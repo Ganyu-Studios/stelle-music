@@ -38,9 +38,6 @@
 			"correctness": {
 				"noVoidTypeReturn": "off"
 			},
-			"security": {
-				"noGlobalEval": "off"
-			},
 			"performance": {
 				"noBarrelFile": "off"
 			}
