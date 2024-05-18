@@ -10,7 +10,7 @@ if (!process.env.TOKEN) throw new Error("Stelle [ENV]: 'TOKEN' in '.env' file ca
 
 export default config.bot({
     debug: DEBUG_MODE,
-    token: process.env.TOKEN ?? "",
+    token: process.env.TOKEN,
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.MessageContent,
@@ -21,7 +21,7 @@ export default config.bot({
     locations: {
         base: "src",
         output: "dist",
-        //commands: "commands",
-        //events: "events"
+        commands: "commands",
+        events: "events"
     },
 });
