@@ -6,7 +6,11 @@
   "type": "module",
   "homepage": "https://github.com/Ganyu-Studios/stelle-music#readme",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run clean && npm run start:debug",
+    "build": "tsc",
+    "clean": "node ./scripts/clean.js",
+    "start": "node ./dist/index.js",
+    "start:debug": "node ./dist/index.js --debug",
     "lint": "biome lint --apply ./src",
     "format": "biome check --apply ./src"
   },
@@ -21,6 +25,7 @@
     "url": "https://github.com/Ganyu-Studios/stelle-music/issues"
   },
   "dependencies": {
+    "chalk": "^5.3.0",
     "discord-api-types": "^0.37.84",
     "seyfert": "github:tiramisulabs/seyfert"
   },
@@ -30,6 +35,11 @@
     "typescript": "^5.4.5"
   },
   "imports": {
-    "#stelle/client": "./dist/structures/client/Stelle.js"
+    "#stelle/client": "./dist/structures/client/Stelle.js",
+    "#stelle/types": "./dist/structures/utils/types/index.js",
+    "#stelle/classes": "./dist/structures/utils/classes/index.js",
+    "#stelle/middlwares": "./dist/middlewares/index.js",
+    "#stelle/data/*": "./dist/structures/utils/data/*",
+    "#stelle/utils/*": "./dist/structures/utils/*"
   }
 }

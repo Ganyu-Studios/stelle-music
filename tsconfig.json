@@ -23,7 +23,12 @@
         "skipDefaultLibCheck": true,
         "skipLibCheck": true,
         "paths": {
-            "#stelle/client": ["./src/structures/client/Stelle.ts"]
+            "#stelle/client": ["./src/structures/client/Stelle.ts"],
+            "#stelle/types": ["./src/structures/utils/types/index.ts"],
+            "#stelle/classes": ["./src/structures/utils/classes/index.ts"],
+            "#stelle/middlwares": ["./src/middlewares/index.ts"],
+            "#stelle/data/*": ["./src/structures/utils/data/*"],
+            "#stelle/utils/*": ["./src/structures/utils/*"],
         }
     },
     "include": [
