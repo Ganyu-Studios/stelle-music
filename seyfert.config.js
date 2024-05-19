@@ -10,7 +10,7 @@ if (!process.env.TOKEN) throw new Error("Stelle [ENV]: 'TOKEN' in '.env' file ca
 
 export default config.bot({
     debug: DEBUG_MODE,
-    token: String(process.env.TOKEN ?? "Trailblazer"),
+    token: process.env.TOKEN,
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.MessageContent,
