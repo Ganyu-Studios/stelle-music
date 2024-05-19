@@ -27,6 +27,7 @@
   "dependencies": {
     "chalk": "^5.3.0",
     "discord-api-types": "^0.37.84",
+    "dotenv": "^16.4.5",
     "kazagumo": "^3.0.5",
     "kazagumo-spotify": "^2.1.0",
     "seyfert": "github:tiramisulabs/seyfert",
@@ -42,6 +43,7 @@
     "#stelle/types": "./dist/structures/utils/types/index.js",
     "#stelle/classes": "./dist/structures/utils/classes/index.js",
     "#stelle/middlwares": "./dist/middlewares/index.js",
+    "#stelle/errors": "./dist/structures/utils/Errors.js",
     "#stelle/data/*": "./dist/structures/utils/data/*",
     "#stelle/utils/*": "./dist/structures/utils/*"
   }

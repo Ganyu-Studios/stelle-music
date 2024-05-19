@@ -18,7 +18,7 @@ export class SeyfertConnector extends Connector {
                 if (packet.t === "READY") return this.ready(nodes);
                 // Attach to the raw websocket event, this event must be 1:1 on spec with dapi (most libs implement this)
                 return this.raw(packet);
-            }
-        }
+            },
+        };
     }
 }

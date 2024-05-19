@@ -1,26 +1,22 @@
 import { ActivityType, PresenceUpdateStatus } from "discord-api-types/v10";
-import { Client, LimitedCollection, Logger } from "seyfert";
+import { Client, LimitedCollection } from "seyfert";
 
 import type { StelleConfiguration } from "#stelle/types";
 
 import { Configuration } from "#stelle/data/Configuration.js";
 import { StelleMiddlewares } from "#stelle/middlwares";
-import { customLogger, getWatermark } from "#stelle/utils/Logger.js";
+import { getWatermark } from "#stelle/utils/Logger.js";
 
 import { THINK_MESSAGES } from "#stelle/data/Constants.js";
 import { StelleManager } from "./modules/Manager.js";
-
-Logger.customize(customLogger);
-Logger.saveOnFile = "all";
-Logger.dirname = "logs";
 
 /**
  * Main Stelle class.
  */
 export class Stelle extends Client<true> {
-    public readonly token = "🌟" as const;
     public readonly cooldowns: LimitedCollection<string, number> = new LimitedCollection();
     public readonly config: StelleConfiguration = Configuration;
+    public readonly token = "🌟" as const;
 
     public readonly manager: StelleManager;
 

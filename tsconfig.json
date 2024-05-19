@@ -27,6 +27,7 @@
             "#stelle/types": ["./src/structures/utils/types/index.ts"],
             "#stelle/classes": ["./src/structures/utils/classes/index.ts"],
             "#stelle/middlwares": ["./src/middlewares/index.ts"],
+            "#stelle/errors": ["./src/structures/utils/Errors.ts"],
             "#stelle/data/*": ["./src/structures/utils/data/*"],
             "#stelle/utils/*": ["./src/structures/utils/*"],
         }

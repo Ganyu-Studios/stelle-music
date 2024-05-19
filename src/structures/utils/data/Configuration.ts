@@ -15,7 +15,7 @@ export const Configuration: StelleConfiguration = {
             url: "144.22.50.176:2333",
             auth: "ganyuontopuwu",
             secure: false,
-        }
+        },
     ],
     spotify: {
         clientId: process.env.SPOTIFY_ID,
@@ -24,5 +24,5 @@ export const Configuration: StelleConfiguration = {
         albumPageLimit: 50,
         playlistPageLimit: 100,
         searchLimit: 5,
-    }
+    },
 };
