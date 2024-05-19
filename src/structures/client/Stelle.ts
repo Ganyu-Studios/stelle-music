@@ -18,6 +18,8 @@ export class Stelle extends Client<true> {
     public readonly config: StelleConfiguration = Configuration;
     public readonly token = "🌟" as const;
 
+    public readyTimestamp: number = 0;
+
     public readonly manager: StelleManager;
 
     /**

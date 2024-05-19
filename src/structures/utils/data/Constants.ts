@@ -13,7 +13,10 @@ export const BOT_VERSION: string = packageJSON.version;
  */
 export const DEBUG_MODE: boolean = getFlag("--debug");
 
-export const THINK_MESSAGES = [
+/**
+ * Stelle think messages.
+ */
+export const THINK_MESSAGES: string[] = [
     "is thinking...",
     "is stargazing...",
     "is astral pondering...",

@@ -11,6 +11,7 @@ export default config.bot({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildVoiceStates,
         GatewayIntentBits.GuildPresences,
