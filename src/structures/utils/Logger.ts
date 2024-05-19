@@ -70,7 +70,39 @@ export function getWatermark(): void {
  * @returns
  */
 function getRandomText(): string {
-    const texts = ["Traveling~"];
+    const texts = [
+        "Traveling~",
+        "Trailblazing with Stelle!",
+        "Warp-speed help, Stelle-style!",
+        "Stelle's starry aid!",
+        "Galaxy-grade support!",
+        "Astral assistance, Stelle touch!",
+        "Stellar aid on the rail!",
+        "Cosmic help from Stelle!",
+        "Warp to help with Stelle!",
+        "Stelle's cosmic boost!",
+        "Star Rail swift support!",
+        "Galaxy's best aid!",
+        "Stelle's interstellar help!",
+        "Light-speed support!",
+        "Astral aid with Stelle!",
+        "Support from the stars!",
+        "Stelle's nebula assist!",
+        "Celestial help, Stelle way!",
+        "Galaxy express support!",
+        "Stelle's space-age aid!",
+        "Support across the stars!",
+        "Stelle's comet-like help!",
+        "Universal support, Stelle style!",
+        "Honkai help, Stelle flair!",
+        "Spacefaring aid from Stelle!",
+        "Astral support express!",
+        "Stelle's cosmic care!",
+        "Support on the Honkai rails!",
+        "Stelle's starship aid!",
+        "Galactic help, Stelle touch!",
+        "Help from the cosmos!",
+    ];
 
     return texts[Math.floor(Math.random() * texts.length)];
 }

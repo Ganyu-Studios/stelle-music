@@ -7,6 +7,9 @@ import { Configuration } from "#stelle/data/Configuration.js";
 import { StelleMiddlewares } from "#stelle/middlwares";
 import { customLogger, getWatermark } from "#stelle/utils/Logger.js";
 
+import { THINK_MESSAGES } from "#stelle/data/Constants.js";
+import { StelleManager } from "./modules/Manager.js";
+
 Logger.customize(customLogger);
 Logger.saveOnFile = "all";
 Logger.dirname = "logs";
@@ -18,6 +21,8 @@ export class Stelle extends Client<true> {
     public readonly token = "🌟" as const;
     public readonly cooldowns: LimitedCollection<string, number> = new LimitedCollection();
     public readonly config: StelleConfiguration = Configuration;
+
+    public readonly manager: StelleManager;
 
     /**
      * Create a new Stelle instance.
@@ -32,7 +37,9 @@ export class Stelle extends Client<true> {
                 prefix: () => [this.config.defaultPrefix, ...this.config.prefixes],
                 reply: () => true,
                 deferReplyResponse: ({ client }) => ({
-                    content: `<a:typing:1214253750093488149> **${client.me.username}** is thinking...`,
+                    content: `<a:typing:1214253750093488149> **${client.me.username}** ${
+                        THINK_MESSAGES[Math.floor(Math.random() * THINK_MESSAGES.length)]
+                    }`,
                 }),
             },
             presence: () => ({
@@ -43,13 +50,15 @@ export class Stelle extends Client<true> {
             }),
         });
 
+        this.manager = new StelleManager(this);
+
         this.run();
     }
 
     /**
-     * 
+     *
      * Start the main Stelle process.
-     * @returns 
+     * @returns
      */
     private async run(): Promise<typeof this.token> {
         getWatermark();
