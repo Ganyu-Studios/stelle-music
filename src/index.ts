@@ -1,4 +1,4 @@
-process.loadEnvFile();
+import "dotenv/config";
 
 import { Logger } from "seyfert";
 import { Stelle } from "#stelle/client";

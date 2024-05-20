@@ -35,6 +35,9 @@
 					}
 				}
 			},
+			"security": {
+				"noGlobalEval": "off"
+			},
 			"correctness": {
 				"noVoidTypeReturn": "off"
 			},

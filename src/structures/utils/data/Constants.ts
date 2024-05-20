@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { getFlag } from "../functions/utils.js";
 
-const packageJSON = await JSON.parse(await readFile("./package.json", "utf-8"));
+const packageJSON = JSON.parse(await readFile("./package.json", "utf-8"));
 
 /**
  * Stelle version.
