@@ -3,17 +3,35 @@ import type { UsingClient } from "seyfert";
 
 const prismaClient = new PrismaClient();
 
+/**
+ * Main Stelle database class.
+ */
 export class StelleDatabase {
     private client: UsingClient;
     private prisma!: PrismaClient;
 
-    public connected: boolean = false;
+    private connected: boolean = false;
 
+    /**
+     *
+     * Create a instance of the database.
+     * @param client
+     */
     constructor(client: UsingClient) {
         this.client = client;
+
+        //cuz prisma makes weird stuff
+        //credits: NoBody-UU for the tip
         Object.defineProperty(this, "prisma", {
             get: () => prismaClient,
         });
+    }
+
+    /**
+     * Return if Stelle is connected to the Database.
+     */
+    public get isConnected(): boolean {
+        return this.connected;
     }
 
     /**
