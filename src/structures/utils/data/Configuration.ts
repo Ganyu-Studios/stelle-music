@@ -2,7 +2,7 @@ import type { StelleConfiguration } from "#stelle/types";
 
 export const Configuration: StelleConfiguration = {
     defaultPrefix: "stelle",
-    prefixes: ["st!", "s!"],
+    prefixes: ["st!"],
     defaultLocale: "en-US",
     developerIds: [
         "391283181665517568", // <-- JustEvil
@@ -22,8 +22,8 @@ export const Configuration: StelleConfiguration = {
         clientId: process.env.SPOTIFY_ID,
         clientSecret: process.env.SPOTIFY_SECRET,
         searchMarket: "US",
-        albumPageLimit: 50,
-        playlistPageLimit: 100,
-        searchLimit: 5,
+        albumPageLimit: 1,
+        playlistPageLimit: 1,
+        searchLimit: 10,
     },
 };

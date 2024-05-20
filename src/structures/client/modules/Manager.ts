@@ -9,10 +9,10 @@ export class StelleManager extends Kazagumo {
     constructor(client: UsingClient) {
         super(
             {
-                defaultSearchEngine: "spsearch",
+                defaultSearchEngine: "youtube",
                 defaultYoutubeThumbnail: "maxresdefault",
                 send: (guildId, payload) => client.gateway.send(client.gateway.calculateShardId(guildId), payload),
-                plugins: [new Spotify({ ...client.config.spotify })],
+                plugins: [new Spotify(client.config.spotify)],
             },
             new Connectors.Seyfert(client),
             client.config.nodes,
