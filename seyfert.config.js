@@ -20,6 +20,7 @@ export default config.bot({
         base: "src",
         output: "dist",
         commands: "commands",
-        events: "events"
+        events: "events",
+        langs: "locales"
     },
 });

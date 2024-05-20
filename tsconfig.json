@@ -28,6 +28,7 @@
             "#stelle/classes": ["./src/structures/utils/classes/index.ts"],
             "#stelle/middlwares": ["./src/middlewares/index.ts"],
             "#stelle/errors": ["./src/structures/utils/Errors.ts"],
+            "#stelle/decorators": ["./src/structures/utils/Decorators.ts"],
             "#stelle/data/*": ["./src/structures/utils/data/*"],
             "#stelle/utils/*": ["./src/structures/utils/*"],
         }

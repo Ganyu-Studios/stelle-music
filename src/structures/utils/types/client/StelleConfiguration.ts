@@ -23,6 +23,8 @@ export interface StelleConfiguration {
     developerIds: string[];
     /** Stelle developer guild id(s). */
     guildIds: string[];
+    /** Stelle default locale. */
+    defaultLocale: string;
     /** Stelle nodes. */
     nodes: NodeOption[];
     /** Stelle spotify data. */

@@ -3,12 +3,16 @@ import { Client, LimitedCollection } from "seyfert";
 
 import type { StelleConfiguration } from "#stelle/types";
 
-import { Configuration } from "#stelle/data/Configuration.js";
 import { StelleMiddlewares } from "#stelle/middlwares";
+
+import { Configuration } from "#stelle/data/Configuration.js";
 import { getWatermark } from "#stelle/utils/Logger.js";
+import { customContext } from "#stelle/utils/functions/utils.js";
+
+import { StelleDatabase } from "./modules/Database.js";
+import { StelleManager } from "./modules/Manager.js";
 
 import { THINK_MESSAGES } from "#stelle/data/Constants.js";
-import { StelleManager } from "./modules/Manager.js";
 
 /**
  * Main Stelle class.
@@ -21,12 +25,15 @@ export class Stelle extends Client<true> {
     public readyTimestamp: number = 0;
 
     public readonly manager: StelleManager;
+    public readonly database: StelleDatabase;
 
     /**
      * Create a new Stelle instance.
      */
     constructor() {
         super({
+            context: customContext,
+            globalMiddlewares: ["checkCooldown"],
             allowedMentions: {
                 replied_user: false,
                 parse: ["roles"],
@@ -49,6 +56,7 @@ export class Stelle extends Client<true> {
         });
 
         this.manager = new StelleManager(this);
+        this.database = new StelleDatabase(this);
 
         this.run();
     }
@@ -63,6 +71,7 @@ export class Stelle extends Client<true> {
 
         this.setServices({
             middlewares: StelleMiddlewares,
+            langs: { default: this.config.defaultLocale },
         });
 
         await this.start();

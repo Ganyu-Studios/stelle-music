@@ -3,6 +3,7 @@ import type { StelleConfiguration } from "#stelle/types";
 export const Configuration: StelleConfiguration = {
     defaultPrefix: "stelle",
     prefixes: ["st!", "s!"],
+    defaultLocale: "en-US",
     developerIds: [
         "391283181665517568", // <-- JustEvil
     ],
