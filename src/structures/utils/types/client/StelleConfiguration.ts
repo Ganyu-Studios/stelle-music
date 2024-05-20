@@ -1,17 +1,17 @@
 import type { NodeOption } from "shoukaku";
 
 interface StelleSpotify {
-    /** Spotify client id. */
+    /** Spotify application client id. */
     clientId: string;
-    /** Spotify client secret. */
+    /** Spotify application client secret. */
     clientSecret: string;
     /** Spotify search market. */
-    searchMarket: string;
+    searchMarket: "US" | "IN" | "EN";
     /** Spotify tracks per page. */
     playlistPageLimit: number;
     /** Spotify tracks per page. */
     albumPageLimit: number;
-    /** Spotofy track limit when searching tracks. */
+    /** Spotofy track limit for searching tracks. */
     searchLimit: number;
 }
 export interface StelleConfiguration {
