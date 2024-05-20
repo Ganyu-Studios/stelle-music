@@ -32,7 +32,7 @@
     "kazagumo": "^3.0.5",
     "kazagumo-spotify": "^2.1.0",
     "seyfert": "github:tiramisulabs/seyfert",
-    "shoukaku": "^4.0.1"
+    "shoukaku": "github:shipgirlproject/Shoukaku"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.7.3",
