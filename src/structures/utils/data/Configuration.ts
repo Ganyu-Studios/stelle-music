@@ -12,8 +12,8 @@ export const Configuration: StelleConfiguration = {
     ],
     nodes: [
         {
-            name: "SN #1", //<--- AKA Stelle Node
-            url: "144.22.50.176:2333",
+            name: "SN #1", // <--- AKA Stelle Node
+            url: "localhost:2333",
             auth: "ganyuontopuwu",
             secure: false,
         },
