@@ -1,6 +1,7 @@
-import "dotenv/config";
+process.loadEnvFile();
 
 import { Logger } from "seyfert";
+import { Stelle } from "#stelle/client";
 import { customLogger } from "#stelle/utils/Logger.js";
 import { validateEnv } from "#stelle/utils/functions/validateEnv.js";
 
@@ -9,8 +10,6 @@ Logger.saveOnFile = "all";
 Logger.dirname = "logs";
 
 validateEnv();
-
-import { Stelle } from "#stelle/client";
 
 const client = new Stelle();
 

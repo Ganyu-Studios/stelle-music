@@ -1,5 +1,5 @@
-import { BOT_VERSION } from "#stelle/data/Constants.js";
 import { createEvent } from "seyfert";
+import { BOT_VERSION } from "#stelle/data/Constants.js";
 
 export default createEvent({
     data: { name: "botReady", once: true },
