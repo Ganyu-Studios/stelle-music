@@ -14,7 +14,6 @@ datasource db {
 }
 
 model guildLocale {
-  id      String  @id @default(auto()) @map("_id") @db.ObjectId
-  guildId String  @unique
-  locale  String?
+  id     String  @id @map("_id")
+  locale String?
 }

@@ -55,7 +55,7 @@ export class StelleDatabase {
      * @returns
      */
     public async getLocale(guildId: string): Promise<string> {
-        const data = await this.prisma.guildLocale.findUnique({ where: { guildId } });
+        const data = await this.prisma.guildLocale.findUnique({ where: { id: guildId } });
         return data?.locale ?? this.client.config.defaultLocale;
     }
 }
