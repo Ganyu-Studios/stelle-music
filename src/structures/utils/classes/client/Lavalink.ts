@@ -3,10 +3,9 @@ import type { AllEvents, KazagumoEvents, LavalinkEvent, LavalinkEventRun, Lavali
 /**
  * Stelle Lavalink events main class.
  */
-export class Lavalink<K extends keyof AllEvents = keyof AllEvents> {
+export class Lavalink<K extends keyof AllEvents = keyof AllEvents> implements LavalinkEvent<K> {
     readonly name: K;
     readonly type: LavalinkEventType<K>;
-
     readonly run: LavalinkEventRun<K>;
 
     /**
@@ -39,5 +38,5 @@ export class Lavalink<K extends keyof AllEvents = keyof AllEvents> {
     }
 }
 
-type LavalinkShoukaku = keyof ShoukakuEvents;
-type LavalinkKazagumo = keyof KazagumoEvents;
+type LavalinkShoukaku = Lavalink<keyof ShoukakuEvents>;
+type LavalinkKazagumo = Lavalink<keyof KazagumoEvents>;

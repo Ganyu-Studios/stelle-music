@@ -1,15 +1,23 @@
 import { Kazagumo } from "kazagumo";
 import { Connectors } from "shoukaku";
 
-import type { UsingClient } from "seyfert";
+import type { Stelle } from "#stelle/client";
 
 import Spotify from "kazagumo-spotify";
 import { StelleHandler } from "#stelle/utils/classes/client/Handler.js";
 
+/**
+ * Main music manager class.
+ */
 export class StelleManager extends Kazagumo {
     readonly handler: StelleHandler;
 
-    constructor(client: UsingClient) {
+    /**
+     * 
+     * Create a new instance of the manager.
+     * @param client 
+     */
+    constructor(client: Stelle) {
         super(
             {
                 defaultSearchEngine: "youtube",
@@ -25,7 +33,7 @@ export class StelleManager extends Kazagumo {
     }
 
     /**
-     * Load the handler.
+     * Load the manager.
      */
     public async load(): Promise<void> {
         //... no.

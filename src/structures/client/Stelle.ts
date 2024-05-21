@@ -1,19 +1,19 @@
 import { ActivityType, PresenceUpdateStatus } from "discord-api-types/v10";
 import { Client, LimitedCollection } from "seyfert";
+import { YunaParser } from "../parser/index.js";
 
-import type { StelleConfiguration } from "#stelle/types";
+import type { InternalRuntime, InternalStelleRuntime, StelleConfiguration } from "#stelle/types";
 
 import { StelleMiddlewares } from "#stelle/middlwares";
 
 import { Configuration } from "#stelle/data/Configuration.js";
 import { getWatermark } from "#stelle/utils/Logger.js";
-import { customContext } from "#stelle/utils/functions/utils.js";
+import { customContext, stelleRC } from "#stelle/utils/functions/utils.js";
 
 import { StelleDatabase } from "./modules/Database.js";
 import { StelleManager } from "./modules/Manager.js";
 
 import { THINK_MESSAGES } from "#stelle/data/Constants.js";
-import { YunaParser } from "../parser/index.js";
 
 /**
  * Main Stelle class.
@@ -86,6 +86,15 @@ export class Stelle extends Client<true> {
         await this.uploadCommands();
 
         return "🌟";
+    }
+    
+    /**
+     * 
+     * Overrides the original `runtime configuration`.
+     * @returns 
+     */
+    public override getRC<T extends InternalRuntime = InternalRuntime>(): Promise<InternalStelleRuntime<T>> {
+        return stelleRC();
     }
 
     /**

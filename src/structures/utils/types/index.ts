@@ -1,10 +1,11 @@
-import type { InternalRuntimeConfig, RuntimeConfig } from "seyfert/lib/client/base.js";
+import type { InternalRuntimeConfig, InternalRuntimeConfigHTTP } from "seyfert/lib/client/base.js";
 
 export { StelleConfiguration } from "./client/StelleConfiguration.js";
 export { KazagumoEvents, ShoukakuEvents, AllEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "./client/StelleLavalink.js";
 
-export type InternalStelleRuntime = InternalRuntimeConfig & { lavalink: string };
-export type StelleRuntime = RuntimeConfig & { locations: { lavalink: string } };
+export type StelleRuntime = { locations: { lavalink: string } };
+export type InternalStelleRuntime<T extends InternalRuntimeConfigHTTP | InternalRuntimeConfig = InternalRuntimeConfigHTTP | InternalRuntimeConfig> = { debug: boolean; } & Omit<T, "locations" | "debug"> & { templates: string | undefined; langs: string | undefined; events: string | undefined; components: string | undefined; commands: string | undefined; base: string; output: string; lavalink: string } 
+export type InternalRuntime = InternalRuntimeConfigHTTP | InternalRuntimeConfig;
 
 export interface Options {
     /** The command cooldown. */

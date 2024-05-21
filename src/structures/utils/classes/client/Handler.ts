@@ -1,26 +1,37 @@
-import type { UsingClient } from "seyfert";
 import { BaseHandler } from "seyfert/lib/common/index.js";
+import { Lavalink } from "./Lavalink.js";
 
-import type { Lavalink } from "./Lavalink.js";
-import { join } from "node:path";
+import type { Stelle } from "#stelle/client";
 
+/**
+ * Main Stelle music handler.
+ */
 export class StelleHandler extends BaseHandler {
-    readonly client: UsingClient;
+    readonly client: Stelle;
 
-    constructor(client: UsingClient) {
+    /**
+     * 
+     * Create a new instance of the handler.
+     * @param client 
+     */
+    constructor(client: Stelle) {
         super(client.logger);
         this.client = client;
     }
+
+    /**
+     * Load the handler.
+     */
     public async load() {
-        const eventsDir = `${join(process.cwd(), "dist", "lavalink")}`;
+        const eventsDir = await this.client.getRC().then((x) => x.lavalink);
         const files = await this.loadFilesK<Lavalink>(await this.getFiles(eventsDir));
 
         for await (const eventFile of files) {
             const eventPath = eventFile.path.split(process.cwd()).slice(1).join(process.cwd());
-            const event: Lavalink<any> = eventFile.file;
+            const event: Lavalink = eventFile.file;
 
-            if (!event) {
-                this.logger.warn(`${eventPath} doesn't export the class by \`export default ...\``);
+            if (!(event && (event instanceof Lavalink))) {
+                this.logger.warn(`${eventPath} doesn't export by \`export default new Lavaink({ ... })\``);
                 continue;
             }
 
@@ -29,13 +40,19 @@ export class StelleHandler extends BaseHandler {
                 continue;
             }
 
-            const run = (...args: any[]) => event.run(this.client, ...args);
+            const run = (...args: any) => event.run(this.client, ...args);
 
-            if (event.isShoukaku()) this.client.manager.shoukaku.on(event.name, run);
-            else if (event.isKazagumo()) this.client.manager.on(event.name, run);
+            //cuz shoukaku & kazagumo types are strage...
+            if (event.isShoukaku()) this.client.manager.shoukaku.on(event.name as any, run);
+            else if (event.isKazagumo()) this.client.manager.on(event.name as any, run);
         }
     }
 
+    /**
+     * 
+     * Reload all `shoukaku` & `kazagumo` events.
+     * @returns 
+     */
     //well,.. this is weird, but works.
     async reloadAll(): Promise<void> {
         this.client.manager.removeAllListeners();

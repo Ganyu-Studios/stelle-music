@@ -1,9 +1,7 @@
 import { join } from "node:path";
 import { extendContext } from "seyfert";
-import { pathToFileURL } from "node:url";
 
-import type { InternalStelleRuntime } from "#stelle/types";
-
+import { magicImport } from "seyfert/lib/common/index.js";
 
 /**
  * Stelle custom context.
@@ -22,7 +20,7 @@ export const customContext = extendContext((int) => ({
  * Stelle custom runtime configuration.
  * @returns
  */
-export const stelleRC = async (): Promise<InternalStelleRuntime> => {
+export const stelleRC = async (): Promise<any> => {
     const { locations, debug, ...env } = await magicImport(join(process.cwd(), "seyfert.config.js")).then((x) => x.default ?? x);
     return {
         ...env,
@@ -51,11 +49,3 @@ export const getFlag = (flag: string) => process.argv.some((arg) => arg === flag
  * @returns
  */
 export const convertToHEX = (color?: number) => (color ? `#${color.toString(16).padStart(6, "0")}` : "#FFFFFF");
-
-/**
- * 
- * Import files, that's all.
- * @param file 
- * @returns 
- */
-export const magicImport = async (file: string) => await import(`${pathToFileURL(file)}?updated=${Date.now()}`);
