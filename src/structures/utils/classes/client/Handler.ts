@@ -10,9 +10,9 @@ export class StelleHandler extends BaseHandler {
     readonly client: Stelle;
 
     /**
-     * 
+     *
      * Create a new instance of the handler.
-     * @param client 
+     * @param client
      */
     constructor(client: Stelle) {
         super(client.logger);
@@ -30,7 +30,7 @@ export class StelleHandler extends BaseHandler {
             const eventPath = eventFile.path.split(process.cwd()).slice(1).join(process.cwd());
             const event: Lavalink = eventFile.file;
 
-            if (!(event && (event instanceof Lavalink))) {
+            if (!(event && event instanceof Lavalink)) {
                 this.logger.warn(`${eventPath} doesn't export by \`export default new Lavaink({ ... })\``);
                 continue;
             }
@@ -49,9 +49,9 @@ export class StelleHandler extends BaseHandler {
     }
 
     /**
-     * 
+     *
      * Reload all `shoukaku` & `kazagumo` events.
-     * @returns 
+     * @returns
      */
     //well,.. this is weird, but works.
     async reloadAll(): Promise<void> {

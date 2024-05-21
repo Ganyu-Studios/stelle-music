@@ -13,9 +13,9 @@ export class StelleManager extends Kazagumo {
     readonly handler: StelleHandler;
 
     /**
-     * 
+     *
      * Create a new instance of the manager.
-     * @param client 
+     * @param client
      */
     constructor(client: Stelle) {
         super(

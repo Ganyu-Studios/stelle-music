@@ -4,7 +4,19 @@ export { StelleConfiguration } from "./client/StelleConfiguration.js";
 export { KazagumoEvents, ShoukakuEvents, AllEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "./client/StelleLavalink.js";
 
 export type StelleRuntime = { locations: { lavalink: string } };
-export type InternalStelleRuntime<T extends InternalRuntimeConfigHTTP | InternalRuntimeConfig = InternalRuntimeConfigHTTP | InternalRuntimeConfig> = { debug: boolean; } & Omit<T, "locations" | "debug"> & { templates: string | undefined; langs: string | undefined; events: string | undefined; components: string | undefined; commands: string | undefined; base: string; output: string; lavalink: string } 
+//literally just copied this because the types cry
+export type InternalStelleRuntime<
+    T extends InternalRuntimeConfigHTTP | InternalRuntimeConfig = InternalRuntimeConfigHTTP | InternalRuntimeConfig,
+> = { debug: boolean } & Omit<T, "locations" | "debug"> & {
+        templates: string | undefined;
+        langs: string | undefined;
+        events: string | undefined;
+        components: string | undefined;
+        commands: string | undefined;
+        base: string;
+        output: string;
+        lavalink: string;
+    };
 export type InternalRuntime = InternalRuntimeConfigHTTP | InternalRuntimeConfig;
 
 export interface Options {

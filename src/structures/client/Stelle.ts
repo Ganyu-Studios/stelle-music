@@ -87,11 +87,11 @@ export class Stelle extends Client<true> {
 
         return "🌟";
     }
-    
+
     /**
-     * 
+     *
      * Overrides the original `runtime configuration`.
-     * @returns 
+     * @returns
      */
     public override getRC<T extends InternalRuntime = InternalRuntime>(): Promise<InternalStelleRuntime<T>> {
         return stelleRC();
