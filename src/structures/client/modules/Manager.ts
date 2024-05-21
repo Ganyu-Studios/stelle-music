@@ -4,8 +4,11 @@ import { Connectors } from "shoukaku";
 import type { UsingClient } from "seyfert";
 
 import Spotify from "kazagumo-spotify";
+import { StelleHandler } from "#stelle/utils/classes/client/Handler.js";
 
 export class StelleManager extends Kazagumo {
+    readonly handler: StelleHandler;
+
     constructor(client: UsingClient) {
         super(
             {
@@ -17,5 +20,16 @@ export class StelleManager extends Kazagumo {
             new Connectors.Seyfert(client),
             client.config.nodes,
         );
+
+        this.handler = new StelleHandler(client);
+    }
+
+    /**
+     * Load the handler.
+     */
+    public async load(): Promise<void> {
+        //... no.
+        await this.handler.load();
+        this.handler.client.logger.info("MusicManager loaded");
     }
 }

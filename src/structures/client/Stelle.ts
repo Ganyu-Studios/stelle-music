@@ -13,6 +13,7 @@ import { StelleDatabase } from "./modules/Database.js";
 import { StelleManager } from "./modules/Manager.js";
 
 import { THINK_MESSAGES } from "#stelle/data/Constants.js";
+import { YunaParser } from "../parser/index.js";
 
 /**
  * Main Stelle class.
@@ -41,6 +42,12 @@ export class Stelle extends Client<true> {
             commands: {
                 prefix: () => [this.config.defaultPrefix, ...this.config.prefixes],
                 reply: () => true,
+                argsParser: YunaParser({
+                    useUniqueNamedSyntaxAtSameTime: true,
+                    enabled: {
+                        namedOptions: ["-", "--"],
+                    },
+                }),
                 deferReplyResponse: ({ client }) => ({
                     content: `<a:typing:1214253750093488149> **${client.me.username}** ${
                         THINK_MESSAGES[Math.floor(Math.random() * THINK_MESSAGES.length)]
@@ -75,8 +82,28 @@ export class Stelle extends Client<true> {
         });
 
         await this.start();
+        await this.manager.load();
         await this.uploadCommands();
 
         return "🌟";
+    }
+
+    /**
+     *
+     * Reload Stelle..
+     * @returns
+     */
+    public async reload(): Promise<void> {
+        this.logger.warn("Attemping to reload...");
+
+        try {
+            await this.events?.reloadAll();
+            await this.commands?.reloadAll();
+            await this.manager.handler.reloadAll();
+
+            this.logger.info("Stelle has been reloaded.");
+        } catch (error) {
+            this.logger.error("Error ", error);
+        }
     }
 }

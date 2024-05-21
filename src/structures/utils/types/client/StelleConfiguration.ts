@@ -14,6 +14,12 @@ interface StelleSpotify {
     /** Spotofy track limit for searching tracks. */
     searchLimit: number;
 }
+
+interface StelleColors {
+    /** The success color. */
+    success: number;
+}
+
 export interface StelleConfiguration {
     /** Stelle default prefix. */
     defaultPrefix: string;
@@ -29,4 +35,6 @@ export interface StelleConfiguration {
     nodes: NodeOption[];
     /** Stelle spotify data. */
     spotify: StelleSpotify;
+    /** Stelle colors. */
+    color: StelleColors;
 }

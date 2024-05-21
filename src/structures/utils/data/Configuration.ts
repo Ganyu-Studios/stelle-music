@@ -26,4 +26,7 @@ export const Configuration: StelleConfiguration = {
         playlistPageLimit: 1,
         searchLimit: 10,
     },
+    color: {
+        success: 0x8d86a8,
+    },
 };

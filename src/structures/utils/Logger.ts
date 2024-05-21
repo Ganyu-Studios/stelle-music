@@ -1,9 +1,12 @@
 import { Logger } from "seyfert";
 import { LogLevels } from "seyfert/lib/common/index.js";
 
-import chalk, { type ChalkInstance } from "chalk";
+import { Configuration } from "./data/Configuration.js";
 
-const customColor = "#8D86A8";
+import chalk, { type ChalkInstance } from "chalk";
+import { convertToHEX } from "./functions/utils.js";
+
+const customColor = convertToHEX(Configuration.color.success);
 
 /**
  *
