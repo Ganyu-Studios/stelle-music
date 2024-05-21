@@ -3,6 +3,10 @@ import type { UsingClient } from "seyfert";
 import type { Awaitable } from "seyfert/lib/common/index.js";
 import type { PlayerUpdate, TrackExceptionEvent, TrackStuckEvent, WebSocketClosedEvent } from "shoukaku";
 
+//
+// yeah, these types are harcoded so don't expect too much.
+//
+
 export interface ShoukakuEvents {
     reconnecting: [name: string, reconnectsLeft: number, reconnectInterval: number];
     debug: [name: string, info: string];

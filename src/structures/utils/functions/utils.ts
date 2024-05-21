@@ -44,7 +44,7 @@ export const getFlag = (flag: string) => process.argv.some((arg) => arg === flag
 
 /**
  *
- * Convert a number color to HEX
+ * Convert a number color to HEX.
  * @param color - The color number
  * @returns
  */
