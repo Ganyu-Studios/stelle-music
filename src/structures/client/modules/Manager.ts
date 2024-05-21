@@ -14,8 +14,8 @@ export class StelleManager extends Kazagumo {
             {
                 defaultSearchEngine: "youtube",
                 defaultYoutubeThumbnail: "maxresdefault",
-                send: (guildId, payload) => client.gateway.send(client.gateway.calculateShardId(guildId), payload),
                 plugins: [new Spotify(client.config.spotify)],
+                send: (guildId, payload) => client.gateway.send(client.gateway.calculateShardId(guildId), payload),
             },
             new Connectors.Seyfert(client),
             client.config.nodes,

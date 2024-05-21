@@ -97,13 +97,14 @@ export class Stelle extends Client<true> {
         this.logger.warn("Attemping to reload...");
 
         try {
-            await this.events?.reloadAll();
+            //await this.events?.reloadAll();
             await this.commands?.reloadAll();
             await this.manager.handler.reloadAll();
 
             this.logger.info("Stelle has been reloaded.");
         } catch (error) {
-            this.logger.error("Error ", error);
+            this.logger.error("Error -", error);
+            throw error;
         }
     }
 }
