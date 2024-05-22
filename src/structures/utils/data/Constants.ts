@@ -9,6 +9,11 @@ const packageJSON = JSON.parse(await readFile("./package.json", "utf-8"));
 export const BOT_VERSION: string = packageJSON.version;
 
 /**
+ * Stelle bot name.
+ */
+export const BOT_NAME: string = "Stelle";
+
+/**
  * Check if Stelle is running un DEBUG MODE.
  */
 export const DEBUG_MODE: boolean = getFlag("--debug");
