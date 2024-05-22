@@ -47,6 +47,7 @@
     "#stelle/middlwares": "./dist/middlewares/index.js",
     "#stelle/errors": "./dist/structures/utils/Errors.js",
     "#stelle/decorators": "./dist/structures/utils/Decorators.js",
+    "#stelle/parser": "./dist/structures/parser/index.js",
     "#stelle/data/*": "./dist/structures/utils/data/*",
     "#stelle/utils/*": "./dist/structures/utils/*"
   }

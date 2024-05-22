@@ -28,5 +28,6 @@ export const Configuration: StelleConfiguration = {
     },
     color: {
         success: 0x8d86a8,
+        extra: 0xece8f1,
     },
 };

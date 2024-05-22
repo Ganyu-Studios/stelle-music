@@ -18,6 +18,8 @@ interface StelleSpotify {
 interface StelleColors {
     /** The success color. */
     success: number;
+    /** The success color. */
+    extra: number;
 }
 
 export interface StelleConfiguration {

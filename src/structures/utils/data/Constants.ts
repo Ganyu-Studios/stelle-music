@@ -14,6 +14,11 @@ export const BOT_VERSION: string = packageJSON.version;
 export const DEBUG_MODE: boolean = getFlag("--debug");
 
 /**
+ * Stelle eval secrets regex.
+ */
+export const SECRETS_REGEX = /\b(?:client\.(?:config)|config|env|process\.env|eval|atob|btoa)\b/;
+
+/**
  * Stelle think messages.
  */
 export const THINK_MESSAGES: string[] = [
@@ -33,4 +38,21 @@ export const THINK_MESSAGES: string[] = [
     "is spacebound reflecting...",
     "is nebulae pondering...",
     "is lunar musing...",
+];
+
+/**
+ * Stelle eval secrets messages.
+ */
+export const SECRETS_MESSAGES = [
+    "That's... restricted information...",
+    "Hey! You can't see that.",
+    "Don't you have better things to do?",
+    "No, I won't let you see that...",
+    "That information, is private...",
+    "Hey! Mind your business...",
+    "I'm getting bored of this....",
+    "ENOUGH!",
+    "I'm serious... I'm tired...",
+    "...",
+    "I will restrict you if you continue...",
 ];

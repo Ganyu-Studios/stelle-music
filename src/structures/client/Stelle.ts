@@ -1,10 +1,10 @@
 import { ActivityType, PresenceUpdateStatus } from "discord-api-types/v10";
 import { Client, LimitedCollection } from "seyfert";
-import { YunaParser } from "../parser/index.js";
 
 import type { InternalRuntime, InternalStelleRuntime, StelleConfiguration } from "#stelle/types";
 
 import { StelleMiddlewares } from "#stelle/middlwares";
+import { YunaParser } from "#stelle/parser";
 
 import { Configuration } from "#stelle/data/Configuration.js";
 import { getWatermark } from "#stelle/utils/Logger.js";
@@ -106,7 +106,7 @@ export class Stelle extends Client<true> {
         this.logger.warn("Attemping to reload...");
 
         try {
-            //await this.events?.reloadAll();
+            await this.events?.reloadAll();
             await this.commands?.reloadAll();
             await this.manager.handler.reloadAll();
 

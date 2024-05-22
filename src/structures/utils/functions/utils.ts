@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import { inspect } from "node:util";
 import { extendContext } from "seyfert";
 
 import { magicImport } from "seyfert/lib/common/index.js";
@@ -49,3 +50,27 @@ export const getFlag = (flag: string) => process.argv.some((arg) => arg === flag
  * @returns
  */
 export const convertToHEX = (color?: number) => (color ? `#${color.toString(16).padStart(6, "0")}` : "#FFFFFF");
+
+/**
+ *
+ * Representation of a object.
+ * @param error
+ * @returns
+ */
+export const getDepth = (error: any): string => inspect(error, { depth: 0 });
+
+/**
+ *
+ * Create a new codeblock.
+ * @param language
+ * @param code
+ * @returns
+ */
+export const codeBlock = (language: string, code: string) => `\`\`\`${language}\n${code}\n\`\`\``;
+
+/**
+ * Slice text.
+ * @param text
+ * @returns
+ */
+export const sliceText = (text: string, max: number = 100) => (text.length > max ? `${text.slice(0, max)}...` : text);
