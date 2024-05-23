@@ -63,8 +63,6 @@ export default class EvalCommand extends StelleCommand {
             else if (typeof output !== "string") {
                 if (/^(?:\(?)\s*await\b/.test(code.toLowerCase())) code = `(async () => ${code})()`;
 
-                console.info({ code, typecode });
-
                 output = await eval(code);
                 typecode = typeof output;
                 output = getDepth(output)
