@@ -4,6 +4,8 @@ import { StelleCommand } from "#stelle/classes";
 @Declare({
     name: "ping",
     description: "Get the Stelle ping.",
+    integrationTypes: ["GuildInstall"],
+    contexts: ["Guild"],
 })
 export default class PingCommand extends StelleCommand {
     async run(ctx: CommandContext) {

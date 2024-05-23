@@ -17,6 +17,8 @@ const options = {
     name: "play",
     description: "Play music with Stelle.",
     aliases: ["p"],
+    integrationTypes: ["GuildInstall"],
+    contexts: ["Guild"],
 })
 @StelleOptions({ cooldown: 5, inVoice: true, sameVoice: true })
 @Options(options)

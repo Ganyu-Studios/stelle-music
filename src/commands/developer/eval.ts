@@ -27,6 +27,8 @@ const options = {
     description: "Eval code with Stelle.",
     aliases: ["code"],
     guildId: Configuration.guildIds,
+    integrationTypes: ["GuildInstall"],
+    contexts: ["Guild"],
 })
 @Options(options)
 @StelleOptions({ onlyDeveloper: true })

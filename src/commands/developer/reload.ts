@@ -10,6 +10,8 @@ import { Configuration } from "#stelle/data/Configuration.js";
     name: "reload",
     description: "Reload Stelle.",
     guildId: Configuration.guildIds,
+    integrationTypes: ["GuildInstall"],
+    contexts: ["Guild"],
 })
 @StelleOptions({ onlyDeveloper: true })
 export default class ReloadCommand extends StelleCommand {
