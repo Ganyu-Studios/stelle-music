@@ -1,19 +1,45 @@
-import { MessageFlags } from "discord-api-types/v10";
 import { createMiddleware } from "seyfert";
+
+import { MessageFlags } from "discord-api-types/v10";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 
-export const checkCooldown = createMiddleware<void>(async ({ context, next, pass }) => {
-    const { client, author } = context;
+import type { AnyContext } from "#stelle/types";
+
+type CommandData = {
+    name: string;
+    type: string;
+};
+
+function getMetadata(ctx: AnyContext): CommandData {
+    if (ctx.isChat() || ctx.isMenu())
+        return {
+            name: ctx.fullCommandName,
+            type: "command",
+        };
+
+    if (ctx.isComponent() || ctx.isModal())
+        return {
+            name: ctx.customId,
+            type: "component",
+        };
+
+    return {
+        name: "---",
+        type: "any",
+    };
+}
+
+export const checkCooldown = createMiddleware<void>(async ({ context, next }) => {
+    const { client, author, command } = context;
     const { cooldowns } = client;
 
-    if (!context.isChat()) return next();
+    if (!command) return;
 
-    const command = context.resolver.getCommand();
-    if (!command) return pass();
+    const { name, type } = getMetadata(context);
 
     const cooldown = (command.cooldown ?? 3) * 1000;
     const timeNow = Date.now();
-    const setKey = `${author.id}-${command.name}`;
+    const setKey = `${name}-${type}-${author.id}`;
 
     const { messages } = context.t.get(await context.getLocale());
 

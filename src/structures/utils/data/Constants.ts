@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { getFlag } from "../functions/utils.js";
+import { getFlag } from "#stelle/utils/functions/utils.js";
 
 const packageJSON = JSON.parse(await readFile("./package.json", "utf-8"));
 
@@ -48,7 +48,7 @@ export const THINK_MESSAGES: string[] = [
 /**
  * Stelle eval secrets messages.
  */
-export const SECRETS_MESSAGES = [
+export const SECRETS_MESSAGES: string[] = [
     "That's... restricted information...",
     "Hey! You can't see that.",
     "Don't you have better things to do?",

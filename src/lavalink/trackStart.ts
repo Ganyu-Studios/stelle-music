@@ -7,6 +7,10 @@ export default new Lavalink({
         const channel = await client.channels.fetch(player.textId!);
         if (!channel.isTextGuild()) return;
 
+        const voice = await client.channels.fetch(player.voiceId);
+        if (!voice.isVoice()) return;
+
+        await voice.setVoiceState(`🎵 ${track.title}`);
         await channel.messages.write({ content: `Now playing: ${track.title}` });
     },
 });

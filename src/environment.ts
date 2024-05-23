@@ -24,6 +24,10 @@ declare module "seyfert" {
 
     interface Command extends Options {}
     interface SubCommand extends Options {}
+    interface ComponentCommand extends Options {}
+    interface ModalCommand extends Options {}
+    interface ContextMenuCommand extends Options {}
+
     interface UsingClient extends ParseClient<Stelle> {}
     interface RegisteredMiddlewares extends ParseMiddlewares<typeof StelleMiddlewares> {}
     interface GlobalMetadata extends ParseMiddlewares<typeof StelleMiddlewares> {}

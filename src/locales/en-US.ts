@@ -8,6 +8,10 @@ export default {
         },
         events: {
             inCooldown: ({ time }: ICooldown) => `\`❌\` You need to wait: <t:${time}:R> (<t:${time}:t>) to use this.`,
+            onlyDeveloper: "`❌` Only the **bot developer** can use this.",
+            onlyGuildOwner: "`❌` Only the **guild owner** can use this.",
+            noVoiceChannel: "`❌` You are not in a **voice channel**... Join to play music.",
+            noSameVoice: ({ channelId }: IChannel) => `\`❌\` You are not in the **same voice channel** as me. (<#${channelId}>)`,
         },
     },
     locales: {
@@ -26,5 +30,6 @@ export default {
     },
 };
 
+type IChannel = { channelId: string };
 type IPing = { wsPing: number; clientPing: number };
 type ICooldown = { time: number };

@@ -24,7 +24,7 @@ const options = {
 
 @Declare({
     name: "eval",
-    description: "Eval code with stelle.",
+    description: "Eval code with Stelle.",
     aliases: ["code"],
     guildId: Configuration.guildIds,
 })
