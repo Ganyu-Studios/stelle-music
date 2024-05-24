@@ -8,7 +8,7 @@ import { StelleCommand } from "#stelle/classes";
     contexts: ["Guild"],
 })
 export default class PingCommand extends StelleCommand {
-    async run(ctx: CommandContext) {
+    async run(ctx: CommandContext): Promise<void> {
         const { client } = ctx;
         const { messages } = ctx.t.get();
 

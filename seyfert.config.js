@@ -24,6 +24,7 @@ export default config.bot({
         output: "dist",
         lavalink: "lavalink",
         commands: "commands",
+        components: "components",
         events: "events",
         langs: "locales",
     },

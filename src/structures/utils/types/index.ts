@@ -26,6 +26,7 @@ export type InternalStelleRuntime<
         lavalink: string;
     };
 
+export type LoopMode = "none" | "queue" | "track";
 export type InternalRuntime = InternalRuntimeConfigHTTP | InternalRuntimeConfig;
 export type AnyContext =
     | CommandContext
@@ -46,4 +47,8 @@ export interface Options {
     sameVoice?: boolean;
     /** Check if Stelle is connected atleast in one node. */
     checkNodes?: boolean;
+    /** Check if a player exists in a guild. */
+    checkPlayer?: boolean;
+    /** Check if the player queue has more than one song. */
+    checkQueue?: boolean;
 }

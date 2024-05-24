@@ -15,6 +15,7 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
 
     const voice = member.voice();
     const bot = context.me()?.voice();
+    const player = client.manager.getPlayer(context.guildId);
 
     if (command.onlyDeveloper && !developerIds.includes(author.id))
         return context.editOrReply({
@@ -32,7 +33,7 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
             flags: MessageFlags.Ephemeral,
             embeds: [
                 {
-                    description: messages.events.onlyDeveloper,
+                    description: messages.events.onlyGuildOwner,
                     color: EmbedColors.Red,
                 },
             ],
@@ -66,6 +67,28 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
             embeds: [
                 {
                     description: messages.events.noSameVoice({ channelId: bot.channelId! }),
+                    color: EmbedColors.Red,
+                },
+            ],
+        });
+
+    if (command.checkPlayer && !player)
+        return context.editOrReply({
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                {
+                    description: messages.events.noPlayer,
+                    color: EmbedColors.Red,
+                },
+            ],
+        });
+
+    if (command.checkQueue && !player?.queue.size)
+        return context.editOrReply({
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                {
+                    description: messages.events.noTracks,
                     color: EmbedColors.Red,
                 },
             ],

@@ -1,4 +1,13 @@
-import { type CommandContext, Declare, Embed, type OKFunction, Options, createStringOption } from "seyfert";
+import {
+    type CommandContext,
+    Declare,
+    Embed,
+    type Message,
+    type OKFunction,
+    Options,
+    type WebhookMessage,
+    createStringOption,
+} from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { StelleCommand } from "#stelle/classes";
 
@@ -34,7 +43,7 @@ const options = {
 @StelleOptions({ onlyDeveloper: true })
 @DeclareParserConfig(ParserRecommendedConfig.Eval)
 export default class EvalCommand extends StelleCommand {
-    async run(ctx: CommandContext<typeof options>) {
+    async run(ctx: CommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
         const { client, options, author, member, channelId } = ctx;
 
         await author.fetch();

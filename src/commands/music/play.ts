@@ -1,4 +1,14 @@
-import { type CommandContext, Declare, Embed, LocalesT, Options, type User, createStringOption } from "seyfert";
+import {
+    type CommandContext,
+    Declare,
+    Embed,
+    LocalesT,
+    type Message,
+    Options,
+    type User,
+    type WebhookMessage,
+    createStringOption,
+} from "seyfert";
 import { StelleCommand } from "#stelle/classes";
 import { StelleOptions } from "#stelle/decorators";
 
@@ -31,11 +41,17 @@ const options = {
                     { name: messages.commands.play.autocomplete.noQuery, value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT" },
                 ]);
 
-            const res = await client.manager.search(query, { requester: null, engine: "spotify" });
-            const tracks = res.tracks.slice(0, 25).map((track) => ({
-                name: `${sliceText(track.title)} (${parseTime(track.length)}) - ${sliceText(track.author ?? "---", 30)}`,
-                value: track.uri!,
-            }));
+            const res = await client.manager.search(query, { requester: null });
+            const tracks = res.tracks.slice(0, 25).map((track) => {
+                const duration = track.isStream
+                    ? messages.commands.play.live
+                    : parseTime(track.length) ?? messages.commands.play.undetermined;
+
+                return {
+                    name: `${sliceText(track.title)} (${duration}) - ${sliceText(track.author ?? "---", 30)}`,
+                    value: track.uri!,
+                };
+            });
 
             if (!tracks.length) return interaction.respond([{ name: messages.commands.play.autocomplete.noTracks, value: "noTracks" }]);
 
@@ -55,7 +71,7 @@ const options = {
 @Options(options)
 @LocalesT("locales.play.name", "locales.play.description")
 export default class PlayCommand extends StelleCommand {
-    async run(ctx: CommandContext<typeof options>) {
+    async run(ctx: CommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
         const { options, client, guildId, channelId, member, author } = ctx;
         const { query } = options;
 
@@ -78,7 +94,7 @@ export default class PlayCommand extends StelleCommand {
             volume: 100,
         });
 
-        const result = await player.search(query, { requester: author, engine: "spotify" });
+        const result = await player.search(query, { requester: author });
         if (!result.tracks.length)
             return ctx.editOrReply({
                 flags: MessageFlags.Ephemeral,
@@ -102,7 +118,9 @@ export default class PlayCommand extends StelleCommand {
                     player.queue.add(track);
 
                     const type = player.queue.size > 1 ? "results" : "result";
-                    const status = parseTime(track.length) ?? messages.commands.play.undetermined;
+                    const status = track.isStream
+                        ? messages.commands.play.live
+                        : parseTime(track.length) ?? messages.commands.play.undetermined;
 
                     const embed = new Embed()
                         .setThumbnail(track.thumbnail)

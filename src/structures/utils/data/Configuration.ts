@@ -9,6 +9,7 @@ export const Configuration: StelleConfiguration = {
     ],
     guildIds: [
         "1075885077529120798", // <-- Return Emojis
+        "970508955363188736", // <-- Ganyu Studios
     ],
     nodes: [
         {
