@@ -4,6 +4,8 @@ import { extendContext } from "seyfert";
 
 import { magicImport } from "seyfert/lib/common/index.js";
 
+import humanize from "humanize-duration";
+
 /**
  * Stelle custom context.
  */
@@ -33,6 +35,38 @@ export const stelleRC = async (): Promise<any> => {
         commands: locations.commands ? join(process.cwd(), locations.output, locations.commands) : undefined,
         lavalink: join(process.cwd(), locations.output, locations.lavalink),
     };
+};
+
+/**
+ *
+ * Convert MS to a time string.
+ * @param time
+ * @returns
+ */
+export const parseTime = (time?: number): string | undefined => {
+    if (!time) return;
+
+    const humanizer = humanize.humanizer({
+        spacer: "",
+        language: "short",
+        maxDecimalPoints: 0,
+        serialComma: false,
+        delimiter: " : ",
+        languages: {
+            short: {
+                y: () => "y",
+                mo: () => "mo",
+                w: () => "w",
+                d: () => "d",
+                h: () => "h",
+                m: () => "m",
+                s: () => "s",
+                ms: () => "ms",
+            },
+        },
+    });
+
+    return humanizer(time);
 };
 
 /**

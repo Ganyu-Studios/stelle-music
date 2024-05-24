@@ -1,4 +1,4 @@
-import { Kazagumo } from "kazagumo";
+import { Kazagumo, State } from "kazagumo";
 import { Connectors } from "shoukaku";
 import { StelleHandler } from "#stelle/utils/classes/client/Handler.js";
 
@@ -30,11 +30,23 @@ export class StelleManager extends Kazagumo {
             new Connectors.Seyfert(client),
             client.config.nodes,
             {
+                reconnectInterval: 20,
+                resume: true,
+                resumeByLibrary: true,
                 userAgent: `${BOT_NAME} v${BOT_VERSION}`,
             },
         );
 
         this.handler = new StelleHandler(client);
+    }
+
+    /**
+     *
+     * Return if Stelle is connected atleast in one node.
+     * @returns
+     */
+    public get isUseable(): boolean {
+        return [...this.shoukaku.nodes.values()].filter((node) => node.state === State.CONNECTED).length > 0;
     }
 
     /**

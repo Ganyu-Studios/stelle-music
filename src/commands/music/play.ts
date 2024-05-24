@@ -1,6 +1,11 @@
-import { type CommandContext, Declare, LocalesT, Options, createStringOption } from "seyfert";
+import { type CommandContext, Declare, Embed, LocalesT, Options, type User, createStringOption } from "seyfert";
 import { StelleCommand } from "#stelle/classes";
 import { StelleOptions } from "#stelle/decorators";
+
+import { MessageFlags } from "discord-api-types/v10";
+import { EmbedColors } from "seyfert/lib/common/index.js";
+
+import { parseTime, sliceText } from "#stelle/utils/functions/utils.js";
 
 const options = {
     query: createStringOption({
@@ -9,6 +14,32 @@ const options = {
         locales: {
             name: "locales.play.option.name",
             description: "locales.play.option.description",
+        },
+        autocomplete: async (interaction) => {
+            const { client, member } = interaction;
+            const { messages } = client.t(interaction.locale).get();
+
+            if (!client.manager.isUseable)
+                return interaction.respond([{ name: messages.commands.play.autocomplete.noNodes, value: "noNodes" }]);
+
+            const voice = member?.voice();
+            if (!voice) return interaction.respond([{ name: messages.commands.play.autocomplete.noVoiceChannel, value: "noVoice" }]);
+
+            const query = interaction.getInput();
+            if (!query)
+                return interaction.respond([
+                    { name: messages.commands.play.autocomplete.noQuery, value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT" },
+                ]);
+
+            const res = await client.manager.search(query, { requester: null, engine: "spotify" });
+            const tracks = res.tracks.slice(0, 25).map((track) => ({
+                name: `${sliceText(track.title)} (${parseTime(track.length)}) - ${sliceText(track.author ?? "---", 30)}`,
+                value: track.uri!,
+            }));
+
+            if (!tracks.length) return interaction.respond([{ name: messages.commands.play.autocomplete.noTracks, value: "noTracks" }]);
+
+            await interaction.respond(tracks);
         },
     }),
 };
@@ -20,7 +51,7 @@ const options = {
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
 })
-@StelleOptions({ cooldown: 5, inVoice: true, sameVoice: true })
+@StelleOptions({ cooldown: 5, inVoice: true, sameVoice: true, checkNodes: true })
 @Options(options)
 @LocalesT("locales.play.name", "locales.play.description")
 export default class PlayCommand extends StelleCommand {
@@ -36,6 +67,10 @@ export default class PlayCommand extends StelleCommand {
         const botVoice = ctx.me()?.voice();
         if (botVoice && botVoice.channelId !== voice.channelId) return;
 
+        const { messages } = ctx.t.get(await ctx.getLocale());
+
+        await ctx.deferReply();
+
         const player = await client.manager.createPlayer({
             guildId: guildId,
             textId: channelId,
@@ -43,19 +78,84 @@ export default class PlayCommand extends StelleCommand {
             volume: 100,
         });
 
-        const result = await client.manager.search(query, { requester: author, engine: "spotify" });
-        if (!result.tracks.length) return ctx.editOrReply({ content: "No results found!" });
+        const result = await player.search(query, { requester: author, engine: "spotify" });
+        if (!result.tracks.length)
+            return ctx.editOrReply({
+                flags: MessageFlags.Ephemeral,
+                content: "",
+                embeds: [
+                    {
+                        color: EmbedColors.Red,
+                        description: messages.commands.play.noResults,
+                    },
+                ],
+            });
 
-        if (result.type === "PLAYLIST") player.queue.add(result.tracks);
-        else player.queue.add(result.tracks[0]);
+        player.data.set("commandContext", ctx);
 
-        if (!player.playing) await player.play();
+        switch (result.type) {
+            case "TRACK":
+            case "SEARCH":
+                {
+                    const track = result.tracks[0];
 
-        return ctx.editOrReply({
-            content:
-                result.type === "PLAYLIST"
-                    ? `Queued ${result.tracks.length} from ${result.playlistName}`
-                    : `Queued ${result.tracks[0].title}`,
-        });
+                    player.queue.add(track);
+
+                    const type = player.queue.size > 1 ? "results" : "result";
+                    const status = parseTime(track.length) ?? messages.commands.play.undetermined;
+
+                    const embed = new Embed()
+                        .setThumbnail(track.thumbnail)
+                        .setColor(client.config.color.success)
+                        .setDescription(
+                            messages.commands.play.embed[type]({
+                                duration: status,
+                                position: player.queue.size,
+                                requester: (track.requester as User).id,
+                                title: track.title,
+                                url: track.uri!,
+                                volume: player.volume,
+                            }),
+                        )
+                        .setTimestamp();
+
+                    await ctx.editOrReply({
+                        content: "",
+                        embeds: [embed],
+                    });
+
+                    if (!player.playing) await player.play();
+                }
+                break;
+
+            case "PLAYLIST":
+                {
+                    const track = result.tracks[0];
+
+                    player.queue.add(result.tracks);
+
+                    const embed = new Embed()
+                        .setColor(client.config.color.success)
+                        .setThumbnail(track.thumbnail)
+                        .setDescription(
+                            messages.commands.play.embed.playlist({
+                                query,
+                                playlist: result.playlistName ?? track.title,
+                                requester: (track.requester as User).id,
+                                tracks: result.tracks.length,
+                                volume: player.volume,
+                            }),
+                        )
+                        .setTimestamp();
+
+                    await ctx.editOrReply({
+                        content: "",
+                        embeds: [embed],
+                    });
+
+                    if (!player.playing) await player.play();
+                }
+                break;
+        }
     }
 }

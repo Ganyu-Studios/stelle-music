@@ -1,4 +1,3 @@
-import type { InternalRuntimeConfig, InternalRuntimeConfigHTTP } from "seyfert/lib/client/base.js";
 import type {
     CommandContext,
     ComponentContext,
@@ -7,6 +6,7 @@ import type {
     ModalContext,
     UserCommandInteraction,
 } from "seyfert";
+import type { InternalRuntimeConfig, InternalRuntimeConfigHTTP } from "seyfert/lib/client/base.js";
 
 export { StelleConfiguration } from "./client/StelleConfiguration.js";
 export { KazagumoEvents, ShoukakuEvents, AllEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "./client/StelleLavalink.js";
@@ -25,7 +25,7 @@ export type InternalStelleRuntime<
         output: string;
         lavalink: string;
     };
-    
+
 export type InternalRuntime = InternalRuntimeConfigHTTP | InternalRuntimeConfig;
 export type AnyContext =
     | CommandContext
@@ -44,4 +44,6 @@ export interface Options {
     inVoice?: boolean;
     /** Only a member on the same voice channel with Stelle will be able to use the command. */
     sameVoice?: boolean;
+    /** Check if Stelle is connected atleast in one node. */
+    checkNodes?: boolean;
 }

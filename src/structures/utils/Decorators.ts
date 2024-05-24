@@ -9,5 +9,6 @@ export function StelleOptions(options: Options) {
             onlyGuildOwner = options.onlyDeveloper;
             inVoice = options.inVoice;
             sameVoice = options.sameVoice;
+            checkNodes = options.checkNodes;
         };
 }

@@ -12,7 +12,8 @@
     "start": "node ./dist/index.js",
     "start:debug": "node ./dist/index.js --debug",
     "lint": "biome lint --apply ./src",
-    "format": "biome check --apply ./src"
+    "format": "biome check --apply ./src",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "JustEvil",
@@ -29,6 +30,7 @@
     "chalk": "^5.3.0",
     "discord-api-types": "^0.37.85",
     "dotenv": "^16.4.5",
+    "humanize-duration": "^3.32.0",
     "kazagumo": "^3.0.5",
     "kazagumo-spotify": "^2.1.0",
     "seyfert": "github:tiramisulabs/seyfert",
@@ -36,7 +38,9 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.7.3",
+    "@types/humanize-duration": "^3.27.4",
     "@types/node": "^20.12.12",
+    "husky": "^9.0.11",
     "prisma": "^5.14.0",
     "typescript": "^5.4.5"
   },
@@ -48,6 +52,7 @@
     "#stelle/errors": "./dist/structures/utils/Errors.js",
     "#stelle/decorators": "./dist/structures/utils/Decorators.js",
     "#stelle/parser": "./dist/structures/parser/index.js",
+    "#stelle/index": "./dist/index.js",
     "#stelle/data/*": "./dist/structures/utils/data/*",
     "#stelle/utils/*": "./dist/structures/utils/*"
   }
