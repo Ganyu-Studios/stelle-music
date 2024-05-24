@@ -30,6 +30,7 @@
             "#stelle/errors": ["./src/structures/utils/Errors.ts"],
             "#stelle/decorators": ["./src/structures/utils/Decorators.ts"],
             "#stelle/parser": ["./src/structures/parser/index.ts"],
+            "#stelle/index": ["./src/index.ts"],
             "#stelle/data/*": ["./src/structures/utils/data/*"],
             "#stelle/utils/*": ["./src/structures/utils/*"],
         }
