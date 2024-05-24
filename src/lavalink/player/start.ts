@@ -41,10 +41,7 @@ export default new Lavalink({
             .setTimestamp();
 
         const row = new ActionRow<Button>().addComponents(
-            new Button()
-                .setCustomId("player-stopPlayer")
-                .setStyle(ButtonStyle.Danger)
-                .setLabel(messages.events.trackStart.components.stop),
+            new Button().setCustomId("player-stopPlayer").setStyle(ButtonStyle.Danger).setLabel(messages.events.trackStart.components.stop),
             new Button()
                 .setCustomId("player-skipTrack")
                 .setStyle(ButtonStyle.Secondary)

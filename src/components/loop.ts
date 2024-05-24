@@ -26,7 +26,7 @@ export default class ToggleLoopComponent extends ComponentCommand {
         const states: Record<LoopMode, LoopMode> = {
             none: "track",
             track: "queue",
-            queue: "none"
+            queue: "none",
         };
 
         player.setLoop(states[player.loop]);
