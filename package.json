@@ -13,7 +13,7 @@
     "start:debug": "node ./dist/index.js --debug",
     "lint": "biome lint --apply ./src",
     "format": "biome check --apply ./src",
-    "prepare": "husky"
+    "prepare": "husky && pnpm clean"
   },
   "keywords": [],
   "author": "JustEvil",

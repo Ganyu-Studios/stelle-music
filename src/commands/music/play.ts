@@ -41,7 +41,7 @@ const options = {
                     { name: messages.commands.play.autocomplete.noQuery, value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT" },
                 ]);
 
-            const res = await client.manager.search(query, { requester: null });
+            const res = await client.manager.search(query, { requester: null, engine: "spotify" });
             const tracks = res.tracks.slice(0, 25).map((track) => {
                 const duration = track.isStream
                     ? messages.commands.play.live
@@ -94,7 +94,7 @@ export default class PlayCommand extends StelleCommand {
             volume: 100,
         });
 
-        const result = await player.search(query, { requester: author });
+        const result = await player.search(query, { requester: author, engine: "spotify" });
         if (!result.tracks.length)
             return ctx.editOrReply({
                 flags: MessageFlags.Ephemeral,
