@@ -21,7 +21,7 @@ const execSync = promisify(exec);
 
         if (exist) await rm(path, { recursive: true });
 
-        await execSync("npm run build");
+        await execSync("pnpm build");
 
         console.info(`Done! Compiled at: ${Date.now() - timeStart}ms`);
     } catch (error) {
