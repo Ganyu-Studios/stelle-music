@@ -5,6 +5,9 @@ import type { AnyContext } from "#stelle/types";
 import { EmbedColors, type InteractionCreateBodyRequest, type InteractionMessageUpdateBodyRequest } from "seyfert/lib/common/index.js";
 import { InvalidEmbedsLength, InvalidMessage, InvalidPageNumber } from "./Errors.js";
 
+/**
+ * Main Stelle paginator class..
+ */
 export class EmbedPaginator {
     private ctx: AnyContext;
     private pages: Record<string, number>;
@@ -169,14 +172,12 @@ export class EmbedPaginator {
 
         if (page > embeds.length) throw new InvalidPageNumber(`The page "${page}" exceeds the limit of "${embeds.length}" pages.`);
 
-        const userId = ctx.author.id;
-
-        pages[userId] = page - 1;
+        pages[ctx.author.id] = page - 1;
 
         ctx.editOrReply({
             content: "",
-            embeds: [embeds[pages[userId]]],
-            components: [this.getRow(userId)],
+            embeds: [embeds[pages[ctx.author.id]]],
+            components: [this.getRow(ctx.author.id)],
         });
 
         return this;

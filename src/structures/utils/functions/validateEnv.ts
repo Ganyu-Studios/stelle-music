@@ -5,6 +5,11 @@ const logger = new Logger({
     name: "[ENV]",
 });
 
+/**
+ *
+ * Validate Stelle environment variables.
+ * @returns
+ */
 export function validateEnv() {
     logger.info("Validating '.env' file variables...");
 
