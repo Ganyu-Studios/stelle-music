@@ -45,7 +45,7 @@ export default class ExampleCommand extends StelleCommand {
                 ],
             });
         } else {
-            for (let i = 0; i < maxFields; i += maxFields) {
+            for (let i = 0; fields.length < maxFields; i += maxFields) {
                 pages.addEmbed(
                     new Embed()
                         .setDescription(messages.commands.nodes.description)
