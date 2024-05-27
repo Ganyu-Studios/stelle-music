@@ -9,7 +9,7 @@
   "scripts": {
     "test": "pnpm clean && pnpm start:debug",
     "build": "tsc",
-    "clean": "node ./scripts/clean.js",
+    "clean": "node ./scripts/clean.js && pnpm build",
     "start": "node ./dist/index.js",
     "start:debug": "node ./dist/index.js --debug",
     "lint": "biome lint --apply ./src",
