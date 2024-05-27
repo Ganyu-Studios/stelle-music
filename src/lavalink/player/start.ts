@@ -81,7 +81,7 @@ export default new Lavalink({
                 .setStyle(ButtonStyle.Secondary)
                 .setLabel(
                     messages.events.playerStart.components.loop({
-                        loop: messages.commands.loop.loopType[player.loop],
+                        type: messages.commands.loop.loopType[player.loop],
                     }),
                 ),
             new Button()

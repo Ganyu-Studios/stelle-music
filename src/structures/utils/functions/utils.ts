@@ -71,6 +71,38 @@ export const parseTime = (time?: number): string | undefined => {
 
 /**
  *
+ * Convert MS to a time string.
+ * @param time
+ * @returns
+ */
+export const msParser = (time?: number): string => {
+    if (!time) return "0s";
+
+    const humanizer = humanize.humanizer({
+        spacer: "",
+        language: "short",
+        maxDecimalPoints: 0,
+        serialComma: false,
+        delimiter: " ",
+        languages: {
+            short: {
+                y: () => "y",
+                mo: () => "mo",
+                w: () => "w",
+                d: () => "d",
+                h: () => "h",
+                m: () => "m",
+                s: () => "s",
+                ms: () => "ms",
+            },
+        },
+    });
+
+    return humanizer(time);
+};
+
+/**
+ *
  * Check a flag in the process command.
  * @param flag
  * @returns
@@ -103,6 +135,7 @@ export const getDepth = (error: any): string => inspect(error, { depth: 0 });
 export const codeBlock = (language: string, code: string) => `\`\`\`${language}\n${code}\n\`\`\``;
 
 /**
+ *
  * Slice text.
  * @param text
  * @returns

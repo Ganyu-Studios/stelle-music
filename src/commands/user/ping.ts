@@ -1,5 +1,7 @@
-import { type CommandContext, Declare, Embed } from "seyfert";
+import { type CommandContext, Declare, Embed, LocalesT } from "seyfert";
 import { StelleCommand } from "#stelle/classes";
+
+import { StelleOptions } from "#stelle/decorators";
 
 @Declare({
     name: "ping",
@@ -7,6 +9,8 @@ import { StelleCommand } from "#stelle/classes";
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
 })
+@StelleOptions({ cooldown: 5 })
+@LocalesT("locales.ping.name", "locales.ping.description")
 export default class PingCommand extends StelleCommand {
     async run(ctx: CommandContext): Promise<void> {
         const { client } = ctx;

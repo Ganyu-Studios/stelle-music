@@ -83,7 +83,7 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
             ],
         });
 
-    if (command.checkQueue && !player?.queue.size)
+    if (command.checkQueue && !player?.queue.isEmpty)
         return context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [

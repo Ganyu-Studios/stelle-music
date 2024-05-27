@@ -1,5 +1,5 @@
 import { Kazagumo, State } from "kazagumo";
-import { Connectors } from "shoukaku";
+import { Connectors, type Node } from "shoukaku";
 import { StelleHandler } from "#stelle/utils/classes/client/Handler.js";
 
 import type { Stelle } from "#stelle/client";
@@ -33,6 +33,8 @@ export class StelleManager extends Kazagumo {
                 reconnectInterval: 20,
                 resume: true,
                 resumeByLibrary: true,
+                reconnectTries: 5,
+                resumeTimeout: 30,
                 userAgent: `${BOT_NAME} v${BOT_VERSION}`,
             },
         );
@@ -41,12 +43,18 @@ export class StelleManager extends Kazagumo {
     }
 
     /**
+     * Get all nodes.
+     */
+    public get nodes(): Node[] {
+        return [...this.shoukaku.nodes.values()];
+    }
+
+    /**
      *
      * Return if Stelle is connected atleast in one node.
-     * @returns
      */
     public get isUseable(): boolean {
-        return [...this.shoukaku.nodes.values()].filter((node) => node.state === State.CONNECTED).length > 0;
+        return this.nodes.filter((node) => node.state === State.CONNECTED).length > 0;
     }
 
     /**
