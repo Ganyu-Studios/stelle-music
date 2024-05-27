@@ -5,11 +5,9 @@ import type { AnyContext } from "#stelle/types";
 import { EmbedColors, type InteractionCreateBodyRequest, type InteractionMessageUpdateBodyRequest } from "seyfert/lib/common/index.js";
 import { InvalidEmbedsLength, InvalidMessage, InvalidPageNumber } from "./Errors.js";
 
-type Pages = { [userId: string]: number };
-
 export class EmbedPaginator {
     private ctx: AnyContext;
-    private pages: Pages;
+    private pages: Record<string, number>;
     private embeds: Embed[];
 
     private message: Message | WebhookMessage | null;
