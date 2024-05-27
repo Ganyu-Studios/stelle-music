@@ -34,6 +34,12 @@ export default {
                     track: "Track",
                 } satisfies Record<LoopMode, string>,
             },
+            autoplay: {
+                autoplayType: {
+                    enabled: "On",
+                    disabled: "Off",
+                },
+            }
         },
         events: {
             inCooldown: ({ time }: ICooldown) => `\`❌\` You need to wait: <t:${time}:R> (<t:${time}:t>) to use this.`,
@@ -44,15 +50,21 @@ export default {
             noNodes: "`❌` I'm not connected to any of my nodes.",
             noPlayer: "`❌` Nothing is playing right now...",
             noTracks: "`❌` There are no more tracks in the queue.",
-            trackStart: {
+            playerEnd: "`🔰` The queue has finished... Waiting for more tracks.",
+            playerStart: {
                 embed: ({ duration, requester, title, url, volume, author, size }: ITrackStart) =>
                     `\`📻\` Now playing [\`${title}\`](${url})\n\n\`🎤\` **Author**: \`${author}\`\n\`🕛\` **Duration**: \`${duration}\`\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>\n\n\`📋\` **In queue**: \`${size} tracks\``,
                 components: {
+                    loop: ({ loop }: { loop: string }) => `Loop: ${loop}`,
+                    autoplay: ({ type }: { type: string }) => `Autoplay: ${type}`,
                     stop: "Stop",
                     skip: "Skip",
                     previous: "Previous",
                     queue: "Queue",
-                    loop: ({ loop }: { loop: string }) => `Loop: ${loop}`,
+                    paused: {
+                        resume: "Resume",
+                        pause: "Pause",
+                    }
                 },
             },
         },

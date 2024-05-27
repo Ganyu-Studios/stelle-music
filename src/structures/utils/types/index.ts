@@ -27,6 +27,7 @@ export type InternalStelleRuntime<
     };
 
 export type LoopMode = "none" | "queue" | "track";
+export type AutoplayMode = "enabled" | "disabled";
 export type InternalRuntime = InternalRuntimeConfigHTTP | InternalRuntimeConfig;
 export type AnyContext =
     | CommandContext
