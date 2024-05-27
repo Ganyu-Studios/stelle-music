@@ -39,7 +39,7 @@ export default {
                     enabled: "On",
                     disabled: "Off",
                 },
-            }
+            },
         },
         events: {
             inCooldown: ({ time }: ICooldown) => `\`❌\` You need to wait: <t:${time}:R> (<t:${time}:t>) to use this.`,
@@ -64,7 +64,7 @@ export default {
                     paused: {
                         resume: "Resume",
                         pause: "Pause",
-                    }
+                    },
                 },
             },
         },

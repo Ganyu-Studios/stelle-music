@@ -13,7 +13,7 @@ export default new Lavalink({
     run: async (client, player, track) => {
         if (!player.textId) return;
 
-        const isAutoplay = player.data.get("autoplay") as boolean | undefined ?? false;
+        const isAutoplay = (player.data.get("autoplay") as boolean | undefined) ?? false;
         const autoplayType: Record<string, AutoplayMode> = {
             true: "enabled",
             false: "disabled",
@@ -49,7 +49,10 @@ export default new Lavalink({
             .setTimestamp();
 
         const row = new ActionRow<Button>().addComponents(
-            new Button().setCustomId("player-stopPlayer").setStyle(ButtonStyle.Danger).setLabel(messages.events.playerStart.components.stop),
+            new Button()
+                .setCustomId("player-stopPlayer")
+                .setStyle(ButtonStyle.Danger)
+                .setLabel(messages.events.playerStart.components.stop),
             new Button()
                 .setCustomId("player-skipTrack")
                 .setStyle(ButtonStyle.Secondary)
@@ -85,7 +88,7 @@ export default new Lavalink({
                 .setCustomId("player-pauseTrack")
                 .setStyle(ButtonStyle.Primary)
                 .setLabel(messages.events.playerStart.components.paused.pause),
-        )
+        );
 
         const message = await channel.messages.write({ embeds: [embed], components: [row, newRow] }).catch(() => null);
         if (message) player.data.set("messageId", message.id);
