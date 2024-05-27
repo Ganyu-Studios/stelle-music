@@ -3,8 +3,6 @@ import { StelleCommand } from "#stelle/classes";
 
 import { StelleOptions } from "#stelle/decorators";
 
-import { MessageFlags } from "discord-api-types/v10";
-
 import { EmbedPaginator } from "#stelle/utils/Paginator.js";
 import { msParser } from "#stelle/utils/functions/utils.js";
 
@@ -35,7 +33,6 @@ export default class ExampleCommand extends StelleCommand {
 
         if (fields.length < maxFields) {
             await ctx.editOrReply({
-                flags: MessageFlags.Ephemeral,
                 embeds: [
                     new Embed()
                         .setDescription(messages.commands.nodes.description)
@@ -55,7 +52,7 @@ export default class ExampleCommand extends StelleCommand {
                 );
             }
 
-            await pages.reply(true);
+            await pages.reply();
         }
     }
 }
