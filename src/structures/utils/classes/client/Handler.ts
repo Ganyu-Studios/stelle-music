@@ -42,9 +42,8 @@ export class StelleHandler extends BaseHandler {
 
             const run = (...args: any) => event.run(this.client, ...args);
 
-            //cuz shoukaku & kazagumo types are strage...
-            if (event.isShoukaku()) this.client.manager.shoukaku.on(event.name as any, run);
-            else if (event.isKazagumo()) this.client.manager.on(event.name as any, run);
+            if (event.isShoukaku()) this.client.manager.shoukaku.on(event.name, run);
+            else if (event.isKazagumo()) this.client.manager.on(event.name, run);
         }
     }
 
