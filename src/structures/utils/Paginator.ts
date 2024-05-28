@@ -106,16 +106,11 @@ export class EmbedPaginator {
             },
         });
 
-        collector.run("pagination-pagePrev", async (interaction) => {
+        collector.run(["pagination-pagePrev", "pagination-pageNext"], async (interaction) => {
             if (!interaction.isButton()) return;
-            if (pages[userId] > 0) --pages[userId];
-            await interaction.deferUpdate();
-            await ctx.editOrReply({ embeds: [embeds[pages[userId]]], components: [this.getRow(userId)] }).catch(() => {});
-        });
 
-        collector.run("pagination-pageNext", async (interaction) => {
-            if (!interaction.isButton()) return;
-            if (pages[userId] < embeds.length - 1) ++pages[userId];
+            if (interaction.customId === "pagination-pagePrev" && pages[userId] > 0) --pages[userId];
+            if (interaction.customId === "pagination-pageNext" && pages[userId] < embeds.length - 1) ++pages[userId];
 
             await interaction.deferUpdate();
             await ctx.editOrReply({ embeds: [embeds[pages[userId]]], components: [this.getRow(userId)] }).catch(() => {});
