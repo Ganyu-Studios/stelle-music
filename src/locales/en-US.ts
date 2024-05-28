@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType as OptionType } from "discord-api-types/v10";
+import { ApplicationCommandOptionType } from "discord-api-types/v10";
 import { State } from "kazagumo";
 
 import type { LoopMode, PermissionNames } from "#stelle/types";
@@ -72,18 +72,18 @@ export default {
             playerEnd: "`🔰` The queue has finished... Waiting for more tracks.",
             commandError: "`❌` Something unexpected ocurred during the execution.\n`📢` If the problem persists, report the issue.",
             optionTypes: {
-                [OptionType.Subcommand]: "subcommand",
-                [OptionType.SubcommandGroup]: "subcommand group",
-                [OptionType.String]: "string",
-                [OptionType.Integer]: "integer",
-                [OptionType.Boolean]: "boolean",
-                [OptionType.User]: "@user",
-                [OptionType.Channel]: "#channel",
-                [OptionType.Role]: "@role",
-                [OptionType.Mentionable]: "@mentionable",
-                [OptionType.Number]: "number",
-                [OptionType.Attachment]: "attachment",
-            } satisfies Record<OptionType, string>,
+                [ApplicationCommandOptionType.Subcommand]: "subcommand",
+                [ApplicationCommandOptionType.SubcommandGroup]: "subcommand group",
+                [ApplicationCommandOptionType.String]: "string",
+                [ApplicationCommandOptionType.Integer]: "integer",
+                [ApplicationCommandOptionType.Boolean]: "boolean",
+                [ApplicationCommandOptionType.User]: "@user",
+                [ApplicationCommandOptionType.Channel]: "#channel",
+                [ApplicationCommandOptionType.Role]: "@role",
+                [ApplicationCommandOptionType.Mentionable]: "@mentionable",
+                [ApplicationCommandOptionType.Number]: "number",
+                [ApplicationCommandOptionType.Attachment]: "attachment",
+            } satisfies Record<ApplicationCommandOptionType, string>,
             playerStart: {
                 embed: ({ duration, requester, title, url, volume, author, size }: ITrackStart) =>
                     `\`📻\` Now playing [\`${title}\`](${url})\n\n\`🎤\` **Author**: \`${author}\`\n\`🕛\` **Duration**: \`${duration}\`\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>\n\n\`📋\` **In queue**: \`${size} tracks\``,
