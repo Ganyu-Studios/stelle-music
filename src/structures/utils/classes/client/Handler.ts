@@ -26,17 +26,17 @@ export class StelleHandler extends BaseHandler {
         const eventsDir = await this.client.getRC().then((x) => x.lavalink);
         const files = await this.loadFilesK<Lavalink>(await this.getFiles(eventsDir));
 
-        for await (const eventFile of files) {
-            const eventPath = eventFile.path.split(process.cwd()).slice(1).join(process.cwd());
-            const event: Lavalink = eventFile.file;
+        for await (const file of files) {
+            const path = file.path.split(process.cwd()).slice(1).join(process.cwd());
+            const event: Lavalink = file.file;
 
             if (!(event && event instanceof Lavalink)) {
-                this.logger.warn(`${eventPath} doesn't export by \`export default new Lavaink({ ... })\``);
+                this.logger.warn(`${path} doesn't export by \`export default new Lavaink({ ... })\``);
                 continue;
             }
 
             if (!event.name) {
-                this.logger.warn(`${eventPath} doesn't have a \`name\``);
+                this.logger.warn(`${path} doesn't have a \`name\``);
                 continue;
             }
 
