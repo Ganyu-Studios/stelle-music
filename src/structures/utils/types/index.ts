@@ -1,3 +1,4 @@
+import type { PermissionFlagsBits } from "discord-api-types/v10";
 import type {
     CommandContext,
     ComponentContext,
@@ -26,6 +27,7 @@ export type InternalStelleRuntime<
         lavalink: string;
     };
 
+export type PermissionNames = keyof typeof PermissionFlagsBits;
 export type LoopMode = "none" | "queue" | "track";
 export type AutoplayMode = "enabled" | "disabled";
 export type InternalRuntime = InternalRuntimeConfigHTTP | InternalRuntimeConfig;

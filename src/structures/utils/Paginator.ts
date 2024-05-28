@@ -9,11 +9,13 @@ import { InvalidEmbedsLength, InvalidMessage, InvalidPageNumber } from "./Errors
  * Main Stelle paginator class..
  */
 export class EmbedPaginator {
-    private ctx: AnyContext;
-    private pages: Record<string, number>;
-    private embeds: Embed[];
+    readonly pages: Record<string, number> = {};
+    private embeds: Embed[] = [];
 
+    private ctx: AnyContext;
     private message: Message | WebhookMessage | null;
+
+    readonly userId: string;
 
     /**
      *
@@ -23,9 +25,7 @@ export class EmbedPaginator {
     constructor(ctx: AnyContext) {
         this.ctx = ctx;
         this.message = null;
-
-        this.pages = {};
-        this.embeds = [];
+        this.userId = ctx.author.id;
     }
 
     /**
@@ -37,7 +37,7 @@ export class EmbedPaginator {
     private getRow(userId: string): ActionRow<Button> {
         const { pages, embeds } = this;
 
-        const row = new ActionRow<Button>().addComponents(
+        return new ActionRow<Button>().addComponents(
             new Button()
                 .setEmoji("<:forward:1061798317417312306>")
                 .setStyle(ButtonStyle.Secondary)
@@ -54,8 +54,6 @@ export class EmbedPaginator {
                 .setCustomId("pagination-pageNext")
                 .setDisabled(pages[userId] === embeds.length - 1),
         );
-
-        return row;
     }
 
     /**
@@ -64,17 +62,16 @@ export class EmbedPaginator {
      * @returns
      */
     private async createCollector() {
-        const { ctx, pages, embeds, message } = this;
+        const { ctx, pages, embeds, message, userId } = this;
         const { messages } = ctx.t.get(await ctx.getLocale());
         const { client } = ctx;
 
         if (!message) return;
 
-        const userId = ctx.author.id;
         const collector = message.createComponentCollector({
             idle: 60000,
             filter: async (interaction) => {
-                if (interaction.user.id !== ctx.author.id) {
+                if (interaction.user.id !== userId) {
                     await interaction.write({
                         flags: MessageFlags.Ephemeral,
                         embeds: [
@@ -129,7 +126,7 @@ export class EmbedPaginator {
      * Get the current page of the paginator.
      */
     get currentPage(): number {
-        return this.pages[this.ctx.author.id] + 1;
+        return this.pages[this.userId] + 1;
     }
 
     /**
@@ -165,19 +162,20 @@ export class EmbedPaginator {
      * @param page
      */
     public setPage(page: number): this {
-        const { message, embeds, pages, ctx } = this;
+        const { message, embeds, pages, ctx, userId } = this;
 
         if (!embeds.length) throw new InvalidEmbedsLength("I can't send the pagination without embeds.");
         if (!message) throw new InvalidMessage("I can't set the page to an unresponded pagination.");
 
-        if (page > embeds.length) throw new InvalidPageNumber(`The page "${page}" exceeds the limit of "${embeds.length}" pages.`);
+        if (page > embeds.length || page < embeds.length)
+            throw new InvalidPageNumber(`The page: "${page}" is invalid. There are: "${embeds.length}" pages.`);
 
-        pages[ctx.author.id] = page - 1;
+        pages[userId] = page - 1;
 
         ctx.editOrReply({
             content: "",
-            embeds: [embeds[pages[ctx.author.id]]],
-            components: [this.getRow(ctx.author.id)],
+            embeds: [embeds[pages[userId]]],
+            components: [this.getRow(userId)],
         });
 
         return this;
@@ -189,10 +187,9 @@ export class EmbedPaginator {
      * @param ephemeral
      */
     public async reply(ephemeral: boolean = false): Promise<this> {
-        const { ctx, pages, embeds } = this;
+        const { ctx, pages, embeds, userId } = this;
 
         const flags = ephemeral ? MessageFlags.Ephemeral : undefined;
-        const userId = ctx.author.id;
 
         pages[userId] = pages[userId] ?? 0;
 

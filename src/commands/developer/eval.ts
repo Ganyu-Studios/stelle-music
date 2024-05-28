@@ -10,13 +10,12 @@ import {
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { StelleCommand } from "#stelle/classes";
-
-import { codeBlock, getDepth, sliceText } from "#stelle/utils/functions/utils.js";
+import { StelleOptions } from "#stelle/decorators";
 
 import { Configuration } from "#stelle/data/Configuration.js";
+import { codeBlock, getDepth, sliceText } from "#stelle/utils/functions/utils.js";
 
 import { SECRETS_MESSAGES, SECRETS_REGEX } from "#stelle/data/Constants.js";
-import { StelleOptions } from "#stelle/decorators";
 
 import { DeclareParserConfig, ParserRecommendedConfig } from "#stelle/parser";
 

@@ -1,6 +1,5 @@
 import { type CommandContext, Declare } from "seyfert";
 import { StelleCommand } from "#stelle/classes";
-
 import { StelleOptions } from "#stelle/decorators";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";

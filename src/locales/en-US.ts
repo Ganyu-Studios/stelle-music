@@ -1,5 +1,7 @@
+import { ApplicationCommandOptionType as OptionType } from "discord-api-types/v10";
 import { State } from "kazagumo";
-import type { LoopMode } from "#stelle/types";
+
+import type { LoopMode, PermissionNames } from "#stelle/types";
 
 export default {
     messages: {
@@ -59,6 +61,8 @@ export default {
             inCooldown: ({ time }: ICooldown) => `\`❌\` You need to wait: <t:${time}:R> (<t:${time}:t>) to use this.`,
             noSameVoice: ({ channelId }: IChannel) => `\`❌\` You are not in the **same voice channel** as me. (<#${channelId}>)`,
             noCollector: ({ userId }: IUser) => `\`❌\` Only the user: <@${userId}> can use this.`,
+            invalidOptions: ({ options, list }: IOptions) =>
+                `\`❌\` Invalid command options or arguments.\n- **Required**: \`<>\`\n- **Optional**: \`[]\`\n\n\`📋\` **Usage**:\n ${options}\n\`📢\` **Options Avaible**:\n${list}`,
             onlyDeveloper: "`❌` Only the **bot developer** can use this.",
             onlyGuildOwner: "`❌` Only the **guild owner** can use this.",
             noVoiceChannel: "`❌` You are not in a **voice channel**... Join to play music.",
@@ -66,6 +70,20 @@ export default {
             noPlayer: "`❌` Nothing is playing right now...",
             noTracks: "`❌` There are no more tracks in the queue.",
             playerEnd: "`🔰` The queue has finished... Waiting for more tracks.",
+            commandError: "`❌` Something unexpected ocurred during the execution.\n`📢` If the problem persists, report the issue.",
+            optionTypes: {
+                [OptionType.Subcommand]: "subcommand",
+                [OptionType.SubcommandGroup]: "subcommand group",
+                [OptionType.String]: "string",
+                [OptionType.Integer]: "integer",
+                [OptionType.Boolean]: "boolean",
+                [OptionType.User]: "@user",
+                [OptionType.Channel]: "#channel",
+                [OptionType.Role]: "@role",
+                [OptionType.Mentionable]: "@mentionable",
+                [OptionType.Number]: "number",
+                [OptionType.Attachment]: "attachment",
+            } satisfies Record<OptionType, string>,
             playerStart: {
                 embed: ({ duration, requester, title, url, volume, author, size }: ITrackStart) =>
                     `\`📻\` Now playing [\`${title}\`](${url})\n\n\`🎤\` **Author**: \`${author}\`\n\`🕛\` **Duration**: \`${duration}\`\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>\n\n\`📋\` **In queue**: \`${size} tracks\``,
@@ -80,6 +98,67 @@ export default {
                         resume: "Resume",
                         pause: "Pause",
                     },
+                },
+            },
+            permissions: {
+                list: {
+                    AddReactions: "Add Reactions",
+                    Administrator: "Administrator",
+                    AttachFiles: "Attach Files",
+                    BanMembers: "Ban Members",
+                    ChangeNickname: "Change Nickname",
+                    Connect: "Connect",
+                    CreateInstantInvite: "Create Invites",
+                    CreatePrivateThreads: "Create Private Threads",
+                    CreatePublicThreads: "Create Public Threads",
+                    DeafenMembers: "Deafen Members",
+                    EmbedLinks: "Embed Links",
+                    KickMembers: "Kick Members",
+                    ManageChannels: "Manage Channels",
+                    ManageEmojisAndStickers: "Manage Stickers & Emojis",
+                    ManageEvents: "Manage Events",
+                    ManageGuild: "Manage Server",
+                    ManageMessages: "Manage Messages",
+                    ManageNicknames: "Manage Nicknames",
+                    ManageRoles: "Manage Roles",
+                    ManageThreads: "Manage Threads",
+                    ManageWebhooks: "Manage Webhooks",
+                    MentionEveryone: "Mention Everyone",
+                    ModerateMembers: "Moderate Members",
+                    MoveMembers: "Move Members",
+                    MuteMembers: "Mute Members",
+                    PrioritySpeaker: "Priority Speaker",
+                    ReadMessageHistory: "Read Message History",
+                    RequestToSpeak: "Request To Speak",
+                    SendMessages: "Send Messages",
+                    SendMessagesInThreads: "Send Messages In Threads",
+                    SendTTSMessages: "Send TTS Messages",
+                    Speak: "Speak",
+                    Stream: "Stream",
+                    UseApplicationCommands: "Use Application Commands",
+                    UseEmbeddedActivities: "Use Activities",
+                    UseExternalEmojis: "Use External Emojis",
+                    UseExternalStickers: "Use External Stickers",
+                    UseVAD: "Use VAD",
+                    ViewAuditLog: "View Audit Logs",
+                    ViewChannel: "View Channel",
+                    ViewGuildInsights: "View Guild Insights",
+                    ManageGuildExpressions: "Manage Guild Expressions",
+                    ViewCreatorMonetizationAnalytics: "View Creator Monetization Analytics",
+                    UseSoundboard: "Use Sound Board",
+                    UseExternalSounds: "Use External Sounds",
+                    SendVoiceMessages: "Send Voice Messages",
+                    CreateEvents: "Create Events",
+                    CreateGuildExpressions: "Create Guild Expressions",
+                    SendPolls: "Send Polls",
+                } satisfies Record<PermissionNames, string>,
+                user: {
+                    description: "`📢` Hey! You are missing some permissions to use this.",
+                    field: "`📋` Missing Permissions",
+                },
+                bot: {
+                    description: "`📢` Hey! I'm missing some permissions to do this.",
+                    field: "`📋` Missing Permissions",
                 },
             },
         },
@@ -104,6 +183,7 @@ export default {
     },
 };
 
+type IOptions = { options: string; list: string };
 type INodes = { state: string; uptime: string; players: number };
 type ITrackStart = { title: string; url: string; duration: string; volume: number; requester: string; author: string; size: number };
 type IPlayTrack = { title: string; url: string; duration: string; volume: number; requester: string; position: number };
