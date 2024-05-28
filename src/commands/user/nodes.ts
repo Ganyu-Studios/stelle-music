@@ -3,6 +3,8 @@ import { StelleCommand } from "#stelle/classes";
 
 import { StelleOptions } from "#stelle/decorators";
 
+import { EmbedColors } from "seyfert/lib/common/index.js";
+
 import { EmbedPaginator } from "#stelle/utils/Paginator.js";
 import { msParser } from "#stelle/utils/functions/utils.js";
 
@@ -30,6 +32,16 @@ export default class ExampleCommand extends StelleCommand {
                 uptime: msParser(node.stats?.uptime),
             }),
         }));
+
+        if (!fields.length)
+            return ctx.editOrReply({
+                embeds: [
+                    {
+                        description: messages.commands.nodes.noNodes,
+                        color: EmbedColors.Red,
+                    },
+                ],
+            });
 
         if (fields.length < maxFields) {
             await ctx.editOrReply({

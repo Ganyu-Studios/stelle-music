@@ -44,9 +44,10 @@ export default {
                 },
             },
             nodes: {
-                description: "`📋` List of all Stelle nodes.",
                 value: ({ state, uptime, players }: INodes) =>
                     `\`📘\` State: \`${state}\`\n\`🕛\` Uptime: \`${uptime}\`\n\`🎤\` Players: \`${players}\``,
+                description: "`📋` List of all Stelle nodes.",
+                noNodes: "`❌` No nodes avaible at the moment.",
                 states: {
                     [State.CONNECTED]: "🟢 Connected.",
                     [State.CONNECTING]: "🟢 Connecting...",
