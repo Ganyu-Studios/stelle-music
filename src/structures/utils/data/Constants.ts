@@ -1,6 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { getFlag } from "#stelle/utils/functions/utils.js";
 
+import type { AutoplayMode, LoopMode } from "#stelle/types";
+
 const packageJSON = JSON.parse(await readFile("./package.json", "utf-8"));
 
 /**
@@ -22,6 +24,36 @@ export const DEBUG_MODE: boolean = getFlag("--debug");
  * Stelle eval secrets regex.
  */
 export const SECRETS_REGEX = /\b(?:client\.(?:config)|config|env|process\.env|eval|atob|btoa)\b/;
+
+/**
+ *
+ * Stelle autoplay state.
+ * @param boolean
+ * @returns
+ */
+export const AUTOPLAY_TYPE = (boolean: boolean) => {
+    const autoplayType: Record<string, AutoplayMode> = {
+        true: "enabled",
+        false: "disabled",
+    };
+    return autoplayType[String(boolean)];
+};
+
+/**
+ *
+ * Stelle loop state.
+ * @param mode
+ * @returns
+ */
+export const LOOP_STATE = (mode: LoopMode) => {
+    const states: Record<LoopMode, LoopMode> = {
+        none: "track",
+        track: "queue",
+        queue: "none",
+    };
+
+    return states[mode];
+};
 
 /**
  * Stelle think messages.

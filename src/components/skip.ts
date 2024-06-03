@@ -18,6 +18,8 @@ export default class SkipTrackComponent extends ComponentCommand {
         if (!player) return;
 
         player.skip();
+
         await ctx.interaction.deferUpdate();
+        await ctx.interaction.message.edit({ components: [] });
     }
 }

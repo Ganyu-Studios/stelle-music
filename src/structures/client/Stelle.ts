@@ -8,6 +8,7 @@ import { YunaParser } from "#stelle/parser";
 
 import { Configuration } from "#stelle/data/Configuration.js";
 import { getWatermark } from "#stelle/utils/Logger.js";
+import { onBotPermissionsFail, onOptionsError, onPermissionsFail, onRunError } from "#stelle/utils/functions/overrides.js";
 import { customContext, stelleRC } from "#stelle/utils/functions/utils.js";
 
 import { StelleDatabase } from "./modules/Database.js";
@@ -39,9 +40,20 @@ export class Stelle extends Client<true> {
                 replied_user: false,
                 parse: ["roles"],
             },
+            components: {
+                defaults: {
+                    onRunError,
+                },
+            },
             commands: {
                 prefix: () => [this.config.defaultPrefix, ...this.config.prefixes],
                 reply: () => true,
+                defaults: {
+                    onBotPermissionsFail,
+                    onOptionsError,
+                    onPermissionsFail,
+                    onRunError,
+                },
                 argsParser: YunaParser({
                     useUniqueNamedSyntaxAtSameTime: true,
                     enabled: {

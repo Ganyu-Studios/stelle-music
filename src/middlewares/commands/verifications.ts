@@ -16,6 +16,7 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
     const voice = member.voice();
     const bot = context.me()?.voice();
     const player = client.manager.getPlayer(context.guildId);
+    const isAutoplay = player?.data.get("autoplay") as boolean | undefined;
 
     if (command.onlyDeveloper && !developerIds.includes(author.id))
         return context.editOrReply({
@@ -61,7 +62,7 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
             ],
         });
 
-    if (command.sameVoice && bot && bot.channelId !== voice?.channelId)
+    if (command.sameVoice && bot && bot.channelId !== voice!.channelId)
         return context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [
@@ -83,12 +84,23 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
             ],
         });
 
-    if (command.checkQueue && !player?.queue.isEmpty)
+    if (command.checkQueue && (!isAutoplay ?? false) && player!.queue.isEmpty)
         return context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [
                 {
                     description: messages.events.noTracks,
+                    color: EmbedColors.Red,
+                },
+            ],
+        });
+
+    if (command.moreTracks && !(player!.queue.totalSize >= 2))
+        return context.editOrReply({
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                {
+                    description: messages.events.moreTracks,
                     color: EmbedColors.Red,
                 },
             ],

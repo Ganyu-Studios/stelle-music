@@ -1,4 +1,5 @@
 import {
+    Command,
     type CommandContext,
     Declare,
     Embed,
@@ -9,7 +10,6 @@ import {
     type WebhookMessage,
     createStringOption,
 } from "seyfert";
-import { StelleCommand } from "#stelle/classes";
 import { StelleOptions } from "#stelle/decorators";
 
 import { MessageFlags } from "discord-api-types/v10";
@@ -70,7 +70,7 @@ const options = {
 @StelleOptions({ cooldown: 5, inVoice: true, sameVoice: true, checkNodes: true })
 @Options(options)
 @LocalesT("locales.play.name", "locales.play.description")
-export default class PlayCommand extends StelleCommand {
+export default class PlayCommand extends Command {
     async run(ctx: CommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
         const { options, client, guildId, channelId, member, author } = ctx;
         const { query } = options;
@@ -117,7 +117,7 @@ export default class PlayCommand extends StelleCommand {
 
                     player.queue.add(track);
 
-                    const type = player.queue.size > 1 ? "results" : "result";
+                    const type = player.queue.totalSize > 1 ? "results" : "result";
                     const status = track.isStream
                         ? messages.commands.play.live
                         : parseTime(track.length) ?? messages.commands.play.undetermined;
@@ -128,7 +128,7 @@ export default class PlayCommand extends StelleCommand {
                         .setDescription(
                             messages.commands.play.embed[type]({
                                 duration: status,
-                                position: player.queue.size,
+                                position: player.queue.totalSize,
                                 requester: (track.requester as User).id,
                                 title: track.title,
                                 url: track.uri!,

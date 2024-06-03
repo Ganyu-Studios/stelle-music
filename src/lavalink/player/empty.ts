@@ -1,4 +1,5 @@
 import { Lavalink } from "#stelle/classes";
+import { autoplay } from "#stelle/utils/functions/autoplay.js";
 
 import { type CommandContext, Embed } from "seyfert";
 
@@ -6,6 +7,8 @@ export default new Lavalink({
     name: "playerEmpty",
     type: "kazagumo",
     run: async (client, player) => {
+        if (player.data.get("autoplay")) return autoplay(player, player.getPrevious());
+
         if (!player.textId) return;
 
         const messageId = player.data.get("messageId") as string | undefined;

@@ -34,7 +34,7 @@ export class StelleManager extends Kazagumo {
                 resume: true,
                 resumeByLibrary: true,
                 reconnectTries: 5,
-                resumeTimeout: 30,
+                resumeTimeout: 60,
                 userAgent: `${BOT_NAME} v${BOT_VERSION}`,
             },
         );

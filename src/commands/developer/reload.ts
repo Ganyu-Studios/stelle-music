@@ -1,5 +1,4 @@
-import { type CommandContext, Declare } from "seyfert";
-import { StelleCommand } from "#stelle/classes";
+import { Command, type CommandContext, Declare } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
@@ -13,7 +12,7 @@ import { Configuration } from "#stelle/data/Configuration.js";
     contexts: ["Guild"],
 })
 @StelleOptions({ onlyDeveloper: true })
-export default class ReloadCommand extends StelleCommand {
+export default class ReloadCommand extends Command {
     async run(ctx: CommandContext): Promise<void> {
         await ctx.deferReply(true);
         await ctx.client

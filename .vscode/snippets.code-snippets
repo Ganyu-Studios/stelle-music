@@ -19,8 +19,7 @@
 		"prefix": "@stelle:command",
 		"scope": "typescript",
 		"body": [
-			"import { Declare } from \"seyfert\";",
-			"import { StelleCommand } from \"#stelle/classes\";",
+			"import { Declare, Command } from \"seyfert\";",
 			"import { StelleOptions } from \"#stelle/decorators\";",
 			"",
 			"import { Configuration } from \"#stelle/data/Configuration.js\";",
@@ -33,7 +32,7 @@
 			"    contexts: [\"Guild\"],",
 			"})",
 			"@StelleOptions({ ... })",
-			"export default class ${3:Example}Command extends StelleCommand {}",
+			"export default class ${3:Example}Command extends Command {}",
 			""
 		],
 		"description": "Create a new Stelle command."

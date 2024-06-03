@@ -1,7 +1,7 @@
 import type { KazagumoPlayer, KazagumoQueue, KazagumoTrack, PlayerMovedChannels, PlayerMovedState } from "kazagumo";
 import type { UsingClient } from "seyfert";
 import type { Awaitable } from "seyfert/lib/common/index.js";
-import type { PlayerUpdate, TrackExceptionEvent, TrackStuckEvent, WebSocketClosedEvent } from "shoukaku";
+import type { Player, PlayerUpdate, TrackExceptionEvent, TrackStuckEvent, WebSocketClosedEvent } from "shoukaku";
 
 //
 // yeah, these types are harcoded so don't expect too much.
@@ -15,6 +15,7 @@ export interface ShoukakuEvents {
     close: [name: string, code: number, reason: string];
     disconnect: [name: string, count: number];
     raw: [name: string, json: unknown];
+    resumed: [player: Player];
 }
 
 export interface KazagumoEvents {

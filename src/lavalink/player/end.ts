@@ -10,7 +10,6 @@ export default new Lavalink({
         if (!messageId) return;
 
         const message = await client.messages.fetch(messageId, player.textId);
-
         await message.edit({ components: [] });
     },
 });

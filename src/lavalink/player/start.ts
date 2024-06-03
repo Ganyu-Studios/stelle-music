@@ -3,9 +3,8 @@ import { Lavalink } from "#stelle/classes";
 
 import { ButtonStyle } from "discord-api-types/v10";
 
+import { AUTOPLAY_TYPE } from "#stelle/data/Constants.js";
 import { parseTime } from "#stelle/utils/functions/utils.js";
-
-import type { AutoplayMode } from "#stelle/types";
 
 export default new Lavalink({
     name: "playerStart",
@@ -14,10 +13,6 @@ export default new Lavalink({
         if (!player.textId) return;
 
         const isAutoplay = (player.data.get("autoplay") as boolean | undefined) ?? false;
-        const autoplayType: Record<string, AutoplayMode> = {
-            true: "enabled",
-            false: "disabled",
-        };
 
         const ctx = player.data.get("commandContext") as CommandContext | undefined;
         if (!ctx) return;
@@ -41,7 +36,7 @@ export default new Lavalink({
                     url: track.uri!,
                     volume: player.volume,
                     author: track.author ?? "---",
-                    size: player.queue.size,
+                    size: player.queue.totalSize,
                 }),
             )
             .setThumbnail(track.thumbnail)
@@ -73,7 +68,7 @@ export default new Lavalink({
                 .setStyle(ButtonStyle.Primary)
                 .setLabel(
                     messages.events.playerStart.components.autoplay({
-                        type: messages.commands.autoplay.autoplayType[autoplayType[String(isAutoplay)]],
+                        type: messages.commands.autoplay.autoplayType[AUTOPLAY_TYPE(isAutoplay)],
                     }),
                 ),
             new Button()

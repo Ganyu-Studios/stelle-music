@@ -100,7 +100,7 @@ export class EmbedPaginator {
                             }),
                     );
 
-                    await client.messages.edit(message.id, message.channelId, { components: [row] }).catch(() => {});
+                    await client.messages.edit(message.id, message.channelId, { components: [row] }).catch(() => null);
                 }
             },
         });
@@ -112,7 +112,7 @@ export class EmbedPaginator {
             if (interaction.customId === "pagination-pageNext" && pages[userId] < embeds.length - 1) ++pages[userId];
 
             await interaction.deferUpdate();
-            await ctx.editOrReply({ embeds: [embeds[pages[userId]]], components: [this.getRow(userId)] }).catch(() => {});
+            await ctx.editOrReply({ embeds: [embeds[pages[userId]]], components: [this.getRow(userId)] }).catch(() => null);
         });
     }
 

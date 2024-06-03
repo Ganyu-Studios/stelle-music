@@ -31,7 +31,7 @@ importers:
         version: 2.1.0
       seyfert:
         specifier: github:tiramisulabs/seyfert
-        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/2737b8f426a8050affd433c7abf6cba415e0b850
+        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/ac0d09d77ac669955bc79dc38ab2f89cd75e4ba7
       shoukaku:
         specifier: github:shipgirlproject/Shoukaku
         version: https://codeload.github.com/shipgirlproject/Shoukaku/tar.gz/e5ea077cb389015ea8d03085224d4bc03ba94a92
@@ -411,8 +411,8 @@ packages:
   rfdc@1.3.1:
     resolution: {integrity: sha512-r5a3l5HzYlIC68TpmYKlxWjmOP6wiPJ1vWv2HeLhNsRZMrCkxeqxiHlQ21oXmQ4F3SiryXBHhAD7JZqvOJjFmg==}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/2737b8f426a8050affd433c7abf6cba415e0b850:
-    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/2737b8f426a8050affd433c7abf6cba415e0b850}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/ac0d09d77ac669955bc79dc38ab2f89cd75e4ba7:
+    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/ac0d09d77ac669955bc79dc38ab2f89cd75e4ba7}
     version: 1.4.0
 
   shebang-command@2.0.0:
@@ -840,7 +840,7 @@ snapshots:
 
   rfdc@1.3.1: {}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/2737b8f426a8050affd433c7abf6cba415e0b850:
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/ac0d09d77ac669955bc79dc38ab2f89cd75e4ba7:
     dependencies:
       chokidar: 3.6.0
       discord-api-types: 0.37.87

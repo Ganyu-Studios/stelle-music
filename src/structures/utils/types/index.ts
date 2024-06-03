@@ -54,4 +54,6 @@ export interface Options {
     checkPlayer?: boolean;
     /** Check if the player queue has more than one song. */
     checkQueue?: boolean;
+    /** Check if the queue has two or more tracks. */
+    moreTracks?: boolean;
 }

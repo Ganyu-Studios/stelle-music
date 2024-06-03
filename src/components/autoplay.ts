@@ -2,29 +2,31 @@ import { ActionRow, Button, ComponentCommand, type ComponentContext } from "seyf
 import { StelleOptions } from "#stelle/decorators";
 
 import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType } from "discord-api-types/v10";
-import { LOOP_STATE } from "#stelle/data/Constants.js";
 
-@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true })
-export default class ToggleLoopComponent extends ComponentCommand {
+import { AUTOPLAY_TYPE } from "#stelle/data/Constants.js";
+
+@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, moreTracks: true })
+export default class AutoplayComponent extends ComponentCommand {
     componentType = "Button" as const;
 
     filter(ctx: ComponentContext<typeof this.componentType>): boolean {
-        return ctx.customId === "player-toggleLoop";
+        return ctx.customId === "player-toggleAutoplay";
     }
 
-    async run(ctx: ComponentContext<typeof this.componentType>): Promise<void> {
-        const { client } = ctx;
+    async run(ctx: ComponentContext<typeof this.componentType>) {
+        const { client, guildId } = ctx;
 
-        if (!ctx.guildId) return;
-
-        const player = client.manager.getPlayer(ctx.guildId);
-        if (!player) return;
+        if (!guildId) return;
 
         const { messages } = ctx.t.get(await ctx.getLocale());
 
-        player.setLoop(LOOP_STATE(player.loop));
+        const player = client.manager.getPlayer(guildId);
+        if (!player) return;
 
-        //sussy code, but works
+        player.data.set("autoplay", !player.data.get("autoplay") ?? true);
+
+        const isAutoplay = player.data.get("autoplay") as boolean;
+
         const components = ctx.interaction.message.components[0].toJSON();
         const newComponents = ctx.interaction.message.components[1].toJSON();
 
@@ -35,9 +37,9 @@ export default class ToggleLoopComponent extends ComponentCommand {
             newComponents.components
                 .filter((row) => row.type === ComponentType.Button && row.style !== ButtonStyle.Link)
                 .map((button) => {
-                    if ((button as APIButtonComponentWithCustomId).custom_id === "player-toggleLoop")
-                        (button as APIButtonComponentWithCustomId).label = messages.events.playerStart.components.loop({
-                            type: messages.commands.loop.loopType[player.loop],
+                    if ((button as APIButtonComponentWithCustomId).custom_id === "player-toggleAutoplay")
+                        (button as APIButtonComponentWithCustomId).label = messages.events.playerStart.components.autoplay({
+                            type: messages.commands.autoplay.autoplayType[AUTOPLAY_TYPE(isAutoplay)],
                         });
 
                     return new Button(button as APIButtonComponentWithCustomId);

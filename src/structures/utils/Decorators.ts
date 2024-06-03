@@ -11,5 +11,6 @@ export function StelleOptions(options: Options) {
             checkNodes = options.checkNodes;
             checkPlayer = options.checkPlayer;
             checkQueue = options.checkQueue;
+            moreTracks = options.moreTracks;
         };
 }

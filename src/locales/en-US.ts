@@ -8,7 +8,8 @@ export default {
         commands: {
             ping: {
                 message: "`🪶` Calculating...",
-                response: ({ wsPing, clientPing }: IPing) => `\`🌐\` Pong! (**Client**: \`${wsPing}ms\` - **API**: \`${clientPing}ms\`)`,
+                response: ({ wsPing, clientPing, shardPing }: IPing) =>
+                    `\`🌐\` Pong! (**Client**: \`${wsPing}ms\` - **API**: \`${clientPing}ms\` - **Shard**: \`${shardPing}ms\`)`,
             },
             play: {
                 undetermined: "Undetermined",
@@ -71,6 +72,7 @@ export default {
             noPlayer: "`❌` Nothing is playing right now...",
             noTracks: "`❌` There are no more tracks in the queue.",
             playerEnd: "`🔰` The queue has finished... Waiting for more tracks.",
+            moreTracks: "`❌` In order to enable **this** `two or more tracks` are required.",
             commandError: "`❌` Something unexpected ocurred during the execution.\n`📢` If the problem persists, report the issue.",
             optionTypes: {
                 [ApplicationCommandOptionType.Subcommand]: "subcommand",
@@ -191,5 +193,5 @@ type IPlayTrack = { title: string; url: string; duration: string; volume: number
 type IPlayList = { query: string; playlist: string; volume: number; requester: string; tracks: number };
 type IChannel = { channelId: string };
 type IUser = { userId: string };
-type IPing = { wsPing: number; clientPing: number };
+type IPing = { wsPing: number; clientPing: number; shardPing: number };
 type ICooldown = { time: number };

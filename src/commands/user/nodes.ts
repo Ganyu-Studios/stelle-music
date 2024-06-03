@@ -1,5 +1,4 @@
-import { type CommandContext, Declare, Embed, LocalesT } from "seyfert";
-import { StelleCommand } from "#stelle/classes";
+import { Command, type CommandContext, Declare, Embed, LocalesT } from "seyfert";
 
 import { StelleOptions } from "#stelle/decorators";
 
@@ -16,7 +15,7 @@ import { msParser } from "#stelle/utils/functions/utils.js";
 })
 @StelleOptions({ cooldown: 5 })
 @LocalesT("locales.nodes.name", "locales.nodes.description")
-export default class ExampleCommand extends StelleCommand {
+export default class ExampleCommand extends Command {
     async run(ctx: CommandContext) {
         const { client } = ctx;
         const { messages } = ctx.t.get(await ctx.getLocale());

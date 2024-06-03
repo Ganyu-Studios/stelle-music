@@ -1,6 +1,4 @@
-import { type CommandContext, Declare, Embed, LocalesT } from "seyfert";
-import { StelleCommand } from "#stelle/classes";
-
+import { Command, type CommandContext, Declare, Embed, LocalesT } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
 @Declare({
@@ -11,7 +9,7 @@ import { StelleOptions } from "#stelle/decorators";
 })
 @StelleOptions({ cooldown: 5 })
 @LocalesT("locales.ping.name", "locales.ping.description")
-export default class PingCommand extends StelleCommand {
+export default class PingCommand extends Command {
     async run(ctx: CommandContext): Promise<void> {
         const { client } = ctx;
         const { messages } = ctx.t.get();
@@ -22,8 +20,9 @@ export default class PingCommand extends StelleCommand {
 
         const wsPing = Math.floor(client.gateway.latency);
         const clientPing = Math.floor(Date.now() - (ctx.message ?? ctx.interaction)!.createdTimestamp);
+        const shardPing = Math.floor((await ctx.client.gateway.get(ctx.shardId)?.ping()) ?? 0);
 
-        embed.setColor(client.config.color.success).setDescription(messages.commands.ping.response({ clientPing, wsPing }));
+        embed.setColor(client.config.color.success).setDescription(messages.commands.ping.response({ clientPing, wsPing, shardPing }));
 
         await ctx.editOrReply({ embeds: [embed] });
     }
