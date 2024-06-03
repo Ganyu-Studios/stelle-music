@@ -11,7 +11,7 @@ interface StelleSpotify {
     playlistPageLimit: number;
     /** Spotify tracks per page. */
     albumPageLimit: number;
-    /** Spotofy track limit for searching tracks. */
+    /** Spotify track limit for searching tracks. */
     searchLimit: number;
 }
 

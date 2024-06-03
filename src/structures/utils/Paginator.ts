@@ -1,4 +1,4 @@
-import { type APIButtonComponent, ButtonStyle, ComponentType, MessageFlags } from "discord-api-types/v10";
+import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType, MessageFlags } from "discord-api-types/v10";
 import { ActionRow, Button, type Embed, type Message, type WebhookMessage } from "seyfert";
 import type { AnyContext } from "#stelle/types";
 
@@ -35,14 +35,12 @@ export class EmbedPaginator {
      * @returns
      */
     private getRow(userId: string): ActionRow<Button> {
-        const { pages, embeds } = this;
-
         return new ActionRow<Button>().addComponents(
             new Button()
                 .setEmoji("<:forward:1061798317417312306>")
                 .setStyle(ButtonStyle.Secondary)
                 .setCustomId("pagination-pagePrev")
-                .setDisabled(pages[userId] === 0),
+                .setDisabled(this.pages[userId] === 0),
             new Button()
                 .setLabel(`${this.currentPage}/${this.maxPages}`)
                 .setStyle(ButtonStyle.Primary)
@@ -52,7 +50,7 @@ export class EmbedPaginator {
                 .setEmoji("<:next:1061798311671103528>")
                 .setStyle(ButtonStyle.Secondary)
                 .setCustomId("pagination-pageNext")
-                .setDisabled(pages[userId] === embeds.length - 1),
+                .setDisabled(this.pages[userId] === this.embeds.length - 1),
         );
     }
 
@@ -94,10 +92,11 @@ export class EmbedPaginator {
                     const row = new ActionRow<Button>().setComponents(
                         message.components[0].components
                             .map((builder) => builder.toJSON())
-                            .filter((row) => row.type === ComponentType.Button)
+                            .filter((row) => row.type === ComponentType.Button && row.style !== ButtonStyle.Link)
                             .map((component) => {
-                                if ((component as APIButtonComponent).label) (component as APIButtonComponent).label = "0/0";
-                                return new Button(component as APIButtonComponent).setDisabled(true);
+                                if ((component as APIButtonComponentWithCustomId).custom_id === "pagination-pagePrev")
+                                    (component as APIButtonComponentWithCustomId).label = "0/0";
+                                return new Button(component as APIButtonComponentWithCustomId).setDisabled(true);
                             }),
                     );
 

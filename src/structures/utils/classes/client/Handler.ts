@@ -23,8 +23,7 @@ export class StelleHandler extends BaseHandler {
      * Load the handler.
      */
     public async load() {
-        const eventsDir = await this.client.getRC().then((x) => x.lavalink);
-        const files = await this.loadFilesK<Lavalink>(await this.getFiles(eventsDir));
+        const files = await this.loadFilesK<Lavalink>(await this.getFiles(await this.client.getRC().then((x) => x.lavalink)));
 
         for await (const file of files) {
             const path = file.path.split(process.cwd()).slice(1).join(process.cwd());
@@ -53,9 +52,9 @@ export class StelleHandler extends BaseHandler {
      * @returns
      */
     //well,.. this is weird, but works.
-    async reloadAll(): Promise<void> {
+    reloadAll(): Promise<void> {
         this.client.manager.removeAllListeners();
         this.client.manager.shoukaku.removeAllListeners();
-        return await this.load();
+        return this.load();
     }
 }

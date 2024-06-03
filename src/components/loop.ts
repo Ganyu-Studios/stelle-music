@@ -43,11 +43,9 @@ export default class ToggleLoopComponent extends ComponentCommand {
                 .filter((row) => row.type === ComponentType.Button && row.style !== ButtonStyle.Link)
                 .map((button) => {
                     if ((button as APIButtonComponentWithCustomId).custom_id === "player-toggleLoop")
-                        return new Button(button as APIButtonComponentWithCustomId).setLabel(
-                            messages.events.playerStart.components.loop({
-                                type: messages.commands.loop.loopType[player.loop],
-                            }),
-                        );
+                        (button as APIButtonComponentWithCustomId).label = messages.events.playerStart.components.loop({
+                            type: messages.commands.loop.loopType[player.loop],
+                        });
 
                     return new Button(button as APIButtonComponentWithCustomId);
                 }),

@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import type { UsingClient } from "seyfert";
 
+//🗿
 const prismaClient = new PrismaClient();
 
 /**
@@ -38,14 +39,13 @@ export class StelleDatabase {
      * Connect Stelle to the database.
      */
     public async connect(): Promise<void> {
-        try {
-            await this.prisma.$connect();
-
-            this.connected = true;
-            this.client.logger.info("Database - Stelle is now connected to the database.");
-        } catch (error) {
-            this.client.logger.error(`Database - ${error}`);
-        }
+        await this.prisma
+            .$connect()
+            .then(() => {
+                this.connected = true;
+                this.client.logger.info("Database - Stelle is now connected to the database.");
+            })
+            .catch((error) => this.client.logger.error(`Database - ${error}`));
     }
 
     /**

@@ -10,11 +10,11 @@ export default class SkipTrackComponent extends ComponentCommand {
     }
 
     async run(ctx: ComponentContext<typeof this.componentType>): Promise<void> {
-        const { client } = ctx;
+        const { client, guildId } = ctx;
 
-        if (!ctx.guildId) return;
+        if (!guildId) return;
 
-        const player = client.manager.getPlayer(ctx.guildId);
+        const player = client.manager.getPlayer(guildId);
         if (!player) return;
 
         player.skip();
