@@ -7,12 +7,14 @@ export default new Lavalink({
     name: "playerEmpty",
     type: "kazagumo",
     run: async (client, player) => {
-        if (player.data.get("autoplay")) return autoplay(player, player.getPrevious());
-
         if (!player.textId) return;
 
         const messageId = player.data.get("messageId") as string | undefined;
         if (!messageId) return;
+
+        await client.messages.edit(messageId, player.textId, { components: [] });
+
+        if (player.data.get("autoplay")) return autoplay(player, player.getPrevious());
 
         const ctx = player.data.get("commandContext") as CommandContext | undefined;
         if (!ctx) return;
@@ -25,11 +27,9 @@ export default new Lavalink({
 
         const { messages } = ctx.t.get(await ctx.getLocale());
 
-        const message = await client.messages.fetch(messageId, player.textId);
         const embed = new Embed().setDescription(messages.events.playerEnd).setColor(client.config.color.success).setTimestamp();
 
         await voice.setVoiceState(null);
         await channel.messages.write({ embeds: [embed] });
-        await message.edit({ components: [] });
     },
 });
