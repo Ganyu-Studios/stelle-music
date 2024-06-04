@@ -3,9 +3,9 @@ import { StelleOptions } from "#stelle/decorators";
 
 import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType } from "discord-api-types/v10";
 
-import { AUTOPLAY_TYPE } from "#stelle/data/Constants.js";
+import { AUTOPLAY_STATE } from "#stelle/data/Constants.js";
 
-@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, moreTracks: true })
+@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, moreTracks: true, cooldown: 5 })
 export default class AutoplayComponent extends ComponentCommand {
     componentType = "Button" as const;
 
@@ -39,7 +39,7 @@ export default class AutoplayComponent extends ComponentCommand {
                 .map((button) => {
                     if ((button as APIButtonComponentWithCustomId).custom_id === "player-toggleAutoplay")
                         (button as APIButtonComponentWithCustomId).label = messages.events.playerStart.components.autoplay({
-                            type: messages.commands.autoplay.autoplayType[AUTOPLAY_TYPE(isAutoplay)],
+                            type: messages.commands.autoplay.autoplayType[AUTOPLAY_STATE(isAutoplay)],
                         });
 
                     return new Button(button as APIButtonComponentWithCustomId);

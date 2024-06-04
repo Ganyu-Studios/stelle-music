@@ -14,7 +14,7 @@ export default new Lavalink({
 
         await client.messages.edit(messageId, player.textId, { components: [] });
 
-        if (player.data.get("autoplay")) return autoplay(player, player.getPrevious());
+        if (player.data.get("autoplay")) return autoplay(player, player.getPrevious(true));
 
         const ctx = player.data.get("commandContext") as CommandContext | undefined;
         if (!ctx) return;

@@ -1,7 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { getFlag } from "#stelle/utils/functions/utils.js";
 
-import type { AutoplayMode, LoopMode } from "#stelle/types";
+import { ActivityType, type GatewayActivityUpdateData } from "discord-api-types/v10";
+import type { AutoplayMode, LoopMode, PausedMode } from "#stelle/types";
 
 const packageJSON = JSON.parse(await readFile("./package.json", "utf-8"));
 
@@ -31,12 +32,26 @@ export const SECRETS_REGEX = /\b(?:client\.(?:config)|config|env|process\.env|ev
  * @param boolean
  * @returns
  */
-export const AUTOPLAY_TYPE = (boolean: boolean) => {
-    const autoplayType: Record<string, AutoplayMode> = {
+export const AUTOPLAY_STATE = (boolean: boolean) => {
+    const states: Record<string, AutoplayMode> = {
         true: "enabled",
         false: "disabled",
     };
-    return autoplayType[String(boolean)];
+    return states[String(boolean)];
+};
+
+/**
+ *
+ * Stelle pause state.
+ * @param boolean
+ * @returns
+ */
+export const PAUSE_STATE = (boolean: boolean) => {
+    const states: Record<string, PausedMode> = {
+        true: "resume",
+        false: "pause",
+    };
+    return states[String(boolean)];
 };
 
 /**
@@ -92,4 +107,16 @@ export const SECRETS_MESSAGES: string[] = [
     "I'm serious... I'm tired...",
     "...",
     "I will restrict you if you continue...",
+];
+
+/**
+ * Stelle presence activities.
+ */
+export const BOT_ACTIVITIES: GatewayActivityUpdateData[] = [
+    { name: "/help. 📜", type: ActivityType.Listening },
+    { name: `v${BOT_VERSION}. 🐐`, type: ActivityType.Listening },
+    { name: "with {users} users. 🎧", type: ActivityType.Listening },
+    { name: "in {guilds} guilds. ❤️", type: ActivityType.Streaming },
+    { name: "with {users} users. 👤", type: ActivityType.Playing },
+    { name: "{players} players. 🌐", type: ActivityType.Watching },
 ];

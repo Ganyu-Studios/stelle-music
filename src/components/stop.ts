@@ -1,12 +1,12 @@
 import { ComponentCommand, type ComponentContext } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
-@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, checkQueue: true, cooldown: 5 })
-export default class SkipTrackComponent extends ComponentCommand {
+@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, cooldown: 5 })
+export default class StopComponent extends ComponentCommand {
     componentType = "Button" as const;
 
     filter(ctx: ComponentContext<typeof this.componentType>): boolean {
-        return ctx.customId === "player-skipTrack";
+        return ctx.customId === "player-stopPlayer";
     }
 
     async run(ctx: ComponentContext<typeof this.componentType>): Promise<void> {
@@ -17,8 +17,7 @@ export default class SkipTrackComponent extends ComponentCommand {
         const player = client.manager.getPlayer(guildId);
         if (!player) return;
 
-        player.skip();
-
+        await player.destroy();
         await ctx.interaction.deferUpdate();
         await ctx.interaction.message.edit({ components: [] });
     }

@@ -3,7 +3,7 @@ import { Lavalink } from "#stelle/classes";
 
 import { ButtonStyle } from "discord-api-types/v10";
 
-import { AUTOPLAY_TYPE } from "#stelle/data/Constants.js";
+import { AUTOPLAY_STATE, PAUSE_STATE } from "#stelle/data/Constants.js";
 import { parseTime } from "#stelle/utils/functions/utils.js";
 
 export default new Lavalink({
@@ -16,9 +16,6 @@ export default new Lavalink({
 
         const ctx = player.data.get("commandContext") as CommandContext | undefined;
         if (!ctx) return;
-
-        const channel = await client.channels.fetch(player.textId);
-        if (!channel.isTextGuild()) return;
 
         const voice = await client.channels.fetch(player.voiceId);
         if (!voice.isVoice()) return;
@@ -36,7 +33,7 @@ export default new Lavalink({
                     url: track.uri!,
                     volume: player.volume,
                     author: track.author ?? "---",
-                    size: player.queue.totalSize,
+                    size: player.queue.size,
                 }),
             )
             .setThumbnail(track.thumbnail)
@@ -68,7 +65,7 @@ export default new Lavalink({
                 .setStyle(ButtonStyle.Primary)
                 .setLabel(
                     messages.events.playerStart.components.autoplay({
-                        type: messages.commands.autoplay.autoplayType[AUTOPLAY_TYPE(isAutoplay)],
+                        type: messages.commands.autoplay.autoplayType[AUTOPLAY_STATE(isAutoplay)],
                     }),
                 ),
             new Button()
@@ -82,10 +79,10 @@ export default new Lavalink({
             new Button()
                 .setCustomId("player-pauseTrack")
                 .setStyle(ButtonStyle.Primary)
-                .setLabel(messages.events.playerStart.components.paused.pause),
+                .setLabel(messages.events.playerStart.components.paused[PAUSE_STATE(player.paused)]),
         );
 
-        const message = await channel.messages.write({ embeds: [embed], components: [row, newRow] }).catch(() => null);
+        const message = await client.messages.write(player.textId, { embeds: [embed], components: [row, newRow] }).catch(() => null);
         if (message) player.data.set("messageId", message.id);
 
         await voice.setVoiceState(`🎵 ${track.title}`);

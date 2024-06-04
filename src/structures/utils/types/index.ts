@@ -30,6 +30,7 @@ export type InternalStelleRuntime<
 export type PermissionNames = keyof typeof PermissionFlagsBits;
 export type LoopMode = "none" | "queue" | "track";
 export type AutoplayMode = "enabled" | "disabled";
+export type PausedMode = "pause" | "resume";
 export type InternalRuntime = InternalRuntimeConfigHTTP | InternalRuntimeConfig;
 export type AnyContext =
     | CommandContext

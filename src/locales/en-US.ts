@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType } from "discord-api-types/v10";
 import { State } from "kazagumo";
 
-import type { LoopMode, PermissionNames } from "#stelle/types";
+import type { LoopMode, PausedMode, PermissionNames } from "#stelle/types";
 
 export default {
     messages: {
@@ -70,7 +70,9 @@ export default {
             noVoiceChannel: "`❌` You are not in a **voice channel**... Join to play music.",
             noNodes: "`❌` I'm not connected to any of my nodes.",
             noPlayer: "`❌` Nothing is playing right now...",
+            noPrevious: "`❌` There is no previous track to add.",
             noTracks: "`❌` There are no more tracks in the queue.",
+            playerQueue: ({ tracks }: ITracks) => `\`📋\` Here is the full server queue: \n\n${tracks}`,
             playerEnd: "`🔰` The queue has finished... Waiting for more tracks.",
             moreTracks: "`❌` In order to enable **this** `two or more tracks` are required.",
             commandError: "`❌` Something unexpected ocurred during the execution.\n`📢` If the problem persists, report the issue.",
@@ -100,7 +102,7 @@ export default {
                     paused: {
                         resume: "Resume",
                         pause: "Pause",
-                    },
+                    } satisfies Record<PausedMode, string>,
                 },
             },
             permissions: {
@@ -186,6 +188,7 @@ export default {
     },
 };
 
+type ITracks = { tracks: string };
 type IOptions = { options: string; list: string };
 type INodes = { state: string; uptime: string; players: number };
 type ITrackStart = { title: string; url: string; duration: string; volume: number; requester: string; author: string; size: number };
