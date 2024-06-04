@@ -26,24 +26,16 @@ export async function autoplay(player: KazagumoPlayer, lastTrack?: KazagumoTrack
         );
         if (ids.length >= 1) {
             const res = await player.search(`seed_tracks=${ids.join(",")}`, { requester: lastTrack.requester, source: "sprec:" });
-            const track = res.tracks.filter((v) => !player.queue.previous.find((t) => t.identifier === v.identifier))[
-                Math.floor(Math.random() * res.tracks.length) ?? 1
-            ];
+            const tracks = res.tracks.filter((v) => !player.queue.previous.find((t) => t.identifier === v.identifier));
 
-            player.queue.previous.push(track);
-
-            if (res.tracks.length) player.queue.add(track);
+            if (res.tracks.length) player.queue.add(tracks.slice(0, 5));
         }
     } else if (["youtube", "youtubemusic"].includes(lastTrack.sourceName)) {
         const search = `https://www.youtube.com/watch?v=${lastTrack.identifier}&list=RD${lastTrack.identifier}`;
         const res = await player.search(search, { requester: lastTrack.requester });
-        const track = res.tracks.filter((v) => !player.queue.previous.find((t) => t.identifier === v.identifier))[
-            Math.floor(Math.random() * res.tracks.length) ?? 1
-        ];
+        const tracks = res.tracks.filter((v) => !player.queue.previous.find((t) => t.identifier === v.identifier));
 
-        player.queue.previous.push(track);
-
-        if (res.tracks.length) player.queue.add(track);
+        if (res.tracks.length) player.queue.add(tracks.slice(0, 5));
     }
 
     //just in case
