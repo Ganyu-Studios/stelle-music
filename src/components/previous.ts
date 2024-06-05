@@ -34,8 +34,16 @@ export default class PreviousTrackComponent extends ComponentCommand {
                 ],
             });
 
-        await player.destroy();
-        await ctx.interaction.deferUpdate();
-        await ctx.interaction.message.edit({ components: [] });
+        player.queue.add(track);
+
+        await ctx.editOrReply({
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                {
+                    description: messages.commands.previous({ title: track.title, uri: track.uri! }),
+                    color: client.config.color.success,
+                },
+            ],
+        });
     }
 }

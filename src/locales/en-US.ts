@@ -4,8 +4,19 @@ import { State } from "kazagumo";
 import type { LoopMode, PausedMode, PermissionNames } from "#stelle/types";
 
 export default {
+    metadata: {
+        name: "English",
+        emoji: "🇺🇸",
+        traslators: ["JustEvil"],
+    },
     messages: {
         commands: {
+            previous: ({ title, uri }: IPrevious) => `\`✅\` The previous track [**${title}**](${uri}) has been added to the queue.`,
+            setlocale: {
+                invalidLocale: ({ locale, avaible }: ILocale & { avaible: string }) =>
+                    `\`❌\` The locale : \`${locale}\` is invalid.\n\n\`📢\` **Avaible locales**: \n${avaible}`,
+                newLocale: ({ locale }: ILocale) => `\`✅\` The locale of **Stelle** is now: \`${locale}\``,
+            },
             ping: {
                 message: "`🪶` Calculating...",
                 response: ({ wsPing, clientPing, shardPing }: IPing) =>
@@ -185,9 +196,19 @@ export default {
             name: "nodes",
             description: "Get the status of all Stelle nodes.",
         },
+        setlocale: {
+            name: "setlocale",
+            description: "Set the locale of Stelle.",
+            option: {
+                name: "locale",
+                description: "Enter the new locale.",
+            },
+        },
     },
 };
 
+type ILocale = { locale: string };
+type IPrevious = { title: string; uri: string };
 type ITracks = { tracks: string };
 type IOptions = { options: string; list: string };
 type INodes = { state: string; uptime: string; players: number };

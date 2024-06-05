@@ -9,13 +9,13 @@ import humanize from "humanize-duration";
 /**
  * Stelle custom context.
  */
-export const customContext = extendContext((int) => ({
+export const customContext = extendContext((interaction) => ({
     /**
      *
      * Get the locale from the database.
      * @returns
      */
-    getLocale: async () => await int.client.database.getLocale(int.guildId!),
+    getLocale: async () => await interaction.client.database.getLocale(interaction.guildId!),
 }));
 
 /**
