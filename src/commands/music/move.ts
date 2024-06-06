@@ -1,6 +1,7 @@
-import { ChannelType } from "discord-api-types/v10";
 import { Command, type CommandContext, Declare, LocalesT, Options, createChannelOption } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
+
+import { ChannelType } from "discord-api-types/v10";
 
 const options = {
     voice: createChannelOption({
