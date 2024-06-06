@@ -1,6 +1,6 @@
 {
   "name": "stelle-music",
-  "version": "0.1.0-BLAZER",
+  "version": "0.2.0-BLAZER",
   "description": "A music bot.",
   "main": "./dist/index.js",
   "type": "module",
