@@ -47,7 +47,7 @@
     "@biomejs/biome": "^1.8.0",
     "@types/humanize-duration": "^3.27.4",
     "@types/ms": "^0.7.34",
-    "@types/node": "^20.14.1",
+    "@types/node": "^20.14.2",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.5",
     "prisma": "^5.15.0",
