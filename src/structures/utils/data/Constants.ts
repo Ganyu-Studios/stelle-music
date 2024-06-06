@@ -58,14 +58,21 @@ export const PAUSE_STATE = (boolean: boolean) => {
  *
  * Stelle loop state.
  * @param mode
+ * @param alt
  * @returns
  */
-export const LOOP_STATE = (mode: LoopMode) => {
+export const LOOP_STATE = (mode: LoopMode, alt?: boolean) => {
     const states: Record<LoopMode, LoopMode> = {
         none: "track",
         track: "queue",
         queue: "none",
     };
+
+    if (alt) {
+        states.none = "none";
+        states.track = "track";
+        states.queue = "queue";
+    }
 
     return states[mode];
 };

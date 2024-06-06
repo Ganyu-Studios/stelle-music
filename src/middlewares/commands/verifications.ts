@@ -16,7 +16,7 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
     const voice = member.voice();
     const bot = context.me()?.voice();
     const player = client.manager.getPlayer(context.guildId);
-    const isAutoplay = player?.data.get("autoplay") as boolean | undefined;
+    const isAutoplay = player?.data.get("enabledAutoplay") as boolean | undefined;
 
     if (command.onlyDeveloper && !developerIds.includes(author.id))
         return context.editOrReply({

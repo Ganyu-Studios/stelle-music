@@ -5,7 +5,7 @@ import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType } from 
 
 import { AUTOPLAY_STATE } from "#stelle/data/Constants.js";
 
-@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, moreTracks: true, cooldown: 5 })
+@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, moreTracks: true, cooldown: 5, checkNodes: true })
 export default class AutoplayComponent extends ComponentCommand {
     componentType = "Button" as const;
 
@@ -23,9 +23,9 @@ export default class AutoplayComponent extends ComponentCommand {
         const player = client.manager.getPlayer(guildId);
         if (!player) return;
 
-        player.data.set("autoplay", !player.data.get("autoplay") ?? true);
+        player.data.set("enabledAutoplay", !player.data.get("autoplay") ?? true);
 
-        const isAutoplay = player.data.get("autoplay") as boolean;
+        const isAutoplay = player.data.get("enabledAutoplay") as boolean;
 
         const components = ctx.interaction.message.components[0].toJSON();
         const newComponents = ctx.interaction.message.components[1].toJSON();

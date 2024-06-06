@@ -5,6 +5,7 @@ const isRequired = (option: string, req?: boolean) => (req ? `<${option}>` : `[$
 type FormattedOption = {
     option: string;
     description: string;
+    range: string;
 };
 
 /**
@@ -32,10 +33,40 @@ export function formatOptions(
                 result.push({
                     option: `--${option.name} ${isRequired(types[option.type], option.required)}`,
                     description: option.description,
+                    range: `${getRange(option).trim()}`,
                 });
             }
         }
     }
 
     return result;
+}
+
+/**
+ *
+ * Get the option min/max value.
+ * @param option
+ * @returns
+ */
+function getRange(option: APIApplicationCommandOption): string {
+    let text: string = "";
+
+    switch (option.type) {
+        case ApplicationCommandOptionType.String:
+            {
+                text += option.max_length ? ` Max: ${option.max_length}` : "";
+                text += option.min_length ? ` Min: ${option.min_length}` : "";
+            }
+            break;
+
+        case ApplicationCommandOptionType.Integer:
+        case ApplicationCommandOptionType.Number:
+            {
+                text += option.max_value ? ` Max: ${option.max_value}` : "";
+                text += option.min_value ? ` Min: ${option.min_value}` : "";
+            }
+            break;
+    }
+
+    return text;
 }

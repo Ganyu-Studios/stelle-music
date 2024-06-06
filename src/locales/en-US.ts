@@ -11,7 +11,10 @@ export default {
     },
     messages: {
         commands: {
+            skip: ({ amount }: IAmount) => `\`✅\` Skipped the amount of: \`${amount} tracks\`.`,
+            move: ({ textId, voiceId }: IMove) => `\`✅\` Moved to the voice channel <#${voiceId}> and the text channel: ${textId}`,
             previous: ({ title, uri }: IPrevious) => `\`✅\` The previous track [**${title}**](${uri}) has been added to the queue.`,
+            stop: "`👋` Stopping and leaving...",
             setlocale: {
                 invalidLocale: ({ locale, avaible }: ILocale & { avaible: string }) =>
                     `\`❌\` The locale : \`${locale}\` is invalid.\n\n\`📢\` **Avaible locales**: \n${avaible}`,
@@ -30,8 +33,8 @@ export default {
                     noNodes: "Stelle - I'm not connected to any of my nodes.",
                     noVoiceChannel: "Stelle - You are not in a voice channel... Join to play music.",
                     noSameVoice: "Stelle - You are not in the same voice channel as me.",
-                    noQuery: "Stelle - Enter a song name or URL to play it.",
-                    noTracks: "Stelle - No tracks was found. Enter another song name or URL.",
+                    noQuery: "Stelle - Enter a track name or URL to play it.",
+                    noTracks: "Stelle - No tracks was found. Enter another track name or URL.",
                 },
                 embed: {
                     playlist: ({ playlist, tracks, volume, query, requester }: IPlayList) =>
@@ -43,6 +46,7 @@ export default {
                 },
             },
             loop: {
+                toggled: ({ type }: IType) => `\`✅\` The **loop mode** is now: \`${type}\``,
                 loopType: {
                     none: "Off",
                     queue: "Queue",
@@ -50,6 +54,7 @@ export default {
                 } satisfies Record<LoopMode, string>,
             },
             autoplay: {
+                toggled: ({ type }: IType) => `\`✅\` The **autoplay mode** is now: \`${type}\``,
                 autoplayType: {
                     enabled: "On",
                     disabled: "Off",
@@ -69,6 +74,20 @@ export default {
                     [State.RECONNECTING]: "🟡 Reconnecting...",
                 } satisfies Record<State, String>,
             },
+            volume: {
+                changed: ({ volume }: IVolume) => `\`✅\` The volume has been set to: **${volume}%**.`,
+                paused: "`🔰` The volume is **1%**, so the player has been paused.",
+            },
+            seek: {
+                invalidTime: ({ time }: Pick<ISeek, "time">) => `\`❌\` The time \`${time}\` is not a valid time.`,
+                seeked: ({ time, type }: ISeek) => `\`✅\` The track has been **${type}** to \`${time}\`.`,
+                exeedsTime: ({ time }: Pick<ISeek, "time">) => `\`❌\` The time \`${time}\` exceeds the current track time.`,
+                noSeekable: "`❌` The **current track** is not `seekable`.",
+                type: {
+                    seeked: "seeked",
+                    rewond: "rewond",
+                },
+            },
         },
         events: {
             inCooldown: ({ time }: ICooldown) => `\`❌\` You need to wait: <t:${time}:R> (<t:${time}:t>) to use this.`,
@@ -76,6 +95,10 @@ export default {
             noCollector: ({ userId }: IUser) => `\`❌\` Only the user: <@${userId}> can use this.`,
             invalidOptions: ({ options, list }: IOptions) =>
                 `\`❌\` Invalid command options or arguments.\n- **Required**: \`<>\`\n- **Optional**: \`[]\`\n\n\`📋\` **Usage**:\n ${options}\n\`📢\` **Options Avaible**:\n${list}`,
+            playerQueue: ({ tracks }: ITracks) => `\`📋\` Here is the full server queue: \n\n${tracks}`,
+            channelEmpty: ({ type }: IType) => `\`🎧\` Stelle is alone in the **voice channel**... Pausing and waiting **${type}**.`,
+            noMembers: "`🎧` Stelle is alone in the **voice channel**... Leaving the channel.",
+            hasMembers: "`🎧` Stelle is not alone anymore... Resuming.",
             onlyDeveloper: "`❌` Only the **bot developer** can use this.",
             onlyGuildOwner: "`❌` Only the **guild owner** can use this.",
             noVoiceChannel: "`❌` You are not in a **voice channel**... Join to play music.",
@@ -83,7 +106,6 @@ export default {
             noPlayer: "`❌` Nothing is playing right now...",
             noPrevious: "`❌` There is no previous track to add.",
             noTracks: "`❌` There are no more tracks in the queue.",
-            playerQueue: ({ tracks }: ITracks) => `\`📋\` Here is the full server queue: \n\n${tracks}`,
             playerEnd: "`🔰` The queue has finished... Waiting for more tracks.",
             moreTracks: "`❌` In order to enable **this** `two or more tracks` are required.",
             commandError: "`❌` Something unexpected ocurred during the execution.\n`📢` If the problem persists, report the issue.",
@@ -104,8 +126,8 @@ export default {
                 embed: ({ duration, requester, title, url, volume, author, size }: ITrackStart) =>
                     `\`📻\` Now playing [\`${title}\`](${url})\n\n\`🎤\` **Author**: \`${author}\`\n\`🕛\` **Duration**: \`${duration}\`\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>\n\n\`📋\` **In queue**: \`${size} tracks\``,
                 components: {
-                    loop: ({ type }: { type: string }) => `Loop: ${type}`,
-                    autoplay: ({ type }: { type: string }) => `Autoplay: ${type}`,
+                    loop: ({ type }: IType) => `Loop: ${type}`,
+                    autoplay: ({ type }: IType) => `Autoplay: ${type}`,
                     stop: "Stop",
                     skip: "Skip",
                     previous: "Previous",
@@ -185,7 +207,7 @@ export default {
             description: "Play music with Stelle.",
             option: {
                 name: "query",
-                description: "Enter the song name or url.",
+                description: "Enter the track name or url.",
             },
         },
         ping: {
@@ -204,9 +226,74 @@ export default {
                 description: "Enter the new locale.",
             },
         },
+        autoplay: {
+            name: "autoplay",
+            description: "Toggle the autoplay.",
+        },
+        volume: {
+            name: "volume",
+            description: "Modify the volume.",
+            option: {
+                name: "volume",
+                description: "Enter the volume.",
+            },
+        },
+        loop: {
+            name: "loop",
+            description: "Toggle the loop mode.",
+            option: {
+                name: "mode",
+                description: "Select the loop mode.",
+            },
+        },
+        move: {
+            name: "move",
+            description: "Move the player.",
+            options: {
+                voice: {
+                    name: "voice",
+                    description: "Select the channel.",
+                },
+                text: {
+                    name: "text",
+                    description: "Select the channel.",
+                },
+            },
+        },
+        stop: {
+            name: "stop",
+            description: "Stop the player.",
+        },
+        skip: {
+            name: "skip",
+            description: "Skip the current track.",
+            option: {
+                to: {
+                    name: "to",
+                    description: "Skip a specific amount of songs.",
+                },
+            },
+        },
+        queue: {
+            name: "queue",
+            description: "See the queue.",
+        },
+        seek: {
+            name: "seek",
+            description: "Seek the current track.",
+            option: {
+                name: "time",
+                description: "Enter the time. (Ex: 2min)",
+            },
+        },
     },
 };
 
+type ISeek = { time: string | number; type: string };
+type IAmount = { amount: number };
+type IMove = { textId: string; voiceId: string };
+type IVolume = { volume: number };
+type IType = { type: string };
 type ILocale = { locale: string };
 type IPrevious = { title: string; uri: string };
 type ITracks = { tracks: string };

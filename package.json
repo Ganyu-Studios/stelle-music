@@ -9,6 +9,7 @@
   "scripts": {
     "test": "pnpm clean && pnpm start:debug",
     "build": "tsc",
+    "watch": "tsc-watch -p ./tsconfig.json --onSuccess \"pnpm test\"",
     "clean": "node ./scripts/clean.js && pnpm build",
     "start": "node ./dist/index.js",
     "start:debug": "node ./dist/index.js --debug",
@@ -51,6 +52,7 @@
     "husky": "^9.0.11",
     "lint-staged": "^15.2.5",
     "prisma": "^5.15.0",
+    "tsc-watch": "^6.2.0",
     "typescript": "^5.4.5"
   },
   "imports": {

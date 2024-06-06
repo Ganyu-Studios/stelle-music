@@ -53,7 +53,7 @@ export interface Options {
     checkNodes?: boolean;
     /** Check if a player exists in a guild. */
     checkPlayer?: boolean;
-    /** Check if the player queue has more than one song. */
+    /** Check if the player queue has more than one track. */
     checkQueue?: boolean;
     /** Check if the queue has two or more tracks. */
     moreTracks?: boolean;

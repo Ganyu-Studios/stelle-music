@@ -33,6 +33,8 @@ export interface StelleConfiguration {
     guildIds: string[];
     /** Stelle default locale. */
     defaultLocale: string;
+    /** Stelle disconnect time. */
+    disconnectTime: number;
     /** Stelle nodes. */
     nodes: NodeOption[];
     /** Stelle spotify data. */

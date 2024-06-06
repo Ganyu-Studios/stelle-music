@@ -22,7 +22,7 @@ export default class PingCommand extends Command {
         const clientPing = Math.floor(Date.now() - (ctx.message ?? ctx.interaction)!.createdTimestamp);
         const shardPing = Math.floor((await ctx.client.gateway.get(ctx.shardId)?.ping()) ?? 0);
 
-        embed.setColor(client.config.color.success).setDescription(messages.commands.ping.response({ clientPing, wsPing, shardPing }));
+        embed.setColor(client.config.color.success).setDescription(messages.commands.ping.response({ wsPing, clientPing, shardPing }));
 
         await ctx.editOrReply({ embeds: [embed] });
     }

@@ -19,7 +19,7 @@ import { parseTime, sliceText } from "#stelle/utils/functions/utils.js";
 
 const options = {
     query: createStringOption({
-        description: "Enter the song name/url.",
+        description: "Enter the track name or url.",
         required: true,
         locales: {
             name: "locales.play.option.name",

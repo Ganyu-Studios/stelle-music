@@ -1,17 +1,18 @@
-import { MessageFlags } from "discord-api-types/v10";
-import { ComponentCommand, type ComponentContext, Embed, type User } from "seyfert";
+import { Command, type CommandContext, Declare, Embed, LocalesT, type User } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
+
 import { EmbedPaginator } from "#stelle/utils/Paginator.js";
 
-@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, checkQueue: true, cooldown: 5, checkNodes: true })
-export default class QueueComponent extends ComponentCommand {
-    componentType = "Button" as const;
-
-    filter(ctx: ComponentContext<typeof this.componentType>): boolean {
-        return ctx.customId === "player-guildQueue";
-    }
-
-    async run(ctx: ComponentContext<typeof this.componentType>): Promise<void> {
+@Declare({
+    name: "queue",
+    description: "See the queue.",
+    integrationTypes: ["GuildInstall"],
+    contexts: ["Guild"],
+})
+@StelleOptions({ cooldown: 5, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
+@LocalesT("locales.queue.name", "locales.queue.description")
+export default class QueueCommand extends Command {
+    async run(ctx: CommandContext) {
         const { client, guildId, author } = ctx;
 
         if (!guildId) return;
@@ -27,7 +28,6 @@ export default class QueueComponent extends ComponentCommand {
 
         if (tracks.length < tracksPerPage) {
             await ctx.editOrReply({
-                flags: MessageFlags.Ephemeral,
                 embeds: [
                     new Embed()
                         .setDescription(messages.events.playerQueue({ tracks: tracks.slice(0, tracksPerPage).join("\n") }))
@@ -48,7 +48,7 @@ export default class QueueComponent extends ComponentCommand {
                         .setAuthor({ name: author.tag, iconUrl: author.avatarURL() }),
                 );
 
-                await paginator.reply(true);
+                await paginator.reply();
             }
         }
     }

@@ -12,7 +12,7 @@ export default new Lavalink({
     run: async (client, player, track) => {
         if (!player.textId) return;
 
-        const isAutoplay = (player.data.get("autoplay") as boolean | undefined) ?? false;
+        const isAutoplay = (player.data.get("enabledAutoplay") as boolean | undefined) ?? false;
 
         const ctx = player.data.get("commandContext") as CommandContext | undefined;
         if (!ctx) return;

@@ -80,7 +80,7 @@ export async function onOptionsError(ctx: AnyContext) {
         .setDescription(
             messages.events.invalidOptions({
                 options: codeBlock("js", `${options.map(({ option }) => option).join(" ")}`),
-                list: options.map(({ option, description }) => `* \`${option}\`: ${description}`).join("\n"),
+                list: options.map(({ option, description, range }) => `* \`${option}\` \`[${range || "---"}]\`: ${description}`).join("\n"),
             }),
         )
         .setTimestamp();

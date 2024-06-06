@@ -17,7 +17,7 @@ import type { KazagumoPlayer, KazagumoTrack } from "kazagumo";
  */
 export async function autoplay(player: KazagumoPlayer, lastTrack?: KazagumoTrack): Promise<void> {
     if (!lastTrack) return;
-    if (!player.data.get("autoplay")) return;
+    if (!player.data.get("enabledAutoplay")) return;
 
     if (lastTrack.sourceName === "spotify") {
         const filtered = player.queue.previous.filter((track) => track.sourceName === "spotify").slice(0, 5);

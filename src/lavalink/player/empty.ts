@@ -12,9 +12,9 @@ export default new Lavalink({
         const messageId = player.data.get("messageId") as string | undefined;
         if (!messageId) return;
 
-        await client.messages.edit(messageId, player.textId, { components: [] });
+        await client.messages.edit(messageId, player.textId, { components: [] }).catch(() => null);
 
-        if (player.data.get("autoplay")) return autoplay(player, player.getPrevious(true));
+        if (player.data.get("enabledAutoplay")) return autoplay(player, player.getPrevious(true));
 
         const ctx = player.data.get("commandContext") as CommandContext | undefined;
         if (!ctx) return;

@@ -1,9 +1,12 @@
 import type { StelleConfiguration } from "#stelle/types";
 
+import ms from "ms";
+
 export const Configuration: StelleConfiguration = {
     defaultPrefix: "stelle",
     prefixes: ["st!"],
     defaultLocale: "en-US",
+    disconnectTime: ms("30s"),
     developerIds: [
         "391283181665517568", // <-- JustEvil
     ],

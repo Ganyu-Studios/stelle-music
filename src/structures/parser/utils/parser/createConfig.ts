@@ -17,7 +17,7 @@ export interface YunaParserCreateOptions {
          *
          * ` ' ` => `'beautiful sentence'`
          *
-         * **&#96;** => **\`LiSA『Shouted Serenade』 is a good song\`**
+         * **&#96;** => **\`LiSA『Shouted Serenade』 is a good track\`**
          *
          * @default 🐧 all enabled
          */
