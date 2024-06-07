@@ -23,6 +23,8 @@ She has been created with the following technologies:
 - [NodeJS v.20.14x](https://nodejs.org/en/download/prebuilt-installer)
 - [Visual Studio Code](https://code.visualstudio.com)
 
+See the the [how to install](/INSTALLATION.md) for more.
+
 ## 🤝 Contributing
 
 Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/Ganyu-Studios/stelle-music/issues).
