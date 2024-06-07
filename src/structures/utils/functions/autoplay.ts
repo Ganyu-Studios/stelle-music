@@ -19,6 +19,8 @@ export async function autoplay(player: KazagumoPlayer, lastTrack?: KazagumoTrack
     if (!lastTrack) return;
     if (!player.data.get("enabledAutoplay")) return;
 
+    const maxTracks = 10;
+
     if (lastTrack.sourceName === "spotify") {
         const filtered = player.queue.previous.filter((track) => track.sourceName === "spotify").slice(0, 5);
         const ids = filtered.map(
@@ -28,14 +30,14 @@ export async function autoplay(player: KazagumoPlayer, lastTrack?: KazagumoTrack
             const res = await player.search(`seed_tracks=${ids.join(",")}`, { requester: lastTrack.requester, source: "sprec:" });
             const tracks = res.tracks.filter((v) => !player.queue.previous.find((t) => t.identifier === v.identifier));
 
-            if (res.tracks.length) player.queue.add(tracks.slice(0, 5));
+            if (res.tracks.length) player.queue.add(tracks.slice(0, maxTracks));
         }
     } else if (["youtube", "youtubemusic"].includes(lastTrack.sourceName)) {
         const search = `https://www.youtube.com/watch?v=${lastTrack.identifier}&list=RD${lastTrack.identifier}`;
         const res = await player.search(search, { requester: lastTrack.requester });
         const tracks = res.tracks.filter((v) => !player.queue.previous.find((t) => t.identifier === v.identifier));
 
-        if (res.tracks.length) player.queue.add(tracks.slice(0, 5));
+        if (res.tracks.length) player.queue.add(tracks.slice(0, maxTracks));
     }
 
     //just in case

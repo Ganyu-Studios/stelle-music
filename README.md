@@ -9,7 +9,7 @@
 
 > Stelle is a bot created by `Ganyu Studios` to play music.
 
-*Stelle was created with the purpose of exploring, learning and using the possibilities offered by [`Seyfert`](https://github.com/tiramisulabs/seyfert) a new library to interact with the discord API.*
+*Stelle was created with the purpose of exploring, learning and using the possibilities offered by [`Seyfert`](https://github.com/tiramisulabs/seyfert) a new library to interact with the Discord API.*
 
 ![Stelle](https://i.imgur.com/cDBZPmd.png)
 
@@ -52,7 +52,7 @@ Stelle has several features, more can be added.
 - **DATABASE**: Stelle uses `Prisma` as `ORM` and `MongoDB` as database.
 - **NO HANDLERS**: Stelle will do it all for you, you just have to implement it.
 - **LOCALIZATION**: Stelle is able to change the locale to your liking.
-- **PREFIX COMMANDS**: By default, Stelle will work with `slash` and `prefix` commands.
+- **COMMANDS**: By default, Stelle will work with `slash` and `prefix` commands.
 - **AUTOCOMPLETE**: Stelle will display track results based on your search.
 - **CONTROL**: Stelle provides a necessary (*that I consider*) control over the music.
 
