@@ -26,8 +26,13 @@ const options = {
             description: "locales.play.option.description",
         },
         autocomplete: async (interaction) => {
-            const { client, member } = interaction;
-            const { messages } = client.t(interaction.locale).get();
+            const { client, member, guildId } = interaction;
+
+            if (!guildId) return;
+
+            const locale = await client.database.getLocale(guildId);
+
+            const { messages } = client.t(locale).get(locale);
 
             if (!client.manager.isUseable)
                 return interaction.respond([{ name: messages.commands.play.autocomplete.noNodes, value: "noNodes" }]);
