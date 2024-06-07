@@ -32,7 +32,7 @@ const options = {
 
             const locale = await client.database.getLocale(guildId);
 
-            const { messages } = client.t(locale).get(locale);
+            const { messages } = client.t(locale).get();
 
             if (!client.manager.isUseable)
                 return interaction.respond([{ name: messages.commands.play.autocomplete.noNodes, value: "noNodes" }]);

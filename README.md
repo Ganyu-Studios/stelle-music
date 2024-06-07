@@ -50,6 +50,8 @@ Stelle has several features, more can be added.
 - **AUTOCOMPLETE**: Stelle will display track results based on your search.
 - **CONTROL**: Stelle provides a necessary (*that I consider*) control over the music.
 
+* Want to see more? Here's an [invitation](https://discord.com/oauth2/authorize?client_id=1241085977544359968&permissions=36793344&integration_type=0&scope=bot+applications.commands) so you can use the bot.
+
 ## 📝 License
 
 Copyright © 2024 [Ganyu Studios](https://github.com/Ganyu-Studios).
