@@ -20,13 +20,12 @@
 3. Drop the jar with the `application.yml`
 4. Start the node.
 
-You can use the:
-	- [`application.yml`](https://github.com/Ganyu-Studios/stelle-music/blob/main/assets/application.yml)
-	- [`start scripts`](https://github.com/Ganyu-Studios/stelle-music/tree/main/assets)
+You can use my example:
 
-For your own node.
+- [`application.yml`](https://github.com/Ganyu-Studios/stelle-music/blob/main/assets/application.yml)
+- [`start scripts`](https://github.com/Ganyu-Studios/stelle-music/tree/main/assets)
 
-*Just do ./start.bat if  you are on Windows*
+*Just do `./start.bat` if you are on Windows*
 *Or `sh start.sh` if you are on a ubuntu server*
 
 ### 📋 Using the node
