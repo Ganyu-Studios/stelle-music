@@ -49,7 +49,7 @@ export default class SetlangCommand extends Command {
                 flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
-                        description: messages.commands.setlocale.invalidLocale({ locale, avaible: `- ${locales.join("\n- ")}` }),
+                        description: messages.commands.setlocale.invalidLocale({ locale, avaible: locales.join(", ") }),
                         color: client.config.color.success,
                     },
                 ],

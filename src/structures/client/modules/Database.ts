@@ -61,7 +61,18 @@ export class StelleDatabase {
 
     /**
      *
-     * Get the guild locale to the database.
+     * Get the guild prefix from the database.
+     * @param guildId
+     * @returns
+     */
+    public async getPrefix(guildId: string): Promise<string> {
+        const data = await this.prisma.guildPrefix.findUnique({ where: { id: guildId } });
+        return data?.prefix ?? this.client.config.defaultPrefix;
+    }
+
+    /**
+     *
+     * Set the guild locale to the database.
      * @param guildId
      * @param locale
      */
@@ -72,6 +83,23 @@ export class StelleDatabase {
             create: {
                 id: guildId,
                 locale,
+            },
+        });
+    }
+
+    /**
+     *
+     * Set the guild prefix to the database.
+     * @param guildId
+     * @param prefix
+     */
+    public async setPrefix(guildId: string, prefix: string): Promise<void> {
+        await this.prisma.guildPrefix.upsert({
+            where: { id: guildId },
+            update: { prefix },
+            create: {
+                id: guildId,
+                prefix,
             },
         });
     }

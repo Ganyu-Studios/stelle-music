@@ -17,3 +17,8 @@ model guildLocale {
   id     String  @id @map("_id")
   locale String?
 }
+
+model guildPrefix {
+  id     String @id @map("_id")
+  prefix String
+}

@@ -46,7 +46,10 @@ export class Stelle extends Client<true> {
                 },
             },
             commands: {
-                prefix: () => [this.config.defaultPrefix, ...this.config.prefixes],
+                prefix: async (message) => {
+                    const guildPrefix = await this.database.getPrefix(message.guildId!);
+                    return [...new Set([guildPrefix, this.config.defaultPrefix, ...this.config.prefixes])];
+                },
                 reply: () => true,
                 defaults: {
                     onBotPermissionsFail,
