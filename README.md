@@ -50,8 +50,6 @@ Stelle has several features, more can be added.
 - **AUTOCOMPLETE**: Stelle will display track results based on your search.
 - **CONTROL**: Stelle provides a necessary (*that I consider*) control over the music.
 
-> *Made with 🐐❤️💪... A project made by the community, for the community.*
-
 ## 📝 License
 
 Copyright © 2024 [Ganyu Studios](https://github.com/Ganyu-Studios).
@@ -59,3 +57,5 @@ Copyright © 2024 [Ganyu Studios](https://github.com/Ganyu-Studios).
 This project is [MIT](LICENSE) licensed.
 
 - *The character and assets are not my property, property of miHoYo Co. Ltd. (HoYoverse)*
+
+> *Made with 🐐❤️💪... A project made by the community, for the community.*
