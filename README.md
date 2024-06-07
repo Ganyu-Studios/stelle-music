@@ -1,9 +1,9 @@
 <h1 align="center">🌟 STELLE 🌟</h1>
 
-### 🏠 [Homepage](https://github.com/Ganyu-Studios/stelle-music)
+### 🏠 [Homepage](/stelle-music)
 
 * This is the home of `Stelle`, a bot designed to play music.
-* 
+
 ### 🐐 What is Stelle? 
 
 > Stelle is a bot created by `Ganyu Studios` to play music.
@@ -19,9 +19,11 @@ She has been created with the following technologies:
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/Ganyu-Studios/stelle-music/issues).
+Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](/issues).
 
-Also [PR's](https://github.com/Ganyu-Studios/stelle-music/pulls) are really appreciated!
+Also [PR's](/pulls) are really appreciated!
+
+See [CONTRIBUTING](/CONTRIBUTING) for more.
 
 ## ⭐️ Show your support
 
