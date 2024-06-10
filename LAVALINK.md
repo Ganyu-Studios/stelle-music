@@ -10,14 +10,14 @@
 1. Go to [this site](https://adoptium.net/es/temurin/releases/?package=jdks)
 2. Look for your OS. (Windows, Linux, etc...)
 3. Select the Java version of your choice (17 or newer)
-4. Download the .msi file
+4. Download the `.msi` file
 5. Install
 
 ###  📋 Lavalink node
 * Go to the Lavalink repository and download the [latest version](https://github.com/lavalink-devs/Lavalink/releases).
 1. Create a directory.
 2. Go to your directory with cd. `cd my-node`
-3. Drop the jar with the `application.yml`
+3. Drop the `jar` and the `application.yml`
 4. Start the node.
 
 You can use my example:

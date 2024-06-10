@@ -34,7 +34,7 @@ importers:
         version: 2.1.3
       seyfert:
         specifier: github:tiramisulabs/seyfert
-        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/f061dccf3f80f27124661b050c96d4f946e6387d
+        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/37dfaef4075d9e6825ad046cab6eb639c657ba0e
       shoukaku:
         specifier: github:shipgirlproject/Shoukaku
         version: https://codeload.github.com/shipgirlproject/Shoukaku/tar.gz/e5ea077cb389015ea8d03085224d4bc03ba94a92
@@ -331,8 +331,8 @@ packages:
     resolution: {integrity: sha512-f0oHGhIWRXOzmWTLkkEHN4h7V5e08FyD8IG3otLKc+Dp6i1gqGtIrtHa7aBRr5KL/I+rpMlZJ5T3AE45CfH4bA==}
     engines: {node: '>=16.5.0 <=20'}
 
-  lilconfig@3.1.1:
-    resolution: {integrity: sha512-O18pf7nyvHTckunPWCV1XUNXU1piu01y2b7ATJ0ppkUkk8ocqVWBrYjJBCwHDjD/ZWcfyrA0P4gKhzWGi5EINQ==}
+  lilconfig@3.1.2:
+    resolution: {integrity: sha512-eop+wDAvpItUys0FWkHIKeC9ybYrTGbU41U5K7+bttZZeohvnY7M9dZ5kB21GNWiFT2q1OoPTvncPCgSOVO5ow==}
     engines: {node: '>=14'}
 
   lint-staged@15.2.5:
@@ -449,8 +449,8 @@ packages:
   rfdc@1.3.1:
     resolution: {integrity: sha512-r5a3l5HzYlIC68TpmYKlxWjmOP6wiPJ1vWv2HeLhNsRZMrCkxeqxiHlQ21oXmQ4F3SiryXBHhAD7JZqvOJjFmg==}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/f061dccf3f80f27124661b050c96d4f946e6387d:
-    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/f061dccf3f80f27124661b050c96d4f946e6387d}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/37dfaef4075d9e6825ad046cab6eb639c657ba0e:
+    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/37dfaef4075d9e6825ad046cab6eb639c657ba0e}
     version: 1.4.0
 
   shebang-command@2.0.0:
@@ -567,8 +567,8 @@ packages:
       utf-8-validate:
         optional: true
 
-  yaml@2.4.3:
-    resolution: {integrity: sha512-sntgmxj8o7DE7g/Qi60cqpLBA3HG3STcDA0kO+WfB05jEKhZMbY7umNm2rBpQvsmZ16/lPXCJGW2672dgOUkrg==}
+  yaml@2.4.5:
+    resolution: {integrity: sha512-aBx2bnqDzVOyNKfsysjA2ms5ZlnjSAW2eG3/L5G/CSujfjLJTJsEw1bGw8kCf04KodQWk1pxlGnZ56CRxiawmg==}
     engines: {node: '>= 14'}
     hasBin: true
 
@@ -810,7 +810,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  lilconfig@3.1.1: {}
+  lilconfig@3.1.2: {}
 
   lint-staged@15.2.5:
     dependencies:
@@ -818,12 +818,12 @@ snapshots:
       commander: 12.1.0
       debug: 4.3.5
       execa: 8.0.1
-      lilconfig: 3.1.1
+      lilconfig: 3.1.2
       listr2: 8.2.1
       micromatch: 4.0.7
       pidtree: 0.6.0
       string-argv: 0.3.2
-      yaml: 2.4.3
+      yaml: 2.4.5
     transitivePeerDependencies:
       - supports-color
 
@@ -924,7 +924,7 @@ snapshots:
 
   rfdc@1.3.1: {}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/f061dccf3f80f27124661b050c96d4f946e6387d:
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/37dfaef4075d9e6825ad046cab6eb639c657ba0e:
     dependencies:
       chokidar: 3.6.0
       discord-api-types: 0.37.87
@@ -1041,4 +1041,4 @@ snapshots:
 
   ws@8.17.0: {}
 
-  yaml@2.4.3: {}
+  yaml@2.4.5: {}

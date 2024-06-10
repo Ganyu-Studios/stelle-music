@@ -94,7 +94,7 @@ export class EmbedPaginator {
                             .map((builder) => builder.toJSON())
                             .filter((row) => row.type === ComponentType.Button && row.style !== ButtonStyle.Link)
                             .map((component) => {
-                                if ((component as APIButtonComponentWithCustomId).custom_id === "pagination-pagePrev")
+                                if ((component as APIButtonComponentWithCustomId).custom_id === "pagination-pagePos")
                                     (component as APIButtonComponentWithCustomId).label = "0/0";
                                 return new Button(component as APIButtonComponentWithCustomId).setDisabled(true);
                             }),
