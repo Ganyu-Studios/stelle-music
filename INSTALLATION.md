@@ -23,8 +23,8 @@ pnpm i
 pnpm test #It will do everything for you!
 
 #Or you can do it step-by-step
-pnpm clean #Will redo the dist folder
-pnpm start #Will startthe bot
+pnpm clean #Will re-create the dist folder
+pnpm start #Will start the bot
 ```
 
 ### 🔎 Looking for a lavalink node?

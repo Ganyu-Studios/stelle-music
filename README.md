@@ -7,9 +7,10 @@
 
 ### 🐐 What is Stelle? 
 
-> Stelle is a bot created by `Ganyu Studios` to play music.
-
 *Stelle was created with the purpose of exploring, learning and using the possibilities offered by [`Seyfert`](https://github.com/tiramisulabs/seyfert) a new library to interact with the Discord API.*
+
+[![Invite](https://img.shields.io/badge/Add%20the%20bot-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/oauth2/authorize?client_id=1241085977544359968&permissions=36793344&integration_type=0&scope=bot+applications.commands)
+[![Server](https://img.shields.io/badge/Support%20Server-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/invite/yzQQaQMUww)
 
 ![Stelle](https://i.imgur.com/cDBZPmd.png)
 
@@ -50,7 +51,7 @@ Stelle has several features, more can be added.
 - **AUTOCOMPLETE**: Stelle will display track results based on your search.
 - **CONTROL**: Stelle provides a necessary (*that I consider*) control over the music.
 
-* Want to see more? Here's an [invitation](https://discord.com/oauth2/authorize?client_id=1241085977544359968&permissions=36793344&integration_type=0&scope=bot+applications.commands) so you can use the bot.
+* Want to see more? Add the bot and see!
 
 ## 📝 License
 
