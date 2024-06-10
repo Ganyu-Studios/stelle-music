@@ -17,8 +17,8 @@ export default {
             previous: ({ title, uri }: IPrevious) => `\`✅\` The previous track [**${title}**](${uri}) has been added to the queue.`,
             stop: "`👋` Stopping and leaving...",
             setlocale: {
-                invalidLocale: ({ locale, avaible }: ILocale & { avaible: string }) =>
-                    `\`❌\` The locale : \`${locale}\` is invalid.\n\`📢\` **Avaible locales**: \`${avaible}\``,
+                invalidLocale: ({ locale, available }: ILocale & { available: string }) =>
+                    `\`❌\` The locale : \`${locale}\` is invalid.\n\`📢\` **Available locales**: \`${available}\``,
                 newLocale: ({ locale }: ILocale) => `\`✅\` The locale of **Stelle** is now: \`${locale}\``,
             },
             ping: {
@@ -39,7 +39,7 @@ export default {
                 },
                 embed: {
                     playlist: ({ playlist, tracks, volume, query, requester }: IPlayList) =>
-                        `\`🎵\` The laylist [\`${playlist}\`](${query}) has been added to the queue.\n\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>\n\`🔰\` **With**: \`${tracks} tracks\``,
+                        `\`🎵\` The playlist [\`${playlist}\`](${query}) has been added to the queue.\n\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>\n\`🔰\` **With**: \`${tracks} tracks\``,
                     result: ({ title, url, duration, volume, requester }: IPlayTrack) =>
                         `\`🎵\` Added [\`${title}\`](${url}) to the queue.\n\n\`🕛\` **Duration**: \`${duration}\`\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>`,
                     results: ({ title, url, duration, volume, requester, position }: IPlayTrack) =>
@@ -65,7 +65,7 @@ export default {
                 value: ({ state, uptime, players }: INodes) =>
                     `\`📘\` State: \`${state}\`\n\`🕛\` Uptime: \`${uptime}\`\n\`🎤\` Players: \`${players}\``,
                 description: "`📋` List of all Stelle nodes.",
-                noNodes: "`❌` No nodes avaible at the moment.",
+                noNodes: "`❌` No nodes available at the moment.",
                 states: {
                     [State.CONNECTED]: "🟢 Connected.",
                     [State.CONNECTING]: "🟢 Connecting...",
@@ -95,7 +95,7 @@ export default {
             noSameVoice: ({ channelId }: IChannel) => `\`❌\` You are not in the **same voice channel** as me. (<#${channelId}>)`,
             noCollector: ({ userId }: IUser) => `\`❌\` Only the user: <@${userId}> can use this.`,
             invalidOptions: ({ options, list }: IOptions) =>
-                `\`❌\` Invalid command options or arguments.\n- **Required**: \`<>\`\n- **Optional**: \`[]\`\n\n\`📋\` **Usage**:\n ${options}\n\`📢\` **Options Avaible**:\n${list}`,
+                `\`❌\` Invalid command options or arguments.\n- **Required**: \`<>\`\n- **Optional**: \`[]\`\n\n\`📋\` **Usage**:\n ${options}\n\`📢\` **Options Available**:\n${list}`,
             playerQueue: ({ tracks }: ITracks) => `\`📋\` Here is the full server queue: \n\n${tracks}`,
             channelEmpty: ({ type }: IType) => `\`🎧\` Stelle is alone in the **voice channel**... Pausing and waiting **${type}**.`,
             noMembers: "`🎧` Stelle is alone in the **voice channel**... Leaving the channel.",
