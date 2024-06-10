@@ -1,4 +1,3 @@
-import { LoopMode, PermissionNames } from '#stelle/types';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import { State } from 'kazagumo';
 import type defaultLang from './en-US.js';
@@ -52,7 +51,7 @@ export default {
                     none: "Desactivada",
                     queue: "Cola",
                     track: "Canción",
-                } satisfies Record<LoopMode, string>,
+                },
             },
             autoplay: {
                 toggled: ({ type }) => `\`✅\` El modo de la **reproducción automática** ahora es: \`${type}\``,
@@ -122,7 +121,7 @@ export default {
                 [ApplicationCommandOptionType.Mentionable]: "@mencionable",
                 [ApplicationCommandOptionType.Number]: "numero",
                 [ApplicationCommandOptionType.Attachment]: "achivo",
-            } satisfies Record<ApplicationCommandOptionType, string>,
+            },
             playerStart: {
                 embed: ({ duration, requester, title, url, volume, author, size }) =>
                     `\`📻\` Reproduciendo ahora [\`${title}\`](${url})\n\n\`🎤\` **Autor**: \`${author}\`\n\`🕛\` **Duración**: \`${duration}\`\n\`🔊\` **Volumen**: \`${volume}%\`\n\`👤\` **Solicitado por**: <@${requester}>\n\n\`📋\` **En cola**: \`${size} canciones\``,
@@ -190,7 +189,7 @@ export default {
                     CreateEvents: "Crear Eventos",
                     CreateGuildExpressions: "Crear Expresiones del Servidor",
                     SendPolls: "Enviar Encuestas",
-                } satisfies Record<PermissionNames, string>,
+                },
                 user: {
                     description: "`📢` ¡Oye! Te faltan algunos permisos para hacer esto.",
                     field: "`📋` Permisos Faltantes",
