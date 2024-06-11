@@ -49,7 +49,7 @@ export default {
             loop: {
                 toggled: ({ type }) => `\`✅\` El **modo de bucle** ahora es: \`${type}\``,
                 loopType: {
-                    none: "Desactivada",
+                    none: "Desactivado",
                     queue: "Cola",
                     track: "Canción",
                 },
