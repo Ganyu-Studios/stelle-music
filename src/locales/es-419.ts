@@ -1,6 +1,7 @@
-import { ApplicationCommandOptionType } from 'discord-api-types/v10';
-import { State } from 'kazagumo';
-import type defaultLang from './en-US.js';
+import { ApplicationCommandOptionType } from "discord-api-types/v10";
+import { State } from "kazagumo";
+
+import type { DefaultLocale } from "seyfert";
 
 export default {
     metadata: {
@@ -14,7 +15,7 @@ export default {
             skip: ({ amount }) => `\`✅\` Saltando la cantidad de: \`${amount} canciones\`.`,
             move: ({ textId, voiceId }) => `\`✅\` Me movi al canal de voz <#${voiceId}> y canal de texto: ${textId}`,
             previous: ({ title, uri }) => `\`✅\` La canción anterior [**${title}**](${uri}) ha sido añadida a la cola.`,
-            stop: "`👋` Parando y abandonando el canal...",
+            stop: "`👋` Deteniendo y abandonando el canal...",
             setlocale: {
                 invalidLocale: ({ locale, available }) =>
                     `\`❌\` El idioma : \`${locale}\` es inválido.\n\`📢\` **Idiomas disponibles**: \`${available}\``,
@@ -27,7 +28,7 @@ export default {
             },
             play: {
                 undetermined: "Indeterminado",
-                live: "🔴 En Directo",
+                live: "🔴 EN DIRECTO",
                 noResults: "`❌` **Sin resultados** para esta búsqueda...\n`🪶` Intenta buscando otra cosa.",
                 autocomplete: {
                     noNodes: "Stelle - No estoy conectada a ninguno de mis nodos.",
@@ -108,7 +109,8 @@ export default {
             noTracks: "`❌` No hay más canciones en la cola.",
             playerEnd: "`🔰` La cola ha terminado... Esperando más canciones.",
             moreTracks: "`❌` Para habilitar **esto** `dos o más canciones` son requeridas.",
-            commandError: "`❌` Algo inesperado ocurrió durante la ejecución del comando.\n`📢` Si el problema persiste, reporta el problema.",
+            commandError:
+                "`❌` Algo inesperado ocurrió durante la ejecución del comando.\n`📢` Si el problema persiste, reporta el problema.",
             optionTypes: {
                 [ApplicationCommandOptionType.Subcommand]: "subcomando",
                 [ApplicationCommandOptionType.SubcommandGroup]: "grupo de subcomando",
@@ -127,7 +129,7 @@ export default {
                     `\`📻\` Reproduciendo ahora [\`${title}\`](${url})\n\n\`🎤\` **Autor**: \`${author}\`\n\`🕛\` **Duración**: \`${duration}\`\n\`🔊\` **Volumen**: \`${volume}%\`\n\`👤\` **Solicitado por**: <@${requester}>\n\n\`📋\` **En cola**: \`${size} canciones\``,
                 components: {
                     loop: ({ type }) => `Bucle: ${type}`,
-                    autoplay: ({ type }) => `Reproducción automática: ${type}`,
+                    autoplay: ({ type }) => `Aleatorio: ${type}`,
                     stop: "Parar",
                     skip: "Saltar",
                     previous: "Previo",
@@ -135,8 +137,8 @@ export default {
                     paused: {
                         resume: "Resumir",
                         pause: "Pausar",
-                    }
-                }
+                    },
+                },
             },
             permissions: {
                 list: {
@@ -219,7 +221,7 @@ export default {
             description: "Obten el estado de todos los nodos de Stelle.",
         },
         setlocale: {
-            name: "establecer-idioma",
+            name: "idioma",
             description: "Establece el idioma de Stelle.",
             option: {
                 name: "idioma",
@@ -227,7 +229,7 @@ export default {
             },
         },
         autoplay: {
-            name: "auto-reproducción",
+            name: "aleatoria",
             description: "Alterna la reproducción automática.",
         },
         volume: {
@@ -261,8 +263,8 @@ export default {
             },
         },
         stop: {
-            name: "parar",
-            description: "Para el reproductor.",
+            name: "detener",
+            description: "Detiene el reproductor.",
         },
         skip: {
             name: "saltar",
@@ -287,7 +289,7 @@ export default {
             },
         },
         setprefix: {
-            name: "establecer-prefijo",
+            name: "prefijo",
             description: "Establece el prefijo de Stelle.",
             option: {
                 name: "prefijo",
@@ -295,4 +297,4 @@ export default {
             },
         },
     },
-} satisfies typeof defaultLang
+} satisfies DefaultLocale;

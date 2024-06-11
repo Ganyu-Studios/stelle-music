@@ -64,8 +64,9 @@ export class Stelle extends Client<true> {
                     },
                 }),
                 deferReplyResponse: ({ client }) => ({
-                    content: `<a:typing:1214253750093488149> **${client.me.username}** ${THINK_MESSAGES[Math.floor(Math.random() * THINK_MESSAGES.length)]
-                        }`,
+                    content: `<a:typing:1214253750093488149> **${client.me.username}** ${
+                        THINK_MESSAGES[Math.floor(Math.random() * THINK_MESSAGES.length)]
+                    }`,
                 }),
             },
             presence: () => ({
@@ -95,8 +96,8 @@ export class Stelle extends Client<true> {
             langs: {
                 default: this.config.defaultLocale,
                 aliases: {
-                    'es-419': ['es-ES']
-                }
+                    "es-419": ["es-ES"],
+                },
             },
         });
 
