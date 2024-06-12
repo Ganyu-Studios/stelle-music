@@ -84,7 +84,5 @@ export default new Lavalink({
 
         const message = await client.messages.write(player.textId, { embeds: [embed], components: [row, newRow] }).catch(() => null);
         if (message) player.data.set("messageId", message.id);
-
-        await voice.setVoiceState(`🎵 ${track.title}`);
     },
 });
