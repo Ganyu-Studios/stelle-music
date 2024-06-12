@@ -61,7 +61,7 @@ export default class SetlangCommand extends Command {
             flags: MessageFlags.Ephemeral,
             embeds: [
                 {
-                    description: messages.commands.setlocale.newLocale({ locale }),
+                    description: ctx.t.get(locale).messages.commands.setlocale.newLocale({ locale }),
                     color: client.config.color.success,
                 },
             ],
