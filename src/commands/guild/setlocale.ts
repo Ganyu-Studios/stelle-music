@@ -27,6 +27,7 @@ const options = {
 @Declare({
     name: "setlocale",
     description: "Set the locale of Stelle.",
+    aliases: ["locale", "lang", "language"],
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
     defaultMemberPermissions: ["ManageGuild"],

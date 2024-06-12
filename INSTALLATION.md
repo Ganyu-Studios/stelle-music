@@ -19,6 +19,9 @@ pnpm i
 ###  📋 Traspile and Run
 * Stelle is made in `Typescript` but runs in `Javascript`.
 ```bash
+#This is necessary for typescript.
+pnpm prisma generate #Generate types for prisma.
+
 #You can use the test command
 pnpm test #It will do everything for you!
 
