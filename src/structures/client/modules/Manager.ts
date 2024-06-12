@@ -63,6 +63,6 @@ export class StelleManager extends Kazagumo {
     public async load(): Promise<void> {
         //... no.
         await this.handler.load();
-        this.handler.client.logger.info("MusicManager loaded");
+        this.handler.client.logger.info("MusicHandler loaded");
     }
 }
