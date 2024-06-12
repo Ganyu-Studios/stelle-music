@@ -132,7 +132,7 @@ export default {
                     autoplay: ({ type }) => `Aleatorio: ${type}`,
                     stop: "Parar",
                     skip: "Saltar",
-                    previous: "Previo",
+                    previous: "Anterior",
                     queue: "Cola",
                     paused: {
                         resume: "Resumir",
