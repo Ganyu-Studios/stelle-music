@@ -16,6 +16,12 @@ cd stelle-music
 pnpm i
 ```
 
+###  📋 Configuration
+* Stelle has a configuration to save a specific data.
+
+> 1. Go to [the configuration](/src/structures/utils/data/Configuration.ts#L13-L16)
+> 2. Replace the IDs with your IDs.
+
 ###  📋 Traspile and Run
 * Stelle is made in `Typescript` but runs in `Javascript`.
 ```bash

@@ -22,11 +22,11 @@
 
 You can use my example:
 
-- [`application.yml`](https://github.com/Ganyu-Studios/stelle-music/blob/main/assets/application.yml)
-- [`start scripts`](https://github.com/Ganyu-Studios/stelle-music/tree/main/assets)
+- [`application.yml`](/assets/application.yml)
+- [`start scripts`](/assets)
 
 *Just do `./start.bat` if you are on Windows*
 *Or `sh start.sh` if you are on a ubuntu server*
 
 ### 📋 Using the node
-* Just, go to the [configuration](https://github.com/Ganyu-Studios/stelle-music/blob/main/src/structures/utils/data/Configuration.ts#L17) of Stelle and add the node to the list.
+* Just, go to the [configuration](/src/structures/utils/data/Configuration.ts#L17) of Stelle and add the node to the list.

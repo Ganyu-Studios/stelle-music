@@ -53,6 +53,10 @@ Stelle has several features, more can be added.
 
 * Want to see more? Add the bot and see!
 
+## 🔎 FAQ
+
+There are some [FAQs](/FAQ.md) (Frequently Asked Question).
+
 ## 📝 License
 
 Copyright © 2024 [Ganyu Studios](https://github.com/Ganyu-Studios).

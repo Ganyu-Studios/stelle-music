@@ -23,4 +23,4 @@ By using github for bugs and implementations. It is recommended to make a clear 
 
 ## 🐐 License
 
-Everything must be in order with the [LICENSE](https://github.com/Ganyu-Studios/stelle-music/blob/main/LICENSE) of the repository.
+Everything must be in order with the [LICENSE](/LICENSE) of the repository.
