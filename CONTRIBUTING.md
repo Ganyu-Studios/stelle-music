@@ -17,7 +17,7 @@
 4. Try to be clear and concise as possible.
 5. Open a PR (If it is possible)
 
-## 🐛Issues
+## 🐛 Issues
 
 By using github for bugs and implementations. It is recommended to make a clear description with the necessary steps to reproduce the issue.
 
