@@ -191,6 +191,7 @@ export default {
                     CreateEvents: "Crear Eventos",
                     CreateGuildExpressions: "Crear Expresiones del Servidor",
                     SendPolls: "Enviar Encuestas",
+                    UseExternalApps: "Usar Aplicaciones Externas",
                 },
                 user: {
                     description: "`📢` ¡Oye! Te faltan algunos permisos para hacer esto.",

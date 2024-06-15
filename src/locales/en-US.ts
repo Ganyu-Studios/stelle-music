@@ -190,6 +190,7 @@ export default {
                     CreateEvents: "Create Events",
                     CreateGuildExpressions: "Create Guild Expressions",
                     SendPolls: "Send Polls",
+                    UseExternalApps: "Use External Apps",
                 } satisfies Record<PermissionNames, string>,
                 user: {
                     description: "`📢` Hey! You are missing some permissions to use this.",
