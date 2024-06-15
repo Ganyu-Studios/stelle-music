@@ -22,6 +22,15 @@ pnpm i
 > 1. Go to [the configuration](/src/structures/utils/data/Configuration.ts#L13-L16)
 > 2. Replace the IDs with your IDs.
 
+> Example:
+```js
+guildIds: [
+    "123", // Example Guild
+    "456", // Example Guild 2
+    ...
+];
+```
+
 ###  📋 Traspile and Run
 * Stelle is made in `Typescript` but runs in `Javascript`.
 ```bash
