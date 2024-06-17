@@ -300,6 +300,24 @@ export default {
                 description: "Enter the new prefix.",
             },
         },
+        default: {
+            name: "default",
+            description: "Change Stelle default settings.",
+            subcommands: {
+                engine: {
+                    name: "engine",
+                    description: "Change the player default search engine.",
+                    option: {
+                        name: "engine",
+                        description: "Select the engine.",
+                    },
+                },
+                volume: {
+                    name: "volume",
+                    description: "Change the player default volume.",
+                },
+            },
+        },
     },
 };
 

@@ -1,4 +1,4 @@
-import { AutoLoad, Command, Declare } from "seyfert";
+import { AutoLoad, Command, Declare, LocalesT } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
 @Declare({
@@ -10,4 +10,5 @@ import { StelleOptions } from "#stelle/decorators";
 })
 @AutoLoad()
 @StelleOptions({ cooldown: 10 })
+@LocalesT("locales.default.name", "locales.default.description")
 export default class DefaultCommand extends Command {}

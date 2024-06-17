@@ -17,7 +17,7 @@ export default {
             previous: ({ title, uri }) => `\`✅\` La canción anterior [**${title}**](${uri}) ha sido añadida a la cola.`,
             stop: "`👋` Deteniendo y abandonando el canal...",
             default: {
-                engine: ({ engine }) => `\`✅\` El modo de búsqueda por defecto de Stelle ahora es: **${engine}**.`,
+                engine: ({ engine }) => `\`✅\` El tipo de búsqueda por defecto de Stelle ahora es: **${engine}**.`,
                 volume: ({ volume }) => `\`✅\` El volumen por defecto de Stelle ahora es: **${volume}%**.`,
             },
             setlocale: {
@@ -299,6 +299,24 @@ export default {
             option: {
                 name: "prefijo",
                 description: "Introduce el prefijo nuevo.",
+            },
+        },
+        default: {
+            name: "defecto",
+            description: "Cambia los ajustes por defecto de Stelle.",
+            subcommands: {
+                engine: {
+                    name: "busqueda",
+                    description: "Cambia el modo de búsqueda.",
+                    option: {
+                        name: "tipo",
+                        description: "Selecciona el tipo.",
+                    },
+                },
+                volume: {
+                    name: "volumen",
+                    description: "Cambia el volumen por defecto.",
+                },
             },
         },
     },

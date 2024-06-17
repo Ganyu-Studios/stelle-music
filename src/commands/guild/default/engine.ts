@@ -1,4 +1,4 @@
-import { type CommandContext, Declare, Options, SubCommand, createStringOption } from "seyfert";
+import { type CommandContext, Declare, LocalesT, Options, SubCommand, createStringOption } from "seyfert";
 
 const engines: Record<string, string> = {
     spotify: "Spotify",
@@ -8,8 +8,12 @@ const engines: Record<string, string> = {
 
 const options = {
     engine: createStringOption({
-        description: "Enter the volume.",
+        description: "Select the engine.",
         required: true,
+        locales: {
+            name: "locales.default.subcommands.engine.option.name",
+            description: "locales.default.subcommands.engine.option.description",
+        },
         choices: [
             {
                 name: "Spotify",
@@ -32,6 +36,7 @@ const options = {
     description: "Change the player default search engine.",
 })
 @Options(options)
+@LocalesT("locales.default.subcommands.engine.name", "locales.default.subcommands.engine.description")
 export default class EngineSubcommand extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;
