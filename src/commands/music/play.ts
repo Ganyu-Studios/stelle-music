@@ -31,6 +31,7 @@ const options = {
             if (!guildId) return;
 
             const locale = await client.database.getLocale(guildId);
+            const { searchEngine } = await client.database.getPlayer(guildId);
 
             const { messages } = client.t(locale).get();
 
@@ -46,14 +47,14 @@ const options = {
                     { name: messages.commands.play.autocomplete.noQuery, value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT" },
                 ]);
 
-            const res = await client.manager.search(query, { requester: null, engine: "spotify" });
+            const res = await client.manager.search(query, { requester: null, engine: searchEngine });
             const tracks = res.tracks.slice(0, 25).map((track) => {
                 const duration = track.isStream
                     ? messages.commands.play.live
                     : parseTime(track.length) ?? messages.commands.play.undetermined;
 
                 return {
-                    name: `${sliceText(track.title)} (${duration}) - ${sliceText(track.author ?? "---", 30)}`,
+                    name: `${sliceText(track.title, 20)} (${duration}) - ${sliceText(track.author ?? "---", 30)}`,
                     value: track.uri!,
                 };
             });
@@ -89,6 +90,7 @@ export default class PlayCommand extends Command {
         if (botVoice && botVoice.channelId !== voice.channelId) return;
 
         const { messages } = ctx.t.get(await ctx.getLocale());
+        const { defaultVolume, searchEngine } = await client.database.getPlayer(guildId);
 
         await ctx.deferReply();
 
@@ -96,10 +98,10 @@ export default class PlayCommand extends Command {
             guildId: guildId,
             textId: channelId,
             voiceId: voice.channelId,
-            volume: 100,
+            volume: defaultVolume,
         });
 
-        const result = await player.search(query, { requester: author, engine: "spotify" });
+        const result = await player.search(query, { requester: author, engine: searchEngine });
         if (!result.tracks.length)
             return ctx.editOrReply({
                 flags: MessageFlags.Ephemeral,

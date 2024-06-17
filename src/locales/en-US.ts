@@ -16,6 +16,10 @@ export default {
             move: ({ textId, voiceId }: IMove) => `\`✅\` Moved to the voice channel <#${voiceId}> and the text channel: ${textId}`,
             previous: ({ title, uri }: IPrevious) => `\`✅\` The previous track [**${title}**](${uri}) has been added to the queue.`,
             stop: "`👋` Stopping and leaving...",
+            default: {
+                engine: ({ engine }: IEngine) => `\`✅\` The default search engine for Stelle is now: **${engine}**.`,
+                volume: ({ volume }: IVolume) => `\`✅\` The default volume for Stelle is now: **${volume}%**.`,
+            },
             setlocale: {
                 invalidLocale: ({ locale, available }: ILocale & { available: string }) =>
                     `\`❌\` The locale : \`${locale}\` is invalid.\n\`📢\` **Available locales**: \`${available}\``,
@@ -299,6 +303,7 @@ export default {
     },
 };
 
+type IEngine = { engine: string };
 type IPrefix = { prefix: string };
 type ISeek = { time: string | number; type: string };
 type IAmount = { amount: number };

@@ -16,6 +16,10 @@ export default {
             move: ({ textId, voiceId }) => `\`✅\` Me movi al canal de voz <#${voiceId}> y canal de texto: ${textId}`,
             previous: ({ title, uri }) => `\`✅\` La canción anterior [**${title}**](${uri}) ha sido añadida a la cola.`,
             stop: "`👋` Deteniendo y abandonando el canal...",
+            default: {
+                engine: ({ engine }) => `\`✅\` El modo de búsqueda por defecto de Stelle ahora es: **${engine}**.`,
+                volume: ({ volume }) => `\`✅\` El volumen por defecto de Stelle ahora es: **${volume}%**.`,
+            },
             setlocale: {
                 invalidLocale: ({ locale, available }) =>
                     `\`❌\` El idioma : \`${locale}\` es inválido.\n\`📢\` **Idiomas disponibles**: \`${available}\``,

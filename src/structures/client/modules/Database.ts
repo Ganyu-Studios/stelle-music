@@ -1,8 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import type { UsingClient } from "seyfert";
 
+import { Configuration } from "#stelle/data/Configuration.js";
+
 //🗿
 const prismaClient = new PrismaClient();
+
+//TODO: Add a database cache to make less requests to the database.
 
 /**
  * Main Stelle database class.
@@ -72,6 +76,20 @@ export class StelleDatabase {
 
     /**
      *
+     * Get the guild player from the database.
+     * @param guildId
+     * @returns
+     */
+    public async getPlayer(guildId: string): Promise<Pick<NonNullable<PlayerData>, "defaultVolume" | "searchEngine">> {
+        const data = await this.prisma.guildPlayer.findUnique({ where: { id: guildId } });
+        return {
+            defaultVolume: data?.defaultVolume ?? Configuration.defaultVolume,
+            searchEngine: data?.searchEngine ?? Configuration.defaultSearchEngine,
+        };
+    }
+
+    /**
+     *
      * Set the guild locale to the database.
      * @param guildId
      * @param locale
@@ -103,4 +121,29 @@ export class StelleDatabase {
             },
         });
     }
+
+    /**
+     *
+     * Set the guild player to the database.
+     * @param param0
+     * @returns
+     */
+    public async setPlayer({ guildId, defaultVolume, searchEngine }: PlayerData): Promise<void> {
+        const data = await this.getPlayer(guildId);
+
+        defaultVolume ??= data.defaultVolume;
+        searchEngine ??= data.searchEngine;
+
+        await this.prisma.guildPlayer.upsert({
+            where: { id: guildId },
+            update: { defaultVolume, searchEngine },
+            create: { id: guildId, defaultVolume, searchEngine },
+        });
+    }
+}
+
+interface PlayerData {
+    guildId: string;
+    searchEngine?: string;
+    defaultVolume?: number;
 }

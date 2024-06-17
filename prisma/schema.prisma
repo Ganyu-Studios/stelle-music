@@ -22,3 +22,9 @@ model guildPrefix {
   id     String @id @map("_id")
   prefix String
 }
+
+model guildPlayer {
+  id            String  @id @map("_id")
+  searchEngine  String?
+  defaultVolume Int?
+}

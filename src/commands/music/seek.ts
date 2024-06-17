@@ -20,7 +20,7 @@ const options = {
             const milis = time.map((x) => ms(x));
             const result = milis.reduce((a, b) => a + b, 0);
 
-            if (isNaN(result)) return ok(value);
+            if (Number.isNaN(result)) return ok(value);
 
             return ok(result);
         },
@@ -52,7 +52,7 @@ export default class SeekCommand extends Command {
         const position = player.position;
         const track = player.queue.current;
 
-        if (typeof time === "string" || isNaN(time) || !isFinite(time))
+        if (typeof time === "string" || Number.isNaN(time) || !Number.isFinite(time))
             return ctx.editOrReply({
                 embeds: [
                     {

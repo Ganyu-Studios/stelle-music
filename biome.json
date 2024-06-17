@@ -10,8 +10,6 @@
 			"suspicious": {
 				"noExplicitAny": "off",
 				"noConfusingVoidType": "off",
-				"noGlobalIsFinite": "off",
-				"noGlobalIsNan": "off",
 				"noEmptyBlockStatements": "off"
 			},
 			"style": {

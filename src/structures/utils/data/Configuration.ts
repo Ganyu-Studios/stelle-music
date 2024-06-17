@@ -4,6 +4,8 @@ import ms from "ms";
 
 export const Configuration: StelleConfiguration = {
     defaultPrefix: "stelle",
+    defaultVolume: 60,
+    defaultSearchEngine: "spotify",
     prefixes: ["st!"],
     defaultLocale: "en-US",
     disconnectTime: ms("30s"),
