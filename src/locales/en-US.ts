@@ -17,8 +17,8 @@ export default {
             previous: ({ title, uri }: IPrevious) => `\`✅\` The previous track [**${title}**](${uri}) has been added to the queue.`,
             stop: "`👋` Stopping and leaving...",
             default: {
-                engine: ({ engine }: IEngine) => `\`✅\` The default search engine for Stelle is now: **${engine}**.`,
-                volume: ({ volume }: IVolume) => `\`✅\` The default volume for Stelle is now: **${volume}%**.`,
+                engine: ({ engine }: IEngine) => `\`✅\` The default search engine of Stelle is now: **${engine}**.`,
+                volume: ({ volume }: IVolume) => `\`✅\` The default volume of Stelle is now: **${volume}%**.`,
             },
             setlocale: {
                 invalidLocale: ({ locale, available }: ILocale & { available: string }) =>
