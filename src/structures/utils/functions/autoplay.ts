@@ -1,4 +1,5 @@
 import type { KazagumoPlayer, KazagumoTrack } from "kazagumo";
+import type { CommandContext } from "seyfert";
 
 /**
  * Based on:
@@ -21,20 +22,26 @@ export async function autoplay(player: KazagumoPlayer, lastTrack?: KazagumoTrack
 
     const maxTracks = 10;
 
+    const ctx = player.data.get("commandContext") as CommandContext | undefined;
+    if (!ctx) return;
+
     if (lastTrack.sourceName === "spotify") {
         const filtered = player.queue.previous.filter((track) => track.sourceName === "spotify").slice(0, 5);
         const ids = filtered.map(
             (track) => track.identifier || track.uri?.split("/")?.reverse()?.[0] || track.uri?.split("/")?.reverse()?.[1],
         );
         if (ids.length >= 1) {
-            const res = await player.search(`seed_tracks=${ids.join(",")}`, { requester: lastTrack.requester, source: "sprec:" });
+            const res = await player.search(`seed_tracks=${ids.join(",")}`, {
+                requester: { ...ctx.client.me, tag: ctx.client.me.username },
+                source: "sprec:",
+            });
             const tracks = res.tracks.filter((v) => !player.queue.previous.find((t) => t.identifier === v.identifier));
 
             if (res.tracks.length) player.queue.add(tracks.slice(0, maxTracks));
         }
     } else if (["youtube", "youtubemusic"].includes(lastTrack.sourceName)) {
         const search = `https://www.youtube.com/watch?v=${lastTrack.identifier}&list=RD${lastTrack.identifier}`;
-        const res = await player.search(search, { requester: lastTrack.requester });
+        const res = await player.search(search, { requester: { ...ctx.client.me, tag: ctx.client.me.username } });
         const tracks = res.tracks.filter((v) => !player.queue.previous.find((t) => t.identifier === v.identifier));
 
         if (res.tracks.length) player.queue.add(tracks.slice(0, maxTracks));

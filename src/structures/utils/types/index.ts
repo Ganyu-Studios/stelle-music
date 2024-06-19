@@ -10,7 +10,7 @@ import type {
 import type { InternalRuntimeConfig, InternalRuntimeConfigHTTP } from "seyfert/lib/client/base.js";
 
 export { StelleConfiguration } from "./client/StelleConfiguration.js";
-export { KazagumoEvents, ShoukakuEvents, AllEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "./client/StelleLavalink.js";
+export { KazagumoEvents, AllEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "./client/StelleLavalink.js";
 
 export type StelleRuntime = { locations: { lavalink: string } };
 //literally just copied this because the types cry

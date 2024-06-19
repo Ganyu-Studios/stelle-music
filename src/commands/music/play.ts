@@ -122,7 +122,8 @@ export default class PlayCommand extends Command {
                 {
                     const track = result.tracks[0];
 
-                    player.queue.add(track);
+                    if (player.data.get("enabledAutoplay")) player.queue.unshift(track);
+                    else player.queue.add(track);
 
                     const type = player.queue.totalSize > 1 ? "results" : "result";
                     const status = track.isStream
@@ -157,7 +158,8 @@ export default class PlayCommand extends Command {
                 {
                     const track = result.tracks[0];
 
-                    player.queue.add(result.tracks);
+                    if (player.data.get("enabledAutoplay")) player.queue.unshift(...result.tracks);
+                    else player.queue.add(result.tracks);
 
                     const embed = new Embed()
                         .setColor(client.config.color.success)

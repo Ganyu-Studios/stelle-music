@@ -9,14 +9,14 @@ importers:
   .:
     dependencies:
       '@prisma/client':
-        specifier: ^5.15.0
-        version: 5.15.0(prisma@5.15.0)
+        specifier: ^5.15.1
+        version: 5.15.1(prisma@5.15.1)
       chalk:
         specifier: ^5.3.0
         version: 5.3.0
       discord-api-types:
-        specifier: ^0.37.89
-        version: 0.37.89
+        specifier: ^0.37.90
+        version: 0.37.90
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -37,7 +37,7 @@ importers:
         version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/017ccfc3bf8a12c7fb3503fb7d1ee65bce1444dc
       shoukaku:
         specifier: github:shipgirlproject/Shoukaku
-        version: https://codeload.github.com/shipgirlproject/Shoukaku/tar.gz/e5ea077cb389015ea8d03085224d4bc03ba94a92
+        version: https://codeload.github.com/shipgirlproject/Shoukaku/tar.gz/8d77908cfc903456613942f607cff207dda57b6f
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.8.1
@@ -49,8 +49,8 @@ importers:
         specifier: ^0.7.34
         version: 0.7.34
       '@types/node':
-        specifier: ^20.14.2
-        version: 20.14.2
+        specifier: ^20.14.5
+        version: 20.14.5
       husky:
         specifier: ^9.0.11
         version: 9.0.11
@@ -58,8 +58,8 @@ importers:
         specifier: ^15.2.7
         version: 15.2.7
       prisma:
-        specifier: ^5.15.0
-        version: 5.15.0
+        specifier: ^5.15.1
+        version: 5.15.1
       tsc-watch:
         specifier: ^6.2.0
         version: 6.2.0(typescript@5.4.5)
@@ -129,8 +129,8 @@ packages:
   '@ioredis/commands@1.2.0':
     resolution: {integrity: sha512-Sx1pU8EM64o2BrqNpEO1CNLtKQwyhuXuqyfH7oGKCk+1a33d2r5saW8zNwm3j6BTExtjrv2BxTgzzkMwts6vGg==}
 
-  '@prisma/client@5.15.0':
-    resolution: {integrity: sha512-wPTeTjbd2Q0abOeffN7zCDCbkp9C9cF+e9HPiI64lmpehyq2TepgXE+sY7FXr7Rhbb21prLMnhXX27/E11V09w==}
+  '@prisma/client@5.15.1':
+    resolution: {integrity: sha512-fmZRGmsUJ9+VwC/AvfP/PwdpD0xAEyPvNsD9/B3+GYpETq9VejVRT3PiqNvl76q1uYYzNZeo8u/LmzzTetHSEg==}
     engines: {node: '>=16.13'}
     peerDependencies:
       prisma: '*'
@@ -138,20 +138,20 @@ packages:
       prisma:
         optional: true
 
-  '@prisma/debug@5.15.0':
-    resolution: {integrity: sha512-QpEAOjieLPc/4sMny/WrWqtpIAmBYsgqwWlWwIctqZO0AbhQ9QcT6x2Ut3ojbDo/pFRCCA1Z1+xm2MUy7fAkZA==}
+  '@prisma/debug@5.15.1':
+    resolution: {integrity: sha512-NQjdEplhXEcPvf84ghxExC+LD+iTimbg3sZvA3BhybVQIocBEBxFf9GTHhmRVPmjrWoBaYJBVgEEBXZT27JTbQ==}
 
-  '@prisma/engines-version@5.15.0-29.12e25d8d06f6ea5a0252864dd9a03b1bb51f3022':
-    resolution: {integrity: sha512-3BEgZ41Qb4oWHz9kZNofToRvNeS4LZYaT9pienR1gWkjhky6t6K1NyeWNBkqSj2llgraUNbgMOCQPY4f7Qp5wA==}
+  '@prisma/engines-version@5.15.1-1.5675a3182f972f1a8f31d16eee6abf4fd54910e3':
+    resolution: {integrity: sha512-7csphKGCG6n/cN1MkT1mJvQ78Ir18IknlYZ8eyEoLKdQBb0HscR/6TyPmzqrMA7Rz01K1KeXqctwAqxtA/lKQg==}
 
-  '@prisma/engines@5.15.0':
-    resolution: {integrity: sha512-hXL5Sn9hh/ZpRKWiyPA5GbvF3laqBHKt6Vo70hYqqOhh5e0ZXDzHcdmxNvOefEFeqxra2DMz2hNbFoPvqrVe1w==}
+  '@prisma/engines@5.15.1':
+    resolution: {integrity: sha512-1iTRxJEFvpBpEWf2bYiMG6LBBQhX7X+GA5piH+tmPWgc/v+/ElxQf2kjQxby8AErmZqtZkdoKJ7FSRjNjBPE9Q==}
 
-  '@prisma/fetch-engine@5.15.0':
-    resolution: {integrity: sha512-z6AY5yyXxc20Klj7wwnfGP0iIUkVKzybqapT02zLYR/nf9ynaeN8bq73WRmi1TkLYn+DJ5Qy+JGu7hBf1pE78A==}
+  '@prisma/fetch-engine@5.15.1':
+    resolution: {integrity: sha512-mj0wfsJ+mAdDp1ynT2JKxAXa+CoYMT267qF7g2Uv+oaVTI2CMfGWouMARht8T2QLTgl+gpXSFTwIYbcR+oWEtw==}
 
-  '@prisma/get-platform@5.15.0':
-    resolution: {integrity: sha512-1GULDkW4+/VQb73vihxCBSc4Chc2x88MA+O40tcZFjmBzG4/fF44PaXFxUqKSFltxU9L9GIMLhh0Gfkk/pUbtg==}
+  '@prisma/get-platform@5.15.1':
+    resolution: {integrity: sha512-oFccp7bYys+ZYkmtYzjR+0cRrGKvSuF+h5QhSkyEsYQ9kzJzQRvuWt2SiHRPt8xOQ4MTmujM+bP5uOexnnAHdQ==}
 
   '@types/humanize-duration@3.27.4':
     resolution: {integrity: sha512-yaf7kan2Sq0goxpbcwTQ+8E9RP6HutFBPv74T/IA/ojcHKhuKVlk2YFYyHhWZeLvZPzzLE3aatuQB4h0iqyyUA==}
@@ -159,8 +159,8 @@ packages:
   '@types/ms@0.7.34':
     resolution: {integrity: sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==}
 
-  '@types/node@20.14.2':
-    resolution: {integrity: sha512-xyu6WAMVwv6AKFLB+e/7ySZVr/0zLCzOa7rSpq6jNwpqOrUbcACDWC+53d4n2QHOnDou0fbIsg8wZu/sxrnI4Q==}
+  '@types/node@20.14.5':
+    resolution: {integrity: sha512-aoRR+fJkZT2l0aGOJhuA8frnCSoNX6W7U2mpNq63+BxBIj5BQFt8rHy627kijCmm63ijdSdwvGgpUsU6MBsZZA==}
 
   ansi-escapes@6.2.1:
     resolution: {integrity: sha512-4nJ3yixlEthEJ9Rk4vPcdBRkZvQZlYyu8j4/Mqz5sgIkddmEnH2Yj2ZrnP9S3tQOvSNRUIgVNF/1yPpRAGNRig==}
@@ -230,8 +230,8 @@ packages:
     resolution: {integrity: sha512-HVQE3AAb/pxF8fQAoiqpvg9i3evqug3hoiwakOyZAwJm+6vZehbkYXZ0l4JxS+I3QxM97v5aaRNhj8v5oBhekw==}
     engines: {node: '>=0.10'}
 
-  discord-api-types@0.37.89:
-    resolution: {integrity: sha512-+hiYDULKma/0B7Zd9/IYK0XnYlYhWSsPYKNahUk33QEy6yuHdGwlglIfbiTBn683cmJ44IFnFYZa8UX1Ka+kDg==}
+  discord-api-types@0.37.90:
+    resolution: {integrity: sha512-lpOJSGrqHuXoM4FV/2HtjoaJpCClGFHpRNIdZEW8zPINlsCHNSfIwA2EQ8dxeE6k1QhhTuM9ZlOGVYXoU7FLgA==}
 
   dotenv@16.4.5:
     resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
@@ -420,8 +420,8 @@ packages:
     engines: {node: '>=0.10'}
     hasBin: true
 
-  prisma@5.15.0:
-    resolution: {integrity: sha512-JA81ACQSCi3a7NUOgonOIkdx8PAVkO+HbUOxmd00Yb8DgIIEpr2V9+Qe/j6MLxIgWtE/OtVQ54rVjfYRbZsCfw==}
+  prisma@5.15.1:
+    resolution: {integrity: sha512-pYsUVpTlYvZ6mWvZKDv9rKdUa7tlfSUJY1CVtgb8Had1pHbIm9fr1MBASccr5XnSuCUrjnvKhWNwgSYy6aCajA==}
     engines: {node: '>=16.13'}
     hasBin: true
 
@@ -465,8 +465,8 @@ packages:
     resolution: {integrity: sha512-+Y94AnUFabCkE8O2Y3MSfnVmiiQ1MMVK/DO962Q23KPTWJkuqs+S/CPRQSOPWqo+ISq7teVxGJsSapwnJOrFgQ==}
     engines: {node: '>=18.0.0', npm: '>=7.0.0'}
 
-  shoukaku@https://codeload.github.com/shipgirlproject/Shoukaku/tar.gz/e5ea077cb389015ea8d03085224d4bc03ba94a92:
-    resolution: {tarball: https://codeload.github.com/shipgirlproject/Shoukaku/tar.gz/e5ea077cb389015ea8d03085224d4bc03ba94a92}
+  shoukaku@https://codeload.github.com/shipgirlproject/Shoukaku/tar.gz/8d77908cfc903456613942f607cff207dda57b6f:
+    resolution: {tarball: https://codeload.github.com/shipgirlproject/Shoukaku/tar.gz/8d77908cfc903456613942f607cff207dda57b6f}
     version: 4.0.1
     engines: {node: '>=18.0.0', npm: '>=7.0.0'}
 
@@ -614,36 +614,36 @@ snapshots:
   '@ioredis/commands@1.2.0':
     optional: true
 
-  '@prisma/client@5.15.0(prisma@5.15.0)':
+  '@prisma/client@5.15.1(prisma@5.15.1)':
     optionalDependencies:
-      prisma: 5.15.0
+      prisma: 5.15.1
 
-  '@prisma/debug@5.15.0': {}
+  '@prisma/debug@5.15.1': {}
 
-  '@prisma/engines-version@5.15.0-29.12e25d8d06f6ea5a0252864dd9a03b1bb51f3022': {}
+  '@prisma/engines-version@5.15.1-1.5675a3182f972f1a8f31d16eee6abf4fd54910e3': {}
 
-  '@prisma/engines@5.15.0':
+  '@prisma/engines@5.15.1':
     dependencies:
-      '@prisma/debug': 5.15.0
-      '@prisma/engines-version': 5.15.0-29.12e25d8d06f6ea5a0252864dd9a03b1bb51f3022
-      '@prisma/fetch-engine': 5.15.0
-      '@prisma/get-platform': 5.15.0
+      '@prisma/debug': 5.15.1
+      '@prisma/engines-version': 5.15.1-1.5675a3182f972f1a8f31d16eee6abf4fd54910e3
+      '@prisma/fetch-engine': 5.15.1
+      '@prisma/get-platform': 5.15.1
 
-  '@prisma/fetch-engine@5.15.0':
+  '@prisma/fetch-engine@5.15.1':
     dependencies:
-      '@prisma/debug': 5.15.0
-      '@prisma/engines-version': 5.15.0-29.12e25d8d06f6ea5a0252864dd9a03b1bb51f3022
-      '@prisma/get-platform': 5.15.0
+      '@prisma/debug': 5.15.1
+      '@prisma/engines-version': 5.15.1-1.5675a3182f972f1a8f31d16eee6abf4fd54910e3
+      '@prisma/get-platform': 5.15.1
 
-  '@prisma/get-platform@5.15.0':
+  '@prisma/get-platform@5.15.1':
     dependencies:
-      '@prisma/debug': 5.15.0
+      '@prisma/debug': 5.15.1
 
   '@types/humanize-duration@3.27.4': {}
 
   '@types/ms@0.7.34': {}
 
-  '@types/node@20.14.2':
+  '@types/node@20.14.5':
     dependencies:
       undici-types: 5.26.5
 
@@ -707,7 +707,7 @@ snapshots:
   denque@2.1.0:
     optional: true
 
-  discord-api-types@0.37.89: {}
+  discord-api-types@0.37.90: {}
 
   dotenv@16.4.5: {}
 
@@ -897,9 +897,9 @@ snapshots:
 
   pidtree@0.6.0: {}
 
-  prisma@5.15.0:
+  prisma@5.15.1:
     dependencies:
-      '@prisma/engines': 5.15.0
+      '@prisma/engines': 5.15.1
 
   ps-tree@1.2.0:
     dependencies:
@@ -927,7 +927,7 @@ snapshots:
   seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/017ccfc3bf8a12c7fb3503fb7d1ee65bce1444dc:
     dependencies:
       chokidar: 3.6.0
-      discord-api-types: 0.37.89
+      discord-api-types: 0.37.90
       magic-bytes.js: 1.10.0
       ts-mixer: 6.0.4
       ws: 8.17.1
@@ -953,7 +953,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  shoukaku@https://codeload.github.com/shipgirlproject/Shoukaku/tar.gz/e5ea077cb389015ea8d03085224d4bc03ba94a92:
+  shoukaku@https://codeload.github.com/shipgirlproject/Shoukaku/tar.gz/8d77908cfc903456613942f607cff207dda57b6f:
     dependencies:
       ws: 8.17.1
     transitivePeerDependencies:

@@ -120,7 +120,7 @@ export const SECRETS_MESSAGES: string[] = [
  * Stelle presence activities.
  */
 export const BOT_ACTIVITIES: GatewayActivityUpdateData[] = [
-    { name: "/help. 📜", type: ActivityType.Listening },
+    { name: "the Space. 🌠", type: ActivityType.Listening },
     { name: `v${BOT_VERSION}. 🐐`, type: ActivityType.Listening },
     { name: "with {users} users. 🎧", type: ActivityType.Listening },
     { name: "in {guilds} guilds. ❤️", type: ActivityType.Streaming },

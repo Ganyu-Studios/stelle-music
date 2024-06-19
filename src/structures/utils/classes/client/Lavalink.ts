@@ -1,4 +1,5 @@
-import type { AllEvents, KazagumoEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType, ShoukakuEvents } from "#stelle/types";
+import type { ShoukakuEvents } from "shoukaku";
+import type { AllEvents, KazagumoEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "#stelle/types";
 
 /**
  * Stelle Lavalink events main class.
