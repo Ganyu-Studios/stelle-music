@@ -15,6 +15,7 @@ import { StelleDatabase } from "./modules/Database.js";
 import { StelleManager } from "./modules/Manager.js";
 
 import { THINK_MESSAGES } from "#stelle/data/Constants.js";
+import { HandleCommand } from "seyfert/lib/commands/handle.js";
 
 /**
  * Main Stelle class.
@@ -57,12 +58,6 @@ export class Stelle extends Client<true> {
                     onPermissionsFail,
                     onRunError,
                 },
-                argsParser: YunaParser({
-                    useUniqueNamedSyntaxAtSameTime: true,
-                    enabled: {
-                        namedOptions: ["-", "--"],
-                    },
-                }),
                 deferReplyResponse: ({ client }) => ({
                     content: `<a:typing:1214253750093488149> **${client.me.username}** ${
                         THINK_MESSAGES[Math.floor(Math.random() * THINK_MESSAGES.length)]
@@ -92,13 +87,21 @@ export class Stelle extends Client<true> {
         getWatermark();
 
         this.setServices({
-            middlewares: StelleMiddlewares,
-            langs: {
-                default: this.config.defaultLocale,
-                aliases: {
-                    "es-419": ["es-ES"],
-                },
+          middlewares: StelleMiddlewares,
+          langs: {
+            default: this.config.defaultLocale,
+            aliases: {
+              "es-419": ["es-ES"],
             },
+          },
+          handleCommand: class extends HandleCommand {
+            argsParser = YunaParser({
+              useUniqueNamedSyntaxAtSameTime: true,
+              enabled: {
+                namedOptions: ["-", "--"],
+              },
+            });
+          },
         });
 
         await this.start();
