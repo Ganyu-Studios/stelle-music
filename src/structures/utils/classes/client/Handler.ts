@@ -23,11 +23,11 @@ export class StelleHandler extends BaseHandler {
      * Load the handler.
      */
     public async load() {
-        const files = await this.loadFilesK<Lavalink>(await this.getFiles(await this.client.getRC().then((x) => x.lavalink)));
+        const files = await this.loadFilesK<{ default: Lavalink }>(await this.getFiles(await this.client.getRC().then((x) => x.lavalink)));
 
         for await (const file of files) {
             const path = file.path.split(process.cwd()).slice(1).join(process.cwd());
-            const event: Lavalink = file.file;
+            const event: Lavalink = file.file.default;
 
             if (!(event && event instanceof Lavalink)) {
                 this.logger.warn(`${path} doesn't export by \`export default new Lavaink({ ... })\``);
@@ -36,6 +36,11 @@ export class StelleHandler extends BaseHandler {
 
             if (!event.name) {
                 this.logger.warn(`${path} doesn't have a \`name\``);
+                continue;
+            }
+
+            if (typeof event.run !== "function") {
+                this.logger.warn(`${path} doesn't have a \`run\` function`);
                 continue;
             }
 

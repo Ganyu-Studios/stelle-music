@@ -4,7 +4,6 @@ import { Client, LimitedCollection } from "seyfert";
 import type { InternalRuntime, InternalStelleRuntime, StelleConfiguration } from "#stelle/types";
 
 import { StelleMiddlewares } from "#stelle/middlwares";
-import { YunaParser } from "#stelle/parser";
 
 import { Configuration } from "#stelle/data/Configuration.js";
 import { getWatermark } from "#stelle/utils/Logger.js";
@@ -14,8 +13,9 @@ import { customContext, stelleRC } from "#stelle/utils/functions/utils.js";
 import { StelleDatabase } from "./modules/Database.js";
 import { StelleManager } from "./modules/Manager.js";
 
-import { THINK_MESSAGES } from "#stelle/data/Constants.js";
 import { HandleCommand } from "seyfert/lib/commands/handle.js";
+import { Yuna } from "yunaforseyfert";
+import { THINK_MESSAGES } from "#stelle/data/Constants.js";
 
 /**
  * Main Stelle class.
@@ -87,21 +87,24 @@ export class Stelle extends Client<true> {
         getWatermark();
 
         this.setServices({
-          middlewares: StelleMiddlewares,
-          langs: {
-            default: this.config.defaultLocale,
-            aliases: {
-              "es-419": ["es-ES"],
+            middlewares: StelleMiddlewares,
+            handleCommand: class extends HandleCommand {
+                argsParser = Yuna.parser({
+                    syntax: {
+                        namedOptions: ["-", "--"],
+                    },
+                });
+                resolveCommandFromContent = Yuna.resolver({
+                    client: this.client,
+                    afterPrepare: (metadata) => this.client.logger.debug(`Client - Ready to use ${metadata.commands.length} commands.`),
+                });
             },
-          },
-          handleCommand: class extends HandleCommand {
-            argsParser = YunaParser({
-              useUniqueNamedSyntaxAtSameTime: true,
-              enabled: {
-                namedOptions: ["-", "--"],
-              },
-            });
-          },
+            langs: {
+                default: this.config.defaultLocale,
+                aliases: {
+                    "es-419": ["es-ES"],
+                },
+            },
         });
 
         await this.start();

@@ -42,13 +42,14 @@
     "kazagumo-spotify": "^2.1.0",
     "ms": "^2.1.3",
     "seyfert": "github:tiramisulabs/seyfert",
-    "shoukaku": "github:shipgirlproject/Shoukaku"
+    "shoukaku": "github:shipgirlproject/Shoukaku",
+    "yunaforseyfert": "github:SagiriIkeda/yunaforseyfert#experimental"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.2",
     "@types/humanize-duration": "^3.27.4",
     "@types/ms": "^0.7.34",
-    "@types/node": "^20.14.7",
+    "@types/node": "^20.14.8",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.7",
     "prisma": "^5.15.1",
@@ -62,7 +63,6 @@
     "#stelle/middlwares": "./dist/middlewares/index.js",
     "#stelle/errors": "./dist/structures/utils/Errors.js",
     "#stelle/decorators": "./dist/structures/utils/Decorators.js",
-    "#stelle/parser": "./dist/structures/parser/index.js",
     "#stelle/index": "./dist/index.js",
     "#stelle/data/*": "./dist/structures/utils/data/*",
     "#stelle/utils/*": "./dist/structures/utils/*"
