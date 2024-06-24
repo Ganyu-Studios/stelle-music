@@ -67,9 +67,9 @@ export async function onBotPermissionsFail(ctx: AnyContext, permissions: Permiss
 }
 
 export async function onOptionsError(ctx: AnyContext) {
-    const { messages } = ctx.t.get(await ctx.getLocale());
-
     if (!ctx.isChat()) return;
+
+    const { messages } = ctx.t.get(await ctx.getLocale());
 
     const command = ctx.command.toJSON();
     const options = formatOptions(command.options, messages.events.optionTypes);
