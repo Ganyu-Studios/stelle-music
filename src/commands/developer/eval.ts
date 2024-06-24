@@ -15,9 +15,10 @@ import { StelleOptions } from "#stelle/decorators";
 import { Configuration } from "#stelle/data/Configuration.js";
 import { codeBlock, getDepth, sliceText } from "#stelle/utils/functions/utils.js";
 
+import { DeclareParserConfig, ParserRecommendedConfig, Watch, Yuna } from "yunaforseyfert";
 import { SECRETS_MESSAGES, SECRETS_REGEX } from "#stelle/data/Constants.js";
 
-import { DeclareParserConfig, ParserRecommendedConfig } from "#stelle/parser";
+import ms from "ms";
 
 const options = {
     code: createStringOption({
@@ -42,6 +43,23 @@ const options = {
 @StelleOptions({ onlyDeveloper: true })
 @DeclareParserConfig(ParserRecommendedConfig.Eval)
 export default class EvalCommand extends Command {
+    @Watch({
+        idle: ms("1min"),
+        beforeCreate(ctx) {
+            const userWatcher = Yuna.watchers.findInstances(ctx.client, {
+                userId: ctx.author.id,
+                command: this,
+            });
+            if (!userWatcher) return;
+
+            const [watcher] = userWatcher.instances;
+
+            watcher?.stopAll("Another instance of command created.");
+        },
+        onStop(reason) {
+            this.ctx?.editOrReply({ content: `Watcher stoped: ${reason}`, embeds: [] });
+        },
+    })
     async run(ctx: CommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
         const { client, options, author, member, channelId } = ctx;
 

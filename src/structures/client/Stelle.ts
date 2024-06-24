@@ -4,7 +4,6 @@ import { Client, LimitedCollection } from "seyfert";
 import type { InternalRuntime, InternalStelleRuntime, StelleConfiguration } from "#stelle/types";
 
 import { StelleMiddlewares } from "#stelle/middlwares";
-import { YunaParser } from "#stelle/parser";
 
 import { Configuration } from "#stelle/data/Configuration.js";
 import { getWatermark } from "#stelle/utils/Logger.js";
@@ -14,6 +13,8 @@ import { customContext, stelleRC } from "#stelle/utils/functions/utils.js";
 import { StelleDatabase } from "./modules/Database.js";
 import { StelleManager } from "./modules/Manager.js";
 
+import { HandleCommand } from "seyfert/lib/commands/handle.js";
+import { Yuna } from "yunaforseyfert";
 import { THINK_MESSAGES } from "#stelle/data/Constants.js";
 
 /**
@@ -46,23 +47,17 @@ export class Stelle extends Client<true> {
                 },
             },
             commands: {
+                reply: () => true,
                 prefix: async (message) => {
                     const guildPrefix = await this.database.getPrefix(message.guildId!);
                     return [...new Set([guildPrefix, this.config.defaultPrefix, ...this.config.prefixes])];
                 },
-                reply: () => true,
                 defaults: {
                     onBotPermissionsFail,
                     onOptionsError,
                     onPermissionsFail,
                     onRunError,
                 },
-                argsParser: YunaParser({
-                    useUniqueNamedSyntaxAtSameTime: true,
-                    enabled: {
-                        namedOptions: ["-", "--"],
-                    },
-                }),
                 deferReplyResponse: ({ client }) => ({
                     content: `<a:typing:1214253750093488149> **${client.me.username}** ${
                         THINK_MESSAGES[Math.floor(Math.random() * THINK_MESSAGES.length)]
@@ -93,6 +88,17 @@ export class Stelle extends Client<true> {
 
         this.setServices({
             middlewares: StelleMiddlewares,
+            handleCommand: class extends HandleCommand {
+                argsParser = Yuna.parser({
+                    syntax: {
+                        namedOptions: ["-", "--"],
+                    },
+                });
+                resolveCommandFromContent = Yuna.resolver({
+                    client: this.client,
+                    afterPrepare: (metadata) => this.client.logger.debug(`Client - Ready to use ${metadata.commands.length} commands.`),
+                });
+            },
             langs: {
                 default: this.config.defaultLocale,
                 aliases: {
