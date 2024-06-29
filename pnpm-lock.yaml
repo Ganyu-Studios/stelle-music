@@ -39,8 +39,8 @@ importers:
         specifier: github:Shipgirlproject/Shoukaku
         version: https://codeload.github.com/Shipgirlproject/Shoukaku/tar.gz/761f40f7c0b54473070fa1c40602d1504a8bf167
       yunaforseyfert:
-        specifier: github:EvilG-MC/yunaforseyfert#backup
-        version: https://codeload.github.com/EvilG-MC/yunaforseyfert/tar.gz/ffba6d8154bcc6154653b856862420f52c20dd2a
+        specifier: github:SagiriIkeda/yunaforseyfert#dev
+        version: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/fbd40c89b63c80804a2cb993ce9d1a4ae9178cc2
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.8.3
@@ -575,8 +575,8 @@ packages:
     engines: {node: '>= 14'}
     hasBin: true
 
-  yunaforseyfert@https://codeload.github.com/EvilG-MC/yunaforseyfert/tar.gz/ffba6d8154bcc6154653b856862420f52c20dd2a:
-    resolution: {tarball: https://codeload.github.com/EvilG-MC/yunaforseyfert/tar.gz/ffba6d8154bcc6154653b856862420f52c20dd2a}
+  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/fbd40c89b63c80804a2cb993ce9d1a4ae9178cc2:
+    resolution: {tarball: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/fbd40c89b63c80804a2cb993ce9d1a4ae9178cc2}
     version: 1.0.0
 
 snapshots:
@@ -1050,7 +1050,7 @@ snapshots:
 
   yaml@2.4.5: {}
 
-  yunaforseyfert@https://codeload.github.com/EvilG-MC/yunaforseyfert/tar.gz/ffba6d8154bcc6154653b856862420f52c20dd2a:
+  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/fbd40c89b63c80804a2cb993ce9d1a4ae9178cc2:
     dependencies:
       discord-api-types: 0.37.91
       seyfert: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/0be7c73d4ad3167b70a03a1e8d2ba1e8303c0b28

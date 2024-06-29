@@ -43,7 +43,7 @@
     "ms": "^2.1.3",
     "seyfert": "github:tiramisulabs/seyfert",
     "shoukaku": "github:Shipgirlproject/Shoukaku",
-    "yunaforseyfert": "github:EvilG-MC/yunaforseyfert#backup"
+    "yunaforseyfert": "github:SagiriIkeda/yunaforseyfert#dev"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
