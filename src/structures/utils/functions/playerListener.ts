@@ -12,6 +12,8 @@ export async function playerListener(newState: VoiceState, client: UsingClient, 
     const player = client.manager.getPlayer(guildId);
     if (!player?.textId) return;
 
+    if (typeof player.textId !== "string" || typeof player.voiceId !== "string") return;
+
     const ctx = player.data.get("commandContext") as CommandContext | undefined;
     if (!ctx) return;
 
