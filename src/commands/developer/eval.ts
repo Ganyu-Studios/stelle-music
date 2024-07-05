@@ -46,15 +46,10 @@ export default class EvalCommand extends Command {
     @Watch({
         idle: ms("1min"),
         beforeCreate(ctx) {
-            const userWatcher = Yuna.watchers.findInstances(ctx.client, {
-                userId: ctx.author.id,
-                command: this,
-            });
-            if (!userWatcher) return;
+            const watcher = Yuna.watchers.find(ctx.client, { userId: ctx.author.id, command: this });
+            if (!watcher) return;
 
-            const [watcher] = userWatcher.instances;
-
-            watcher?.stopAll("Another instance of command created.");
+            watcher.stop("Another instance of command created.");
         },
         onStop(reason) {
             this.ctx?.editOrReply({ content: `Watcher stoped: ${reason}`, embeds: [] });
