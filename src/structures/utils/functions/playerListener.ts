@@ -17,7 +17,7 @@ export async function playerListener(newState: VoiceState, client: UsingClient, 
     const ctx = player.data.get("commandContext") as CommandContext | undefined;
     if (!ctx) return;
 
-    const { messages } = ctx.t.get(await ctx.getLocale());
+    const { messages } = await ctx.getLocale();
 
     const channel = await client.channels.fetch(player.voiceId);
     if (!channel.isVoice()) return;

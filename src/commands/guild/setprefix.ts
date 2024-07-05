@@ -29,7 +29,7 @@ export default class SetlangCommand extends Command {
 
         if (!ctx.guildId) return;
 
-        const { messages } = ctx.t.get(await ctx.getLocale());
+        const { messages } = await ctx.getLocale();
 
         await client.database.setPrefix(ctx.guildId, prefix);
         await ctx.editOrReply({

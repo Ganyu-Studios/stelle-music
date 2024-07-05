@@ -89,7 +89,7 @@ export default class PlayCommand extends Command {
         const botVoice = ctx.me()?.voice();
         if (botVoice && botVoice.channelId !== voice.channelId) return;
 
-        const { messages } = ctx.t.get(await ctx.getLocale());
+        const { messages } = await ctx.getLocale();
         const { defaultVolume, searchEngine } = await client.database.getPlayer(guildId);
 
         await ctx.deferReply();

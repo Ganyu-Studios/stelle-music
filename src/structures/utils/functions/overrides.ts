@@ -8,7 +8,7 @@ import { formatOptions } from "./formatter.js";
 import { codeBlock } from "./utils.js";
 
 export async function onRunError(ctx: AnyContext, error: unknown) {
-    const { messages } = ctx.t.get(await ctx.getLocale());
+    const { messages } = await ctx.getLocale();
 
     ctx.client.logger.error(error);
 
@@ -25,7 +25,7 @@ export async function onRunError(ctx: AnyContext, error: unknown) {
 }
 
 export async function onPermissionsFail(ctx: AnyContext, permissions: PermissionStrings) {
-    const { messages } = ctx.t.get(await ctx.getLocale());
+    const { messages } = await ctx.getLocale();
 
     return ctx.editOrReply({
         content: "",
@@ -46,7 +46,7 @@ export async function onPermissionsFail(ctx: AnyContext, permissions: Permission
 }
 
 export async function onBotPermissionsFail(ctx: AnyContext, permissions: PermissionStrings) {
-    const { messages } = ctx.t.get(await ctx.getLocale());
+    const { messages } = await ctx.getLocale();
 
     return ctx.editOrReply({
         content: "",
@@ -69,7 +69,7 @@ export async function onBotPermissionsFail(ctx: AnyContext, permissions: Permiss
 export async function onOptionsError(ctx: AnyContext) {
     if (!ctx.isChat()) return;
 
-    const { messages } = ctx.t.get(await ctx.getLocale());
+    const { messages } = await ctx.getLocale();
 
     const command = ctx.command.toJSON();
     const options = formatOptions(command.options, messages.events.optionTypes);

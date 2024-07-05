@@ -41,7 +41,7 @@ export const checkCooldown = createMiddleware<void>(async ({ context, next }) =>
     const timeNow = Date.now();
     const setKey = `${name}-${type}-${author.id}`;
 
-    const { messages } = context.t.get(await context.getLocale());
+    const { messages } = await context.getLocale();
 
     const data = cooldowns.get(setKey);
     if (data && timeNow < data)
