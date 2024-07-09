@@ -20,7 +20,7 @@ export default new Lavalink({
         const voice = await client.channels.fetch(player.voiceId);
         if (!voice.isVoice()) return;
 
-        const { messages } = ctx.t.get(await ctx.getLocale());
+        const { messages } = await ctx.getLocale();
 
         const duration = track.isStream ? messages.commands.play.live : parseTime(track.length) ?? messages.commands.play.undetermined;
 

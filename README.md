@@ -10,7 +10,7 @@
 *Stelle was created with the purpose of exploring, learning and using the possibilities offered by [`Seyfert`](https://github.com/tiramisulabs/seyfert) a new library to interact with the Discord API.*
 
 [![Invite](https://img.shields.io/badge/Add%20the%20bot-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/oauth2/authorize?client_id=1241085977544359968&permissions=36793344&integration_type=0&scope=bot+applications.commands)
-[![Server](https://img.shields.io/badge/Support%20Server-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/invite/yzQQaQMUww)
+[![Server](https://img.shields.io/badge/Support%20Server-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/invite/4JmKY8wgB6)
 
 ![Stelle](https://i.imgur.com/cDBZPmd.png)
 

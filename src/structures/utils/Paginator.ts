@@ -61,7 +61,7 @@ export class EmbedPaginator {
      */
     private async createCollector() {
         const { ctx, pages, embeds, message, userId } = this;
-        const { messages } = ctx.t.get(await ctx.getLocale());
+        const { messages } = await ctx.getLocale();
         const { client } = ctx;
 
         if (!message) return;

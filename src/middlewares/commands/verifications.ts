@@ -11,7 +11,7 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
 
     if (!(member && command && guild)) return;
 
-    const { messages } = context.t.get(await context.getLocale());
+    const { messages } = await context.getLocale();
 
     const voice = member.voice();
     const bot = context.me()?.voice();

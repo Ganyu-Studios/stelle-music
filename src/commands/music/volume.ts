@@ -31,7 +31,7 @@ export default class VolumeCommand extends Command {
 
         if (!guildId) return;
 
-        const { messages } = ctx.t.get(await ctx.getLocale());
+        const { messages } = await ctx.getLocale();
 
         const player = client.manager.getPlayer(guildId);
         if (!player) return;

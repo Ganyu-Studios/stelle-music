@@ -15,7 +15,7 @@ export const customContext = extendContext((interaction) => ({
      * Get the locale from the database.
      * @returns
      */
-    getLocale: async () => await interaction.client.database.getLocale(interaction.guildId!),
+    getLocale: async () => interaction.client.t(await interaction.client.database.getLocale(interaction.guildId!)).get(),
 }));
 
 /**

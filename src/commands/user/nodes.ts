@@ -18,7 +18,7 @@ import { msParser } from "#stelle/utils/functions/utils.js";
 export default class ExampleCommand extends Command {
     async run(ctx: CommandContext) {
         const { client } = ctx;
-        const { messages } = ctx.t.get(await ctx.getLocale());
+        const { messages } = await ctx.getLocale();
 
         const pages = new EmbedPaginator(ctx);
         const maxFields = 25;
