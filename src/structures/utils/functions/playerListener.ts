@@ -4,7 +4,8 @@ import { EmbedColors } from "seyfert/lib/common/index.js";
 import { msParser } from "#stelle/utils/functions/utils.js";
 
 const timeouts: Map<string, NodeJS.Timeout> = new Map();
-export async function playerListener(newState: VoiceState, client: UsingClient, oldState?: VoiceState): Promise<void> {
+
+export async function playerListener(client: UsingClient, newState: VoiceState, oldState?: VoiceState): Promise<void> {
     if (oldState?.channelId === newState.channelId) return;
 
     const { guildId } = newState;

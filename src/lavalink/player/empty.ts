@@ -1,3 +1,4 @@
+import { PlayerState } from "kazagumo";
 import { Lavalink } from "#stelle/classes";
 import { autoplay } from "#stelle/utils/functions/autoplay.js";
 
@@ -9,6 +10,9 @@ export default new Lavalink({
     run: async (client, player) => {
         if (!player.textId) return;
 
+        if (typeof player.textId !== "string" || typeof player.voiceId !== "string") return;
+        if (player.state !== PlayerState.CONNECTED) return;
+
         const messageId = player.data.get("messageId") as string | undefined;
         if (!messageId) return;
 
@@ -19,9 +23,6 @@ export default new Lavalink({
         const ctx = player.data.get("commandContext") as CommandContext | undefined;
         if (!ctx) return;
 
-        const channel = await client.channels.fetch(player.textId);
-        if (!channel.isTextGuild()) return;
-
         const voice = await client.channels.fetch(player.voiceId);
         if (!voice.isVoice()) return;
 
@@ -29,6 +30,6 @@ export default new Lavalink({
 
         const embed = new Embed().setDescription(messages.events.playerEnd).setColor(client.config.color.success).setTimestamp();
 
-        await channel.messages.write({ embeds: [embed] });
+        await client.messages.write(player.textId, { embeds: [embed] }).catch(() => null);
     },
 });
