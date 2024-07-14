@@ -19,7 +19,7 @@ pnpm i
 ###  📋 Configuration
 * Stelle has a configuration to save a specific data.
 
-> 1. Go to [the configuration](/src/structures/utils/data/Configuration.ts#L13-L16)
+> 1. Go to [the configuration](/src/structures/utils/data/Configuration.ts#L15-L18)
 > 2. Replace the IDs with your IDs.
 
 > Example:
