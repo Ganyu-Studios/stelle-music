@@ -1,10 +1,13 @@
+import type { SearchPlatform } from "lavalink-client";
 import { type CommandContext, Declare, LocalesT, Options, SubCommand, createStringOption } from "seyfert";
+
 import { Shortcut } from "yunaforseyfert";
 
 const engines: Record<string, string> = {
-    spotify: "Spotify",
-    youtube: "Youtube",
-    youtube_music: "Youtube Music",
+    spsearch: "Spotify",
+    ytsearch: "Youtube",
+    ytmsearch: "Youtube Music",
+    scsearch: "Soundcloud",
 };
 
 const options = {
@@ -18,15 +21,19 @@ const options = {
         choices: [
             {
                 name: "Spotify",
-                value: "spotify",
+                value: "spsearch",
             },
             {
                 name: "Youtube",
-                value: "youtube",
+                value: "ytsearch",
             },
             {
                 name: "Youtube Music",
-                value: "youtube_music",
+                value: "ytmsearch",
+            },
+            {
+                name: "Soundcloud",
+                value: "scsearch",
             },
         ],
     }),
@@ -48,7 +55,7 @@ export default class EngineSubcommand extends SubCommand {
 
         const { messages } = await ctx.getLocale();
 
-        await client.database.setPlayer({ guildId, searchEngine: engine });
+        await client.database.setPlayer({ guildId, searchEngine: engine as SearchPlatform });
         await ctx.editOrReply({
             embeds: [
                 {

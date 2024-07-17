@@ -1,5 +1,5 @@
-import type { ShoukakuEvents } from "shoukaku";
-import type { AllEvents, KazagumoEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "#stelle/types";
+import type { LavalinkManagerEvents, NodeManagerEvents } from "lavalink-client";
+import type { AllEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "#stelle/types";
 
 /**
  * Stelle Lavalink events main class.
@@ -25,8 +25,8 @@ export class Lavalink<K extends keyof AllEvents = keyof AllEvents> implements La
      * Check if the event is a `shoukaku` event.
      * @returns
      */
-    public isShoukaku(): this is LavalinkShoukaku {
-        return this.type === "shoukaku";
+    public isNode(): this is LavalinkNode {
+        return this.type === "node";
     }
 
     /**
@@ -34,10 +34,10 @@ export class Lavalink<K extends keyof AllEvents = keyof AllEvents> implements La
      * Check if the event is a `kazagumo` event.
      * @returns
      */
-    public isKazagumo(): this is LavalinkKazagumo {
-        return this.type === "kazagumo";
+    public isManager(): this is LavalinkManager {
+        return this.type === "manager";
     }
 }
 
-type LavalinkShoukaku = Lavalink<keyof ShoukakuEvents>;
-type LavalinkKazagumo = Lavalink<keyof KazagumoEvents>;
+type LavalinkNode = Lavalink<keyof NodeManagerEvents>;
+type LavalinkManager = Lavalink<keyof LavalinkManagerEvents>;

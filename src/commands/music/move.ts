@@ -45,10 +45,10 @@ export default class MoveCommand extends Command {
         const player = client.manager.getPlayer(guildId);
         if (!player) return;
 
-        if (text) player.setTextChannel(text.id);
+        if (text) player.textChannelId = text.id;
+        player.voiceChannelId = voice.id;
 
-        player.setVoiceChannel(voice.id);
-
+        await player.connect();
         await ctx.editOrReply({
             embeds: [
                 {

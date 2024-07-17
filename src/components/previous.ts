@@ -14,7 +14,6 @@ export default class PreviousTrackComponent extends ComponentCommand {
 
     async run(ctx: ComponentContext<typeof this.componentType>) {
         const { client, guildId } = ctx;
-
         if (!guildId) return;
 
         const { messages } = await ctx.getLocale();
@@ -22,7 +21,7 @@ export default class PreviousTrackComponent extends ComponentCommand {
         const player = client.manager.getPlayer(guildId);
         if (!player) return;
 
-        const track = player.getPrevious(true);
+        const track = player.queue.previous.shift();
         if (!track)
             return ctx.editOrReply({
                 flags: MessageFlags.Ephemeral,
@@ -40,7 +39,7 @@ export default class PreviousTrackComponent extends ComponentCommand {
             flags: MessageFlags.Ephemeral,
             embeds: [
                 {
-                    description: messages.commands.previous({ title: track.title, uri: track.uri! }),
+                    description: messages.commands.previous({ title: track.info.title, uri: track.info.uri! }),
                     color: client.config.color.success,
                 },
             ],

@@ -11,25 +11,25 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
     const { guildId } = newState;
 
     const player = client.manager.getPlayer(guildId);
-    if (!player?.textId) return;
+    if (!player) return;
 
-    if (typeof player.textId !== "string" || typeof player.voiceId !== "string") return;
+    if (!(player.textChannelId && player.voiceChannelId)) return;
 
-    const ctx = player.data.get("commandContext") as CommandContext | undefined;
+    const ctx = player.get<CommandContext | undefined>("commandContext");
     if (!ctx) return;
 
     const { messages } = await ctx.getLocale();
 
-    const channel = await client.channels.fetch(player.voiceId);
+    const channel = await client.channels.fetch(player.voiceChannelId);
     if (!channel.isVoice()) return;
 
     const members = await Promise.all((await channel.states()).map(async (c) => await c.member()));
     const isEmpty = members.filter(({ user }) => !user.bot).length === 0;
 
     if (isEmpty && (player.playing || player.paused)) {
-        if (!player.paused && player.playing) player.pause(true);
+        if (!player.paused && player.playing) player.pause();
 
-        await client.messages.write(player.textId, {
+        await client.messages.write(player.textChannelId, {
             embeds: [
                 {
                     color: EmbedColors.Yellow,
@@ -42,7 +42,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
 
         const timeoutId = setTimeout(async () => {
             await player.destroy();
-            await client.messages.write(player.textId, {
+            await client.messages.write(player.textChannelId!, {
                 embeds: [
                     {
                         description: messages.events.noMembers,
@@ -53,12 +53,12 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
         }, client.config.disconnectTime);
 
         timeouts.set(guildId, timeoutId);
-    } else if (timeouts.has(guildId) && !isEmpty && !player.playing) {
-        if (!player.playing && player.paused) player.pause(false);
+    } else if (timeouts.has(guildId) && !isEmpty && !player.playing && player.paused) {
+        if (!player.playing && player.paused) player.resume();
 
         clearTimeout(timeouts.get(guildId));
 
-        await client.messages.write(player.textId, {
+        await client.messages.write(player.textChannelId, {
             embeds: [
                 {
                     description: messages.events.hasMembers,

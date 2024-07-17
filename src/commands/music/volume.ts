@@ -37,7 +37,7 @@ export default class VolumeCommand extends Command {
         if (!player) return;
 
         if (volume === 1) {
-            player.pause(true);
+            await player.pause();
             await player.setVolume(volume);
 
             return ctx.editOrReply({
@@ -51,7 +51,7 @@ export default class VolumeCommand extends Command {
         }
 
         if (volume > 1 && player.paused) {
-            player.pause(false);
+            await player.resume();
             await player.setVolume(volume);
 
             return ctx.editOrReply({

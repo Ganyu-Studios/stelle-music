@@ -23,7 +23,9 @@ export default class QueueComponent extends ComponentCommand {
 
         const tracksPerPage = 20;
         const paginator = new EmbedPaginator(ctx);
-        const tracks = player.queue.map((track, i) => `#${i + 1}. [\`${track.title}\`](${track.uri}) - ${(track.requester as User).tag}`);
+        const tracks = player.queue.tracks.map(
+            (track, i) => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${(track.requester as User).tag}`,
+        );
 
         if (tracks.length < tracksPerPage) {
             await ctx.editOrReply({

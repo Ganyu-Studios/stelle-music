@@ -1,14 +1,14 @@
 import { Lavalink } from "#stelle/classes";
 
 export default new Lavalink({
-    name: "playerEnd",
-    type: "kazagumo",
+    name: "trackEnd",
+    type: "manager",
     run: async (client, player) => {
-        if (!player.textId) return;
+        if (!player.textChannelId) return;
 
-        const messageId = player.data.get("messageId") as string | undefined;
+        const messageId = player.get<string | undefined>("messageId");
         if (!messageId) return;
 
-        await client.messages.edit(messageId, player.textId, { components: [] }).catch(() => null);
+        await client.messages.edit(messageId, player.textChannelId, { components: [] }).catch(() => null);
     },
 });

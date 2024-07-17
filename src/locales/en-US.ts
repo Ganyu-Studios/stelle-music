@@ -1,7 +1,6 @@
 import { ApplicationCommandOptionType } from "discord-api-types/v10";
-import { State } from "kazagumo";
-
-import type { LoopMode, PausedMode, PermissionNames } from "#stelle/types";
+import type { RepeatMode } from "lavalink-client/dist/types/index.js";
+import type { PausedMode, PermissionNames } from "#stelle/types";
 
 export default {
     metadata: {
@@ -53,10 +52,10 @@ export default {
             loop: {
                 toggled: ({ type }: IType) => `\`✅\` The **loop mode** is now: \`${type}\``,
                 loopType: {
-                    none: "Off",
+                    off: "Off",
                     queue: "Queue",
                     track: "Track",
-                } satisfies Record<LoopMode, string>,
+                } satisfies Record<RepeatMode, string>,
             },
             autoplay: {
                 toggled: ({ type }: IType) => `\`✅\` The **autoplay mode** is now: \`${type}\``,
@@ -71,13 +70,9 @@ export default {
                 description: "`📋` List of all Stelle nodes.",
                 noNodes: "`❌` No nodes available at the moment.",
                 states: {
-                    [State.CONNECTED]: "🟢 Connected.",
-                    [State.CONNECTING]: "🟢 Connecting...",
-                    [State.DISCONNECTED]: "🔴 Disconnected.",
-                    [State.DISCONNECTING]: "🔴 Disconnecting...",
-                    [State.NEARLY]: "⚪ Nearly...",
-                    [State.RECONNECTING]: "🟡 Reconnecting...",
-                } satisfies Record<State, String>,
+                    connected: "🟢 Connected.",
+                    disconnected: "🔴 Disconnected.",
+                } satisfies Record<string, string>,
             },
             volume: {
                 changed: ({ volume }: IVolume) => `\`✅\` The volume has been set to: **${volume}%**.`,

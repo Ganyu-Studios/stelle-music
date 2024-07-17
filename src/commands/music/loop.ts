@@ -1,9 +1,9 @@
 import { Command, type CommandContext, Declare, LocalesT, Options, createStringOption } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
-import { LOOP_STATE } from "#stelle/data/Constants.js";
+import type { RepeatMode } from "lavalink-client";
 
-import type { LoopMode } from "#stelle/types";
+import { LOOP_STATE } from "#stelle/data/Constants.js";
 
 const options = {
     mode: createStringOption({
@@ -12,7 +12,7 @@ const options = {
         choices: [
             {
                 name: "Off",
-                value: "none",
+                value: "off",
             },
             {
                 name: "Track",
@@ -52,14 +52,13 @@ export default class LoopCommand extends Command {
         const player = client.manager.getPlayer(guildId);
         if (!player) return;
 
-        player.setLoop(mode as LoopMode);
-
+        await player.setRepeatMode(mode as RepeatMode);
         await ctx.editOrReply({
             embeds: [
                 {
                     color: client.config.color.success,
                     description: messages.commands.autoplay.toggled({
-                        type: messages.commands.loop.loopType[LOOP_STATE(player.loop, true)],
+                        type: messages.commands.loop.loopType[LOOP_STATE(player.repeatMode, true)],
                     }),
                 },
             ],

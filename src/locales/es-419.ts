@@ -1,5 +1,4 @@
 import { ApplicationCommandOptionType } from "discord-api-types/v10";
-import { State } from "kazagumo";
 
 import type { DefaultLocale } from "seyfert";
 
@@ -53,7 +52,7 @@ export default {
             loop: {
                 toggled: ({ type }) => `\`✅\` El **modo de bucle** ahora es: \`${type}\``,
                 loopType: {
-                    none: "Desactivado",
+                    off: "Desactivado",
                     queue: "Cola",
                     track: "Canción",
                 },
@@ -71,13 +70,9 @@ export default {
                 description: "`📋` Lista de los nodos de Stelle.",
                 noNodes: "`❌` No hay nodos disponibles por el momento.",
                 states: {
-                    [State.CONNECTED]: "🟢 Conectado.",
-                    [State.CONNECTING]: "🟢 Conectando...",
-                    [State.DISCONNECTED]: "🔴 Desconectado.",
-                    [State.DISCONNECTING]: "🔴 Desconectando...",
-                    [State.NEARLY]: "⚪ Casi...",
-                    [State.RECONNECTING]: "🟡 Reconectando...",
-                } satisfies Record<State, String>,
+                    connected: "🟢 Conectado.",
+                    disconnected: "🔴 Desconectado.",
+                },
             },
             volume: {
                 changed: ({ volume }) => `\`✅\` El volumen ha sido establecido a: **${volume}%**.`,

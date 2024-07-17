@@ -22,7 +22,8 @@ export default class PauseTrackComponent extends ComponentCommand {
         const player = client.manager.getPlayer(guildId);
         if (!player) return;
 
-        player.pause(!player.paused);
+        if (player.paused) await player.resume();
+        else await player.pause();
 
         const components = ctx.interaction.message.components[0].toJSON();
         const newComponents = ctx.interaction.message.components[1].toJSON();

@@ -62,7 +62,7 @@ export default class SeekCommand extends Command {
                 ],
             });
 
-        if (!track?.isSeekable)
+        if (!track?.info.isSeekable)
             return ctx.editOrReply({
                 embeds: [
                     {
@@ -72,7 +72,7 @@ export default class SeekCommand extends Command {
                 ],
             });
 
-        if (time > (track.length ?? 0))
+        if (time > track.info.duration)
             return ctx.editOrReply({
                 embeds: [
                     {

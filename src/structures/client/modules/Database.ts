@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+
+import type { SearchPlatform } from "lavalink-client";
 import type { UsingClient } from "seyfert";
 
 import { Configuration } from "#stelle/data/Configuration.js";
@@ -84,7 +86,7 @@ export class StelleDatabase {
         const data = await this.prisma.guildPlayer.findUnique({ where: { id: guildId } });
         return {
             defaultVolume: data?.defaultVolume ?? Configuration.defaultVolume,
-            searchEngine: data?.searchEngine ?? Configuration.defaultSearchEngine,
+            searchEngine: (data?.searchEngine as SearchPlatform | null | undefined) ?? Configuration.defaultSearchEngine,
         };
     }
 
@@ -144,6 +146,6 @@ export class StelleDatabase {
 
 interface PlayerData {
     guildId: string;
-    searchEngine?: string;
+    searchEngine?: SearchPlatform;
     defaultVolume?: number;
 }

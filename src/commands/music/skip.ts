@@ -33,12 +33,8 @@ export default class SkipCommand extends Command {
         const player = client.manager.getPlayer(guildId);
         if (!player) return;
 
-        if (to) {
-            player.queue.splice(0, to - 1);
-            await player.play(player.queue.shift(), { replaceCurrent: true });
-        } else {
-            player.skip();
-        }
+        if (to) await player.skip(to - 1);
+        else await player.skip();
 
         await ctx.editOrReply({
             embeds: [

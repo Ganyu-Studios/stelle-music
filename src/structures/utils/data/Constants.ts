@@ -2,7 +2,8 @@ import { readFile } from "node:fs/promises";
 import { getFlag } from "#stelle/utils/functions/utils.js";
 
 import { ActivityType, type GatewayActivityUpdateData } from "discord-api-types/v10";
-import type { AutoplayMode, LoopMode, PausedMode } from "#stelle/types";
+import type { RepeatMode } from "lavalink-client/dist/types/index.js";
+import type { AutoplayMode, PausedMode } from "#stelle/types";
 
 const packageJSON = JSON.parse(await readFile("./package.json", "utf-8"));
 
@@ -10,11 +11,6 @@ const packageJSON = JSON.parse(await readFile("./package.json", "utf-8"));
  * Stelle version.
  */
 export const BOT_VERSION: string = packageJSON.version;
-
-/**
- * Stelle bot name.
- */
-export const BOT_NAME: string = "Stelle";
 
 /**
  * Check if Stelle is running un DEBUG MODE.
@@ -61,15 +57,15 @@ export const PAUSE_STATE = (boolean: boolean) => {
  * @param alt
  * @returns
  */
-export const LOOP_STATE = (mode: LoopMode, alt?: boolean) => {
-    const states: Record<LoopMode, LoopMode> = {
-        none: "track",
+export const LOOP_STATE = (mode: RepeatMode, alt?: boolean) => {
+    const states: Record<RepeatMode, RepeatMode> = {
+        off: "track",
         track: "queue",
-        queue: "none",
+        queue: "off",
     };
 
     if (alt) {
-        states.none = "none";
+        states.off = "off";
         states.track = "track";
         states.queue = "queue";
     }

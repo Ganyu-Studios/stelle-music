@@ -9,6 +9,7 @@ export const Configuration: StelleConfiguration = {
     prefixes: ["st!"],
     defaultLocale: "en-US",
     disconnectTime: ms("30s"),
+    resumeTime: ms("1min"),
     developerIds: [
         "391283181665517568", // <-- JustEvil
     ],
@@ -18,20 +19,13 @@ export const Configuration: StelleConfiguration = {
     ],
     nodes: [
         {
-            name: "SN #1", // <--- AKA Stelle Node
-            url: "localhost:2333",
-            auth: "ganyuontopuwu",
+            id: "SN #1", // <--- AKA Stelle Node
+            host: "localhost",
+            port: 2333,
+            authorization: "ganyuontopuwu",
             secure: false,
         },
     ],
-    spotify: {
-        clientId: process.env.SPOTIFY_ID,
-        clientSecret: process.env.SPOTIFY_SECRET,
-        searchMarket: "US",
-        albumPageLimit: 1,
-        playlistPageLimit: 1,
-        searchLimit: 10,
-    },
     color: {
         success: 0x8d86a8,
         extra: 0xece8f1,

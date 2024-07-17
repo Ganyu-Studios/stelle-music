@@ -23,9 +23,9 @@ export default class AutoplayComponent extends ComponentCommand {
         const player = client.manager.getPlayer(guildId);
         if (!player) return;
 
-        player.data.set("enabledAutoplay", !player.data.get("enabledAutoplay") ?? true);
+        player.set("enabledAutoplay", !player.get("enabledAutoplay") ?? true);
 
-        const isAutoplay = player.data.get("enabledAutoplay") as boolean;
+        const isAutoplay = player.get<boolean>("enabledAutoplay");
 
         const components = ctx.interaction.message.components[0].toJSON();
         const newComponents = ctx.interaction.message.components[1].toJSON();
