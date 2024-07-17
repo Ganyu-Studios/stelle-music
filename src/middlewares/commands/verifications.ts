@@ -15,8 +15,8 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
 
     const voice = member.voice();
     const bot = context.me()?.voice();
-    const player = client.manager.getPlayer(context.guildId);
-    const isAutoplay = player?.data.get("enabledAutoplay") as boolean | undefined;
+    const player = client.manager.getPlayer(context.guildId!);
+    const isAutoplay = !!player?.get<boolean | undefined>("enabledAutoplay");
 
     if (command.onlyDeveloper && !developerIds.includes(author.id))
         return context.editOrReply({
@@ -40,7 +40,7 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
             ],
         });
 
-    if (command.checkNodes && !client.manager.isUseable)
+    if (command.checkNodes && !client.manager.useable)
         return context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [
@@ -84,7 +84,7 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
             ],
         });
 
-    if (command.checkQueue && (!isAutoplay ?? false) && player!.queue.isEmpty)
+    if (command.checkQueue && !isAutoplay && !player!.queue.tracks.length)
         return context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [
@@ -95,7 +95,7 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
             ],
         });
 
-    if (command.moreTracks && !(player!.queue.totalSize >= 2))
+    if (command.moreTracks && !(player!.queue.tracks.length + Number(!!player.queue.current) >= 2))
         return context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [

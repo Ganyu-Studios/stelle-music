@@ -1,31 +1,4 @@
-import type { NodeOption } from "shoukaku";
-
-interface StelleSpotify {
-    /**
-     * Spotify search market.
-     * @default "US"
-     */
-    searchMarket: "US" | "IN" | "EN";
-    /**
-     * Spotify tracks per page.
-     * @default 1
-     */
-    playlistPageLimit: number;
-    /**
-     * Spotify tracks per page.
-     * @default 1
-     */
-    albumPageLimit: number;
-    /**
-     * Spotify track limit for searching tracks.
-     * @default 10
-     */
-    searchLimit: number;
-    /** Spotify application client id. */
-    clientId: string;
-    /** Spotify application client secret. */
-    clientSecret: string;
-}
+import type { LavalinkNodeOptions, SearchPlatform } from "lavalink-client";
 
 interface StelleColors {
     /** The success color. */
@@ -49,7 +22,7 @@ export interface StelleConfiguration {
      * Stelle default player search engine.
      * @default "spotify"
      */
-    defaultSearchEngine: "spotify" | "youtube" | "youtube_music";
+    defaultSearchEngine: SearchPlatform;
     /**
      * Stelle prefixes.
      * @default ["st!"]
@@ -65,14 +38,18 @@ export interface StelleConfiguration {
      * @default ms("30s")
      */
     disconnectTime: number;
+    /**
+     * Stelle default resume time.
+     * @default ms("1min")
+     */
+    resumeTime: number;
     /** Stelle developer id(s). */
     developerIds: string[];
     /** Stelle developer guild id(s). */
     guildIds: string[];
     /** Stelle nodes. */
-    nodes: NodeOption[];
+    nodes: LavalinkNodeOptions[];
     /** Stelle spotify data. */
-    spotify: StelleSpotify;
     /** Stelle colors. */
     color: StelleColors;
 }

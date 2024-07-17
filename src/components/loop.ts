@@ -22,7 +22,7 @@ export default class ToggleLoopComponent extends ComponentCommand {
 
         const { messages } = await ctx.getLocale();
 
-        player.setLoop(LOOP_STATE(player.loop));
+        await player.setRepeatMode(LOOP_STATE(player.repeatMode));
 
         //sussy code, but works
         const components = ctx.interaction.message.components[0].toJSON();
@@ -37,7 +37,7 @@ export default class ToggleLoopComponent extends ComponentCommand {
                 .map((button) => {
                     if ((button as APIButtonComponentWithCustomId).custom_id === "player-toggleLoop")
                         (button as APIButtonComponentWithCustomId).label = messages.events.playerStart.components.loop({
-                            type: messages.commands.loop.loopType[player.loop],
+                            type: messages.commands.loop.loopType[player.repeatMode],
                         });
 
                     return new Button(button as APIButtonComponentWithCustomId);

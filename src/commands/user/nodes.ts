@@ -22,13 +22,13 @@ export default class ExampleCommand extends Command {
 
         const pages = new EmbedPaginator(ctx);
         const maxFields = 25;
-        const fields = client.manager.nodes.map((node, i) => ({
-            name: `\`🔰\` ${node.name} - #${i + 1}`,
+        const fields = client.manager.nodeManager.nodes.map((node, i) => ({
+            name: `\`🔰\` ${node.id} - #${i + 1}`,
             inline: true,
             value: messages.commands.nodes.value({
-                state: messages.commands.nodes.states[node.state],
-                players: node.stats?.players ?? 0,
-                uptime: msParser(node.stats?.uptime),
+                state: messages.commands.nodes.states[node.connected ? "connected" : "disconnected"],
+                players: node.stats.players,
+                uptime: msParser(node.stats.uptime),
             }),
         }));
 

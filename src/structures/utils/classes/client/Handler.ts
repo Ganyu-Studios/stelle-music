@@ -46,8 +46,8 @@ export class StelleHandler extends BaseHandler {
 
             const run = (...args: any) => event.run(this.client, ...args);
 
-            if (event.isShoukaku()) this.client.manager.shoukaku.on(event.name, run);
-            else if (event.isKazagumo()) this.client.manager.on(event.name, run);
+            if (event.isNode()) this.client.manager.nodeManager.on(event.name, run);
+            else if (event.isManager()) this.client.manager.on(event.name, run);
         }
     }
 
@@ -59,7 +59,7 @@ export class StelleHandler extends BaseHandler {
     //well,.. this is weird, but works.
     reloadAll(): Promise<void> {
         this.client.manager.removeAllListeners();
-        this.client.manager.shoukaku.removeAllListeners();
+        this.client.manager.nodeManager.removeAllListeners();
         return this.load();
     }
 }

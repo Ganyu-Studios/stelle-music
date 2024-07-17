@@ -7,36 +7,38 @@ import { AUTOPLAY_STATE, PAUSE_STATE } from "#stelle/data/Constants.js";
 import { parseTime } from "#stelle/utils/functions/utils.js";
 
 export default new Lavalink({
-    name: "playerStart",
-    type: "kazagumo",
+    name: "trackStart",
+    type: "manager",
     run: async (client, player, track) => {
-        if (!player.textId) return;
+        if (!(player.textChannelId && player.voiceChannelId)) return;
 
-        const isAutoplay = (player.data.get("enabledAutoplay") as boolean | undefined) ?? false;
+        const isAutoplay = player.get<boolean | undefined>("enabledAutoplay") ?? false;
 
-        const ctx = player.data.get("commandContext") as CommandContext | undefined;
+        const ctx = player.get<CommandContext | undefined>("commandContext");
         if (!ctx) return;
 
-        const voice = await client.channels.fetch(player.voiceId);
+        const voice = await client.channels.fetch(player.voiceChannelId);
         if (!voice.isVoice()) return;
 
         const { messages } = await ctx.getLocale();
 
-        const duration = track.isStream ? messages.commands.play.live : parseTime(track.length) ?? messages.commands.play.undetermined;
+        const duration = track.info.isStream
+            ? messages.commands.play.live
+            : parseTime(track.info.duration) ?? messages.commands.play.undetermined;
 
         const embed = new Embed()
             .setDescription(
                 messages.events.playerStart.embed({
                     duration,
                     requester: (track.requester as User).id,
-                    title: track.title,
-                    url: track.uri!,
+                    title: track.info.title,
+                    url: track.info.uri,
                     volume: player.volume,
-                    author: track.author ?? "---",
-                    size: player.queue.size,
+                    author: track.info.author,
+                    size: player.queue.tracks.length,
                 }),
             )
-            .setThumbnail(track.thumbnail)
+            .setThumbnail(track.info.artworkUrl ?? "")
             .setColor(client.config.color.extra)
             .setTimestamp();
 
@@ -73,7 +75,7 @@ export default new Lavalink({
                 .setStyle(ButtonStyle.Secondary)
                 .setLabel(
                     messages.events.playerStart.components.loop({
-                        type: messages.commands.loop.loopType[player.loop],
+                        type: messages.commands.loop.loopType[player.repeatMode],
                     }),
                 ),
             new Button()
@@ -82,7 +84,7 @@ export default new Lavalink({
                 .setLabel(messages.events.playerStart.components.paused[PAUSE_STATE(player.paused)]),
         );
 
-        const message = await client.messages.write(player.textId, { embeds: [embed], components: [row, newRow] }).catch(() => null);
-        if (message) player.data.set("messageId", message.id);
+        const message = await client.messages.write(player.textChannelId, { embeds: [embed], components: [row, newRow] }).catch(() => null);
+        if (message) player.set("messageId", message.id);
     },
 });

@@ -10,7 +10,7 @@ import type {
 import type { InternalRuntimeConfig, InternalRuntimeConfigHTTP } from "seyfert/lib/client/base.js";
 
 export { StelleConfiguration } from "./client/StelleConfiguration.js";
-export { KazagumoEvents, AllEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "./client/StelleLavalink.js";
+export { AllEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "./client/StelleLavalink.js";
 
 export type StelleRuntime = { locations: { lavalink: string } };
 //literally just copied this because the types cry
@@ -28,7 +28,6 @@ export type InternalStelleRuntime<
     };
 
 export type PermissionNames = keyof typeof PermissionFlagsBits;
-export type LoopMode = "none" | "queue" | "track";
 export type AutoplayMode = "enabled" | "disabled";
 export type PausedMode = "pause" | "resume";
 export type InternalRuntime = InternalRuntimeConfigHTTP | InternalRuntimeConfig;
@@ -39,7 +38,7 @@ export type AnyContext =
     | ModalContext;
 
 export interface Options {
-    /** The command cooldown. */
+    /** The cooldown. */
     cooldown?: number;
     /** Only the bot developer can use the command. */
     onlyDeveloper?: boolean;
@@ -57,4 +56,8 @@ export interface Options {
     checkQueue?: boolean;
     /** Check if the queue has two or more tracks. */
     moreTracks?: boolean;
+    /** The command category. */
+    category?: string;
 }
+
+export type NonCommandOptions = Omit<Options, "category">;

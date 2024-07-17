@@ -1,16 +1,14 @@
-import type { Options } from "#stelle/types";
+import type { BaseCommand } from "seyfert";
+import type { NonCommandOptions, Options } from "#stelle/types";
 
-export function StelleOptions(options: Options) {
-    return <T extends { new (...args: any[]): {} }>(target: T) =>
+type Instantiable<T> = { new (...arg: any[]): T };
+
+export function StelleOptions<A extends Instantiable<any>>(options: A extends Instantiable<BaseCommand> ? Options : NonCommandOptions) {
+    return (target: A) =>
         class extends target {
-            cooldown = options.cooldown;
-            onlyDeveloper = options.onlyDeveloper;
-            onlyGuildOwner = options.onlyGuildOwner;
-            inVoice = options.inVoice;
-            sameVoice = options.sameVoice;
-            checkNodes = options.checkNodes;
-            checkPlayer = options.checkPlayer;
-            checkQueue = options.checkQueue;
-            moreTracks = options.moreTracks;
+            constructor(...args: any[]) {
+                super(...args);
+                Object.assign(this, options);
+            }
         };
 }

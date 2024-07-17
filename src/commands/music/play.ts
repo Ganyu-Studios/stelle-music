@@ -29,13 +29,11 @@ const options = {
             const { client, member, guildId } = interaction;
 
             if (!guildId) return;
-
-            const locale = await client.database.getLocale(guildId);
             const { searchEngine } = await client.database.getPlayer(guildId);
 
-            const { messages } = client.t(locale).get();
+            const { messages } = client.t(await client.database.getLocale(guildId)).get();
 
-            if (!client.manager.isUseable)
+            if (!client.manager.useable)
                 return interaction.respond([{ name: messages.commands.play.autocomplete.noNodes, value: "noNodes" }]);
 
             const voice = member?.voice();
@@ -47,21 +45,21 @@ const options = {
                     { name: messages.commands.play.autocomplete.noQuery, value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT" },
                 ]);
 
-            const res = await client.manager.search(query, { requester: null, engine: searchEngine });
-            const tracks = res.tracks.slice(0, 25).map((track) => {
-                const duration = track.isStream
-                    ? messages.commands.play.live
-                    : parseTime(track.length) ?? messages.commands.play.undetermined;
-
-                return {
-                    name: `${sliceText(track.title, 20)} (${duration}) - ${sliceText(track.author ?? "---", 30)}`,
-                    value: track.uri!,
-                };
-            });
-
+            const tracks = await client.manager.search(query, searchEngine);
             if (!tracks.length) return interaction.respond([{ name: messages.commands.play.autocomplete.noTracks, value: "noTracks" }]);
 
-            await interaction.respond(tracks);
+            await interaction.respond(
+                tracks.slice(0, 25).map((track) => {
+                    const duration = track.info.isStream
+                        ? messages.commands.play.live
+                        : parseTime(track.info.duration) ?? messages.commands.play.undetermined;
+
+                    return {
+                        name: `${sliceText(track.info.title, 20)} (${duration}) - ${sliceText(track.info.author, 30)}`,
+                        value: track.info.uri!,
+                    };
+                }),
+            );
         },
     }),
 };
@@ -94,52 +92,64 @@ export default class PlayCommand extends Command {
 
         await ctx.deferReply();
 
-        const player = await client.manager.createPlayer({
+        const player = client.manager.createPlayer({
             guildId: guildId,
-            textId: channelId,
-            voiceId: voice.channelId,
+            textChannelId: channelId,
+            voiceChannelId: voice.channelId!,
             volume: defaultVolume,
+            selfDeaf: true,
         });
 
-        const result = await player.search(query, { requester: author, engine: searchEngine });
-        if (!result.tracks.length)
-            return ctx.editOrReply({
-                flags: MessageFlags.Ephemeral,
-                content: "",
-                embeds: [
-                    {
-                        color: EmbedColors.Red,
-                        description: messages.commands.play.noResults,
-                    },
-                ],
-            });
+        await player.node.updateSession(true, client.config.resumeTime);
 
-        player.data.set("commandContext", ctx);
+        const { loadType, playlist, tracks } = await player.search({ query, source: searchEngine }, author);
 
-        switch (result.type) {
-            case "TRACK":
-            case "SEARCH":
+        player.set("commandContext", ctx);
+
+        if (!player.connected) await player.connect();
+
+        switch (loadType) {
+            case "empty":
+            case "error":
                 {
-                    const track = result.tracks[0];
+                    if (!player.queue.current) await player.destroy();
 
-                    if (player.data.get("enabledAutoplay")) player.queue.unshift(track);
+                    await ctx.editOrReply({
+                        flags: MessageFlags.Ephemeral,
+                        content: "",
+                        embeds: [
+                            {
+                                color: EmbedColors.Red,
+                                description: messages.commands.play.noResults,
+                            },
+                        ],
+                    });
+                }
+                break;
+
+            case "track":
+            case "search":
+                {
+                    const track = tracks[0];
+
+                    if (player.get("enabledAutoplay")) player.queue.add(track, 0);
                     else player.queue.add(track);
 
-                    const type = player.queue.totalSize > 1 ? "results" : "result";
-                    const status = track.isStream
+                    const type = player.queue.tracks.length > 1 ? "results" : "result";
+                    const status = track.info.isStream
                         ? messages.commands.play.live
-                        : parseTime(track.length) ?? messages.commands.play.undetermined;
+                        : parseTime(track.info.duration) ?? messages.commands.play.undetermined;
 
                     const embed = new Embed()
-                        .setThumbnail(track.thumbnail)
+                        .setThumbnail(track.info.artworkUrl ?? "")
                         .setColor(client.config.color.success)
                         .setDescription(
                             messages.commands.play.embed[type]({
                                 duration: status,
-                                position: player.queue.size,
+                                position: player.queue.tracks.length,
                                 requester: (track.requester as User).id,
-                                title: track.title,
-                                url: track.uri!,
+                                title: track.info.title,
+                                url: track.info.uri!,
                                 volume: player.volume,
                             }),
                         )
@@ -154,22 +164,22 @@ export default class PlayCommand extends Command {
                 }
                 break;
 
-            case "PLAYLIST":
+            case "playlist":
                 {
-                    const track = result.tracks[0];
+                    const track = tracks[0];
 
-                    if (player.data.get("enabledAutoplay")) player.queue.unshift(...result.tracks);
-                    else player.queue.add(result.tracks);
+                    if (player.get("enabledAutoplay")) player.queue.add(tracks, 0);
+                    else player.queue.add(tracks);
 
                     const embed = new Embed()
                         .setColor(client.config.color.success)
-                        .setThumbnail(track.thumbnail)
+                        .setThumbnail(track.info.artworkUrl ?? "")
                         .setDescription(
                             messages.commands.play.embed.playlist({
                                 query,
-                                playlist: result.playlistName ?? track.title,
+                                playlist: playlist?.name ?? playlist?.title ?? track.info.title,
                                 requester: (track.requester as User).id,
-                                tracks: result.tracks.length,
+                                tracks: tracks.length,
                                 volume: player.volume,
                             }),
                         )

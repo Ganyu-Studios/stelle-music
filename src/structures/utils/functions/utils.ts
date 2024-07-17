@@ -103,6 +103,23 @@ export const msParser = (time?: number): string => {
 
 /**
  *
+ * Make a new random id with a specific length.
+ * @param length
+ * @returns
+ */
+export const makeId = (length: number) => {
+    let result = "";
+
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const charactersLength = characters.length;
+
+    for (let i = 0; i < length; i++) result += characters.charAt(Math.floor(Math.random() * charactersLength));
+
+    return result;
+};
+
+/**
+ *
  * Check a flag in the process command.
  * @param flag
  * @returns

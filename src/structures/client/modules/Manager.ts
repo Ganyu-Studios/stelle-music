@@ -1,17 +1,14 @@
-import { Kazagumo, State } from "kazagumo";
-import { Connectors, type Node } from "shoukaku";
-import { StelleHandler } from "#stelle/utils/classes/client/Handler.js";
+import { LavalinkManager, type SearchPlatform, type Track } from "lavalink-client";
 
 import type { Stelle } from "#stelle/client";
+import { StelleHandler } from "#stelle/utils/classes/client/Handler.js";
 
-import { BOT_NAME, BOT_VERSION } from "#stelle/data/Constants.js";
-
-import Spotify from "kazagumo-spotify";
+import { autoPlayFunction } from "#stelle/utils/functions/autoplay.js";
 
 /**
  * Main music manager class.
  */
-export class StelleManager extends Kazagumo {
+export class StelleManager extends LavalinkManager {
     readonly handler: StelleHandler;
 
     /**
@@ -20,41 +17,37 @@ export class StelleManager extends Kazagumo {
      * @param client
      */
     constructor(client: Stelle) {
-        super(
-            {
-                defaultSearchEngine: "youtube",
-                defaultYoutubeThumbnail: "maxresdefault",
-                plugins: [new Spotify(client.config.spotify)],
-                send: (guildId, payload) => client.gateway.send(client.gateway.calculateShardId(guildId), payload),
+        super({
+            nodes: client.config.nodes,
+            sendToShard: (guildId, payload) => client.gateway.send(client.gateway.calculateShardId(guildId), payload),
+            queueOptions: {
+                maxPreviousTracks: 25,
             },
-            new Connectors.Seyfert(client),
-            client.config.nodes,
-            {
-                reconnectInterval: 20,
-                resume: true,
-                resumeByLibrary: true,
-                reconnectTries: 5,
-                resumeTimeout: 60,
-                userAgent: `${BOT_NAME} v${BOT_VERSION}`,
+            playerOptions: {
+                defaultSearchPlatform: "spsearch",
+                onDisconnect: {
+                    destroyPlayer: true,
+                },
+                onEmptyQueue: {
+                    autoPlayFunction,
+                },
             },
-        );
+        });
 
         this.handler = new StelleHandler(client);
     }
 
     /**
-     * Get all nodes.
-     */
-    public get nodes(): Node[] {
-        return [...this.shoukaku.nodes.values()];
-    }
-
-    /**
      *
-     * Return if Stelle is connected atleast in one node.
+     * Search tracks.
+     * @param query
+     * @returns
      */
-    public get isUseable(): boolean {
-        return this.nodes.filter((node) => node.state === State.CONNECTED).length > 0;
+    public async search(query: string, source?: SearchPlatform): Promise<Track[]> {
+        const nodes = this.nodeManager.leastUsedNodes();
+        const node = nodes[Math.floor(Math.random() * nodes.length)];
+        const result = await node.search({ query, source }, null, false);
+        return result.tracks;
     }
 
     /**

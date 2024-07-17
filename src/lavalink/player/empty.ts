@@ -1,34 +1,28 @@
 import { Lavalink } from "#stelle/classes";
-import { autoplay } from "#stelle/utils/functions/autoplay.js";
 
 import { type CommandContext, Embed } from "seyfert";
 
 export default new Lavalink({
-    name: "playerEmpty",
-    type: "kazagumo",
+    name: "queueEnd",
+    type: "manager",
     run: async (client, player) => {
-        if (!player.textId) return;
+        if (!(player.textChannelId && player.voiceChannelId)) return;
 
-        const messageId = player.data.get("messageId") as string | undefined;
+        const messageId = player.get<string | undefined>("messageId");
         if (!messageId) return;
 
-        await client.messages.edit(messageId, player.textId, { components: [] }).catch(() => null);
+        await client.messages.edit(messageId, player.textChannelId, { components: [] }).catch(() => null);
 
-        if (player.data.get("enabledAutoplay")) return autoplay(player, player.getPrevious(true));
-
-        const ctx = player.data.get("commandContext") as CommandContext | undefined;
+        const ctx = player.get<CommandContext | undefined>("commandContext");
         if (!ctx) return;
 
-        const channel = await client.channels.fetch(player.textId);
-        if (!channel.isTextGuild()) return;
-
-        const voice = await client.channels.fetch(player.voiceId);
+        const voice = await client.channels.fetch(player.voiceChannelId);
         if (!voice.isVoice()) return;
 
         const { messages } = await ctx.getLocale();
 
         const embed = new Embed().setDescription(messages.events.playerEnd).setColor(client.config.color.success).setTimestamp();
 
-        await channel.messages.write({ embeds: [embed] });
+        await client.messages.write(player.textChannelId, { embeds: [embed] }).catch(() => null);
     },
 });

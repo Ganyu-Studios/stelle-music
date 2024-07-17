@@ -17,8 +17,7 @@ export default class SkipTrackComponent extends ComponentCommand {
         const player = client.manager.getPlayer(guildId);
         if (!player) return;
 
-        player.skip();
-
+        await player.skip(undefined, !player.get("enabledAutoplay"));
         await ctx.interaction.deferUpdate();
         await ctx.interaction.message.edit({ components: [] });
     }
