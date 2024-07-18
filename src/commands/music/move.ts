@@ -30,7 +30,7 @@ const options = {
     contexts: ["Guild"],
     aliases: ["mov", "m"],
 })
-@StelleOptions({ cooldown: 5, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
+@StelleOptions({ cooldown: 5, checkPlayer: true, inVoice: true, checkNodes: true })
 @Options(options)
 @LocalesT("locales.move.name", "locales.move.description")
 export default class MoveCommand extends Command {
