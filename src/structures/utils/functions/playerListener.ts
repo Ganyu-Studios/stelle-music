@@ -14,7 +14,6 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
     if (!player) return;
 
     if (!(player.textChannelId && player.voiceChannelId)) return;
-
     const ctx = player.get<CommandContext | undefined>("commandContext");
     if (!ctx) return;
 
@@ -26,9 +25,28 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
     const members = await Promise.all((await channel.states()).map(async (c) => await c.member()));
     const isEmpty = members.filter(({ user }) => !user.bot).length === 0;
 
-    if (isEmpty && (player.playing || player.paused)) {
-        if (!player.paused && player.playing) player.pause();
+    if (
+        isEmpty &&
+        !player.playing &&
+        !player.paused &&
+        !(player.queue.tracks.length + Number(!!player.queue.current)) &&
+        player.connected
+    ) {
+        await player.destroy();
+        await client.messages.write(player.textChannelId!, {
+            embeds: [
+                {
+                    description: messages.events.noMembers,
+                    color: EmbedColors.Yellow,
+                },
+            ],
+        });
 
+        return;
+    }
+
+    if (isEmpty && !player.paused) {
+        await player.pause();
         await client.messages.write(player.textChannelId, {
             embeds: [
                 {
@@ -53,11 +71,8 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
         }, client.config.disconnectTime);
 
         timeouts.set(guildId, timeoutId);
-    } else if (timeouts.has(guildId) && !isEmpty && !player.playing && player.paused) {
-        if (!player.playing && player.paused) player.resume();
-
-        clearTimeout(timeouts.get(guildId));
-
+    } else if (timeouts.has(guildId) && !isEmpty && player.paused) {
+        await player.resume();
         await client.messages.write(player.textChannelId, {
             embeds: [
                 {
@@ -67,6 +82,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
             ],
         });
 
+        clearTimeout(timeouts.get(guildId));
         timeouts.delete(guildId);
     }
 }
