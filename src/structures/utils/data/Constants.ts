@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { getFlag } from "#stelle/utils/functions/utils.js";
 
 import { ActivityType, type GatewayActivityUpdateData } from "discord-api-types/v10";
-import type { RepeatMode } from "lavalink-client/dist/types/index.js";
+import type { RepeatMode } from "lavalink-client";
 import type { AutoplayMode, PausedMode } from "#stelle/types";
 
 const packageJSON = JSON.parse(await readFile("./package.json", "utf-8"));

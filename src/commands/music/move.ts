@@ -45,7 +45,12 @@ export default class MoveCommand extends Command {
         const player = client.manager.getPlayer(guildId);
         if (!player) return;
 
-        if (text) player.textChannelId = text.id;
+        if (text) {
+            player.options.textChannelId = text.id;
+            player.textChannelId = text.id;
+        }
+
+        player.options.voiceChannelId = voice.id;
         player.voiceChannelId = voice.id;
 
         await player.connect();
@@ -55,7 +60,7 @@ export default class MoveCommand extends Command {
                     color: client.config.color.success,
                     description: messages.commands.move({
                         voiceId: voice.id,
-                        textId: text?.toString() ?? "---",
+                        textId: text?.toString() ?? ctx.channel()?.toString() ?? "<#1143606303850483280>",
                     }),
                 },
             ],
