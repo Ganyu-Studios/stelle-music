@@ -24,6 +24,8 @@ export const Configuration: StelleConfiguration = {
             port: 2333,
             authorization: "ganyuontopuwu",
             secure: false,
+            retryAmount: 5,
+            retryDelay: ms("10s"),
         },
     ],
     color: {

@@ -13,7 +13,7 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
 
     const { messages } = await context.getLocale();
 
-    const voice = member.voice();
+    const voice = await member.voice()?.channel();
     const bot = context.me()?.voice();
     const player = client.manager.getPlayer(context.guildId!);
     const isAutoplay = !!player?.get<boolean | undefined>("enabledAutoplay");
@@ -51,7 +51,7 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
             ],
         });
 
-    if (command.inVoice && !voice)
+    if (command.inVoice && !voice?.is(["GuildVoice", "GuildStageVoice"]))
         return context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [
@@ -62,7 +62,7 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
             ],
         });
 
-    if (command.sameVoice && bot && bot.channelId !== voice!.channelId)
+    if (command.sameVoice && bot && bot.channelId !== voice!.id)
         return context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [

@@ -81,11 +81,11 @@ export default class PlayCommand extends Command {
 
         if (!(guildId && member)) return;
 
-        const voice = member.voice();
-        if (!voice) return;
+        const voice = await member.voice()?.channel();
+        if (!voice?.is(["GuildVoice", "GuildStageVoice"])) return;
 
-        const botVoice = ctx.me()?.voice();
-        if (botVoice && botVoice.channelId !== voice.channelId) return;
+        const bot = ctx.me()?.voice();
+        if (bot && bot.channelId !== voice.id) return;
 
         const { messages } = await ctx.getLocale();
         const { defaultVolume, searchEngine } = await client.database.getPlayer(guildId);
@@ -95,7 +95,7 @@ export default class PlayCommand extends Command {
         const player = client.manager.createPlayer({
             guildId: guildId,
             textChannelId: channelId,
-            voiceChannelId: voice.channelId!,
+            voiceChannelId: voice.id,
             volume: defaultVolume,
             selfDeaf: true,
         });
@@ -107,6 +107,7 @@ export default class PlayCommand extends Command {
         player.set("commandContext", ctx);
 
         if (!player.connected) await player.connect();
+        if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);
 
         switch (loadType) {
             case "empty":

@@ -89,7 +89,7 @@ export class Stelle extends Client<true> {
         this.setServices({
             middlewares: StelleMiddlewares,
             cache: {
-                disabledCache: ["bans", "emojis", "overwrites", "stickers", "threads", "roles", "presences"],
+                disabledCache: ["bans", "emojis", "overwrites", "stickers", "threads", "roles", "presences", "messages"],
             },
             handleCommand: class extends HandleCommand {
                 argsParser = Yuna.parser({

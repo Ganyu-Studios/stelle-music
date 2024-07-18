@@ -20,7 +20,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
     const { messages } = await ctx.getLocale();
 
     const channel = await client.channels.fetch(player.voiceChannelId);
-    if (!channel.isVoice()) return;
+    if (!channel.is(["GuildStageVoice", "GuildVoice"])) return;
 
     const members = await Promise.all((await channel.states()).map(async (c) => await c.member()));
     const isEmpty = members.filter(({ user }) => !user.bot).length === 0;
