@@ -147,7 +147,7 @@ export default class PlayCommand extends Command {
                         .setDescription(
                             messages.commands.play.embed[type]({
                                 duration: status,
-                                position: player.queue.tracks.length,
+                                position: player.queue.tracks.findIndex((t) => t.info.identifier === track.info.identifier) + 1,
                                 requester: (track.requester as User).id,
                                 title: track.info.title,
                                 url: track.info.uri!,
