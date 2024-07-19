@@ -88,10 +88,7 @@ export default class EvalCommand extends Command {
 
                 output = await eval(code);
                 typecode = typeof output;
-                output = getDepth(output)
-                    .replaceAll(process.env.TOKEN, client.token)
-                    .replaceAll(process.env.SPOTIFY_ID, client.token)
-                    .replaceAll(process.env.SPOTIFY_SECRET, client.token);
+                output = getDepth(output).replaceAll(process.env.TOKEN, client.token);
             }
 
             await ctx.editOrReply({
