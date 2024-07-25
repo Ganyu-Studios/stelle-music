@@ -84,7 +84,7 @@ export default class PlayCommand extends Command {
         const voice = await member.voice()?.channel();
         if (!voice?.is(["GuildVoice", "GuildStageVoice"])) return;
 
-        const bot = ctx.me()?.voice();
+        let bot = ctx.me()?.voice();
         if (bot && bot.channelId !== voice.id) return;
 
         const { messages } = await ctx.getLocale();
@@ -100,13 +100,15 @@ export default class PlayCommand extends Command {
             selfDeaf: true,
         });
 
+        if (!player.connected) await player.connect();
+
         await player.node.updateSession(true, client.config.resumeTime);
 
         const { loadType, playlist, tracks } = await player.search({ query, source: searchEngine }, author);
 
         player.set("commandContext", ctx);
 
-        if (!player.connected) await player.connect();
+        if (!bot) bot = client.cache.voiceStates?.get(client.me.id, guildId);
         if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);
 
         switch (loadType) {
