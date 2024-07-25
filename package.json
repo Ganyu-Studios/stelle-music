@@ -37,7 +37,6 @@
     "discord-api-types": "^0.37.93",
     "dotenv": "^16.4.5",
     "humanize-duration": "^3.32.1",
-    "kazagumo-spotify": "^2.1.0",
     "lavalink-client": "github:Tomato6966/lavalink-client",
     "ms": "^2.1.3",
     "seyfert": "github:tiramisulabs/seyfert",

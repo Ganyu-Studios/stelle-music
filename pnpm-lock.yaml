@@ -23,9 +23,6 @@ importers:
       humanize-duration:
         specifier: ^3.32.1
         version: 3.32.1
-      kazagumo-spotify:
-        specifier: ^2.1.0
-        version: 2.1.0
       lavalink-client:
         specifier: github:Tomato6966/lavalink-client
         version: https://codeload.github.com/Tomato6966/lavalink-client/tar.gz/0b99fd660be8662fde7d35228068287d0e007d1a
@@ -118,10 +115,6 @@ packages:
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [win32]
-
-  '@fastify/busboy@2.1.1':
-    resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
-    engines: {node: '>=14'}
 
   '@ioredis/commands@1.2.0':
     resolution: {integrity: sha512-Sx1pU8EM64o2BrqNpEO1CNLtKQwyhuXuqyfH7oGKCk+1a33d2r5saW8zNwm3j6BTExtjrv2BxTgzzkMwts6vGg==}
@@ -312,9 +305,6 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
-  kazagumo-spotify@2.1.0:
-    resolution: {integrity: sha512-UQrQp+2cXYER+Hon1u1ffixXZ8ZXhWlbJOxbKdFnKZyJ3yda1opM9MkViExAwPWeQOM0CBbiQZMeGxyWeeEkbg==}
-
   lavalink-client@https://codeload.github.com/Tomato6966/lavalink-client/tar.gz/0b99fd660be8662fde7d35228068287d0e007d1a:
     resolution: {tarball: https://codeload.github.com/Tomato6966/lavalink-client/tar.gz/0b99fd660be8662fde7d35228068287d0e007d1a}
     version: 2.2.1
@@ -492,10 +482,6 @@ packages:
   undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
-  undici@6.6.1:
-    resolution: {integrity: sha512-J0GaEp0ztu/grIE2Uq57AbK6TRb+bWbOlxu0POCzhFKA6LKbwSAev+hDQaQcgUUA9CPs8Ky+cauzTHnQrtAQEA==}
-    engines: {node: '>=18.0'}
-
   which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
     engines: {node: '>= 8'}
@@ -562,8 +548,6 @@ snapshots:
 
   '@biomejs/cli-win32-x64@1.8.3':
     optional: true
-
-  '@fastify/busboy@2.1.1': {}
 
   '@ioredis/commands@1.2.0':
     optional: true
@@ -746,10 +730,6 @@ snapshots:
 
   isexe@2.0.0: {}
 
-  kazagumo-spotify@2.1.0:
-    dependencies:
-      undici: 6.6.1
-
   lavalink-client@https://codeload.github.com/Tomato6966/lavalink-client/tar.gz/0b99fd660be8662fde7d35228068287d0e007d1a:
     dependencies:
       tslib: 2.6.3
@@ -928,10 +908,6 @@ snapshots:
     optional: true
 
   undici-types@5.26.5: {}
-
-  undici@6.6.1:
-    dependencies:
-      '@fastify/busboy': 2.1.1
 
   which@2.0.2:
     dependencies:
