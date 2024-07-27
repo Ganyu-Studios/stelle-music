@@ -3,7 +3,7 @@ import { createMiddleware } from "seyfert";
 import { MessageFlags } from "discord-api-types/v10";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 
-export const checkVerifications = createMiddleware<void>(async ({ context, next }) => {
+export const checkVerifications = createMiddleware<void>(async ({ context, next, pass }) => {
     const { client, author, member, command } = context;
     const { developerIds } = client.config;
 
@@ -18,8 +18,8 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
     const player = client.manager.getPlayer(context.guildId!);
     const isAutoplay = !!player?.get<boolean | undefined>("enabledAutoplay");
 
-    if (command.onlyDeveloper && !developerIds.includes(author.id))
-        return context.editOrReply({
+    if (command.onlyDeveloper && !developerIds.includes(author.id)) {
+        await context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [
                 {
@@ -29,8 +29,11 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
             ],
         });
 
-    if (command.onlyGuildOwner && author.id !== guild.ownerId)
-        return context.editOrReply({
+        return pass();
+    }
+
+    if (command.onlyGuildOwner && author.id !== guild.ownerId) {
+        await context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [
                 {
@@ -40,8 +43,11 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
             ],
         });
 
-    if (command.checkNodes && !client.manager.useable)
-        return context.editOrReply({
+        return pass();
+    }
+
+    if (command.checkNodes && !client.manager.useable) {
+        await context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [
                 {
@@ -51,8 +57,11 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
             ],
         });
 
-    if (command.inVoice && !voice?.is(["GuildVoice", "GuildStageVoice"]))
-        return context.editOrReply({
+        return pass();
+    }
+
+    if (command.inVoice && !voice?.is(["GuildVoice", "GuildStageVoice"])) {
+        await context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [
                 {
@@ -62,8 +71,11 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
             ],
         });
 
-    if (command.sameVoice && bot && bot.channelId !== voice!.id)
-        return context.editOrReply({
+        return pass();
+    }
+
+    if (command.sameVoice && bot && bot.channelId !== voice!.id) {
+        await context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [
                 {
@@ -73,8 +85,11 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
             ],
         });
 
-    if (command.checkPlayer && !player)
-        return context.editOrReply({
+        return pass();
+    }
+
+    if (command.checkPlayer && !player) {
+        await context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [
                 {
@@ -84,8 +99,11 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
             ],
         });
 
-    if (command.checkQueue && !isAutoplay && !player!.queue.tracks.length)
-        return context.editOrReply({
+        return pass();
+    }
+
+    if (command.checkQueue && !isAutoplay && !player!.queue.tracks.length) {
+        await context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [
                 {
@@ -95,8 +113,11 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
             ],
         });
 
-    if (command.moreTracks && !(player!.queue.tracks.length + Number(!!player.queue.current) >= 2))
-        return context.editOrReply({
+        return pass();
+    }
+
+    if (command.moreTracks && !(player!.queue.tracks.length + Number(!!player.queue.current) >= 2)) {
+        await context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [
                 {
@@ -105,6 +126,9 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next 
                 },
             ],
         });
+
+        return pass();
+    }
 
     return next();
 });

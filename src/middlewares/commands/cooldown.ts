@@ -29,7 +29,7 @@ function getMetadata(ctx: AnyContext): CommandData {
     };
 }
 
-export const checkCooldown = createMiddleware<void>(async ({ context, next }) => {
+export const checkCooldown = createMiddleware<void>(async ({ context, next, pass }) => {
     const { client, author, command } = context;
     const { cooldowns } = client;
 
@@ -44,8 +44,8 @@ export const checkCooldown = createMiddleware<void>(async ({ context, next }) =>
     const { messages } = await context.getLocale();
 
     const data = cooldowns.get(setKey);
-    if (data && timeNow < data)
-        return context.editOrReply({
+    if (data && timeNow < data) {
+        context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [
                 {
@@ -54,6 +54,9 @@ export const checkCooldown = createMiddleware<void>(async ({ context, next }) =>
                 },
             ],
         });
+
+        return pass();
+    }
 
     cooldowns.set(setKey, timeNow + cooldown, cooldown);
 
