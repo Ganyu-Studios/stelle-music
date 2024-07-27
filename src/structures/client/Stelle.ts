@@ -36,7 +36,7 @@ export class Stelle extends Client<true> {
     constructor() {
         super({
             context: customContext,
-            globalMiddlewares: ["checkCooldown", "checkVerifications"],
+            globalMiddlewares: ["checkVerifications", "checkCooldown", "checkVoice", "checkMusic"],
             allowedMentions: {
                 replied_user: false,
                 parse: ["roles"],
