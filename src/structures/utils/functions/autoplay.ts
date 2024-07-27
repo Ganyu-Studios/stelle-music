@@ -1,16 +1,16 @@
 import type { Player, Track, UnresolvedTrack } from "lavalink-client";
 import type { CommandContext } from "seyfert";
 
+type ResolvableTrack = UnresolvedTrack | Track;
+
+const maxTracks = 10;
+
 /**
  * Based on:
  * https://github.com/Tomato6966/lavalink-client/blob/main/testBot/Utils/OptionalFunctions.ts#L18
  *
  * Modified by: https://github.com/NoBody-UU/
  */
-
-type ResolvableTrack = UnresolvedTrack | Track;
-
-const maxTracks = 10;
 
 /**
  *
