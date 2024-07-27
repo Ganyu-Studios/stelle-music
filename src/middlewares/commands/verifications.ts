@@ -13,6 +13,11 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next,
 
     const { messages } = await context.getLocale();
 
+    const voice = await member.voice()?.channel();
+    const bot = context.me()?.voice();
+    const player = client.manager.getPlayer(context.guildId!);
+    const isAutoplay = !!player?.get<boolean | undefined>("enabledAutoplay");
+
     if (command.onlyDeveloper && !developerIds.includes(author.id)) {
         await context.editOrReply({
             flags: MessageFlags.Ephemeral,
@@ -33,6 +38,90 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next,
             embeds: [
                 {
                     description: messages.events.onlyGuildOwner,
+                    color: EmbedColors.Red,
+                },
+            ],
+        });
+
+        return pass();
+    }
+
+    if (command.checkNodes && !client.manager.useable) {
+        await context.editOrReply({
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                {
+                    description: messages.events.noNodes,
+                    color: EmbedColors.Red,
+                },
+            ],
+        });
+
+        return pass();
+    }
+
+    if (command.inVoice && !voice?.is(["GuildVoice", "GuildStageVoice"])) {
+        await context.editOrReply({
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                {
+                    description: messages.events.noVoiceChannel,
+                    color: EmbedColors.Red,
+                },
+            ],
+        });
+
+        return pass();
+    }
+
+    if (command.sameVoice && bot && bot.channelId !== voice!.id) {
+        await context.editOrReply({
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                {
+                    description: messages.events.noSameVoice({ channelId: bot.channelId! }),
+                    color: EmbedColors.Red,
+                },
+            ],
+        });
+
+        return pass();
+    }
+
+    if (command.checkPlayer && !player) {
+        await context.editOrReply({
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                {
+                    description: messages.events.noPlayer,
+                    color: EmbedColors.Red,
+                },
+            ],
+        });
+
+        return pass();
+    }
+
+    if (command.checkQueue && !isAutoplay && !player!.queue.tracks.length) {
+        await context.editOrReply({
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                {
+                    description: messages.events.noTracks,
+                    color: EmbedColors.Red,
+                },
+            ],
+        });
+
+        return pass();
+    }
+
+    if (command.moreTracks && !(player!.queue.tracks.length + Number(!!player.queue.current) >= 2)) {
+        await context.editOrReply({
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                {
+                    description: messages.events.moreTracks,
                     color: EmbedColors.Red,
                 },
             ],
