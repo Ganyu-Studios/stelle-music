@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType } from "discord-api-types/v10";
+import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 
 import type { DefaultLocale } from "seyfert";
 

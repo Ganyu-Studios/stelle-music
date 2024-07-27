@@ -1,5 +1,5 @@
-import { ApplicationCommandOptionType } from "discord-api-types/v10";
 import type { RepeatMode } from "lavalink-client";
+import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 import type { PausedMode, PermissionNames } from "#stelle/types";
 
 export default {

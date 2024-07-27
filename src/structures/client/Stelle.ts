@@ -1,5 +1,5 @@
-import { ActivityType, PresenceUpdateStatus } from "discord-api-types/v10";
 import { Client, LimitedCollection } from "seyfert";
+import { ActivityType, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
 
 import type { InternalRuntime, InternalStelleRuntime, StelleConfiguration } from "#stelle/types";
 

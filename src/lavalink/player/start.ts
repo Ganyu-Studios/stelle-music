@@ -1,7 +1,7 @@
 import { ActionRow, Button, type CommandContext, Embed, type User } from "seyfert";
 import { Lavalink } from "#stelle/classes";
 
-import { ButtonStyle } from "discord-api-types/v10";
+import { ButtonStyle } from "seyfert/lib/types/index.js";
 
 import { AUTOPLAY_STATE, PAUSE_STATE } from "#stelle/data/Constants.js";
 import { parseTime } from "#stelle/utils/functions/utils.js";

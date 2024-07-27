@@ -1,7 +1,7 @@
 import { createMiddleware } from "seyfert";
 
-import { MessageFlags } from "discord-api-types/v10";
 import { EmbedColors } from "seyfert/lib/common/index.js";
+import { MessageFlags } from "seyfert/lib/types/index.js";
 
 import type { AnyContext } from "#stelle/types";
 

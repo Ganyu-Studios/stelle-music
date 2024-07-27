@@ -1,5 +1,5 @@
-import { MessageFlags } from "discord-api-types/v10";
 import { ComponentCommand, type ComponentContext, Embed, type User } from "seyfert";
+import { MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleOptions } from "#stelle/decorators";
 import { EmbedPaginator } from "#stelle/utils/Paginator.js";
 
