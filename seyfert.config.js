@@ -1,6 +1,6 @@
 //@ts-check
 
-import { GatewayIntentBits } from "discord-api-types/v10";
+import { GatewayIntentBits } from "seyfert/lib/types/index.js";
 import { config } from "seyfert";
 
 import { DEBUG_MODE } from "#stelle/data/Constants.js";

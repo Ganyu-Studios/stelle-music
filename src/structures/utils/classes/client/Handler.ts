@@ -53,7 +53,7 @@ export class StelleHandler extends BaseHandler {
 
     /**
      *
-     * Reload all `shoukaku` & `kazagumo` events.
+     * Reload all `lavalink-client` events.
      * @returns
      */
     //well,.. this is weird, but works.

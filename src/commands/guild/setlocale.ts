@@ -1,7 +1,7 @@
 import { Command, type CommandContext, Declare, type DefaultLocale, LocalesT, Options, createStringOption } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
-import { MessageFlags } from "discord-api-types/v10";
+import { MessageFlags } from "seyfert/lib/types/index.js";
 
 const options = {
     locale: createStringOption({

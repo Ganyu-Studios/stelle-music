@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType } from "discord-api-types/v10";
+import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 
 import type { DefaultLocale } from "seyfert";
 
@@ -107,7 +107,7 @@ export default {
             noPrevious: "`❌` No hubo una canción antes de esta.",
             noTracks: "`❌` No hay más canciones en la cola.",
             playerEnd: "`🔰` La cola ha terminado... Esperando más canciones.",
-            moreTracks: "`❌` Para habilitar **esto** `dos o más canciones` son requeridas.",
+            moreTracks: "`❌` Para habilitar **esto** `una o más canciones` son requeridas.",
             commandError:
                 "`❌` Algo inesperado ocurrió durante la ejecución del comando.\n`📢` Si el problema persiste, reporta el problema.",
             optionTypes: {

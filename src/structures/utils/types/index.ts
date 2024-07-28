@@ -1,4 +1,3 @@
-import type { PermissionFlagsBits } from "discord-api-types/v10";
 import type {
     CommandContext,
     ComponentContext,
@@ -8,6 +7,7 @@ import type {
     UserCommandInteraction,
 } from "seyfert";
 import type { InternalRuntimeConfig, InternalRuntimeConfigHTTP } from "seyfert/lib/client/base.js";
+import type { PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
 export { StelleConfiguration } from "./client/StelleConfiguration.js";
 export { AllEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "./client/StelleLavalink.js";

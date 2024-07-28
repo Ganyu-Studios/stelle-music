@@ -1,5 +1,5 @@
-import { ActivityType, PresenceUpdateStatus } from "discord-api-types/v10";
 import { Client, LimitedCollection } from "seyfert";
+import { ActivityType, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
 
 import type { InternalRuntime, InternalStelleRuntime, StelleConfiguration } from "#stelle/types";
 
@@ -88,6 +88,9 @@ export class Stelle extends Client<true> {
 
         this.setServices({
             middlewares: StelleMiddlewares,
+            cache: {
+                disabledCache: ["bans", "emojis", "overwrites", "stickers", "threads", "roles", "presences", "messages"],
+            },
             handleCommand: class extends HandleCommand {
                 argsParser = Yuna.parser({
                     syntax: {

@@ -1,7 +1,7 @@
 import { Command, type CommandContext, Declare, LocalesT, Options, createChannelOption } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
-import { ChannelType } from "discord-api-types/v10";
+import { ChannelType } from "seyfert/lib/types/index.js";
 
 const options = {
     voice: createChannelOption({
@@ -30,7 +30,7 @@ const options = {
     contexts: ["Guild"],
     aliases: ["mov", "m"],
 })
-@StelleOptions({ cooldown: 5, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
+@StelleOptions({ cooldown: 5, checkPlayer: true, inVoice: true, checkNodes: true })
 @Options(options)
 @LocalesT("locales.move.name", "locales.move.description")
 export default class MoveCommand extends Command {
@@ -45,7 +45,12 @@ export default class MoveCommand extends Command {
         const player = client.manager.getPlayer(guildId);
         if (!player) return;
 
-        if (text) player.textChannelId = text.id;
+        if (text) {
+            player.options.textChannelId = text.id;
+            player.textChannelId = text.id;
+        }
+
+        player.options.voiceChannelId = voice.id;
         player.voiceChannelId = voice.id;
 
         await player.connect();
@@ -55,7 +60,7 @@ export default class MoveCommand extends Command {
                     color: client.config.color.success,
                     description: messages.commands.move({
                         voiceId: voice.id,
-                        textId: text?.toString() ?? "---",
+                        textId: text?.toString() ?? ctx.channel()?.toString() ?? "<#1143606303850483280>",
                     }),
                 },
             ],

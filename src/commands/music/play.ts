@@ -12,8 +12,8 @@ import {
 } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
-import { MessageFlags } from "discord-api-types/v10";
 import { EmbedColors } from "seyfert/lib/common/index.js";
+import { MessageFlags } from "seyfert/lib/types/index.js";
 
 import { parseTime, sliceText } from "#stelle/utils/functions/utils.js";
 
@@ -81,11 +81,11 @@ export default class PlayCommand extends Command {
 
         if (!(guildId && member)) return;
 
-        const voice = member.voice();
-        if (!voice) return;
+        const voice = await member.voice()?.channel();
+        if (!voice?.is(["GuildVoice", "GuildStageVoice"])) return;
 
-        const botVoice = ctx.me()?.voice();
-        if (botVoice && botVoice.channelId !== voice.channelId) return;
+        let bot = ctx.me()?.voice();
+        if (bot && bot.channelId !== voice.id) return;
 
         const { messages } = await ctx.getLocale();
         const { defaultVolume, searchEngine } = await client.database.getPlayer(guildId);
@@ -95,10 +95,12 @@ export default class PlayCommand extends Command {
         const player = client.manager.createPlayer({
             guildId: guildId,
             textChannelId: channelId,
-            voiceChannelId: voice.channelId!,
+            voiceChannelId: voice.id,
             volume: defaultVolume,
             selfDeaf: true,
         });
+
+        if (!player.connected) await player.connect();
 
         await player.node.updateSession(true, client.config.resumeTime);
 
@@ -106,7 +108,8 @@ export default class PlayCommand extends Command {
 
         player.set("commandContext", ctx);
 
-        if (!player.connected) await player.connect();
+        if (!bot) bot = client.cache.voiceStates?.get(client.me.id, guildId);
+        if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);
 
         switch (loadType) {
             case "empty":
@@ -132,8 +135,8 @@ export default class PlayCommand extends Command {
                 {
                     const track = tracks[0];
 
-                    if (player.get("enabledAutoplay")) player.queue.add(track, 0);
-                    else player.queue.add(track);
+                    if (player.get("enabledAutoplay")) await player.queue.add(track, 0);
+                    else await player.queue.add(track);
 
                     const type = player.queue.tracks.length > 1 ? "results" : "result";
                     const status = track.info.isStream
@@ -146,7 +149,7 @@ export default class PlayCommand extends Command {
                         .setDescription(
                             messages.commands.play.embed[type]({
                                 duration: status,
-                                position: player.queue.tracks.length,
+                                position: player.queue.tracks.findIndex((t) => t.info.identifier === track.info.identifier) + 1,
                                 requester: (track.requester as User).id,
                                 title: track.info.title,
                                 url: track.info.uri!,
@@ -168,8 +171,8 @@ export default class PlayCommand extends Command {
                 {
                     const track = tracks[0];
 
-                    if (player.get("enabledAutoplay")) player.queue.add(tracks, 0);
-                    else player.queue.add(tracks);
+                    if (player.get("enabledAutoplay")) await player.queue.add(tracks, 0);
+                    else await player.queue.add(tracks);
 
                     const embed = new Embed()
                         .setColor(client.config.color.success)

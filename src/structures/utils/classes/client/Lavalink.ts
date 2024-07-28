@@ -22,7 +22,7 @@ export class Lavalink<K extends keyof AllEvents = keyof AllEvents> implements La
 
     /**
      *
-     * Check if the event is a `shoukaku` event.
+     * Check if the event is a `node` event.
      * @returns
      */
     public isNode(): this is LavalinkNode {
@@ -31,7 +31,7 @@ export class Lavalink<K extends keyof AllEvents = keyof AllEvents> implements La
 
     /**
      *
-     * Check if the event is a `kazagumo` event.
+     * Check if the event is a `manager` event.
      * @returns
      */
     public isManager(): this is LavalinkManager {

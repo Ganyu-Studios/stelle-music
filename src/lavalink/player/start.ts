@@ -1,7 +1,7 @@
 import { ActionRow, Button, type CommandContext, Embed, type User } from "seyfert";
 import { Lavalink } from "#stelle/classes";
 
-import { ButtonStyle } from "discord-api-types/v10";
+import { ButtonStyle } from "seyfert/lib/types/index.js";
 
 import { AUTOPLAY_STATE, PAUSE_STATE } from "#stelle/data/Constants.js";
 import { parseTime } from "#stelle/utils/functions/utils.js";
@@ -18,7 +18,7 @@ export default new Lavalink({
         if (!ctx) return;
 
         const voice = await client.channels.fetch(player.voiceChannelId);
-        if (!voice.isVoice()) return;
+        if (!voice.is(["GuildStageVoice", "GuildVoice"])) return;
 
         const { messages } = await ctx.getLocale();
 

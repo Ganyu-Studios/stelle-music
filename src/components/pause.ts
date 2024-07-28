@@ -1,7 +1,7 @@
 import { ActionRow, Button, ComponentCommand, type ComponentContext } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
-import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType } from "discord-api-types/v10";
+import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType } from "seyfert/lib/types/index.js";
 import { PAUSE_STATE } from "#stelle/data/Constants.js";
 
 @StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, cooldown: 5, checkNodes: true })

@@ -17,7 +17,7 @@ export default new Lavalink({
         if (!ctx) return;
 
         const voice = await client.channels.fetch(player.voiceChannelId);
-        if (!voice.isVoice()) return;
+        if (!voice.is(["GuildStageVoice", "GuildVoice"])) return;
 
         const { messages } = await ctx.getLocale();
 

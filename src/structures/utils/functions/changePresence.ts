@@ -1,5 +1,5 @@
-import { PresenceUpdateStatus } from "discord-api-types/v10";
 import type { UsingClient } from "seyfert";
+import { PresenceUpdateStatus } from "seyfert/lib/types/index.js";
 
 import { BOT_ACTIVITIES } from "#stelle/data/Constants.js";
 

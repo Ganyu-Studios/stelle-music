@@ -1,4 +1,4 @@
-import { type APIApplicationCommandOption, ApplicationCommandOptionType } from "discord-api-types/v10";
+import { type APIApplicationCommandOption, ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 
 const isRequired = (option: string, req?: boolean) => (req ? `<${option}>` : `[${option}]`);
 

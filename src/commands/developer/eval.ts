@@ -1,21 +1,11 @@
-import {
-    Command,
-    type CommandContext,
-    Declare,
-    Embed,
-    type Message,
-    type OKFunction,
-    Options,
-    type WebhookMessage,
-    createStringOption,
-} from "seyfert";
+import { Command, type CommandContext, Declare, Embed, type Message, Options, type WebhookMessage, createStringOption } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { StelleOptions } from "#stelle/decorators";
 
 import { Configuration } from "#stelle/data/Configuration.js";
 import { codeBlock, getDepth, sliceText } from "#stelle/utils/functions/utils.js";
 
-import { DeclareParserConfig, ParserRecommendedConfig, Watch, Yuna } from "yunaforseyfert";
+import { DeclareParserConfig, Watch, Yuna } from "yunaforseyfert";
 import { SECRETS_MESSAGES, SECRETS_REGEX } from "#stelle/data/Constants.js";
 
 import ms from "ms";
@@ -24,10 +14,6 @@ const options = {
     code: createStringOption({
         description: "Enter some code.",
         required: true,
-        value: ({ value }, ok: OKFunction<string>) => {
-            const codeRegex = /```(?:\w+\n)?([\s\S]+?)```/g;
-            return ok(codeRegex.exec(value)?.[1] ?? value);
-        },
     }),
 };
 
@@ -41,7 +27,11 @@ const options = {
 })
 @Options(options)
 @StelleOptions({ onlyDeveloper: true })
-@DeclareParserConfig(ParserRecommendedConfig.Eval)
+@DeclareParserConfig({
+    breakSearchOnConsumeAllOptions: true,
+    disableLongTextTagsInLastOption: true,
+    useCodeBlockLangAsAnOption: true,
+})
 export default class EvalCommand extends Command {
     @Watch({
         idle: ms("1min"),
@@ -88,10 +78,7 @@ export default class EvalCommand extends Command {
 
                 output = await eval(code);
                 typecode = typeof output;
-                output = getDepth(output)
-                    .replaceAll(process.env.TOKEN, client.token)
-                    .replaceAll(process.env.SPOTIFY_ID, client.token)
-                    .replaceAll(process.env.SPOTIFY_SECRET, client.token);
+                output = getDepth(output).replaceAll(process.env.TOKEN, client.token);
             }
 
             await ctx.editOrReply({
