@@ -23,7 +23,8 @@ export async function autoPlayFunction(player: Player, lastTrack?: Track): Promi
     if (!lastTrack) return;
     if (!player.get("enabledAutoplay")) return;
 
-    if (!player.queue.previous.some((t) => t.info.identifier === lastTrack.info.identifier)) player.queue.previous.unshift(lastTrack);
+    if (!(player.queue.previous.some((t) => t.info.identifier === lastTrack.info.identifier) || player.queue.previous.length))
+        player.queue.previous.unshift(lastTrack);
 
     const ctx = player.get<CommandContext | undefined>("commandContext");
     if (!ctx) return;
