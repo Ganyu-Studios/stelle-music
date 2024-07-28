@@ -107,7 +107,7 @@ export default {
             noPrevious: "`❌` There is no previous track to add.",
             noTracks: "`❌` There are no more tracks in the queue.",
             playerEnd: "`🔰` The queue has finished... Waiting for more tracks.",
-            moreTracks: "`❌` In order to enable **this** `two or more tracks` are required.",
+            moreTracks: "`❌` In order to enable **this** `one or more tracks` are required.",
             commandError: "`❌` Something unexpected ocurred during the execution.\n`📢` If the problem persists, report the issue.",
             optionTypes: {
                 [ApplicationCommandOptionType.Subcommand]: "subcommand",

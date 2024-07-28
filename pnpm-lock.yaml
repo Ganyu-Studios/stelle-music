@@ -31,7 +31,7 @@ importers:
         version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/026530fd39de3cf85accf2569091e6b4c362d637
       yunaforseyfert:
         specifier: github:SagiriIkeda/yunaforseyfert#dev
-        version: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/d7190b3f6b2eeacfe0e9387b79810d7b4ad418c5
+        version: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/2029fdcd5ae47478d679e658ecd203268c7f3b64
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.8.3
@@ -317,8 +317,8 @@ packages:
     engines: {node: '>=18.12.0'}
     hasBin: true
 
-  listr2@8.2.3:
-    resolution: {integrity: sha512-Lllokma2mtoniUOS94CcOErHWAug5iu7HOmDrvWgpw8jyQH2fomgB+7lZS4HWZxytUuQwkGOwe49FvwVaA85Xw==}
+  listr2@8.2.4:
+    resolution: {integrity: sha512-opevsywziHd3zHCVQGAj8zu+Z3yHNkkoYhWIGnq54RrCVwLz0MozotJEDnKsIBLvkfLGN6BLOyAeRrYI0pKA4g==}
     engines: {node: '>=18.0.0'}
 
   lodash.defaults@4.2.0:
@@ -503,8 +503,8 @@ packages:
     engines: {node: '>= 14'}
     hasBin: true
 
-  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/d7190b3f6b2eeacfe0e9387b79810d7b4ad418c5:
-    resolution: {tarball: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/d7190b3f6b2eeacfe0e9387b79810d7b4ad418c5}
+  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/2029fdcd5ae47478d679e658ecd203268c7f3b64:
+    resolution: {tarball: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/2029fdcd5ae47478d679e658ecd203268c7f3b64}
     version: 1.0.0
 
 snapshots:
@@ -744,7 +744,7 @@ snapshots:
       debug: 4.3.6
       execa: 8.0.1
       lilconfig: 3.1.2
-      listr2: 8.2.3
+      listr2: 8.2.4
       micromatch: 4.0.7
       pidtree: 0.6.0
       string-argv: 0.3.2
@@ -752,7 +752,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  listr2@8.2.3:
+  listr2@8.2.4:
     dependencies:
       cli-truncate: 4.0.0
       colorette: 2.0.20
@@ -918,7 +918,7 @@ snapshots:
 
   yaml@2.4.5: {}
 
-  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/d7190b3f6b2eeacfe0e9387b79810d7b4ad418c5:
+  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/2029fdcd5ae47478d679e658ecd203268c7f3b64:
     dependencies:
       seyfert: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/026530fd39de3cf85accf2569091e6b4c362d637
     transitivePeerDependencies:

@@ -26,6 +26,8 @@ export async function autoPlayFunction(player: Player, lastTrack?: Track): Promi
     const ctx = player.get<CommandContext | undefined>("commandContext");
     if (!ctx) return;
 
+    if (!player.queue.previous.find((t) => t.info.identifier === lastTrack.info.identifier)) player.queue.previous.unshift(lastTrack);
+
     const filterTracks = (tracks: ResolvableTrack[]) =>
         tracks.filter(
             (track) =>
