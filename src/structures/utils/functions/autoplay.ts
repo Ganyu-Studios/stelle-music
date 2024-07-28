@@ -1,4 +1,4 @@
-import type { Player, Track, UnresolvedTrack } from "lavalink-client";
+import type { Player, SourceNames, Track, UnresolvedTrack } from "lavalink-client";
 import type { CommandContext } from "seyfert";
 
 type ResolvableTrack = UnresolvedTrack | Track;
@@ -23,10 +23,11 @@ export async function autoPlayFunction(player: Player, lastTrack?: Track): Promi
     if (!lastTrack) return;
     if (!player.get("enabledAutoplay")) return;
 
+    if (!(player.queue.previous.some((t) => t.info.identifier === lastTrack.info.identifier) || player.queue.current))
+        player.queue.previous.unshift(lastTrack);
+
     const ctx = player.get<CommandContext | undefined>("commandContext");
     if (!ctx) return;
-
-    if (!player.queue.previous.find((t) => t.info.identifier === lastTrack.info.identifier)) player.queue.previous.unshift(lastTrack);
 
     const filterTracks = (tracks: ResolvableTrack[]) =>
         tracks.filter(
@@ -49,19 +50,17 @@ export async function autoPlayFunction(player: Player, lastTrack?: Track): Promi
         const ids = filtered.map(({ info }) => info.identifier ?? info.uri.split("/").reverse()?.[0] ?? info.uri.split("/").reverse()?.[1]);
         const res = await player.search({ query: `seed_tracks=${ids.join(",")}`, source: "sprec" }, requester);
 
-        if (res?.tracks.length) {
+        if (res.tracks.length) {
             const track = filterTracks(res.tracks)[Math.floor(Math.random() * res.tracks.length)] as Track;
-            player.queue.previous.push(track);
             await player.queue.add(track);
         }
-    } else if (["youtube", "youtubemusic"].includes(lastTrack.info.sourceName)) {
+    } else if ((["youtube", "youtubemusic"] as SourceNames[]).includes(lastTrack.info.sourceName)) {
         const search = `https://www.youtube.com/watch?v=${lastTrack.info.identifier}&list=RD${lastTrack.info.identifier}`;
         const res = await player.search({ query: search }, requester);
 
         if (res.tracks.length) {
             const random = Math.floor(Math.random() * res.tracks.length);
             const tracks = filterTracks(res.tracks).slice(random, random + maxTracks) as Track[];
-            player.queue.previous.push(...tracks);
             await player.queue.add(tracks);
         }
     }
