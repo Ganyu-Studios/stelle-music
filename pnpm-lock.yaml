@@ -31,7 +31,7 @@ importers:
         version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/2f1ba85a94ba99f6974eab490df73d5dc825e82a
       yunaforseyfert:
         specifier: github:SagiriIkeda/yunaforseyfert#dev
-        version: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/1eef92caa7bdf3b357febde3295b674df5f23ea5
+        version: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/bcf9d65a1eb41991d4add756b29f5f194d1f6ee2
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.8.3
@@ -43,8 +43,8 @@ importers:
         specifier: ^0.7.34
         version: 0.7.34
       '@types/node':
-        specifier: ^20.14.12
-        version: 20.14.12
+        specifier: ^20.14.13
+        version: 20.14.13
       husky:
         specifier: ^9.1.3
         version: 9.1.3
@@ -146,8 +146,8 @@ packages:
   '@types/ms@0.7.34':
     resolution: {integrity: sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==}
 
-  '@types/node@20.14.12':
-    resolution: {integrity: sha512-r7wNXakLeSsGT0H1AU863vS2wa5wBOK4bWMjZz2wj+8nBx+m5PeIn0k8AloSLpRuiwdRQZwarZqHE4FNArPuJQ==}
+  '@types/node@20.14.13':
+    resolution: {integrity: sha512-+bHoGiZb8UiQ0+WEtmph2IWQCjIqg8MDZMAV+ppRRhUZnquF5mQkP/9vpSwJClEiSM/C7fZZExPzfU0vJTyp8w==}
 
   ansi-escapes@7.0.0:
     resolution: {integrity: sha512-GdYO7a61mR0fOlAsvC9/rIHf7L96sBc6dEWzeOu+KAea5bZyQRPIpojrVoI4AXGJS/ycu/fBTdLrUkA4ODrvjw==}
@@ -503,8 +503,8 @@ packages:
     engines: {node: '>= 14'}
     hasBin: true
 
-  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/1eef92caa7bdf3b357febde3295b674df5f23ea5:
-    resolution: {tarball: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/1eef92caa7bdf3b357febde3295b674df5f23ea5}
+  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/bcf9d65a1eb41991d4add756b29f5f194d1f6ee2:
+    resolution: {tarball: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/bcf9d65a1eb41991d4add756b29f5f194d1f6ee2}
     version: 1.0.0
 
 snapshots:
@@ -576,7 +576,7 @@ snapshots:
 
   '@types/ms@0.7.34': {}
 
-  '@types/node@20.14.12':
+  '@types/node@20.14.13':
     dependencies:
       undici-types: 5.26.5
 
@@ -918,7 +918,7 @@ snapshots:
 
   yaml@2.4.5: {}
 
-  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/1eef92caa7bdf3b357febde3295b674df5f23ea5:
+  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/bcf9d65a1eb41991d4add756b29f5f194d1f6ee2:
     dependencies:
       seyfert: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/2f1ba85a94ba99f6974eab490df73d5dc825e82a
     transitivePeerDependencies:

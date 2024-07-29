@@ -5,7 +5,7 @@ import { StelleOptions } from "#stelle/decorators";
 import { Configuration } from "#stelle/data/Configuration.js";
 import { codeBlock, getDepth, sliceText } from "#stelle/utils/functions/utils.js";
 
-import { DeclareParserConfig, Watch, Yuna } from "yunaforseyfert";
+import { DeclareParserConfig, ParserRecommendedConfig, Watch, Yuna } from "yunaforseyfert";
 import { SECRETS_MESSAGES, SECRETS_REGEX } from "#stelle/data/Constants.js";
 
 import ms from "ms";
@@ -27,11 +27,7 @@ const options = {
 })
 @Options(options)
 @StelleOptions({ onlyDeveloper: true })
-@DeclareParserConfig({
-    breakSearchOnConsumeAllOptions: true,
-    disableLongTextTagsInLastOption: true,
-    useCodeBlockLangAsAnOption: true,
-})
+@DeclareParserConfig(ParserRecommendedConfig.Eval)
 export default class EvalCommand extends Command {
     @Watch({
         idle: ms("1min"),
