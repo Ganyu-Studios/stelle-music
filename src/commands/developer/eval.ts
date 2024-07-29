@@ -35,10 +35,18 @@ export default class EvalCommand extends Command {
             const watcher = Yuna.watchers.find(ctx.client, { userId: ctx.author.id, command: this });
             if (!watcher) return;
 
-            watcher.stop("Another instance of command created.");
+            watcher.stop("Another execution");
         },
         onStop(reason) {
-            this.ctx?.editOrReply({ content: `Watcher stoped: ${reason}`, embeds: [] });
+            this.ctx?.editOrReply({
+                content: "",
+                embeds: [
+                    {
+                        description: `\`🐐\` Eval command watcher ended by: \`${reason}\``,
+                        color: EmbedColors.White,
+                    },
+                ],
+            });
         },
     })
     async run(ctx: CommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
