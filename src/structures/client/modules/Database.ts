@@ -10,8 +10,6 @@ import { StelleKeys } from "#stelle/types";
 //🗿
 const prismaClient = new PrismaClient();
 
-//TODO: Add a database cache to make less requests to the database.
-
 
 /**
  * Main Stelle database class.
