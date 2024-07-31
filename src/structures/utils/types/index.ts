@@ -37,6 +37,12 @@ export type AnyContext =
     | ComponentContext
     | ModalContext;
 
+export enum StelleKeys {
+    Player = "guild:player",
+    Locale = "guild:locale",
+    Prefix = "guild:prefix",
+}
+
 export interface Options {
     /** The cooldown. */
     cooldown?: number;

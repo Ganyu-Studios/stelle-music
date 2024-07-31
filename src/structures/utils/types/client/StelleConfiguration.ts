@@ -43,6 +43,11 @@ export interface StelleConfiguration {
      * @default ms("1min")
      */
     resumeTime: number;
+    /**
+     * Stelle cache max size.
+     * @default 25
+     */
+    maxCache: number;
     /** Stelle developer id(s). */
     developerIds: string[];
     /** Stelle developer guild id(s). */
