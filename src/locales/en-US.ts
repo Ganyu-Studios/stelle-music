@@ -15,6 +15,7 @@ export default {
             move: ({ textId, voiceId }: IMove) => `\`✅\` Moved to the voice channel <#${voiceId}> and the text channel: ${textId}`,
             previous: ({ title, uri }: IPrevious) => `\`✅\` The previous track [**${title}**](${uri}) has been added to the queue.`,
             stop: "`👋` Stopping and leaving...",
+            shuffle: "`✅` The queue has been shuffled.",
             default: {
                 engine: ({ engine }: IEngine) => `\`✅\` The default search engine of Stelle is now: **${engine}**.`,
                 volume: ({ volume }: IVolume) => `\`✅\` The default volume of Stelle is now: **${volume}%**.`,
@@ -313,6 +314,10 @@ export default {
                 },
             },
         },
+        shuffle: {
+            name: "shuffle",
+            description: "Shuffle the queue.",
+        }
     },
 };
 
