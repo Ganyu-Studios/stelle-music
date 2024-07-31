@@ -1,3 +1,5 @@
+import type { AnyContext } from "#stelle/types";
+
 import { join } from "node:path";
 import { inspect } from "node:util";
 import { extendContext } from "seyfert";
@@ -101,21 +103,20 @@ export const msParser = (time?: number): string => {
     return humanizer(time);
 };
 
+
 /**
  *
- * Make a new random id with a specific length.
- * @param length
+ * Create and Get the cooldown collection key.
+ * @param ctx
  * @returns
  */
-export const makeId = (length: number) => {
-    let result = "";
+export const getCollectionKey = (ctx: AnyContext): string => {
+    const authorId = ctx.author.id;
 
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const charactersLength = characters.length;
+    if (ctx.isChat() || ctx.isMenu()) return `${authorId}-${ctx.fullCommandName}-command`;
+    if (ctx.isComponent() || ctx.isModal()) return `${authorId}-${ctx.customId}-component`;
 
-    for (let i = 0; i < length; i++) result += characters.charAt(Math.floor(Math.random() * charactersLength));
-
-    return result;
+    return `${authorId}-all`;
 };
 
 /**
