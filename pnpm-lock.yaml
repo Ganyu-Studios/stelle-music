@@ -31,7 +31,7 @@ importers:
         version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/5e4a7e2792c7f2e32fc969d1fd2b8c14efdae219
       yunaforseyfert:
         specifier: github:SagiriIkeda/yunaforseyfert#dev
-        version: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/90d2925363418028ef9567673e33d5bb95570b14
+        version: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/967090497fa361c914d4f039413c9d2353bfb046
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.8.3
@@ -503,8 +503,8 @@ packages:
     engines: {node: '>= 14'}
     hasBin: true
 
-  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/90d2925363418028ef9567673e33d5bb95570b14:
-    resolution: {tarball: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/90d2925363418028ef9567673e33d5bb95570b14}
+  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/967090497fa361c914d4f039413c9d2353bfb046:
+    resolution: {tarball: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/967090497fa361c914d4f039413c9d2353bfb046}
     version: 1.0.0
 
 snapshots:
@@ -918,7 +918,7 @@ snapshots:
 
   yaml@2.4.5: {}
 
-  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/90d2925363418028ef9567673e33d5bb95570b14:
+  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/967090497fa361c914d4f039413c9d2353bfb046:
     dependencies:
       seyfert: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/5e4a7e2792c7f2e32fc969d1fd2b8c14efdae219
     transitivePeerDependencies:

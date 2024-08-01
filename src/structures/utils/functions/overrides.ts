@@ -53,11 +53,11 @@ export async function onBotPermissionsFail(ctx: AnyContext, permissions: Permiss
         flags: MessageFlags.Ephemeral,
         embeds: [
             {
-                description: messages.events.permissions.user.description,
+                description: messages.events.permissions.bot.description,
                 color: EmbedColors.Red,
                 fields: [
                     {
-                        name: messages.events.permissions.user.field,
+                        name: messages.events.permissions.bot.field,
                         value: permissions.map((p) => `- ${messages.events.permissions.list[p]}`).join("\n- "),
                     },
                 ],
