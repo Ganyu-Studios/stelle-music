@@ -6,7 +6,7 @@ export default {
     metadata: {
         name: "Spanish",
         emoji: "🇲🇽",
-        traslators: ["MARCROCK22"],
+        translators: ["MARCROCK22"],
     },
     messages: {
         commands: {
