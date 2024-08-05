@@ -13,7 +13,7 @@ export default {
             nowplaying: ({ title, url, author, requester, bar, duration, position }) => `\`📻\` Ahora: [\`${title}\`](${url}) - \`${author}\`\n\`👤\` **Solicitado por**: <@${requester}>\n \n\`🕛\` ${bar} | \`${position}\` - \`(${duration})\``,
             setprefix: ({ prefix }) => `\`✅\` El **nuevo prefijo** para este servidor es: \`${prefix}\``,
             skip: ({ amount }) => `\`✅\` Saltando la cantidad de: \`${amount} canciones\`.`,
-            move: ({ textId, voiceId }) => `\`✅\` Me movi al canal de voz <#${voiceId}> y canal de texto: ${textId}`,
+            move: ({ textId, voiceId }) => `\`✅\` Me movi al canal de voz <#${voiceId}> y canal de texto: <#${textId}>`,
             previous: ({ title, uri }) => `\`✅\` La canción anterior [**${title}**](${uri}) ha sido añadida a la cola.`,
             stop: "`👋` Deteniendo y abandonando el canal...",
             shuffle: "`✅` La cola ha sido mezclada.",
