@@ -18,7 +18,7 @@ export class StelleDatabase {
     private client: UsingClient;
     private prisma!: PrismaClient;
 
-    private cache: StelleCache = new StelleCache();
+    private storage: StelleCache = new StelleCache();
     private connected: boolean = false;
 
     /**
@@ -63,7 +63,7 @@ export class StelleDatabase {
      * @returns
      */
     public async getLocale(guildId: string): Promise<string> {
-        const cached = this.cache.get(guildId, StelleKeys.Locale);
+        const cached = this.storage.get(guildId, StelleKeys.Locale);
         if (cached) return cached.locale!;
 
         const data = await this.prisma.guildLocale.findUnique({ where: { id: guildId } });
@@ -77,7 +77,7 @@ export class StelleDatabase {
      * @returns
      */
     public async getPrefix(guildId: string): Promise<string> {
-        const cached = this.cache.get(guildId, StelleKeys.Prefix);
+        const cached = this.storage.get(guildId, StelleKeys.Prefix);
         if (cached) return cached.prefix!;
 
         const data = await this.prisma.guildPrefix.findUnique({ where: { id: guildId } });
@@ -91,7 +91,7 @@ export class StelleDatabase {
      * @returns
      */
     public async getPlayer(guildId: string): Promise<Pick<NonNullable<PlayerData>, "defaultVolume" | "searchEngine">> {
-        const cached = this.cache.get(guildId, StelleKeys.Player);
+        const cached = this.storage.get(guildId, StelleKeys.Player);
         if (cached) return {
             defaultVolume: cached.defaultVolume!,
             searchEngine: cached.searchEngine! as SearchPlatform,
@@ -120,7 +120,7 @@ export class StelleDatabase {
             },
         });
 
-        this.cache.set(guildId, StelleKeys.Locale, {
+        this.storage.set(guildId, StelleKeys.Locale, {
             id: guildId,
             locale,
         });
@@ -142,7 +142,7 @@ export class StelleDatabase {
             },
         });
 
-        this.cache.set(guildId, StelleKeys.Prefix, {
+        this.storage.set(guildId, StelleKeys.Prefix, {
             id: guildId,
             prefix,
         });
@@ -166,7 +166,7 @@ export class StelleDatabase {
             create: { id: guildId, defaultVolume, searchEngine },
         });
 
-        this.cache.set(guildId, StelleKeys.Player, {
+        this.storage.set(guildId, StelleKeys.Player, {
             id: guildId,
             defaultVolume: defaultVolume!,
             searchEngine: searchEngine as SearchPlatform,
