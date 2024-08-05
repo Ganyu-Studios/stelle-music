@@ -47,7 +47,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
         return;
     }
 
-    if (isEmpty && !player.paused) {
+    if (isEmpty && (player.paused || player.playing)) {
         await player.pause();
         await client.messages.write(player.textChannelId, {
             embeds: [
