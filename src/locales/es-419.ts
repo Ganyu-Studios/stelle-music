@@ -10,6 +10,7 @@ export default {
     },
     messages: {
         commands: {
+            nowplaying: ({ title, url, author, requester, bar, duration, position }) => `\`📻\` Ahora: [\`${title}\`](${url}) - \`${author}\`\n\`👤\` **Solicitado por**: <@${requester}>\n \n\`🕛\` ${bar} | \`${position}\` - \`(${duration})\``,
             setprefix: ({ prefix }) => `\`✅\` El **nuevo prefijo** para este servidor es: \`${prefix}\``,
             skip: ({ amount }) => `\`✅\` Saltando la cantidad de: \`${amount} canciones\`.`,
             move: ({ textId, voiceId }) => `\`✅\` Me movi al canal de voz <#${voiceId}> y canal de texto: ${textId}`,
@@ -124,7 +125,7 @@ export default {
                 [ApplicationCommandOptionType.Number]: "numero",
                 [ApplicationCommandOptionType.Attachment]: "achivo",
             },
-            playerStart: {
+            trackStart: {
                 embed: ({ duration, requester, title, url, volume, author, size }) =>
                     `\`📻\` Reproduciendo ahora [\`${title}\`](${url})\n\n\`🎤\` **Autor**: \`${author}\`\n\`🕛\` **Duración**: \`${duration}\`\n\`🔊\` **Volumen**: \`${volume}%\`\n\`👤\` **Solicitado por**: <@${requester}>\n\n\`📋\` **En cola**: \`${size} canciones\``,
                 components: {
@@ -318,6 +319,10 @@ export default {
         shuffle: {
             name: "mezclar",
             description: "Mezcla la cola.",
+        },
+        nowplaying: {
+            name: "sonando",
+            description: "Obtén la canción actual."
         }
     },
 } satisfies DefaultLocale;

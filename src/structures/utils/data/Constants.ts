@@ -20,7 +20,7 @@ export const DEBUG_MODE: boolean = getFlag("--debug");
 /**
  * Stelle eval secrets regex.
  */
-export const SECRETS_REGEX = /\b(?:client\.(?:config)|config|env|process\.env|eval|atob|btoa)\b/;
+export const SECRETS_REGEX: RegExp = /\b(?:client\.(?:config)|config|env|process\.env|eval|atob|btoa)\b/;
 
 /**
  *

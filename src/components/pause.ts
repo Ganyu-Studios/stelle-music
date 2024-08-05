@@ -38,7 +38,7 @@ export default class PauseTrackComponent extends ComponentCommand {
                     if ((button as APIButtonComponentWithCustomId).custom_id === "player-pauseTrack") {
                         (button as APIButtonComponentWithCustomId).style = player.paused ? ButtonStyle.Secondary : ButtonStyle.Primary;
                         (button as APIButtonComponentWithCustomId).label =
-                            messages.events.playerStart.components.paused[PAUSE_STATE(player.paused)];
+                            messages.events.trackStart.components.paused[PAUSE_STATE(player.paused)];
                     }
 
                     return new Button(button as APIButtonComponentWithCustomId);

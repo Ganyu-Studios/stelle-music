@@ -1,4 +1,5 @@
 import type { AnyContext } from "#stelle/types";
+import type { Player } from "lavalink-client";
 
 import { join } from "node:path";
 import { inspect } from "node:util";
@@ -30,12 +31,12 @@ export const stelleRC = async (): Promise<any> => {
     return {
         ...env,
         debug: !!debug,
+        lavalink: join(process.cwd(), locations.output, locations.lavalink),
         templates: locations.templates ? join(process.cwd(), locations.base, locations.templates) : undefined,
         langs: locations.langs ? join(process.cwd(), locations.output, locations.langs) : undefined,
         events: locations.events ? join(process.cwd(), locations.output, locations.events) : undefined,
         components: locations.components ? join(process.cwd(), locations.output, locations.components) : undefined,
         commands: locations.commands ? join(process.cwd(), locations.output, locations.commands) : undefined,
-        lavalink: join(process.cwd(), locations.output, locations.lavalink),
     };
 };
 
@@ -118,6 +119,37 @@ export const getCollectionKey = (ctx: AnyContext): string => {
 
     return `${authorId}-all`;
 };
+
+/**
+ * 
+ * Create a new progress bar.
+ * @param player 
+ * @returns 
+ */
+export const createBar = (player: Player) => {
+    const size = 15;
+    const line = "▬";
+    const slider = "🔘";
+
+    if (!player.queue.current) return `${slider}${line.repeat(size - 1)}]`;
+
+    const current = player.queue.current.info.duration !== 0 ? player.position : player.queue.current.info.duration;
+    const total = player.queue.current.info.duration;
+
+    const bar =
+        current > total
+            ? [line.repeat((size / 2) * 2), (current / total) * 100]
+            : [
+                line.repeat(Math.round((size / 2) * (current / total))).replace(/.$/, slider) +
+                line.repeat(size - Math.round(size * (current / total)) + 1),
+
+                current / total,
+            ];
+
+    if (!String(bar).includes(slider)) return `${slider}${line.repeat(size - 1)}`;
+
+    return `${bar[0]}`;
+}
 
 /**
  *

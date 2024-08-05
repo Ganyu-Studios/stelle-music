@@ -15,7 +15,7 @@ const options = {
             const { client } = interaction;
 
             const locales = Object.entries<DefaultLocale>(client.langs!.values).map(([value, l]) => ({
-                name: `${l.metadata.name} [${l.metadata.emoji}] - ${l.metadata.traslators.join(", ")}`,
+                name: `${l.metadata.name} [${l.metadata.emoji}] - ${l.metadata.translators.join(", ")}`,
                 value,
             }));
 
