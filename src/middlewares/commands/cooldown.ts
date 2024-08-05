@@ -8,7 +8,7 @@ export const checkCooldown = createMiddleware<void>(async ({ context, next, pass
     const { client, command } = context;
     const { cooldowns } = client;
 
-    if (!command) return;
+    if (!command) return pass();
 
     const cooldown = (command.cooldown ?? 3) * 1000;
     const timeNow = Date.now();
