@@ -3,8 +3,8 @@ import type { Player } from "lavalink-client";
 
 import { join } from "node:path";
 import { inspect } from "node:util";
-import { extendContext } from "seyfert";
 
+import { type DefaultLocale, extendContext } from "seyfert";
 import { magicImport } from "seyfert/lib/common/index.js";
 
 import humanize from "humanize-duration";
@@ -18,7 +18,10 @@ export const customContext = extendContext((interaction) => ({
      * Get the locale from the database.
      * @returns
      */
-    getLocale: async () => interaction.client.t(await interaction.client.database.getLocale(interaction.guildId!)).get(),
+    getLocale: async (): Promise<DefaultLocale> => {
+        const locale = await interaction.client.database.getLocale(interaction.guildId!);
+        return interaction.client.t(locale).get(locale);
+    },
 }));
 
 /**
