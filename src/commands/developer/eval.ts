@@ -82,7 +82,7 @@ export default class EvalCommand extends Command {
 
                 output = await eval(code);
                 typecode = typeof output;
-                output = getDepth(output).replaceAll(process.env.TOKEN, client.token);
+                output = getDepth(output).replaceAll(process.env.TOKEN!, client.token);
             }
 
             await ctx.editOrReply({

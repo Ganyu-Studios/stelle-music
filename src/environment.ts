@@ -7,14 +7,6 @@ import { customContext } from "#stelle/utils/functions/utils.js";
 
 import defaultLocale from "./locales/en-US.js";
 
-declare global {
-    namespace NodeJS {
-        interface ProcessEnv {
-            TOKEN: string;
-        }
-    }
-}
-
 declare module "seyfert" {
     interface InternalOptions {
         withPrefix: true;
