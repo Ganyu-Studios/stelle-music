@@ -28,10 +28,10 @@ importers:
         version: 2.1.3
       seyfert:
         specifier: github:tiramisulabs/seyfert
-        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/942dbd12bf01a58965bd91fcd1450a5840949d3e
+        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d6ff9767a114dcb825e8d16b802b38e0c95f029e
       yunaforseyfert:
         specifier: github:SagiriIkeda/yunaforseyfert#dev
-        version: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/83103689d93713a2d04b0373a8619d832431b8cf
+        version: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/ce7b6a1c669af24f58c52ffad1424c55bf239b74
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.8.3
@@ -412,8 +412,8 @@ packages:
   rfdc@1.4.1:
     resolution: {integrity: sha512-q1b3N5QkRUWUl7iyylaaj3kOpIT0N2i9MqIEQXP73GVsN9cw3fdx8X63cEmWhJGi2PPCF23Ijp7ktmd39rawIA==}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/942dbd12bf01a58965bd91fcd1450a5840949d3e:
-    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/942dbd12bf01a58965bd91fcd1450a5840949d3e}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d6ff9767a114dcb825e8d16b802b38e0c95f029e:
+    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d6ff9767a114dcb825e8d16b802b38e0c95f029e}
     version: 1.5.0
 
   shebang-command@2.0.0:
@@ -503,8 +503,8 @@ packages:
     engines: {node: '>= 14'}
     hasBin: true
 
-  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/83103689d93713a2d04b0373a8619d832431b8cf:
-    resolution: {tarball: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/83103689d93713a2d04b0373a8619d832431b8cf}
+  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/ce7b6a1c669af24f58c52ffad1424c55bf239b74:
+    resolution: {tarball: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/ce7b6a1c669af24f58c52ffad1424c55bf239b74}
     version: 1.0.0
 
 snapshots:
@@ -839,7 +839,7 @@ snapshots:
 
   rfdc@1.4.1: {}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/942dbd12bf01a58965bd91fcd1450a5840949d3e:
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d6ff9767a114dcb825e8d16b802b38e0c95f029e:
     dependencies:
       magic-bytes.js: 1.10.0
     optionalDependencies:
@@ -915,8 +915,8 @@ snapshots:
 
   yaml@2.5.0: {}
 
-  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/83103689d93713a2d04b0373a8619d832431b8cf:
+  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/ce7b6a1c669af24f58c52ffad1424c55bf239b74:
     dependencies:
-      seyfert: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/942dbd12bf01a58965bd91fcd1450a5840949d3e
+      seyfert: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d6ff9767a114dcb825e8d16b802b38e0c95f029e
     transitivePeerDependencies:
       - supports-color

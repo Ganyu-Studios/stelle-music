@@ -13,8 +13,8 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next,
 
     const { messages } = await context.getLocale();
 
-    const voice = await member.voice()?.channel();
-    const bot = context.me()?.voice();
+    const voice = await (await member.voice())?.channel().catch(() => null);
+    const bot = await context.me()?.voice().catch(() => null);
     const player = client.manager.getPlayer(guild.id);
     const isAutoplay = !!player?.get<boolean | undefined>("enabledAutoplay");
 

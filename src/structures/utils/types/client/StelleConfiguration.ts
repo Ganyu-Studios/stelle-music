@@ -39,7 +39,7 @@ export interface StelleConfiguration {
      */
     disconnectTime: number;
     /**
-     * Stelle default resume time.
+     * Stelle default node resume time.
      * @default ms("1min")
      */
     resumeTime: number;
@@ -48,13 +48,17 @@ export interface StelleConfiguration {
      * @default 25
      */
     maxCache: number;
+    /**
+     * Stelle node session resume.
+     * @default true
+     */
+    emableResume: boolean;
     /** Stelle developer id(s). */
     developerIds: string[];
     /** Stelle developer guild id(s). */
     guildIds: string[];
     /** Stelle nodes. */
     nodes: LavalinkNodeOptions[];
-    /** Stelle spotify data. */
     /** Stelle colors. */
     color: StelleColors;
 }
