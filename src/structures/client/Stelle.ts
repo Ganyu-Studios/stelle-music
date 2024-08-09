@@ -15,7 +15,7 @@ import { StelleManager } from "./modules/Manager.js";
 
 import { HandleCommand } from "seyfert/lib/commands/handle.js";
 import { Yuna } from "yunaforseyfert";
-import { THINK_MESSAGES } from "#stelle/data/Constants.js";
+import { DEBUG_MODE, THINK_MESSAGES } from "#stelle/data/Constants.js";
 
 /**
  * Main Stelle class.
@@ -93,6 +93,7 @@ export class Stelle extends Client<true> {
             },
             handleCommand: class extends HandleCommand {
                 argsParser = Yuna.parser({
+                    logResult: DEBUG_MODE,
                     syntax: {
                         namedOptions: ["-", "--"],
                     },
