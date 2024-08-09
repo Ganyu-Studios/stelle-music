@@ -38,7 +38,7 @@
     "humanize-duration": "^3.32.1",
     "lavalink-client": "github:Tomato6966/lavalink-client",
     "ms": "^2.1.3",
-    "seyfert": "github:tiramisulabs/seyfert#socket",
+    "seyfert": "github:tiramisulabs/seyfert#91bf30e",
     "yunaforseyfert": "github:SagiriIkeda/yunaforseyfert#dev"
   },
   "devDependencies": {
