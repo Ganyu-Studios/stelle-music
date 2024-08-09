@@ -98,6 +98,11 @@ export class Stelle extends Client<true> {
                         namedOptions: ["-", "--"],
                     },
                 });
+
+                resolveCommandFromContent = Yuna.resolver({
+                    client: this.client,
+                    logResult: DEBUG_MODE,
+                });
             },
             langs: {
                 default: this.config.defaultLocale,
