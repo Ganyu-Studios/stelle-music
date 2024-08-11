@@ -32,16 +32,15 @@ function addPadding(label: string): string {
  * @returns
  */
 function formatMemoryUsage(bytes: number): string {
-    const gigaBytes = bytes / 1024 ** 3;
-    if (gigaBytes >= 1) return `[RAM: ${gigaBytes.toFixed(3)} GB]`;
+    const units = ["B", "KB", "MB", "GB", "TB"];
+    let i = 0;
 
-    const megaBytes = bytes / 1024 ** 2;
-    if (megaBytes >= 1) return `[RAM: ${megaBytes.toFixed(2)} MB]`;
+    while (bytes >= 1024 && i < units.length - 1) {
+        bytes /= 1024;
+        i++;
+    }
 
-    const kiloBytes = bytes / 1024;
-    if (kiloBytes >= 1) return `[RAM: ${kiloBytes.toFixed(2)} KB]`;
-
-    return `[RAM: ${bytes.toFixed(2)} B]`;
+    return `[RAM: ${bytes.toFixed(2)} ${units[i]}]`;
 }
 
 /**
