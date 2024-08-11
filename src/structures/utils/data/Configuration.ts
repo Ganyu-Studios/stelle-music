@@ -10,9 +10,7 @@ export const Configuration: StelleConfiguration = {
     prefixes: ["st!"],
     defaultLocale: "en-US",
     disconnectTime: ms("30s"),
-    resumeTime: ms("1min"),
     maxCache: 5,
-    emableResume: true,
     developerIds: [
         "391283181665517568", // <-- JustEvil
     ],

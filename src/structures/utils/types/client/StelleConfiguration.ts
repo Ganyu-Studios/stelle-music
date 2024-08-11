@@ -39,20 +39,10 @@ export interface StelleConfiguration {
      */
     disconnectTime: number;
     /**
-     * Stelle default node resume time.
-     * @default ms("1min")
-     */
-    resumeTime: number;
-    /**
      * Stelle cache max size.
      * @default 25
      */
     maxCache: number;
-    /**
-     * Stelle node session resume.
-     * @default true
-     */
-    emableResume: boolean;
     /** Stelle developer id(s). */
     developerIds: string[];
     /** Stelle developer guild id(s). */

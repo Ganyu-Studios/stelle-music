@@ -27,8 +27,8 @@ importers:
         specifier: ^2.1.3
         version: 2.1.3
       seyfert:
-        specifier: github:tiramisulabs/seyfert#91bf30e
-        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/91bf30e
+        specifier: github:tiramisulabs/seyfert
+        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/084c85368e1d11dfced6e246a5417377b3402f5f
       yunaforseyfert:
         specifier: github:SagiriIkeda/yunaforseyfert#dev
         version: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/19f1ae90fa9d16b8ad8fdd1f8c5eb56b49168cad
@@ -43,8 +43,8 @@ importers:
         specifier: ^0.7.34
         version: 0.7.34
       '@types/node':
-        specifier: ^22.1.0
-        version: 22.1.0
+        specifier: ^22.2.0
+        version: 22.2.0
       husky:
         specifier: ^9.1.4
         version: 9.1.4
@@ -146,8 +146,8 @@ packages:
   '@types/ms@0.7.34':
     resolution: {integrity: sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==}
 
-  '@types/node@22.1.0':
-    resolution: {integrity: sha512-AOmuRF0R2/5j1knA3c6G3HOk523Ga+l+ZXltX8SF1+5oqcXijjfTd8fY3XRZqSihEu9XhtQnKYLmkFaoxgsJHw==}
+  '@types/node@22.2.0':
+    resolution: {integrity: sha512-bm6EG6/pCpkxDf/0gDNDdtDILMOHgaQBVOJGdwsqClnxA3xL6jtMv76rLBc006RVMWbmaf0xbmom4Z/5o2nRkQ==}
 
   ansi-escapes@7.0.0:
     resolution: {integrity: sha512-GdYO7a61mR0fOlAsvC9/rIHf7L96sBc6dEWzeOu+KAea5bZyQRPIpojrVoI4AXGJS/ycu/fBTdLrUkA4ODrvjw==}
@@ -412,12 +412,8 @@ packages:
   rfdc@1.4.1:
     resolution: {integrity: sha512-q1b3N5QkRUWUl7iyylaaj3kOpIT0N2i9MqIEQXP73GVsN9cw3fdx8X63cEmWhJGi2PPCF23Ijp7ktmd39rawIA==}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/91bf30e:
-    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/91bf30e}
-    version: 1.5.0
-
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d6ff9767a114dcb825e8d16b802b38e0c95f029e:
-    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d6ff9767a114dcb825e8d16b802b38e0c95f029e}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/084c85368e1d11dfced6e246a5417377b3402f5f:
+    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/084c85368e1d11dfced6e246a5417377b3402f5f}
     version: 1.5.0
 
   shebang-command@2.0.0:
@@ -580,7 +576,7 @@ snapshots:
 
   '@types/ms@0.7.34': {}
 
-  '@types/node@22.1.0':
+  '@types/node@22.2.0':
     dependencies:
       undici-types: 6.13.0
 
@@ -843,7 +839,7 @@ snapshots:
 
   rfdc@1.4.1: {}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/91bf30e:
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/084c85368e1d11dfced6e246a5417377b3402f5f:
     dependencies:
       magic-bytes.js: 1.10.0
       ws: 8.18.0
@@ -856,17 +852,6 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
-
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d6ff9767a114dcb825e8d16b802b38e0c95f029e:
-    dependencies:
-      magic-bytes.js: 1.10.0
-    optionalDependencies:
-      chokidar: 3.6.0
-      ioredis: 5.4.1
-      tweetnacl: 1.0.3
-      uWebSockets.js: https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/f40213ec0a97d0d8721d9d32d92d6eb6ddcd22e7
-    transitivePeerDependencies:
-      - supports-color
 
   shebang-command@2.0.0:
     dependencies:
@@ -935,6 +920,8 @@ snapshots:
 
   yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/19f1ae90fa9d16b8ad8fdd1f8c5eb56b49168cad:
     dependencies:
-      seyfert: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d6ff9767a114dcb825e8d16b802b38e0c95f029e
+      seyfert: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/084c85368e1d11dfced6e246a5417377b3402f5f
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
