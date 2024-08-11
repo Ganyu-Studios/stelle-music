@@ -140,6 +140,7 @@ export class Stelle extends Client<true> {
             await this.events?.reloadAll();
             await this.commands?.reloadAll();
             await this.components?.reloadAll();
+            await this.langs?.reloadAll();
             await this.manager.handler.reloadAll();
 
             this.logger.info("Stelle has been reloaded.");
