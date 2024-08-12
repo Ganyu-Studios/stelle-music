@@ -15,6 +15,7 @@ import { StelleManager } from "./modules/Manager.js";
 
 import { HandleCommand } from "seyfert/lib/commands/handle.js";
 import { Yuna } from "yunaforseyfert";
+
 import { DEBUG_MODE, THINK_MESSAGES } from "#stelle/data/Constants.js";
 
 /**
