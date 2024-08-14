@@ -21,7 +21,7 @@ export default class PreviousTrackComponent extends ComponentCommand {
         const player = client.manager.getPlayer(guildId);
         if (!player) return;
 
-        const track = player.queue.previous.shift();
+        const track = await player.queue.shiftPrevious();
         if (!track)
             return ctx.editOrReply({
                 flags: MessageFlags.Ephemeral,

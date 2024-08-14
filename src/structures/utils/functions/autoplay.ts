@@ -23,8 +23,11 @@ export async function autoPlayFunction(player: Player, lastTrack?: Track): Promi
     if (!lastTrack) return;
     if (!player.get("enabledAutoplay")) return;
 
-    if (!(player.queue.previous.some((t) => t.info.identifier === lastTrack.info.identifier) || player.queue.previous.length))
+    //c'mon dude, this shit seems to work, so
+    if (!player.queue.previous.some((t) => t.info.identifier === lastTrack.info.identifier)) {
         player.queue.previous.unshift(lastTrack);
+        await player.queue.utils.save();
+    }
 
     const ctx = player.get<CommandContext | undefined>("commandContext");
     if (!ctx) return;
