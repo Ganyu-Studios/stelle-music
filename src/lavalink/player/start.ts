@@ -28,7 +28,7 @@ export default new Lavalink({
 
         const embed = new Embed()
             .setDescription(
-                messages.events.playerStart.embed({
+                messages.events.trackStart.embed({
                     duration,
                     requester: (track.requester as User).id,
                     title: track.info.title,
@@ -46,19 +46,19 @@ export default new Lavalink({
             new Button()
                 .setCustomId("player-stopPlayer")
                 .setStyle(ButtonStyle.Danger)
-                .setLabel(messages.events.playerStart.components.stop),
+                .setLabel(messages.events.trackStart.components.stop),
             new Button()
                 .setCustomId("player-skipTrack")
                 .setStyle(ButtonStyle.Secondary)
-                .setLabel(messages.events.playerStart.components.skip),
+                .setLabel(messages.events.trackStart.components.skip),
             new Button()
                 .setCustomId("player-previousTrack")
                 .setStyle(ButtonStyle.Secondary)
-                .setLabel(messages.events.playerStart.components.previous),
+                .setLabel(messages.events.trackStart.components.previous),
             new Button()
                 .setCustomId("player-guildQueue")
                 .setStyle(ButtonStyle.Primary)
-                .setLabel(messages.events.playerStart.components.queue),
+                .setLabel(messages.events.trackStart.components.queue),
         );
 
         const newRow = new ActionRow<Button>().addComponents(
@@ -66,7 +66,7 @@ export default new Lavalink({
                 .setCustomId("player-toggleAutoplay")
                 .setStyle(ButtonStyle.Primary)
                 .setLabel(
-                    messages.events.playerStart.components.autoplay({
+                    messages.events.trackStart.components.autoplay({
                         type: messages.commands.autoplay.autoplayType[AUTOPLAY_STATE(isAutoplay)],
                     }),
                 ),
@@ -74,14 +74,14 @@ export default new Lavalink({
                 .setCustomId("player-toggleLoop")
                 .setStyle(ButtonStyle.Secondary)
                 .setLabel(
-                    messages.events.playerStart.components.loop({
+                    messages.events.trackStart.components.loop({
                         type: messages.commands.loop.loopType[player.repeatMode],
                     }),
                 ),
             new Button()
                 .setCustomId("player-pauseTrack")
                 .setStyle(ButtonStyle.Primary)
-                .setLabel(messages.events.playerStart.components.paused[PAUSE_STATE(player.paused)]),
+                .setLabel(messages.events.trackStart.components.paused[PAUSE_STATE(player.paused)]),
         );
 
         const message = await client.messages.write(player.textChannelId, { embeds: [embed], components: [row, newRow] }).catch(() => null);

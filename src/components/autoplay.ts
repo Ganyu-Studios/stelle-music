@@ -23,7 +23,7 @@ export default class AutoplayComponent extends ComponentCommand {
         const player = client.manager.getPlayer(guildId);
         if (!player) return;
 
-        player.set("enabledAutoplay", !player.get("enabledAutoplay") ?? true);
+        player.set("enabledAutoplay", !player.get("enabledAutoplay"));
 
         const isAutoplay = player.get<boolean>("enabledAutoplay");
 
@@ -38,7 +38,7 @@ export default class AutoplayComponent extends ComponentCommand {
                 .filter((row) => row.type === ComponentType.Button && row.style !== ButtonStyle.Link)
                 .map((button) => {
                     if ((button as APIButtonComponentWithCustomId).custom_id === "player-toggleAutoplay")
-                        (button as APIButtonComponentWithCustomId).label = messages.events.playerStart.components.autoplay({
+                        (button as APIButtonComponentWithCustomId).label = messages.events.trackStart.components.autoplay({
                             type: messages.commands.autoplay.autoplayType[AUTOPLAY_STATE(isAutoplay)],
                         });
 

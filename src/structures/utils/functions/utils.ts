@@ -1,7 +1,10 @@
+import type { AnyContext } from "#stelle/types";
+import type { Player } from "lavalink-client";
+
 import { join } from "node:path";
 import { inspect } from "node:util";
-import { extendContext } from "seyfert";
 
+import { type DefaultLocale, extendContext } from "seyfert";
 import { magicImport } from "seyfert/lib/common/index.js";
 
 import humanize from "humanize-duration";
@@ -15,7 +18,8 @@ export const customContext = extendContext((interaction) => ({
      * Get the locale from the database.
      * @returns
      */
-    getLocale: async () => interaction.client.t(await interaction.client.database.getLocale(interaction.guildId!)).get(),
+    getLocale: async (): Promise<DefaultLocale> => interaction.client.t(await interaction.client.database.getLocale(interaction.guildId!)).get(),
+    
 }));
 
 /**
@@ -28,12 +32,12 @@ export const stelleRC = async (): Promise<any> => {
     return {
         ...env,
         debug: !!debug,
+        lavalink: join(process.cwd(), locations.output, locations.lavalink),
         templates: locations.templates ? join(process.cwd(), locations.base, locations.templates) : undefined,
         langs: locations.langs ? join(process.cwd(), locations.output, locations.langs) : undefined,
         events: locations.events ? join(process.cwd(), locations.output, locations.events) : undefined,
         components: locations.components ? join(process.cwd(), locations.output, locations.components) : undefined,
         commands: locations.commands ? join(process.cwd(), locations.output, locations.commands) : undefined,
-        lavalink: join(process.cwd(), locations.output, locations.lavalink),
     };
 };
 
@@ -101,21 +105,68 @@ export const msParser = (time?: number): string => {
     return humanizer(time);
 };
 
+
 /**
  *
- * Make a new random id with a specific length.
- * @param length
+ * Create and Get the cooldown collection key.
+ * @param ctx
  * @returns
+ */
+export const getCollectionKey = (ctx: AnyContext): string => {
+    const authorId = ctx.author.id;
+
+    if (ctx.isChat() || ctx.isMenu()) return `${authorId}-${ctx.fullCommandName}-command`;
+    if (ctx.isComponent() || ctx.isModal()) return `${authorId}-${ctx.customId}-component`;
+
+    return `${authorId}-all`;
+};
+
+/**
+ * 
+ * Create a new progress bar.
+ * @param player 
+ * @returns 
+ */
+export const createBar = (player: Player) => {
+    const size = 15;
+    const line = "▬";
+    const slider = "🔘";
+
+    if (!player.queue.current) return `${slider}${line.repeat(size - 1)}]`;
+
+    const current = player.queue.current.info.duration !== 0 ? player.position : player.queue.current.info.duration;
+    const total = player.queue.current.info.duration;
+
+    const bar =
+        current > total
+            ? [line.repeat((size / 2) * 2), (current / total) * 100]
+            : [
+                line.repeat(Math.round((size / 2) * (current / total))).replace(/.$/, slider) +
+                line.repeat(size - Math.round(size * (current / total)) + 1),
+
+                current / total,
+            ];
+
+    if (!String(bar).includes(slider)) return `${slider}${line.repeat(size - 1)}`;
+
+    return `${bar[0]}`;
+}
+
+/**
+ * 
+ * Make an id from a specific length.
+ * @param length 
+ * @returns 
  */
 export const makeId = (length: number) => {
     let result = "";
 
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const charactersLength = characters.length;
+	const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	const charactersLength = characters.length;
 
-    for (let i = 0; i < length; i++) result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	for (let i = 0; i < length; i++) result += characters.charAt(Math.floor(Math.random() * charactersLength));
 
-    return result;
+	return result;
 };
 
 /**

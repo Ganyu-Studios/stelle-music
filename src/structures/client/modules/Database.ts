@@ -4,11 +4,12 @@ import type { SearchPlatform } from "lavalink-client";
 import type { UsingClient } from "seyfert";
 
 import { Configuration } from "#stelle/data/Configuration.js";
+import { StelleCache } from "#stelle/classes";
+import { StelleKeys } from "#stelle/types";
 
 //🗿
 const prismaClient = new PrismaClient();
 
-//TODO: Add a database cache to make less requests to the database.
 
 /**
  * Main Stelle database class.
@@ -17,6 +18,7 @@ export class StelleDatabase {
     private client: UsingClient;
     private prisma!: PrismaClient;
 
+    private storage: StelleCache = new StelleCache();
     private connected: boolean = false;
 
     /**
@@ -61,6 +63,9 @@ export class StelleDatabase {
      * @returns
      */
     public async getLocale(guildId: string): Promise<string> {
+        const cached = this.storage.get(guildId, StelleKeys.Locale);
+        if (cached) return cached.locale!;
+
         const data = await this.prisma.guildLocale.findUnique({ where: { id: guildId } });
         return data?.locale ?? this.client.config.defaultLocale;
     }
@@ -72,6 +77,9 @@ export class StelleDatabase {
      * @returns
      */
     public async getPrefix(guildId: string): Promise<string> {
+        const cached = this.storage.get(guildId, StelleKeys.Prefix);
+        if (cached) return cached.prefix!;
+
         const data = await this.prisma.guildPrefix.findUnique({ where: { id: guildId } });
         return data?.prefix ?? this.client.config.defaultPrefix;
     }
@@ -83,6 +91,12 @@ export class StelleDatabase {
      * @returns
      */
     public async getPlayer(guildId: string): Promise<Pick<NonNullable<PlayerData>, "defaultVolume" | "searchEngine">> {
+        const cached = this.storage.get(guildId, StelleKeys.Player);
+        if (cached) return {
+            defaultVolume: cached.defaultVolume!,
+            searchEngine: cached.searchEngine! as SearchPlatform,
+        };
+
         const data = await this.prisma.guildPlayer.findUnique({ where: { id: guildId } });
         return {
             defaultVolume: data?.defaultVolume ?? Configuration.defaultVolume,
@@ -105,6 +119,11 @@ export class StelleDatabase {
                 locale,
             },
         });
+
+        this.storage.set(guildId, StelleKeys.Locale, {
+            id: guildId,
+            locale,
+        });
     }
 
     /**
@@ -121,6 +140,11 @@ export class StelleDatabase {
                 id: guildId,
                 prefix,
             },
+        });
+
+        this.storage.set(guildId, StelleKeys.Prefix, {
+            id: guildId,
+            prefix,
         });
     }
 
@@ -140,6 +164,12 @@ export class StelleDatabase {
             where: { id: guildId },
             update: { defaultVolume, searchEngine },
             create: { id: guildId, defaultVolume, searchEngine },
+        });
+
+        this.storage.set(guildId, StelleKeys.Player, {
+            id: guildId,
+            defaultVolume: defaultVolume!,
+            searchEngine: searchEngine as SearchPlatform,
         });
     }
 }

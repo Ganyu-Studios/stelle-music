@@ -6,15 +6,17 @@ export default {
     metadata: {
         name: "English",
         emoji: "🇺🇸",
-        traslators: ["JustEvil"],
+        translators: ["JustEvil"],
     },
     messages: {
         commands: {
+            nowplaying: ({ title, url, author, requester, bar, duration, position }: INowplaying) => `\`📻\` Now playing: [\`${title}\`](${url}) - \`${author}\`\n\`👤\` **Requested by**: <@${requester}>\n \n\`🕛\` ${bar} | \`${position}\` - \`(${duration})\``,
             setprefix: ({ prefix }: IPrefix) => `\`✅\` The **new prefix** for this guild is now: \`${prefix}\``,
             skip: ({ amount }: IAmount) => `\`✅\` Skipped the amount of: \`${amount} tracks\`.`,
-            move: ({ textId, voiceId }: IMove) => `\`✅\` Moved to the voice channel <#${voiceId}> and the text channel: ${textId}`,
+            move: ({ textId, voiceId }: IMove) => `\`✅\` Moved to the voice channel <#${voiceId}> and the text channel: <#${textId}>`,
             previous: ({ title, uri }: IPrevious) => `\`✅\` The previous track [**${title}**](${uri}) has been added to the queue.`,
             stop: "`👋` Stopping and leaving...",
+            shuffle: "`✅` The queue has been shuffled.",
             default: {
                 engine: ({ engine }: IEngine) => `\`✅\` The default search engine of Stelle is now: **${engine}**.`,
                 volume: ({ volume }: IVolume) => `\`✅\` The default volume of Stelle is now: **${volume}%**.`,
@@ -122,7 +124,7 @@ export default {
                 [ApplicationCommandOptionType.Number]: "number",
                 [ApplicationCommandOptionType.Attachment]: "attachment",
             } satisfies Record<ApplicationCommandOptionType, string>,
-            playerStart: {
+            trackStart: {
                 embed: ({ duration, requester, title, url, volume, author, size }: ITrackStart) =>
                     `\`📻\` Now playing [\`${title}\`](${url})\n\n\`🎤\` **Author**: \`${author}\`\n\`🕛\` **Duration**: \`${duration}\`\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>\n\n\`📋\` **In queue**: \`${size} tracks\``,
                 components: {
@@ -313,9 +315,18 @@ export default {
                 },
             },
         },
+        shuffle: {
+            name: "shuffle",
+            description: "Shuffle the queue.",
+        },
+        nowplaying: {
+            name: "nowplaying",
+            description: "Get the current playing song.",
+        }
     },
 };
 
+type INowplaying = { title: string; url: string; duration: string; requester: string; author: string; bar: string; position: string };
 type IEngine = { engine: string };
 type IPrefix = { prefix: string };
 type ISeek = { time: string | number; type: string };

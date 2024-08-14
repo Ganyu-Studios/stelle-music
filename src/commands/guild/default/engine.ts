@@ -1,8 +1,6 @@
 import type { SearchPlatform } from "lavalink-client";
 import { type CommandContext, Declare, LocalesT, Options, SubCommand, createStringOption } from "seyfert";
 
-import { Shortcut } from "yunaforseyfert";
-
 const engines: Record<string, string> = {
     spsearch: "Spotify",
     ytsearch: "Youtube",
@@ -45,7 +43,6 @@ const options = {
 })
 @Options(options)
 @LocalesT("locales.default.subcommands.engine.name", "locales.default.subcommands.engine.description")
-@Shortcut()
 export default class EngineSubcommand extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;

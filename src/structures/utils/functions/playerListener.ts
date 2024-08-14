@@ -5,6 +5,8 @@ import { msParser } from "#stelle/utils/functions/utils.js";
 
 const timeouts: Map<string, NodeJS.Timeout> = new Map();
 
+//TODO check why this epic code don't work.
+
 export async function playerListener(client: UsingClient, newState: VoiceState, oldState?: VoiceState): Promise<void> {
     if (oldState?.channelId === newState.channelId) return;
 
@@ -45,7 +47,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
         return;
     }
 
-    if (isEmpty && !player.paused) {
+    if (isEmpty && (player.paused || player.playing)) {
         await player.pause();
         await client.messages.write(player.textChannelId, {
             embeds: [

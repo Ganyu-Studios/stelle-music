@@ -15,7 +15,8 @@ import { StelleManager } from "./modules/Manager.js";
 
 import { HandleCommand } from "seyfert/lib/commands/handle.js";
 import { Yuna } from "yunaforseyfert";
-import { THINK_MESSAGES } from "#stelle/data/Constants.js";
+
+import { DEBUG_MODE, THINK_MESSAGES } from "#stelle/data/Constants.js";
 
 /**
  * Main Stelle class.
@@ -93,13 +94,15 @@ export class Stelle extends Client<true> {
             },
             handleCommand: class extends HandleCommand {
                 argsParser = Yuna.parser({
+                    logResult: DEBUG_MODE,
                     syntax: {
                         namedOptions: ["-", "--"],
                     },
                 });
+
                 resolveCommandFromContent = Yuna.resolver({
                     client: this.client,
-                    afterPrepare: (metadata) => this.client.logger.debug(`Client - Ready to use ${metadata.commands.length} commands.`),
+                    logResult: DEBUG_MODE,
                 });
             },
             langs: {
@@ -138,6 +141,7 @@ export class Stelle extends Client<true> {
             await this.events?.reloadAll();
             await this.commands?.reloadAll();
             await this.components?.reloadAll();
+            await this.langs?.reloadAll();
             await this.manager.handler.reloadAll();
 
             this.logger.info("Stelle has been reloaded.");

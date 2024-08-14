@@ -36,7 +36,7 @@ const options = {
             if (!client.manager.useable)
                 return interaction.respond([{ name: messages.commands.play.autocomplete.noNodes, value: "noNodes" }]);
 
-            const voice = member?.voice();
+            const voice = client.cache.voiceStates?.get(member!.id, guildId);
             if (!voice) return interaction.respond([{ name: messages.commands.play.autocomplete.noVoiceChannel, value: "noVoice" }]);
 
             const query = interaction.getInput();
@@ -81,10 +81,10 @@ export default class PlayCommand extends Command {
 
         if (!(guildId && member)) return;
 
-        const voice = await member.voice()?.channel();
+        const voice = await client.cache.voiceStates?.get(member!.id, guildId)?.channel();
         if (!voice?.is(["GuildVoice", "GuildStageVoice"])) return;
 
-        let bot = ctx.me()?.voice();
+        let bot = client.cache.voiceStates?.get(client.me.id, guildId);
         if (bot && bot.channelId !== voice.id) return;
 
         const { messages } = await ctx.getLocale();
@@ -101,8 +101,6 @@ export default class PlayCommand extends Command {
         });
 
         if (!player.connected) await player.connect();
-
-        await player.node.updateSession(true, client.config.resumeTime);
 
         const { loadType, playlist, tracks } = await player.search({ query, source: searchEngine }, author);
 

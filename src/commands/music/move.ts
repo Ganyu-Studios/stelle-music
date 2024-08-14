@@ -60,7 +60,7 @@ export default class MoveCommand extends Command {
                     color: client.config.color.success,
                     description: messages.commands.move({
                         voiceId: voice.id,
-                        textId: text?.toString() ?? ctx.channel()?.toString() ?? "<#1143606303850483280>",
+                        textId: text?.id ?? ctx.channel()?.id ?? "1143606303850483280",
                     }),
                 },
             ],

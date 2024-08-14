@@ -1,49 +1,21 @@
+import { getCollectionKey } from "#stelle/utils/functions/utils.js";
 import { createMiddleware } from "seyfert";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
-import type { AnyContext } from "#stelle/types";
-
-type CommandData = {
-    name: string;
-    type: string;
-};
-
-function getMetadata(ctx: AnyContext): CommandData {
-    if (ctx.isChat() || ctx.isMenu())
-        return {
-            name: ctx.fullCommandName,
-            type: "command",
-        };
-
-    if (ctx.isComponent() || ctx.isModal())
-        return {
-            name: ctx.customId,
-            type: "component",
-        };
-
-    return {
-        name: "---",
-        type: "any",
-    };
-}
-
 export const checkCooldown = createMiddleware<void>(async ({ context, next, pass }) => {
-    const { client, author, command } = context;
+    const { client, command } = context;
     const { cooldowns } = client;
 
-    if (!command) return;
-
-    const { name, type } = getMetadata(context);
+    if (!command) return pass();
 
     const cooldown = (command.cooldown ?? 3) * 1000;
     const timeNow = Date.now();
-    const setKey = `${name}-${type}-${author.id}`;
 
     const { messages } = await context.getLocale();
 
-    const data = cooldowns.get(setKey);
+    const data = cooldowns.get(getCollectionKey(context));
     if (data && timeNow < data) {
         context.editOrReply({
             flags: MessageFlags.Ephemeral,
@@ -58,7 +30,7 @@ export const checkCooldown = createMiddleware<void>(async ({ context, next, pass
         return pass();
     }
 
-    cooldowns.set(setKey, timeNow + cooldown, cooldown);
+    cooldowns.set(getCollectionKey(context), timeNow + cooldown, cooldown);
 
     return next();
 });

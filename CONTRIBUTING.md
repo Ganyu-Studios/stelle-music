@@ -11,7 +11,7 @@
 
 ## ⚙️ Bug Fixes
 
-1. Fork the repo and create your branch from `main`.
+1. Fork the repo and create your branch from `dev`.
 2. First, install the dependencies with `pnpm install`.
 3. Make your code change.
 4. Try to be clear and concise as possible.

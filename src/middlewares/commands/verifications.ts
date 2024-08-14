@@ -9,13 +9,13 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next,
 
     const guild = context.guild();
 
-    if (!(member && command && guild)) return;
+    if (!(member && command && guild)) return pass();
 
     const { messages } = await context.getLocale();
 
-    const voice = await member.voice()?.channel();
-    const bot = context.me()?.voice();
-    const player = client.manager.getPlayer(context.guildId!);
+    const voice = await client.cache.voiceStates?.get(member!.id, guild.id)?.channel();
+    const bot = await client.cache.voiceStates?.get(client.me.id, guild.id);
+    const player = client.manager.getPlayer(guild.id);
     const isAutoplay = !!player?.get<boolean | undefined>("enabledAutoplay");
 
     if (command.onlyDeveloper && !developerIds.includes(author.id)) {
