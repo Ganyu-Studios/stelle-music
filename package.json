@@ -4,7 +4,7 @@
   "description": "A music bot.",
   "main": "./dist/index.js",
   "type": "module",
-  "packageManager": "pnpm@9.7.0+sha512.dc09430156b427f5ecfc79888899e1c39d2d690f004be70e05230b72cb173d96839587545d09429b55ac3c429c801b4dc3c0e002f653830a420fa2dd4e3cf9cf",
+  "packageManager": "pnpm@9.7.1+sha512.faf344af2d6ca65c4c5c8c2224ea77a81a5e8859cbc4e06b1511ddce2f0151512431dd19e6aff31f2c6a8f5f2aced9bd2273e1fed7dd4de1868984059d2c4247",
   "homepage": "https://github.com/Ganyu-Studios/stelle-music#readme",
   "scripts": {
     "test": "pnpm clean && pnpm start:debug",
@@ -45,7 +45,7 @@
     "@biomejs/biome": "^1.8.3",
     "@types/humanize-duration": "^3.27.4",
     "@types/ms": "^0.7.34",
-    "@types/node": "^22.2.0",
+    "@types/node": "^22.3.0",
     "husky": "^9.1.4",
     "lint-staged": "^15.2.9",
     "prisma": "^5.18.0",
