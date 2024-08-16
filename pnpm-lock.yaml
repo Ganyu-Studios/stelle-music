@@ -28,7 +28,7 @@ importers:
         version: 2.1.3
       seyfert:
         specifier: github:tiramisulabs/seyfert
-        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d79254ab6c27f5780013cb8be24301f22294f499
+        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/be10b9bfe64fd41251f8e67e6e0e4674189bc075
       yunaforseyfert:
         specifier: github:SagiriIkeda/yunaforseyfert#dev
         version: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/19f1ae90fa9d16b8ad8fdd1f8c5eb56b49168cad
@@ -409,8 +409,8 @@ packages:
   rfdc@1.4.1:
     resolution: {integrity: sha512-q1b3N5QkRUWUl7iyylaaj3kOpIT0N2i9MqIEQXP73GVsN9cw3fdx8X63cEmWhJGi2PPCF23Ijp7ktmd39rawIA==}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d79254ab6c27f5780013cb8be24301f22294f499:
-    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d79254ab6c27f5780013cb8be24301f22294f499}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/be10b9bfe64fd41251f8e67e6e0e4674189bc075:
+    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/be10b9bfe64fd41251f8e67e6e0e4674189bc075}
     version: 1.5.0
 
   shebang-command@2.0.0:
@@ -834,7 +834,7 @@ snapshots:
 
   rfdc@1.4.1: {}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d79254ab6c27f5780013cb8be24301f22294f499:
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/be10b9bfe64fd41251f8e67e6e0e4674189bc075:
     optionalDependencies:
       chokidar: 3.6.0
       ioredis: 5.4.1
@@ -910,6 +910,6 @@ snapshots:
 
   yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/19f1ae90fa9d16b8ad8fdd1f8c5eb56b49168cad:
     dependencies:
-      seyfert: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d79254ab6c27f5780013cb8be24301f22294f499
+      seyfert: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/be10b9bfe64fd41251f8e67e6e0e4674189bc075
     transitivePeerDependencies:
       - supports-color
