@@ -45,7 +45,7 @@
     "@biomejs/biome": "^1.8.3",
     "@types/humanize-duration": "^3.27.4",
     "@types/ms": "^0.7.34",
-    "@types/node": "^22.3.0",
+    "@types/node": "^22.4.0",
     "husky": "^9.1.4",
     "lint-staged": "^15.2.9",
     "prisma": "^5.18.0",
@@ -58,6 +58,7 @@
     "#stelle/middlwares": "./dist/middlewares/index.js",
     "#stelle/errors": "./dist/structures/utils/Errors.js",
     "#stelle/decorators": "./dist/structures/utils/Decorators.js",
+    "#stelle/listeners": "./dist/structures/listeners/index.js",
     "#stelle/index": "./dist/index.js",
     "#stelle/data/*": "./dist/structures/utils/data/*",
     "#stelle/utils/*": "./dist/structures/utils/*"
