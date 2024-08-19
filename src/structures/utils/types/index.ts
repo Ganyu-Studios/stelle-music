@@ -9,8 +9,8 @@ import type {
 import type { InternalRuntimeConfig, InternalRuntimeConfigHTTP } from "seyfert/lib/client/base.js";
 import type { PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
-export { StelleConfiguration } from "./client/StelleConfiguration.js";
-export { AllEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "./client/StelleLavalink.js";
+export type { StelleConfiguration } from "./client/StelleConfiguration.js";
+export type { AllEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "./client/StelleLavalink.js";
 
 export type StelleRuntime = { locations: { lavalink: string } };
 //literally just copied this because the types cry
@@ -37,12 +37,6 @@ export type AnyContext =
     | ComponentContext
     | ModalContext;
 
-export enum StelleKeys {
-    Player = "guild:player",
-    Locale = "guild:locale",
-    Prefix = "guild:prefix",
-}
-
 export interface Options {
     /** The cooldown. */
     cooldown?: number;
@@ -63,7 +57,19 @@ export interface Options {
     /** Check if the queue has two or more tracks. */
     moreTracks?: boolean;
     /** The command category. */
-    category?: string;
+    category?: StelleCategory;
 }
 
 export type NonCommandOptions = Omit<Options, "category">;
+
+export enum StelleKeys {
+    Player = "guild:player",
+    Locale = "guild:locale",
+    Prefix = "guild:prefix",
+}
+
+export enum StelleCategory {
+    Music = 3,
+    Guild = 2,
+    User = 1,
+}

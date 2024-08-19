@@ -29,6 +29,7 @@
             "#stelle/middlwares": ["./src/middlewares/index.ts"],
             "#stelle/errors": ["./src/structures/utils/Errors.ts"],
             "#stelle/decorators": ["./src/structures/utils/Decorators.ts"],
+            "#stelle/listeners": ["./src/structures/listeners/index.ts"], 
             "#stelle/index": ["./src/index.ts"],
             "#stelle/data/*": ["./src/structures/utils/data/*"],
             "#stelle/utils/*": ["./src/structures/utils/*"],

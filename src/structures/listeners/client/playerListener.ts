@@ -5,8 +5,6 @@ import { msParser } from "#stelle/utils/functions/utils.js";
 
 const timeouts: Map<string, NodeJS.Timeout> = new Map();
 
-//TODO check why this epic code don't work.
-
 export async function playerListener(client: UsingClient, newState: VoiceState, oldState?: VoiceState): Promise<void> {
     if (oldState?.channelId === newState.channelId) return;
 

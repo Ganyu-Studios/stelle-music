@@ -6,6 +6,7 @@ import { EmbedColors } from "seyfert/lib/common/index.js";
 import { msParser } from "#stelle/utils/functions/utils.js";
 
 import ms from "ms";
+import { StelleCategory } from "#stelle/types";
 
 const options = {
     time: createStringOption({
@@ -34,7 +35,7 @@ const options = {
     contexts: ["Guild"],
     aliases: ["sk"],
 })
-@StelleOptions({ cooldown: 5, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
+@StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
 @Options(options)
 @LocalesT("locales.seek.name", "locales.seek.description")
 export default class SeekCommand extends Command {

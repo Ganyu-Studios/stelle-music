@@ -99,6 +99,8 @@ export default {
                 `\`❌\` Invalid command options or arguments.\n- **Required**: \`<>\`\n- **Optional**: \`[]\`\n\n\`📋\` **Usage**:\n ${options}\n\`📢\` **Options Available**:\n${list}`,
             playerQueue: ({ tracks }: ITracks) => `\`📋\` Here is the full server queue: \n\n${tracks}`,
             channelEmpty: ({ type }: IType) => `\`🎧\` Stelle is alone in the **voice channel**... Pausing and waiting **${type}**.`,
+            mention: ({ clientName, defaultPrefix, commandId, commandName }: IMention) => `\`📢\` Hey! My name is: **${clientName}** and my prefix is: \`${defaultPrefix}\` and **/** too!\n\n\`📋\` If you want to see my commands, type: \`${defaultPrefix}${commandName}\` or \`</${commandName}:${commandId}>\`.`,
+            noCommand: "`❌` I don't have the required command *yet*, try again in a moment.",
             noMembers: "`🎧` Stelle is alone in the **voice channel**... Leaving the channel.",
             hasMembers: "`🎧` Stelle is not alone anymore... Resuming.",
             onlyDeveloper: "`❌` Only the **bot developer** can use this.",
@@ -326,6 +328,7 @@ export default {
     },
 };
 
+type IMention = { clientName: string, defaultPrefix: string, commandName: string, commandId: string };
 type INowplaying = { title: string; url: string; duration: string; requester: string; author: string; bar: string; position: string };
 type IEngine = { engine: string };
 type IPrefix = { prefix: string };

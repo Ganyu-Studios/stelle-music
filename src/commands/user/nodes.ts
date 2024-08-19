@@ -6,6 +6,7 @@ import { EmbedColors } from "seyfert/lib/common/index.js";
 
 import { EmbedPaginator } from "#stelle/utils/Paginator.js";
 import { msParser } from "#stelle/utils/functions/utils.js";
+import { StelleCategory } from "#stelle/types";
 
 @Declare({
     name: "nodes",
@@ -13,7 +14,7 @@ import { msParser } from "#stelle/utils/functions/utils.js";
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
 })
-@StelleOptions({ cooldown: 5 })
+@StelleOptions({ cooldown: 5, category: StelleCategory.User })
 @LocalesT("locales.nodes.name", "locales.nodes.description")
 export default class ExampleCommand extends Command {
     async run(ctx: CommandContext) {

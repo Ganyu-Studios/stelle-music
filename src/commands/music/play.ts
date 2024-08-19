@@ -11,6 +11,7 @@ import {
     createStringOption,
 } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
+import { StelleCategory } from "#stelle/types";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
@@ -71,7 +72,7 @@ const options = {
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
 })
-@StelleOptions({ cooldown: 5, inVoice: true, sameVoice: true, checkNodes: true })
+@StelleOptions({ cooldown: 5, category: StelleCategory.Music, inVoice: true, sameVoice: true, checkNodes: true })
 @Options(options)
 @LocalesT("locales.play.name", "locales.play.description")
 export default class PlayCommand extends Command {

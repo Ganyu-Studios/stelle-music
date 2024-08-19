@@ -2,6 +2,7 @@ import { Command, type CommandContext, Declare, Embed, LocalesT, type User } fro
 import { StelleOptions } from "#stelle/decorators";
 
 import { EmbedPaginator } from "#stelle/utils/Paginator.js";
+import { StelleCategory } from "#stelle/types";
 
 @Declare({
     name: "queue",
@@ -9,7 +10,7 @@ import { EmbedPaginator } from "#stelle/utils/Paginator.js";
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
 })
-@StelleOptions({ cooldown: 5, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
+@StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
 @LocalesT("locales.queue.name", "locales.queue.description")
 export default class QueueCommand extends Command {
     async run(ctx: CommandContext) {

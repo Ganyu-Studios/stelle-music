@@ -2,6 +2,7 @@ import { Command, type CommandContext, Declare, type DefaultLocale, LocalesT, Op
 import { StelleOptions } from "#stelle/decorators";
 
 import { MessageFlags } from "seyfert/lib/types/index.js";
+import { StelleCategory } from "#stelle/types";
 
 const options = {
     locale: createStringOption({
@@ -32,7 +33,7 @@ const options = {
     contexts: ["Guild"],
     defaultMemberPermissions: ["ManageGuild"],
 })
-@StelleOptions({ cooldown: 10 })
+@StelleOptions({ cooldown: 10, category: StelleCategory.Guild })
 @LocalesT("locales.setlocale.name", "locales.setlocale.description")
 @Options(options)
 export default class SetlangCommand extends Command {

@@ -1,5 +1,6 @@
 import { Command, type CommandContext, Declare, LocalesT, Options, createIntegerOption } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
+import { StelleCategory } from "#stelle/types";
 
 const options = {
     volume: createIntegerOption({
@@ -21,7 +22,7 @@ const options = {
     contexts: ["Guild"],
     aliases: ["v", "vol"],
 })
-@StelleOptions({ cooldown: 5, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
+@StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
 @Options(options)
 @LocalesT("locales.volume.name", "locales.volume.description")
 export default class VolumeCommand extends Command {
