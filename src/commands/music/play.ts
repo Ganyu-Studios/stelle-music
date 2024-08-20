@@ -76,7 +76,7 @@ const options = {
 @Options(options)
 @LocalesT("locales.play.name", "locales.play.description")
 export default class PlayCommand extends Command {
-    async run(ctx: CommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
+    public override async run(ctx: CommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
         const { options, client, guildId, channelId, member, author } = ctx;
         const { query } = options;
 

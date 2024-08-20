@@ -42,7 +42,7 @@ const options = {
 @Options(options)
 @LocalesT("locales.loop.name", "locales.loop.description")
 export default class LoopCommand extends Command {
-    async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;
         const { mode } = options;
 

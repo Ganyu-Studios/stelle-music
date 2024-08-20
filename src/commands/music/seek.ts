@@ -39,7 +39,7 @@ const options = {
 @Options(options)
 @LocalesT("locales.seek.name", "locales.seek.description")
 export default class SeekCommand extends Command {
-    async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;
         const { time } = options;
 

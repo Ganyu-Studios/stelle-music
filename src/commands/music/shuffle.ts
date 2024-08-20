@@ -12,7 +12,7 @@ import { StelleCategory } from "#stelle/types";
 })
 @StelleOptions({ cooldown: 5,  category: StelleCategory.Music, checkNodes: true, checkPlayer: true, checkQueue: true, inVoice: true, sameVoice: true, })
 export default class ShuffleCommand extends Command {
-    async run (ctx: CommandContext) {
+    public override async run (ctx: CommandContext) {
         const { client } = ctx;
 
         const player = client.manager.getPlayer(ctx.guildId!);

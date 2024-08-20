@@ -12,7 +12,7 @@ import { StelleCategory } from "#stelle/types";
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
 @LocalesT("locales.stop.name", "locales.stop.description")
 export default class StopCommand extends Command {
-    async run(ctx: CommandContext) {
+    public override async run(ctx: CommandContext) {
         const { client, guildId } = ctx;
 
         if (!guildId) return;

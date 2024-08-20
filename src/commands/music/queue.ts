@@ -13,7 +13,7 @@ import { StelleCategory } from "#stelle/types";
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
 @LocalesT("locales.queue.name", "locales.queue.description")
 export default class QueueCommand extends Command {
-    async run(ctx: CommandContext) {
+    public override async run(ctx: CommandContext) {
         const { client, guildId, author } = ctx;
 
         if (!guildId) return;

@@ -35,7 +35,7 @@ const options = {
 @Options(options)
 @LocalesT("locales.move.name", "locales.move.description")
 export default class MoveCommand extends Command {
-    async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;
         const { voice, text } = options;
 

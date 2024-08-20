@@ -11,7 +11,7 @@ import { StelleCategory } from "#stelle/types";
 @StelleOptions({ cooldown: 5, category: StelleCategory.User })
 @LocalesT("locales.ping.name", "locales.ping.description")
 export default class PingCommand extends Command {
-    async run(ctx: CommandContext): Promise<void> {
+    public override async run(ctx: CommandContext): Promise<void> {
         const { client } = ctx;
         const { messages } = await ctx.getLocale();
 

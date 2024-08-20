@@ -26,7 +26,7 @@ const options = {
 @Options(options)
 @LocalesT("locales.volume.name", "locales.volume.description")
 export default class VolumeCommand extends Command {
-    async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;
         const { volume } = options;
 

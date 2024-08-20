@@ -14,7 +14,7 @@ import { createBar, msParser } from "#stelle/utils/functions/utils.js";
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkNodes: true, checkPlayer: true })
 @LocalesT("locales.nowplaying.name", "locales.nowplaying.description")
 export default class NowPlayingCommand extends Command {
-    async run(ctx: CommandContext) {
+    public override async run(ctx: CommandContext) {
         const { client, guildId } = ctx;
 
         if (!guildId) return;

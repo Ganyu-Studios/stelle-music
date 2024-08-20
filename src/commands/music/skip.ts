@@ -23,7 +23,7 @@ const options = {
 @Options(options)
 @LocalesT("locales.skip.name", "locales.skip.description")
 export default class SkipCommand extends Command {
-    async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;
         const { to } = options;
 

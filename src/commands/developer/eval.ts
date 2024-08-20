@@ -49,7 +49,7 @@ export default class EvalCommand extends Command {
             });
         },
     })
-    async run(ctx: CommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
+    public override async run(ctx: CommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
         const { client, options, author, member, channelId } = ctx;
 
         await author.fetch();

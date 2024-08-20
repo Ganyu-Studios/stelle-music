@@ -24,7 +24,7 @@ const options = {
 @LocalesT("locales.setprefix.name", "locales.setprefix.description")
 @Options(options)
 export default class SetlangCommand extends Command {
-    async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: CommandContext<typeof options>) {
         const { client, options } = ctx;
         const { prefix } = options;
 

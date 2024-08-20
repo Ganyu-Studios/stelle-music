@@ -6,7 +6,7 @@ export async function mentionListener(client: UsingClient, message: Message) {
 
     if (!guildId) return;
 
-    const mentionRegex = new RegExp(`^<@!?${client.me.id}>`);
+    const mentionRegex = new RegExp(`^<@!?${client.me.id}>( |)$`);;
     if (content.match(mentionRegex)) {
         const { messages } = client.t(await client.database.getLocale(guildId)).get();
 

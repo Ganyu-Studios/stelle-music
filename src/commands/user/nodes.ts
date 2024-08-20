@@ -17,7 +17,7 @@ import { StelleCategory } from "#stelle/types";
 @StelleOptions({ cooldown: 5, category: StelleCategory.User })
 @LocalesT("locales.nodes.name", "locales.nodes.description")
 export default class ExampleCommand extends Command {
-    async run(ctx: CommandContext) {
+    public override async run(ctx: CommandContext) {
         const { client } = ctx;
         const { messages } = await ctx.getLocale();
 
