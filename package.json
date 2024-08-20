@@ -13,7 +13,8 @@
     "start": "node ./dist/index.js",
     "start:debug": "node ./dist/index.js --debug",
     "lint": "biome lint --apply ./src",
-    "format": "biome check --write ./src"
+    "format": "biome check --write ./src",
+    "prepare": "husky"
   },
   "lint-staged": {
     "*.ts": [
