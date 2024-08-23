@@ -1,5 +1,5 @@
-import type { AnyContext } from "#stelle/types";
 import type { Player } from "lavalink-client";
+import type { AnyContext } from "#stelle/types";
 
 import { join } from "node:path";
 import { inspect } from "node:util";
@@ -18,8 +18,8 @@ export const customContext = extendContext((interaction) => ({
      * Get the locale from the database.
      * @returns
      */
-    getLocale: async (): Promise<DefaultLocale> => interaction.client.t(await interaction.client.database.getLocale(interaction.guildId!)).get(),
-    
+    getLocale: async (): Promise<DefaultLocale> =>
+        interaction.client.t(await interaction.client.database.getLocale(interaction.guildId!)).get(),
 }));
 
 /**
@@ -105,7 +105,6 @@ export const msParser = (time?: number): string => {
     return humanizer(time);
 };
 
-
 /**
  *
  * Create and Get the cooldown collection key.
@@ -122,10 +121,10 @@ export const getCollectionKey = (ctx: AnyContext): string => {
 };
 
 /**
- * 
+ *
  * Create a new progress bar.
- * @param player 
- * @returns 
+ * @param player
+ * @returns
  */
 export const createBar = (player: Player) => {
     const size = 15;
@@ -141,32 +140,32 @@ export const createBar = (player: Player) => {
         current > total
             ? [line.repeat((size / 2) * 2), (current / total) * 100]
             : [
-                line.repeat(Math.round((size / 2) * (current / total))).replace(/.$/, slider) +
-                line.repeat(size - Math.round(size * (current / total)) + 1),
+                  line.repeat(Math.round((size / 2) * (current / total))).replace(/.$/, slider) +
+                      line.repeat(size - Math.round(size * (current / total)) + 1),
 
-                current / total,
-            ];
+                  current / total,
+              ];
 
     if (!String(bar).includes(slider)) return `${slider}${line.repeat(size - 1)}`;
 
     return `${bar[0]}`;
-}
+};
 
 /**
- * 
+ *
  * Make an id from a specific length.
- * @param length 
- * @returns 
+ * @param length
+ * @returns
  */
 export const makeId = (length: number) => {
     let result = "";
 
-	const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	const charactersLength = characters.length;
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const charactersLength = characters.length;
 
-	for (let i = 0; i < length; i++) result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    for (let i = 0; i < length; i++) result += characters.charAt(Math.floor(Math.random() * charactersLength));
 
-	return result;
+    return result;
 };
 
 /**
@@ -209,3 +208,9 @@ export const codeBlock = (language: string, code: string) => `\`\`\`${language}\
  * @returns
  */
 export const sliceText = (text: string, max: number = 100) => (text.length > max ? `${text.slice(0, max)}...` : text);
+
+/**
+ *
+ * Lavalink node sessions.
+ */
+export const sessions = new Map<string, string>();
