@@ -1,5 +1,4 @@
 import type { StelleConfiguration } from "#stelle/types";
-import { makeId, sessions } from "#stelle/utils/functions/utils.js";
 
 import ms from "ms";
 
@@ -25,8 +24,7 @@ export const Configuration: StelleConfiguration = {
             port: 2333,
             authorization: "ganyuontopuwu",
             secure: false,
-            retryAmount: 5,
-            sessionId: sessions.get("sessionId") ?? makeId(16),
+            retryAmount: 10,
             retryDelay: ms("10s"),
         },
     ],

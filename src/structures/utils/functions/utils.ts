@@ -208,9 +208,3 @@ export const codeBlock = (language: string, code: string) => `\`\`\`${language}\
  * @returns
  */
 export const sliceText = (text: string, max: number = 100) => (text.length > max ? `${text.slice(0, max)}...` : text);
-
-/**
- *
- * Lavalink node sessions.
- */
-export const sessions = new Map<string, string>();
