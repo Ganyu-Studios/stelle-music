@@ -7,11 +7,9 @@
   "packageManager": "pnpm@9.7.1+sha512.faf344af2d6ca65c4c5c8c2224ea77a81a5e8859cbc4e06b1511ddce2f0151512431dd19e6aff31f2c6a8f5f2aced9bd2273e1fed7dd4de1868984059d2c4247",
   "homepage": "https://github.com/Ganyu-Studios/stelle-music#readme",
   "scripts": {
-    "test": "pnpm clean && pnpm start:debug",
     "build": "tsc",
-    "clean": "node ./scripts/clean.js && pnpm build",
     "start": "node ./dist/index.js",
-    "start:debug": "node ./dist/index.js --debug",
+    "dev": "tsx watch ./src/index.ts --debug",
     "lint": "biome lint --apply ./src",
     "format": "biome check --write ./src",
     "prepare": "husky"
@@ -46,10 +44,11 @@
     "@biomejs/biome": "^1.8.3",
     "@types/humanize-duration": "^3.27.4",
     "@types/ms": "^0.7.34",
-    "@types/node": "^22.4.1",
-    "husky": "^9.1.4",
+    "@types/node": "^22.5.0",
+    "husky": "^9.1.5",
     "lint-staged": "^15.2.9",
     "prisma": "^5.18.0",
+    "tsx": "^4.17.0",
     "typescript": "^5.5.4"
   },
   "imports": {

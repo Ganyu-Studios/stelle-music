@@ -1,5 +1,5 @@
 import { BaseHandler } from "seyfert/lib/common/index.js";
-import { Lavalink } from "./Lavalink.js";
+import type { Lavalink } from "./Lavalink.js";
 
 import type { Stelle } from "#stelle/client";
 
@@ -29,7 +29,7 @@ export class StelleHandler extends BaseHandler {
             const path = file.path.split(process.cwd()).slice(1).join(process.cwd());
             const event: Lavalink = file.file.default;
 
-            if (!(event && event instanceof Lavalink)) {
+            if (!event) {
                 this.logger.warn(`${path} doesn't export by \`export default new Lavaink({ ... })\``);
                 continue;
             }
