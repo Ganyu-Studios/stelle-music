@@ -43,6 +43,11 @@ export interface StelleConfiguration {
      * @default 25
      */
     maxCache: number;
+    /**
+     * Stelle commands cache path.
+     * @default commands.json
+     */
+    cachePath: string;
     /** Stelle developer id(s). */
     developerIds: string[];
     /** Stelle developer guild id(s). */

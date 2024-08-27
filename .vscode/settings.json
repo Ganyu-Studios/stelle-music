@@ -1,4 +1,3 @@
 {
-    "typescript.tsdk": "node_modules\\typescript\\lib",
-    "files.autoSave": "off"
+    "typescript.tsdk": "node_modules\\typescript\\lib"
 }

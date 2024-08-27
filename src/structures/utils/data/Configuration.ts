@@ -5,6 +5,7 @@ import ms from "ms";
 export const Configuration: StelleConfiguration = {
     defaultPrefix: "stelle",
     defaultVolume: 60,
+    cachePath: "commands.json",
     defaultSearchEngine: "spotify",
     prefixes: ["st!"],
     defaultLocale: "en-US",

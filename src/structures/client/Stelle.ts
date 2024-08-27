@@ -100,7 +100,7 @@ export class Stelle extends Client<true> {
                     presences: true,
                     messages: true,
                     stageInstances: true,
-                }
+                },
             },
             handleCommand: class extends HandleCommand {
                 override argsParser = Yuna.parser({
@@ -125,7 +125,7 @@ export class Stelle extends Client<true> {
 
         await this.start();
         await this.manager.load();
-        await this.uploadCommands();
+        await this.uploadCommands({ cachePath: this.config.cachePath });
 
         return "🌟";
     }
@@ -153,6 +153,7 @@ export class Stelle extends Client<true> {
             await this.components?.reloadAll();
             await this.langs?.reloadAll();
             await this.manager.handler.reloadAll();
+            await this.uploadCommands({ cachePath: this.config.cachePath });
 
             this.logger.info("Stelle has been reloaded.");
         } catch (error) {
