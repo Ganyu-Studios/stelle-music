@@ -3,7 +3,7 @@
 import { GatewayIntentBits } from "seyfert/lib/types/index.js";
 import { config } from "seyfert";
 
-import { DEBUG_MODE, WORKING_DIRECTORY } from "#stelle/data/Constants.js";
+import { DEBUG_MODE, OUTPUT } from "#stelle/data/Constants.js";
 
 export default config.bot({
     token: process.env.TOKEN ?? "Trailblazer",
@@ -21,7 +21,7 @@ export default config.bot({
      */
     locations: {
         base: "src",
-        output: WORKING_DIRECTORY,
+        output: OUTPUT,
         lavalink: "lavalink",
         commands: "commands",
         components: "components",

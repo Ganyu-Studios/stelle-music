@@ -30,7 +30,7 @@ export const IS_WINDOWS: boolean = process.platform === "win32";
 /**
  * Stelle working directory.
  */
-export const WORKING_DIRECTORY: "src" | "dist" = DEBUG_MODE && IS_WINDOWS ? "src" : "dist";
+export const OUTPUT: "src" | "dist" = DEBUG_MODE && IS_WINDOWS ? "src" : "dist";
 
 /**
  *
