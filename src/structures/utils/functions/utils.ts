@@ -174,7 +174,7 @@ export const makeId = (length: number) => {
  * @param flag
  * @returns
  */
-export const getFlag = (flag: string) => process.argv.some((arg) => arg === flag);
+export const getFlag = (flag: string) => process.argv.includes(flag);
 
 /**
  *
