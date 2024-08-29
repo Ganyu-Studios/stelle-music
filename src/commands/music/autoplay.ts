@@ -2,6 +2,7 @@ import { Command, type CommandContext, Declare, LocalesT } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
 import { AUTOPLAY_STATE } from "#stelle/data/Constants.js";
+import { StelleCategory } from "#stelle/types";
 
 @Declare({
     name: "autoplay",
@@ -10,10 +11,10 @@ import { AUTOPLAY_STATE } from "#stelle/data/Constants.js";
     contexts: ["Guild"],
     aliases: ["auto", "ap"],
 })
-@StelleOptions({ cooldown: 5, checkPlayer: true, inVoice: true, sameVoice: true, moreTracks: true, checkNodes: true })
+@StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkPlayer: true, inVoice: true, sameVoice: true, moreTracks: true, checkNodes: true })
 @LocalesT("locales.autoplay.name", "locales.autoplay.description")
 export default class AutoplayCommand extends Command {
-    async run(ctx: CommandContext) {
+    public override async run(ctx: CommandContext) {
         const { client, guildId } = ctx;
 
         if (!guildId) return;

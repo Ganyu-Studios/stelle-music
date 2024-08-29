@@ -23,6 +23,16 @@ export const DEBUG_MODE: boolean = getFlag("--debug");
 export const SECRETS_REGEX: RegExp = /\b(?:client\.(?:config)|config|env|process\.env|eval|atob|btoa)\b/;
 
 /**
+ * Check if Stelle is running on Windows.
+ */
+export const IS_WINDOWS: boolean = process.platform === "win32";
+
+/**
+ * Stelle working directory.
+ */
+export const OUTPUT: "src" | "dist" = DEBUG_MODE && IS_WINDOWS ? "src" : "dist";
+
+/**
  *
  * Stelle autoplay state.
  * @param boolean

@@ -11,7 +11,8 @@ import { resolve } from "node:path";
         const path = resolve("dist");
         if (existsSync(path)) await rm(path, { recursive: true });
         console.info("Done! Cleared.");
-    } catch (_) {
+    } catch (error) {
+        console.info(error);
         process.exit(1);
     };
 })();

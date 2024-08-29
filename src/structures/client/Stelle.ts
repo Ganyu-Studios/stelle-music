@@ -90,17 +90,27 @@ export class Stelle extends Client<true> {
         this.setServices({
             middlewares: StelleMiddlewares,
             cache: {
-                disabledCache: ["bans", "emojis", "overwrites", "stickers", "threads", "roles", "presences", "messages"],
+                disabledCache: {
+                    bans: true,
+                    emojis: true,
+                    overwrites: true,
+                    stickers: true,
+                    threads: true,
+                    roles: true,
+                    presences: true,
+                    messages: true,
+                    stageInstances: true,
+                },
             },
             handleCommand: class extends HandleCommand {
-                argsParser = Yuna.parser({
+                override argsParser = Yuna.parser({
                     logResult: DEBUG_MODE,
                     syntax: {
                         namedOptions: ["-", "--"],
                     },
                 });
 
-                resolveCommandFromContent = Yuna.resolver({
+                override resolveCommandFromContent = Yuna.resolver({
                     client: this.client,
                     logResult: DEBUG_MODE,
                 });
@@ -115,7 +125,7 @@ export class Stelle extends Client<true> {
 
         await this.start();
         await this.manager.load();
-        await this.uploadCommands();
+        await this.uploadCommands({ cachePath: this.config.cachePath });
 
         return "🌟";
     }
@@ -143,6 +153,7 @@ export class Stelle extends Client<true> {
             await this.components?.reloadAll();
             await this.langs?.reloadAll();
             await this.manager.handler.reloadAll();
+            await this.uploadCommands({ cachePath: this.config.cachePath });
 
             this.logger.info("Stelle has been reloaded.");
         } catch (error) {

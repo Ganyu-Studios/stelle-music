@@ -99,6 +99,8 @@ export default {
                 `\`❌\` Opciones o argumentos del comando inválidos.\n- **Requerido**: \`<>\`\n- **Opcional**: \`[]\`\n\n\`📋\` **Uso**:\n ${options}\n\`📢\` **Opciones Disponibles**:\n${list}`,
             playerQueue: ({ tracks }) => `\`📋\` Aquí está la cola completa del servidor: \n\n${tracks}`,
             channelEmpty: ({ type }) => `\`🎧\` Stelle está sola en el **canal de voz**... Pausando y esperando **${type}**.`,
+            mention: ({ clientName, defaultPrefix, commandId, commandName }) => `\`📢\` Hey! Mi nombre es: **${clientName}** y mi prefijo es: \`${defaultPrefix}\` y **/** también!\n\`📋\` Si tu quieres ver mis comandos, escribe: \`${defaultPrefix} ${commandName}\` o </${commandName}:${commandId}>.`,  
+            noCommand: "`❌` No tengo el comando necesitado *todavía*, intenta de nuevo en un momento.",  
             noMembers: "`🎧` Stelle está sola en el **canal de voz**... Abandonando el canal.",
             hasMembers: "`🎧` Stelle dejó de estar sola... Resumiendo.",
             onlyDeveloper: "`❌` Solo el **dueño del bot** puede usar esto.",

@@ -1,10 +1,10 @@
-import { ActionRow, Button, type CommandContext, Embed, type User } from "seyfert";
 import { Lavalink } from "#stelle/classes";
+import { ActionRow, Button, type CommandContext, Embed, type User } from "seyfert";
 
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 
 import { AUTOPLAY_STATE, PAUSE_STATE } from "#stelle/data/Constants.js";
-import { parseTime } from "#stelle/utils/functions/utils.js";
+import { TimeFormat } from "#stelle/utils/TimeFormat.js";
 
 export default new Lavalink({
     name: "trackStart",
@@ -24,7 +24,7 @@ export default new Lavalink({
 
         const duration = track.info.isStream
             ? messages.commands.play.live
-            : parseTime(track.info.duration) ?? messages.commands.play.undetermined;
+            : TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined;
 
         const embed = new Embed()
             .setDescription(
@@ -43,10 +43,7 @@ export default new Lavalink({
             .setTimestamp();
 
         const row = new ActionRow<Button>().addComponents(
-            new Button()
-                .setCustomId("player-stopPlayer")
-                .setStyle(ButtonStyle.Danger)
-                .setLabel(messages.events.trackStart.components.stop),
+            new Button().setCustomId("player-stopPlayer").setStyle(ButtonStyle.Danger).setLabel(messages.events.trackStart.components.stop),
             new Button()
                 .setCustomId("player-skipTrack")
                 .setStyle(ButtonStyle.Secondary)

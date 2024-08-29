@@ -1,5 +1,6 @@
 import { Command, type CommandContext, Declare, LocalesT, Options, createIntegerOption } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
+import { StelleCategory } from "#stelle/types";
 
 const options = {
     to: createIntegerOption({
@@ -18,11 +19,11 @@ const options = {
     contexts: ["Guild"],
     aliases: ["sk"],
 })
-@StelleOptions({ cooldown: 5, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
+@StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true, checkQueue: true })
 @Options(options)
 @LocalesT("locales.skip.name", "locales.skip.description")
 export default class SkipCommand extends Command {
-    async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;
         const { to } = options;
 
@@ -33,8 +34,8 @@ export default class SkipCommand extends Command {
         const player = client.manager.getPlayer(guildId);
         if (!player) return;
 
-        if (to) await player.skip(to - 1);
-        else await player.skip();
+        if (to) await player.skip(to - 1, !player.get("enabledAutoplay"));
+        else await player.skip(undefined, !player.get("enabledAutoplay"));
 
         await ctx.editOrReply({
             embeds: [

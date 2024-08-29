@@ -1,5 +1,6 @@
 import { Command, type CommandContext, Declare, LocalesT, Options, createChannelOption } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
+import { StelleCategory } from "#stelle/types";
 
 import { ChannelType } from "seyfert/lib/types/index.js";
 
@@ -30,11 +31,11 @@ const options = {
     contexts: ["Guild"],
     aliases: ["mov", "m"],
 })
-@StelleOptions({ cooldown: 5, checkPlayer: true, inVoice: true, checkNodes: true })
+@StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkPlayer: true, inVoice: true, checkNodes: true })
 @Options(options)
 @LocalesT("locales.move.name", "locales.move.description")
 export default class MoveCommand extends Command {
-    async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;
         const { voice, text } = options;
 

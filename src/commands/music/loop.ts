@@ -4,6 +4,7 @@ import { StelleOptions } from "#stelle/decorators";
 import type { RepeatMode } from "lavalink-client";
 
 import { LOOP_STATE } from "#stelle/data/Constants.js";
+import { StelleCategory } from "#stelle/types";
 
 const options = {
     mode: createStringOption({
@@ -37,11 +38,11 @@ const options = {
     contexts: ["Guild"],
     aliases: ["l"],
 })
-@StelleOptions({ cooldown: 5, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
+@StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
 @Options(options)
 @LocalesT("locales.loop.name", "locales.loop.description")
 export default class LoopCommand extends Command {
-    async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;
         const { mode } = options;
 

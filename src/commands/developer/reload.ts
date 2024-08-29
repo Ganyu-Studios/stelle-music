@@ -13,7 +13,7 @@ import { Configuration } from "#stelle/data/Configuration.js";
 })
 @StelleOptions({ onlyDeveloper: true })
 export default class ReloadCommand extends Command {
-    async run(ctx: CommandContext): Promise<void> {
+    public override async run(ctx: CommandContext): Promise<void> {
         await ctx.deferReply(true);
         await ctx.client
             .reload()

@@ -1,65 +1,60 @@
 {
-  "name": "stelle-music",
-  "version": "0.2.8-BLAZER",
-  "description": "A music bot.",
-  "main": "./dist/index.js",
-  "type": "module",
-  "packageManager": "pnpm@9.7.0+sha512.dc09430156b427f5ecfc79888899e1c39d2d690f004be70e05230b72cb173d96839587545d09429b55ac3c429c801b4dc3c0e002f653830a420fa2dd4e3cf9cf",
-  "homepage": "https://github.com/Ganyu-Studios/stelle-music#readme",
-  "scripts": {
-    "test": "pnpm clean && pnpm start:debug",
-    "build": "tsc",
-    "clean": "node ./scripts/clean.js && pnpm build",
-    "start": "node ./dist/index.js",
-    "start:debug": "node ./dist/index.js --debug",
-    "lint": "biome lint --apply ./src",
-    "format": "biome check --write ./src"
-  },
-  "lint-staged": {
-    "*.ts": [
-      "biome check --apply",
-      "biome format --write"
-    ]
-  },
-  "keywords": [],
-  "author": "JustEvil",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Ganyu-Studios/stelle-music.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Ganyu-Studios/stelle-music/issues"
-  },
-  "dependencies": {
-    "@prisma/client": "^5.18.0",
-    "chalk": "^5.3.0",
-    "dotenv": "^16.4.5",
-    "humanize-duration": "^3.32.1",
-    "lavalink-client": "github:Tomato6966/lavalink-client",
-    "ms": "^2.1.3",
-    "seyfert": "github:tiramisulabs/seyfert",
-    "yunaforseyfert": "github:SagiriIkeda/yunaforseyfert#dev"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^1.8.3",
-    "@types/humanize-duration": "^3.27.4",
-    "@types/ms": "^0.7.34",
-    "@types/node": "^22.2.0",
-    "husky": "^9.1.4",
-    "lint-staged": "^15.2.9",
-    "prisma": "^5.18.0",
-    "typescript": "^5.5.4"
-  },
-  "imports": {
-    "#stelle/client": "./dist/structures/client/Stelle.js",
-    "#stelle/types": "./dist/structures/utils/types/index.js",
-    "#stelle/classes": "./dist/structures/utils/classes/index.js",
-    "#stelle/middlwares": "./dist/middlewares/index.js",
-    "#stelle/errors": "./dist/structures/utils/Errors.js",
-    "#stelle/decorators": "./dist/structures/utils/Decorators.js",
-    "#stelle/index": "./dist/index.js",
-    "#stelle/data/*": "./dist/structures/utils/data/*",
-    "#stelle/utils/*": "./dist/structures/utils/*"
-  }
+    "name": "stelle-music",
+    "version": "0.2.9-BLAZER",
+    "description": "A music bot.",
+    "main": "./dist/index.js",
+    "type": "module",
+    "packageManager": "pnpm@9.7.1+sha512.faf344af2d6ca65c4c5c8c2224ea77a81a5e8859cbc4e06b1511ddce2f0151512431dd19e6aff31f2c6a8f5f2aced9bd2273e1fed7dd4de1868984059d2c4247",
+    "homepage": "https://github.com/Ganyu-Studios/stelle-music#readme",
+    "scripts": {
+        "build": "tsc",
+        "clean": "node ./scripts/clean.js && pnpm build",
+        "start": "node ./dist/index.js",
+        "dev": "tsx watch ./src/index.ts --debug",
+        "lint": "biome lint --apply ./src",
+        "format": "biome check --write ./src",
+        "prepare": "husky"
+    },
+    "lint-staged": {
+        "*.{ts,json}": ["biome format --write"]
+    },
+    "keywords": [],
+    "author": "JustEvil",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Ganyu-Studios/stelle-music.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Ganyu-Studios/stelle-music/issues"
+    },
+    "dependencies": {
+        "@prisma/client": "^5.19.0",
+        "chalk": "^5.3.0",
+        "dotenv": "^16.4.5",
+        "lavalink-client": "github:Tomato6966/lavalink-client",
+        "seyfert": "github:tiramisulabs/seyfert",
+        "yunaforseyfert": "github:SagiriIkeda/yunaforseyfert#dev"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "^1.8.3",
+        "@types/node": "^22.5.1",
+        "husky": "^9.1.5",
+        "lint-staged": "^15.2.9",
+        "prisma": "^5.19.0",
+        "tsx": "^4.19.0",
+        "typescript": "^5.5.4"
+    },
+    "imports": {
+        "#stelle/client": "./dist/structures/client/Stelle.js",
+        "#stelle/types": "./dist/structures/utils/types/index.js",
+        "#stelle/classes": "./dist/structures/utils/classes/index.js",
+        "#stelle/middlwares": "./dist/middlewares/index.js",
+        "#stelle/errors": "./dist/structures/utils/Errors.js",
+        "#stelle/decorators": "./dist/structures/utils/Decorators.js",
+        "#stelle/listeners": "./dist/structures/listeners/index.js",
+        "#stelle/index": "./dist/index.js",
+        "#stelle/data/*": "./dist/structures/utils/data/*",
+        "#stelle/utils/*": "./dist/structures/utils/*"
+    }
 }

@@ -1,11 +1,9 @@
 import type { CommandContext, UsingClient, VoiceState } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 
-import { msParser } from "#stelle/utils/functions/utils.js";
+import { TimeFormat } from "#stelle/utils/TimeFormat.js";
 
 const timeouts: Map<string, NodeJS.Timeout> = new Map();
-
-//TODO check why this epic code don't work.
 
 export async function playerListener(client: UsingClient, newState: VoiceState, oldState?: VoiceState): Promise<void> {
     if (oldState?.channelId === newState.channelId) return;
@@ -54,7 +52,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
                 {
                     color: EmbedColors.Yellow,
                     description: messages.events.channelEmpty({
-                        type: msParser(client.config.disconnectTime),
+                        type: TimeFormat.toHumanize(client.config.disconnectTime),
                     }),
                 },
             ],

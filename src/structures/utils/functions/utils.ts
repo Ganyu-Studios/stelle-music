@@ -7,8 +7,6 @@ import { inspect } from "node:util";
 import { type DefaultLocale, extendContext } from "seyfert";
 import { magicImport } from "seyfert/lib/common/index.js";
 
-import humanize from "humanize-duration";
-
 /**
  * Stelle custom context.
  */
@@ -18,8 +16,8 @@ export const customContext = extendContext((interaction) => ({
      * Get the locale from the database.
      * @returns
      */
-    getLocale: async (): Promise<DefaultLocale> => interaction.client.t(await interaction.client.database.getLocale(interaction.guildId!)).get(),
-    
+    getLocale: async (): Promise<DefaultLocale> =>
+        interaction.client.t(await interaction.client.database.getLocale(interaction.guildId!)).get(),
 }));
 
 /**
@@ -43,71 +41,6 @@ export const stelleRC = async (): Promise<any> => {
 
 /**
  *
- * Convert MS to a time string.
- * @param time
- * @returns
- */
-export const parseTime = (time?: number): string | undefined => {
-    if (!time) return;
-
-    const humanizer = humanize.humanizer({
-        spacer: "",
-        language: "short",
-        maxDecimalPoints: 0,
-        serialComma: false,
-        delimiter: ":",
-        languages: {
-            short: {
-                y: () => "",
-                mo: () => "",
-                w: () => "",
-                d: () => "",
-                h: () => "",
-                m: () => "",
-                s: () => "",
-                ms: () => "",
-            },
-        },
-    });
-
-    return humanizer(time);
-};
-
-/**
- *
- * Convert MS to a time string.
- * @param time
- * @returns
- */
-export const msParser = (time?: number): string => {
-    if (!time) return "0s";
-
-    const humanizer = humanize.humanizer({
-        spacer: "",
-        language: "short",
-        maxDecimalPoints: 0,
-        serialComma: false,
-        delimiter: " ",
-        languages: {
-            short: {
-                y: () => "y",
-                mo: () => "mo",
-                w: () => "w",
-                d: () => "d",
-                h: () => "h",
-                m: () => "m",
-                s: () => "s",
-                ms: () => "ms",
-            },
-        },
-    });
-
-    return humanizer(time);
-};
-
-
-/**
- *
  * Create and Get the cooldown collection key.
  * @param ctx
  * @returns
@@ -122,10 +55,10 @@ export const getCollectionKey = (ctx: AnyContext): string => {
 };
 
 /**
- * 
+ *
  * Create a new progress bar.
- * @param player 
- * @returns 
+ * @param player
+ * @returns
  */
 export const createBar = (player: Player) => {
     const size = 15;
@@ -141,32 +74,32 @@ export const createBar = (player: Player) => {
         current > total
             ? [line.repeat((size / 2) * 2), (current / total) * 100]
             : [
-                line.repeat(Math.round((size / 2) * (current / total))).replace(/.$/, slider) +
-                line.repeat(size - Math.round(size * (current / total)) + 1),
+                  line.repeat(Math.round((size / 2) * (current / total))).replace(/.$/, slider) +
+                      line.repeat(size - Math.round(size * (current / total)) + 1),
 
-                current / total,
-            ];
+                  current / total,
+              ];
 
     if (!String(bar).includes(slider)) return `${slider}${line.repeat(size - 1)}`;
 
     return `${bar[0]}`;
-}
+};
 
 /**
- * 
+ *
  * Make an id from a specific length.
- * @param length 
- * @returns 
+ * @param length
+ * @returns
  */
 export const makeId = (length: number) => {
     let result = "";
 
-	const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	const charactersLength = characters.length;
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const charactersLength = characters.length;
 
-	for (let i = 0; i < length; i++) result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    for (let i = 0; i < length; i++) result += characters.charAt(Math.floor(Math.random() * charactersLength));
 
-	return result;
+    return result;
 };
 
 /**
@@ -175,7 +108,7 @@ export const makeId = (length: number) => {
  * @param flag
  * @returns
  */
-export const getFlag = (flag: string) => process.argv.some((arg) => arg === flag);
+export const getFlag = (flag: string) => process.argv.includes(flag);
 
 /**
  *

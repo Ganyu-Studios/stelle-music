@@ -1,5 +1,6 @@
 import { Command, type CommandContext, Declare, LocalesT, Options, createStringOption } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
+import { StelleCategory } from "#stelle/types";
 
 const options = {
     prefix: createStringOption({
@@ -19,11 +20,11 @@ const options = {
     contexts: ["Guild"],
     defaultMemberPermissions: ["ManageGuild"],
 })
-@StelleOptions({ cooldown: 10 })
+@StelleOptions({ cooldown: 10, category: StelleCategory.Guild })
 @LocalesT("locales.setprefix.name", "locales.setprefix.description")
 @Options(options)
 export default class SetlangCommand extends Command {
-    async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: CommandContext<typeof options>) {
         const { client, options } = ctx;
         const { prefix } = options;
 

@@ -1,7 +1,9 @@
-import { Declare, Command, type CommandContext, type User, LocalesT } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
+import { StelleCategory } from "#stelle/types";
+import { Command, Declare, LocalesT, type CommandContext, type User } from "seyfert";
 
-import { createBar, msParser } from "#stelle/utils/functions/utils.js";
+import { createBar } from "#stelle/utils/functions/utils.js";
+import { TimeFormat } from "#stelle/utils/TimeFormat.js";
 
 @Declare({
     name: "nowplaying",
@@ -10,10 +12,10 @@ import { createBar, msParser } from "#stelle/utils/functions/utils.js";
     contexts: ["Guild"],
     aliases: ["np"],
 })
-@StelleOptions({ checkNodes: true, checkPlayer: true, cooldown: 5 })
+@StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkNodes: true, checkPlayer: true })
 @LocalesT("locales.nowplaying.name", "locales.nowplaying.description")
 export default class NowPlayingCommand extends Command {
-    async run(ctx: CommandContext) {
+    public override async run(ctx: CommandContext) {
         const { client, guildId } = ctx;
 
         if (!guildId) return;
@@ -34,14 +36,14 @@ export default class NowPlayingCommand extends Command {
                     description: messages.commands.nowplaying({
                         title: track.info.title,
                         url: track.info.uri,
-                        duration: msParser(track.info.duration),
+                        duration: TimeFormat.toHumanize(track.info.duration),
                         author: track.info.author,
-                        position: msParser(player.position),
+                        position: TimeFormat.toHumanize(player.position),
                         requester: (track.requester as User).id,
                         bar: createBar(player),
-                    })
-                }
-            ]
+                    }),
+                },
+            ],
         });
     }
 }

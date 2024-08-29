@@ -3,9 +3,8 @@ import { StelleOptions } from "#stelle/decorators";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
 
-import { msParser } from "#stelle/utils/functions/utils.js";
-
-import ms from "ms";
+import { StelleCategory } from "#stelle/types";
+import { ms, TimeFormat } from "#stelle/utils/TimeFormat.js";
 
 const options = {
     time: createStringOption({
@@ -34,11 +33,11 @@ const options = {
     contexts: ["Guild"],
     aliases: ["sk"],
 })
-@StelleOptions({ cooldown: 5, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
+@StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
 @Options(options)
 @LocalesT("locales.seek.name", "locales.seek.description")
 export default class SeekCommand extends Command {
-    async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;
         const { time } = options;
 
@@ -76,7 +75,7 @@ export default class SeekCommand extends Command {
             return ctx.editOrReply({
                 embeds: [
                     {
-                        description: messages.commands.seek.exeedsTime({ time: msParser(time) }),
+                        description: messages.commands.seek.exeedsTime({ time: TimeFormat.toHumanize(time) }),
                         color: EmbedColors.Red,
                     },
                 ],
@@ -88,7 +87,7 @@ export default class SeekCommand extends Command {
                 {
                     color: client.config.color.success,
                     description: messages.commands.seek.seeked({
-                        time: msParser(time),
+                        time: TimeFormat.toHumanize(time),
                         type: messages.commands.seek.type[time < position ? "rewond" : "seeked"],
                     }),
                 },

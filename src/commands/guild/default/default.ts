@@ -1,5 +1,6 @@
 import { AutoLoad, Command, Declare, LocalesT } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
+import { StelleCategory } from "#stelle/types";
 
 @Declare({
     name: "default",
@@ -9,6 +10,6 @@ import { StelleOptions } from "#stelle/decorators";
     defaultMemberPermissions: ["ManageGuild"],
 })
 @AutoLoad()
-@StelleOptions({ cooldown: 10 })
+@StelleOptions({ cooldown: 10, category: StelleCategory.Guild })
 @LocalesT("locales.default.name", "locales.default.description")
 export default class DefaultCommand extends Command {}
