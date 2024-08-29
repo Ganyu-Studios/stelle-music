@@ -1,6 +1,5 @@
 import type { StelleConfiguration } from "#stelle/types";
-
-import ms from "ms";
+import { ms } from "#stelle/utils/TimeFormat.js";
 
 export const Configuration: StelleConfiguration = {
     defaultPrefix: "stelle",
@@ -15,7 +14,7 @@ export const Configuration: StelleConfiguration = {
         "391283181665517568", // <-- JustEvil
     ],
     guildIds: [
-        "1075885077529120798", // <-- Return Emojis
+        "1075885077529120798", // <-- PenwinSquad
         "970508955363188736", // <-- Ganyu Studios
     ],
     nodes: [
