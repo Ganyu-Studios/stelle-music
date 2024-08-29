@@ -126,15 +126,25 @@ export function ms(from: string | number): string | number {
 }
 
 export const TimeFormat = {
-    /** @example 1h 4s */
+    /**
+     * Convert milliseconds to a string format.
+     * @example "1h 4s"
+     */
     toHumanize: createMsFormater(),
-    /** @example 1:00:04 */
+    /**
+     * Convert milliseconds to a string dotted format.
+     * @example "1:00:04"
+     */
     toDotted: createMsFormater(false),
-    /** 1h => 3600000 */
+    /**
+     * Convert a string to milliseconds.
+     * @example "1h => 3600000"
+     */
     toMs: formatToMs,
-    /** 3600000 => 1h
-     *
-     * 1h => 3600000
+    /**
+     * Convert milliseconds to a string.and string to milliseconds.
+     * @example "3600000 => 1h"
+     * @example "1h => 3600000"
      */
     ms,
 };
