@@ -1,5 +1,5 @@
 import type { StelleConfiguration } from "#stelle/types";
-import { ms } from "../TimeFormat.js";
+import { ms } from "#stelle/utils/TimeFormat.js";
 
 export const Configuration: StelleConfiguration = {
     defaultPrefix: "stelle",

@@ -102,7 +102,7 @@ const TimeUnitsAliases = createAliases(
     },
 );
 
-const stringToMsRegex = /([1-9]+(?:[,.][1-9]+)?)[\s.]*([a-z]+)/g;
+const stringToMsRegex = /([0-9]+(?:[0-9,.]+)?)[\s.,]*([a-zA-Z]+)/g;
 
 const formatToMs = (date: string) => {
     let result = 0;
