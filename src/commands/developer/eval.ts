@@ -7,8 +7,7 @@ import { codeBlock, getDepth, sliceText } from "#stelle/utils/functions/utils.js
 
 import { DeclareParserConfig, ParserRecommendedConfig, Watch, Yuna } from "yunaforseyfert";
 import { SECRETS_MESSAGES, SECRETS_REGEX } from "#stelle/data/Constants.js";
-
-import ms from "ms";
+import { ms } from "#stelle/utils/TimeFormat.js";
 
 const options = {
     code: createStringOption({

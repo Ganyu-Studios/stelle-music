@@ -1,8 +1,9 @@
-import { Declare, Command, type CommandContext, type User, LocalesT } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
+import { Command, Declare, LocalesT, type CommandContext, type User } from "seyfert";
 
-import { createBar, msParser } from "#stelle/utils/functions/utils.js";
+import { createBar } from "#stelle/utils/functions/utils.js";
+import { TimeFormat } from "#stelle/utils/TimeFormat.js";
 
 @Declare({
     name: "nowplaying",
@@ -35,14 +36,14 @@ export default class NowPlayingCommand extends Command {
                     description: messages.commands.nowplaying({
                         title: track.info.title,
                         url: track.info.uri,
-                        duration: msParser(track.info.duration),
+                        duration: TimeFormat.toHumanize(track.info.duration),
                         author: track.info.author,
-                        position: msParser(player.position),
+                        position: TimeFormat.toHumanize(player.position),
                         requester: (track.requester as User).id,
                         bar: createBar(player),
-                    })
-                }
-            ]
+                    }),
+                },
+            ],
         });
     }
 }
