@@ -4,9 +4,9 @@ import { StelleOptions } from "#stelle/decorators";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
 
-import { EmbedPaginator } from "#stelle/utils/Paginator.js";
-import { msParser } from "#stelle/utils/functions/utils.js";
 import { StelleCategory } from "#stelle/types";
+import { EmbedPaginator } from "#stelle/utils/Paginator.js";
+import { TimeFormat } from "#stelle/utils/TimeFormat.js";
 
 @Declare({
     name: "nodes",
@@ -29,7 +29,7 @@ export default class ExampleCommand extends Command {
             value: messages.commands.nodes.value({
                 state: messages.commands.nodes.states[node.connected ? "connected" : "disconnected"],
                 players: node.stats.players,
-                uptime: msParser(node.stats.uptime),
+                uptime: TimeFormat.toHumanize(node.stats.uptime),
             }),
         }));
 

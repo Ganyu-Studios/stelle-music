@@ -1,13 +1,11 @@
-import type { Player } from "lavalink-client";
 import type { AnyContext } from "#stelle/types";
+import type { Player } from "lavalink-client";
 
 import { join } from "node:path";
 import { inspect } from "node:util";
 
 import { type DefaultLocale, extendContext } from "seyfert";
 import { magicImport } from "seyfert/lib/common/index.js";
-
-import humanize from "humanize-duration";
 
 /**
  * Stelle custom context.
@@ -39,70 +37,6 @@ export const stelleRC = async (): Promise<any> => {
         components: locations.components ? join(process.cwd(), locations.output, locations.components) : undefined,
         commands: locations.commands ? join(process.cwd(), locations.output, locations.commands) : undefined,
     };
-};
-
-/**
- *
- * Convert MS to a time string.
- * @param time
- * @returns
- */
-export const parseTime = (time?: number): string | undefined => {
-    if (!time) return;
-
-    const humanizer = humanize.humanizer({
-        spacer: "",
-        language: "short",
-        maxDecimalPoints: 0,
-        serialComma: false,
-        delimiter: ":",
-        languages: {
-            short: {
-                y: () => "",
-                mo: () => "",
-                w: () => "",
-                d: () => "",
-                h: () => "",
-                m: () => "",
-                s: () => "",
-                ms: () => "",
-            },
-        },
-    });
-
-    return humanizer(time);
-};
-
-/**
- *
- * Convert MS to a time string.
- * @param time
- * @returns
- */
-export const msParser = (time?: number): string => {
-    if (!time) return "0s";
-
-    const humanizer = humanize.humanizer({
-        spacer: "",
-        language: "short",
-        maxDecimalPoints: 0,
-        serialComma: false,
-        delimiter: " ",
-        languages: {
-            short: {
-                y: () => "y",
-                mo: () => "mo",
-                w: () => "w",
-                d: () => "d",
-                h: () => "h",
-                m: () => "m",
-                s: () => "s",
-                ms: () => "ms",
-            },
-        },
-    });
-
-    return humanizer(time);
 };
 
 /**

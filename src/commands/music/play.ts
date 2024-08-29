@@ -16,7 +16,8 @@ import { StelleCategory } from "#stelle/types";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
-import { parseTime, sliceText } from "#stelle/utils/functions/utils.js";
+import { sliceText } from "#stelle/utils/functions/utils.js";
+import { TimeFormat } from "#stelle/utils/TimeFormat.js";
 
 const options = {
     query: createStringOption({
@@ -53,7 +54,7 @@ const options = {
                 tracks.slice(0, 25).map((track) => {
                     const duration = track.info.isStream
                         ? messages.commands.play.live
-                        : parseTime(track.info.duration) ?? messages.commands.play.undetermined;
+                        : TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined;
 
                     return {
                         name: `${sliceText(track.info.title, 20)} (${duration}) - ${sliceText(track.info.author, 30)}`,
@@ -140,7 +141,7 @@ export default class PlayCommand extends Command {
                     const type = player.queue.tracks.length > 1 ? "results" : "result";
                     const status = track.info.isStream
                         ? messages.commands.play.live
-                        : parseTime(track.info.duration) ?? messages.commands.play.undetermined;
+                        : TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined;
 
                     const embed = new Embed()
                         .setThumbnail(track.info.artworkUrl ?? "")
