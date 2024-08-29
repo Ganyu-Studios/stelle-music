@@ -29,4 +29,4 @@ You can use my example:
 *Or `sh start.sh` if you are on a ubuntu server*
 
 ### 📋 Using the node
-* Just, go to the [configuration](/src/structures/utils/data/Configuration.ts#L21) of Stelle and add the node to the list.
+* Just, go to the [configuration](/src/structures/utils/data/Configuration.ts#L20) of Stelle and add the node to the list.
