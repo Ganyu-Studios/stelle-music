@@ -18,14 +18,14 @@ importers:
         specifier: ^16.4.5
         version: 16.4.5
       lavalink-client:
-        specifier: github:Tomato6966/lavalink-client
-        version: https://codeload.github.com/Tomato6966/lavalink-client/tar.gz/d6d361be64cb6d8a19d29fb602a1888c09e33572
+        specifier: ^2.2.2
+        version: 2.2.2
       seyfert:
         specifier: github:tiramisulabs/seyfert
         version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/f5a8d06d8b538bfb0375d6567dd35ce6716f8cef
       yunaforseyfert:
-        specifier: github:SagiriIkeda/yunaforseyfert#dev
-        version: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/015d6aeb50fc93f5a6146073d1216d43605ac6f6
+        specifier: 1.0.0-beta.2
+        version: 1.0.0-beta.2
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.8.3
@@ -394,9 +394,8 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
-  lavalink-client@https://codeload.github.com/Tomato6966/lavalink-client/tar.gz/d6d361be64cb6d8a19d29fb602a1888c09e33572:
-    resolution: {tarball: https://codeload.github.com/Tomato6966/lavalink-client/tar.gz/d6d361be64cb6d8a19d29fb602a1888c09e33572}
-    version: 2.2.2
+  lavalink-client@2.2.2:
+    resolution: {integrity: sha512-3pUmVYdfAvv3nnoEDqdPQ1m9sAwzuqjewhe/fqYqd0sfiatXQpcknRuZlECii1XL9l1ucdAPYp97MHjNoGY9vQ==}
     engines: {node: '>=18.0.0'}
 
   lilconfig@3.1.2:
@@ -564,9 +563,8 @@ packages:
     engines: {node: '>= 14'}
     hasBin: true
 
-  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/015d6aeb50fc93f5a6146073d1216d43605ac6f6:
-    resolution: {tarball: https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/015d6aeb50fc93f5a6146073d1216d43605ac6f6}
-    version: 1.0.0
+  yunaforseyfert@1.0.0-beta.2:
+    resolution: {integrity: sha512-4MuOoRgyIjyd50xY1lQeJbMF4Y/YnVzjrmdXnVopMnnxFopRBa5fSZrATwxWKcr/uWvPNZ44ZC8dgwdwyQdAMg==}
 
 snapshots:
 
@@ -821,7 +819,7 @@ snapshots:
 
   isexe@2.0.0: {}
 
-  lavalink-client@https://codeload.github.com/Tomato6966/lavalink-client/tar.gz/d6d361be64cb6d8a19d29fb602a1888c09e33572:
+  lavalink-client@2.2.2:
     dependencies:
       tslib: 2.7.0
       ws: 8.18.0
@@ -976,6 +974,6 @@ snapshots:
 
   yaml@2.5.0: {}
 
-  yunaforseyfert@https://codeload.github.com/SagiriIkeda/yunaforseyfert/tar.gz/015d6aeb50fc93f5a6146073d1216d43605ac6f6:
+  yunaforseyfert@1.0.0-beta.2:
     dependencies:
       seyfert: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/f5a8d06d8b538bfb0375d6567dd35ce6716f8cef
