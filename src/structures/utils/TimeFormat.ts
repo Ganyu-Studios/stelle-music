@@ -36,13 +36,22 @@ const createMsFormater = (isNormalMode = true) => {
 
         const unitName = unitsLabels[targetPosition - 1];
 
-        const resultTime = Math.floor(time / targetUnitValue);
+        const resultTime = Math.floor(time / targetUnitValue).toString();
         const more = time % targetUnitValue;
 
-        if (resultTime === 0) return ["", 0];
+        if (resultTime === "0") return ["", 0];
         if (unitName === undefined) return [`${resultTime}ms`, 0];
 
-        let result = isNormalMode ? resultTime + unitName : isChild ? resultTime.toString().padStart(2, "0") : resultTime.toString();
+        // let result;
+
+        let result = isNormalMode
+            ? resultTime + unitName
+            : isChild
+              ? resultTime.padStart(2, "0")
+              : // do 00:05
+                targetPosition <= 1
+                ? "00:".repeat(targetPosition) + resultTime.padStart(2, "0")
+                : resultTime;
 
         if (more !== 0) {
             const [rest, pos] = baseFormater(more, true);
@@ -117,7 +126,11 @@ const formatToMs = (date: string) => {
 
     return result;
 };
-
+/**
+ * Convert milliseconds to a string and string to milliseconds.
+ * @example "3600000 => 1h"
+ * @example "1h => 3600000"
+ */
 export function ms(from: string): number;
 export function ms(from: number): string;
 export function ms(from: string | number): string | number {
@@ -141,10 +154,5 @@ export const TimeFormat = {
      * @example "1h => 3600000"
      */
     toMs: formatToMs,
-    /**
-     * Convert milliseconds to a string.and string to milliseconds.
-     * @example "3600000 => 1h"
-     * @example "1h => 3600000"
-     */
     ms,
 };
