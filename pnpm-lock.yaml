@@ -24,8 +24,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       yunaforseyfert:
-        specifier: 1.0.0-beta.2
-        version: 1.0.0-beta.2
+        specifier: ^1.0.1
+        version: 1.0.1
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.8.3
@@ -480,10 +480,6 @@ packages:
   seyfert@2.0.0:
     resolution: {integrity: sha512-cAMBhZWr+edrjDkTi2cS+hE74LuwIsML+zZOPOKVFQbXsnd8bbiM+/QHWyDfSjQ2PGWcRZEzCGt6IpsyL7quQQ==}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/f5a8d06d8b538bfb0375d6567dd35ce6716f8cef:
-    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/f5a8d06d8b538bfb0375d6567dd35ce6716f8cef}
-    version: 2.0.0
-
   shebang-command@2.0.0:
     resolution: {integrity: sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==}
     engines: {node: '>=8'}
@@ -566,8 +562,8 @@ packages:
     engines: {node: '>= 14'}
     hasBin: true
 
-  yunaforseyfert@1.0.0-beta.2:
-    resolution: {integrity: sha512-4MuOoRgyIjyd50xY1lQeJbMF4Y/YnVzjrmdXnVopMnnxFopRBa5fSZrATwxWKcr/uWvPNZ44ZC8dgwdwyQdAMg==}
+  yunaforseyfert@1.0.1:
+    resolution: {integrity: sha512-wqsDtfIskU2QdF42W2E0yeKqj74EbiuFizR58ijugV8DaCOa4ESk+SAtIa6XQs/JnBffBInmuHSomDFV5hbTEA==}
 
 snapshots:
 
@@ -914,8 +910,6 @@ snapshots:
 
   seyfert@2.0.0: {}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/f5a8d06d8b538bfb0375d6567dd35ce6716f8cef: {}
-
   shebang-command@2.0.0:
     dependencies:
       shebang-regex: 3.0.0
@@ -979,6 +973,4 @@ snapshots:
 
   yaml@2.5.0: {}
 
-  yunaforseyfert@1.0.0-beta.2:
-    dependencies:
-      seyfert: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/f5a8d06d8b538bfb0375d6567dd35ce6716f8cef
+  yunaforseyfert@1.0.1: {}
