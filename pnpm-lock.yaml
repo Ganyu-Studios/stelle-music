@@ -21,8 +21,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       seyfert:
-        specifier: github:tiramisulabs/seyfert
-        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/f5a8d06d8b538bfb0375d6567dd35ce6716f8cef
+        specifier: ^2.0.0
+        version: 2.0.0
       yunaforseyfert:
         specifier: 1.0.0-beta.2
         version: 1.0.0-beta.2
@@ -477,6 +477,9 @@ packages:
   rfdc@1.4.1:
     resolution: {integrity: sha512-q1b3N5QkRUWUl7iyylaaj3kOpIT0N2i9MqIEQXP73GVsN9cw3fdx8X63cEmWhJGi2PPCF23Ijp7ktmd39rawIA==}
 
+  seyfert@2.0.0:
+    resolution: {integrity: sha512-cAMBhZWr+edrjDkTi2cS+hE74LuwIsML+zZOPOKVFQbXsnd8bbiM+/QHWyDfSjQ2PGWcRZEzCGt6IpsyL7quQQ==}
+
   seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/f5a8d06d8b538bfb0375d6567dd35ce6716f8cef:
     resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/f5a8d06d8b538bfb0375d6567dd35ce6716f8cef}
     version: 2.0.0
@@ -908,6 +911,8 @@ snapshots:
       signal-exit: 4.1.0
 
   rfdc@1.4.1: {}
+
+  seyfert@2.0.0: {}
 
   seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/f5a8d06d8b538bfb0375d6567dd35ce6716f8cef: {}
 
