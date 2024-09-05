@@ -10,12 +10,11 @@ import { InvalidEmbedsLength, InvalidMessage, InvalidPageNumber } from "./Errors
  */
 export class EmbedPaginator {
     readonly pages: Record<string, number> = {};
-    private embeds: Embed[] = [];
-
-    private ctx: AnyContext;
-    private message: Message | WebhookMessage | null;
-
     readonly userId: string;
+
+    private embeds: Embed[] = [];
+    private message: Message | WebhookMessage | null = null;
+    private ctx: AnyContext;
 
     /**
      *
@@ -24,7 +23,6 @@ export class EmbedPaginator {
      */
     constructor(ctx: AnyContext) {
         this.ctx = ctx;
-        this.message = null;
         this.userId = ctx.author.id;
     }
 
