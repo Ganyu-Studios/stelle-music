@@ -1,8 +1,8 @@
 import { Command, type CommandContext, Declare, Embed, LocalesT, type User } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
-import { EmbedPaginator } from "#stelle/utils/Paginator.js";
 import { StelleCategory } from "#stelle/types";
+import { EmbedPaginator } from "#stelle/utils/Paginator.js";
 
 @Declare({
     name: "queue",

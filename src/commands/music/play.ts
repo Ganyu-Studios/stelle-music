@@ -16,8 +16,8 @@ import { StelleCategory } from "#stelle/types";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
-import { sliceText } from "#stelle/utils/functions/utils.js";
 import { TimeFormat } from "#stelle/utils/TimeFormat.js";
+import { sliceText } from "#stelle/utils/functions/utils.js";
 
 const options = {
     query: createStringOption({

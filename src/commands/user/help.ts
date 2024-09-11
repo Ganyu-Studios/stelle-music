@@ -1,4 +1,4 @@
-import { Declare, Command, type CommandContext } from "seyfert";
+import { Command, type CommandContext, Declare } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
 import { StelleCategory } from "#stelle/types";
@@ -13,5 +13,5 @@ import { StelleCategory } from "#stelle/types";
 export default class ExampleCommand extends Command {
     public override async run(ctx: CommandContext) {
         await ctx.editOrReply({ content: "pong!" });
-    }    
+    }
 }

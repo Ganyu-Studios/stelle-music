@@ -3,13 +3,12 @@ import { PrismaClient } from "@prisma/client";
 import type { SearchPlatform } from "lavalink-client";
 import type { UsingClient } from "seyfert";
 
-import { Configuration } from "#stelle/data/Configuration.js";
 import { StelleCache } from "#stelle/classes";
+import { Configuration } from "#stelle/data/Configuration.js";
 import { StelleKeys } from "#stelle/types";
 
 //🗿
 const prismaClient = new PrismaClient();
-
 
 /**
  * Main Stelle database class.
@@ -92,10 +91,11 @@ export class StelleDatabase {
      */
     public async getPlayer(guildId: string): Promise<Pick<NonNullable<PlayerData>, "defaultVolume" | "searchEngine">> {
         const cached = this.storage.get(guildId, StelleKeys.Player);
-        if (cached) return {
-            defaultVolume: cached.defaultVolume!,
-            searchEngine: cached.searchEngine! as SearchPlatform,
-        };
+        if (cached)
+            return {
+                defaultVolume: cached.defaultVolume!,
+                searchEngine: cached.searchEngine! as SearchPlatform,
+            };
 
         const data = await this.prisma.guildPlayer.findUnique({ where: { id: guildId } });
         return {

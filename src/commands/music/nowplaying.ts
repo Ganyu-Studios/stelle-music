@@ -1,9 +1,9 @@
+import { Command, type CommandContext, Declare, LocalesT, type User } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
-import { Command, Declare, LocalesT, type CommandContext, type User } from "seyfert";
 
-import { createBar } from "#stelle/utils/functions/utils.js";
 import { TimeFormat } from "#stelle/utils/TimeFormat.js";
+import { createBar } from "#stelle/utils/functions/utils.js";
 
 @Declare({
     name: "nowplaying",

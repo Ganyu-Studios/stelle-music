@@ -1,5 +1,4 @@
-import { Embed, type PermissionStrings } from "seyfert";
-import type { AnyContext } from "#stelle/types";
+import { type AnyContext, Embed, type PermissionStrings } from "seyfert";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";

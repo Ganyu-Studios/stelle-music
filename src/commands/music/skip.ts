@@ -19,7 +19,15 @@ const options = {
     contexts: ["Guild"],
     aliases: ["sk"],
 })
-@StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true, checkQueue: true })
+@StelleOptions({
+    cooldown: 5,
+    category: StelleCategory.Music,
+    checkPlayer: true,
+    inVoice: true,
+    sameVoice: true,
+    checkNodes: true,
+    checkQueue: true,
+})
 @Options(options)
 @LocalesT("locales.skip.name", "locales.skip.description")
 export default class SkipCommand extends Command {

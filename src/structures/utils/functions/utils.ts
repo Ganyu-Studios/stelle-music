@@ -1,10 +1,9 @@
-import type { AnyContext } from "#stelle/types";
 import type { Player } from "lavalink-client";
 
 import { join } from "node:path";
 import { inspect } from "node:util";
 
-import { type DefaultLocale, extendContext } from "seyfert";
+import { type AnyContext, type DefaultLocale, extendContext } from "seyfert";
 import { magicImport } from "seyfert/lib/common/index.js";
 
 /**

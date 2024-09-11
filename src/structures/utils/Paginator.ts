@@ -1,6 +1,5 @@
-import { ActionRow, Button, type Embed, type Message, type WebhookMessage } from "seyfert";
+import { ActionRow, type AnyContext, Button, type Embed, type Message, type WebhookMessage } from "seyfert";
 import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType, MessageFlags } from "seyfert/lib/types/index.js";
-import type { AnyContext } from "#stelle/types";
 
 import { EmbedColors, type InteractionCreateBodyRequest, type InteractionMessageUpdateBodyRequest } from "seyfert/lib/common/index.js";
 import { InvalidEmbedsLength, InvalidMessage, InvalidPageNumber } from "./Errors.js";

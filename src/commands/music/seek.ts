@@ -4,7 +4,7 @@ import { StelleOptions } from "#stelle/decorators";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 
 import { StelleCategory } from "#stelle/types";
-import { ms, TimeFormat } from "#stelle/utils/TimeFormat.js";
+import { TimeFormat, ms } from "#stelle/utils/TimeFormat.js";
 
 const options = {
     time: createStringOption({

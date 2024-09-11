@@ -1,11 +1,3 @@
-import type {
-    CommandContext,
-    ComponentContext,
-    MenuCommandContext,
-    MessageCommandInteraction,
-    ModalContext,
-    UserCommandInteraction,
-} from "seyfert";
 import type { InternalRuntimeConfig, InternalRuntimeConfigHTTP } from "seyfert/lib/client/base.js";
 import type { PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
@@ -31,11 +23,6 @@ export type PermissionNames = keyof typeof PermissionFlagsBits;
 export type AutoplayMode = "enabled" | "disabled";
 export type PausedMode = "pause" | "resume";
 export type InternalRuntime = InternalRuntimeConfigHTTP | InternalRuntimeConfig;
-export type AnyContext =
-    | CommandContext
-    | MenuCommandContext<MessageCommandInteraction | UserCommandInteraction>
-    | ComponentContext
-    | ModalContext;
 
 export interface Options {
     /** The cooldown. */

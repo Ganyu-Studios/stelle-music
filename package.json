@@ -16,7 +16,7 @@
         "prepare": "husky"
     },
     "lint-staged": {
-        "*.{ts,json}": ["biome format --write"]
+        "*.ts": ["biome format --write"]
     },
     "keywords": [],
     "author": "JustEvil",
