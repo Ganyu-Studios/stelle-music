@@ -6,11 +6,11 @@ export async function mentionListener(client: UsingClient, message: Message) {
 
     if (!guildId) return;
 
-    const mentionRegex = new RegExp(`^<@!?${client.me.id}>( |)$`);;
+    const mentionRegex = new RegExp(`^<@!?${client.me.id}>( |)$`);
     if (content.match(mentionRegex)) {
         const { messages } = client.t(await client.database.getLocale(guildId)).get();
 
-        const command = (await client.proxy.applications(client.applicationId).commands.get()).find((c) => c.name === "help");
+        const command = client.commands?.values.find((command) => command.name === "help");
         if (!command) {
             await message.react("❌");
             return message.reply({
@@ -24,7 +24,7 @@ export async function mentionListener(client: UsingClient, message: Message) {
                     },
                 ],
             });
-        };
+        }
 
         await message.react("🌟");
         await message.reply({
@@ -37,7 +37,6 @@ export async function mentionListener(client: UsingClient, message: Message) {
                     description: messages.events.mention({
                         clientName: client.me.username,
                         defaultPrefix: client.config.defaultPrefix,
-                        commandId: command.id,
                         commandName: command.name,
                     }),
                 },

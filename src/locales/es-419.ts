@@ -10,7 +10,8 @@ export default {
     },
     messages: {
         commands: {
-            nowplaying: ({ title, url, author, requester, bar, duration, position }) => `\`📻\` Ahora: [\`${title}\`](${url}) - \`${author}\`\n\`👤\` **Solicitado por**: <@${requester}>\n \n\`🕛\` ${bar} | \`${position}\` - \`(${duration})\``,
+            nowplaying: ({ title, url, author, requester, bar, duration, position }) =>
+                `\`📻\` Ahora: [\`${title}\`](${url}) - \`${author}\`\n\`👤\` **Solicitado por**: <@${requester}>\n \n\`🕛\` ${bar} | \`${position}\` - \`(${duration})\``,
             setprefix: ({ prefix }) => `\`✅\` El **nuevo prefijo** para este servidor es: \`${prefix}\``,
             skip: ({ amount }) => `\`✅\` Saltando la cantidad de: \`${amount} canciones\`.`,
             move: ({ textId, voiceId }) => `\`✅\` Me movi al canal de voz <#${voiceId}> y canal de texto: <#${textId}>`,
@@ -99,8 +100,9 @@ export default {
                 `\`❌\` Opciones o argumentos del comando inválidos.\n- **Requerido**: \`<>\`\n- **Opcional**: \`[]\`\n\n\`📋\` **Uso**:\n ${options}\n\`📢\` **Opciones Disponibles**:\n${list}`,
             playerQueue: ({ tracks }) => `\`📋\` Aquí está la cola completa del servidor: \n\n${tracks}`,
             channelEmpty: ({ type }) => `\`🎧\` Stelle está sola en el **canal de voz**... Pausando y esperando **${type}**.`,
-            mention: ({ clientName, defaultPrefix, commandId, commandName }) => `\`📢\` Hey! Mi nombre es: **${clientName}** y mi prefijo es: \`${defaultPrefix}\` y **/** también!\n\`📋\` Si tu quieres ver mis comandos, escribe: \`${defaultPrefix} ${commandName}\` o </${commandName}:${commandId}>.`,  
-            noCommand: "`❌` No tengo el comando necesitado *todavía*, intenta de nuevo en un momento.",  
+            mention: ({ clientName, defaultPrefix, commandName }) =>
+                `\`📢\` Hey! Mi nombre es: **${clientName}** y mi prefijo es: \`${defaultPrefix}\` y **/** también!\n\`📋\` Si tu quieres ver mis comandos, escribe: \`${defaultPrefix} ${commandName}\` o /${commandName}.`,
+            noCommand: "`❌` No tengo el comando necesitado *todavía*, intenta de nuevo en un momento.",
             noMembers: "`🎧` Stelle está sola en el **canal de voz**... Abandonando el canal.",
             hasMembers: "`🎧` Stelle dejó de estar sola... Resumiendo.",
             onlyDeveloper: "`❌` Solo el **dueño del bot** puede usar esto.",
@@ -324,7 +326,7 @@ export default {
         },
         nowplaying: {
             name: "sonando",
-            description: "Obtén la canción actual."
-        }
+            description: "Obtén la canción actual.",
+        },
     },
 } satisfies DefaultLocale;

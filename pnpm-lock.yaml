@@ -18,11 +18,11 @@ importers:
         specifier: ^16.4.5
         version: 16.4.5
       lavalink-client:
-        specifier: ^2.2.2
-        version: 2.2.2
+        specifier: github:EvilG-MC/lavalink-client#fix/types
+        version: https://codeload.github.com/EvilG-MC/lavalink-client/tar.gz/201f6efe0ce8ed6e1cf65a36ec47efe0c9b90691
       seyfert:
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.1.0
+        version: 2.1.0
       yunaforseyfert:
         specifier: ^1.0.2
         version: 1.0.2
@@ -46,8 +46,8 @@ importers:
         specifier: ^4.19.0
         version: 4.19.0
       typescript:
-        specifier: ^5.5.4
-        version: 5.5.4
+        specifier: ^5.6.2
+        version: 5.6.2
 
 packages:
 
@@ -279,8 +279,8 @@ packages:
     resolution: {integrity: sha512-GdYO7a61mR0fOlAsvC9/rIHf7L96sBc6dEWzeOu+KAea5bZyQRPIpojrVoI4AXGJS/ycu/fBTdLrUkA4ODrvjw==}
     engines: {node: '>=18'}
 
-  ansi-regex@6.0.1:
-    resolution: {integrity: sha512-n5M855fKb2SsfMIiFFoVrABHJC8QtHwVx+mHWP3QcEqBHYienj5dHSgjbxtC0WEZXYt4wcD6zrQElDPhFuZgfA==}
+  ansi-regex@6.1.0:
+    resolution: {integrity: sha512-7HSX4QQb4CspciLpVFwyRe79O3xsIZDDLER21kERQ71oaPodF8jL725AgJMFAYbooIqolJoRLuM81SpeUkpkvA==}
     engines: {node: '>=12'}
 
   ansi-styles@6.2.1:
@@ -314,8 +314,8 @@ packages:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
     engines: {node: '>= 8'}
 
-  debug@4.3.6:
-    resolution: {integrity: sha512-O/09Bd4Z1fBrU4VzkhFqVgpPzaGbw6Sm9FEkBT1A/YBXQFGuuSxa1dN2nxgxS34JmKXqYx8CZAwEVoJFImUXIg==}
+  debug@4.3.7:
+    resolution: {integrity: sha512-Er2nc/H7RrMXZBFCEim6TCmMk02Z8vLC2Rbi1KEBggpo0fS6l0S1nnapwmIi3yW/+GOJap1Krg4w0Hg80oCqgQ==}
     engines: {node: '>=6.0'}
     peerDependencies:
       supports-color: '*'
@@ -394,8 +394,9 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
-  lavalink-client@2.2.2:
-    resolution: {integrity: sha512-3pUmVYdfAvv3nnoEDqdPQ1m9sAwzuqjewhe/fqYqd0sfiatXQpcknRuZlECii1XL9l1ucdAPYp97MHjNoGY9vQ==}
+  lavalink-client@https://codeload.github.com/EvilG-MC/lavalink-client/tar.gz/201f6efe0ce8ed6e1cf65a36ec47efe0c9b90691:
+    resolution: {tarball: https://codeload.github.com/EvilG-MC/lavalink-client/tar.gz/201f6efe0ce8ed6e1cf65a36ec47efe0c9b90691}
+    version: 2.3.0
     engines: {node: '>=18.0.0'}
 
   lilconfig@3.1.2:
@@ -430,8 +431,8 @@ packages:
     resolution: {integrity: sha512-VP79XUPxV2CigYP3jWwAUFSku2aKqBH7uTAapFWCBqutsbmDo96KY5o8uh6U+/YSIn5OxJnXp73beVkpqMIGhA==}
     engines: {node: '>=18'}
 
-  ms@2.1.2:
-    resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
+  ms@2.1.3:
+    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
   npm-run-path@5.3.0:
     resolution: {integrity: sha512-ppwTtiJZq0O/ai0z7yfudtBpWIoxM8yE6nHi1X47eFR2EWORqfbu6CnPlNsjeN683eT0qG6H/Pyf9fCcvjnnnQ==}
@@ -477,8 +478,8 @@ packages:
   rfdc@1.4.1:
     resolution: {integrity: sha512-q1b3N5QkRUWUl7iyylaaj3kOpIT0N2i9MqIEQXP73GVsN9cw3fdx8X63cEmWhJGi2PPCF23Ijp7ktmd39rawIA==}
 
-  seyfert@2.0.0:
-    resolution: {integrity: sha512-cAMBhZWr+edrjDkTi2cS+hE74LuwIsML+zZOPOKVFQbXsnd8bbiM+/QHWyDfSjQ2PGWcRZEzCGt6IpsyL7quQQ==}
+  seyfert@2.1.0:
+    resolution: {integrity: sha512-L5AoUVACw1HDosUj0an9oA9ORICaGzU99mTs9yX2siT8SPe2LP3eoJ+MhRWrNULAV50qKKVzXMbiXyCzkY0jeA==}
 
   shebang-command@2.0.0:
     resolution: {integrity: sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==}
@@ -528,8 +529,8 @@ packages:
     engines: {node: '>=18.0.0'}
     hasBin: true
 
-  typescript@5.5.4:
-    resolution: {integrity: sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==}
+  typescript@5.6.2:
+    resolution: {integrity: sha512-NW8ByodCSNCwZeghjN3o+JX5OFH0Ojg6sadjEKY4huZ52TqbJTJnDo5+Tw98lSy63NZvi4n+ez5m2u5d4PkZyw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -707,7 +708,7 @@ snapshots:
     dependencies:
       environment: 1.1.0
 
-  ansi-regex@6.0.1: {}
+  ansi-regex@6.1.0: {}
 
   ansi-styles@6.2.1: {}
 
@@ -736,9 +737,9 @@ snapshots:
       shebang-command: 2.0.0
       which: 2.0.2
 
-  debug@4.3.6:
+  debug@4.3.7:
     dependencies:
-      ms: 2.1.2
+      ms: 2.1.3
 
   dotenv@16.4.5: {}
 
@@ -818,7 +819,7 @@ snapshots:
 
   isexe@2.0.0: {}
 
-  lavalink-client@2.2.2:
+  lavalink-client@https://codeload.github.com/EvilG-MC/lavalink-client/tar.gz/201f6efe0ce8ed6e1cf65a36ec47efe0c9b90691:
     dependencies:
       tslib: 2.7.0
       ws: 8.18.0
@@ -832,7 +833,7 @@ snapshots:
     dependencies:
       chalk: 5.3.0
       commander: 12.1.0
-      debug: 4.3.6
+      debug: 4.3.7
       execa: 8.0.1
       lilconfig: 3.1.2
       listr2: 8.2.4
@@ -871,7 +872,7 @@ snapshots:
 
   mimic-function@5.0.1: {}
 
-  ms@2.1.2: {}
+  ms@2.1.3: {}
 
   npm-run-path@5.3.0:
     dependencies:
@@ -908,7 +909,7 @@ snapshots:
 
   rfdc@1.4.1: {}
 
-  seyfert@2.0.0: {}
+  seyfert@2.1.0: {}
 
   shebang-command@2.0.0:
     dependencies:
@@ -938,7 +939,7 @@ snapshots:
 
   strip-ansi@7.1.0:
     dependencies:
-      ansi-regex: 6.0.1
+      ansi-regex: 6.1.0
 
   strip-final-newline@3.0.0: {}
 
@@ -955,7 +956,7 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  typescript@5.5.4: {}
+  typescript@5.6.2: {}
 
   undici-types@6.19.8: {}
 

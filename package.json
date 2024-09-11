@@ -32,8 +32,8 @@
         "@prisma/client": "^5.19.1",
         "chalk": "^5.3.0",
         "dotenv": "^16.4.5",
-        "lavalink-client": "^2.2.2",
-        "seyfert": "^2.0.0",
+        "lavalink-client": "github:EvilG-MC/lavalink-client#fix/types",
+        "seyfert": "^2.1.0",
         "yunaforseyfert": "^1.0.2"
     },
     "devDependencies": {
@@ -43,7 +43,7 @@
         "lint-staged": "^15.2.10",
         "prisma": "^5.19.1",
         "tsx": "^4.19.0",
-        "typescript": "^5.5.4"
+        "typescript": "^5.6.2"
     },
     "imports": {
         "#stelle/client": "./dist/structures/client/Stelle.js",

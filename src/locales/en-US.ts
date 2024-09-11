@@ -10,7 +10,8 @@ export default {
     },
     messages: {
         commands: {
-            nowplaying: ({ title, url, author, requester, bar, duration, position }: INowplaying) => `\`📻\` Now playing: [\`${title}\`](${url}) - \`${author}\`\n\`👤\` **Requested by**: <@${requester}>\n \n\`🕛\` ${bar} | \`${position}\` - \`(${duration})\``,
+            nowplaying: ({ title, url, author, requester, bar, duration, position }: INowplaying) =>
+                `\`📻\` Now playing: [\`${title}\`](${url}) - \`${author}\`\n\`👤\` **Requested by**: <@${requester}>\n \n\`🕛\` ${bar} | \`${position}\` - \`(${duration})\``,
             setprefix: ({ prefix }: IPrefix) => `\`✅\` The **new prefix** for this guild is now: \`${prefix}\``,
             skip: ({ amount }: IAmount) => `\`✅\` Skipped the amount of: \`${amount} tracks\`.`,
             move: ({ textId, voiceId }: IMove) => `\`✅\` Moved to the voice channel <#${voiceId}> and the text channel: <#${textId}>`,
@@ -99,7 +100,8 @@ export default {
                 `\`❌\` Invalid command options or arguments.\n- **Required**: \`<>\`\n- **Optional**: \`[]\`\n\n\`📋\` **Usage**:\n ${options}\n\`📢\` **Options Available**:\n${list}`,
             playerQueue: ({ tracks }: ITracks) => `\`📋\` Here is the full server queue: \n\n${tracks}`,
             channelEmpty: ({ type }: IType) => `\`🎧\` Stelle is alone in the **voice channel**... Pausing and waiting **${type}**.`,
-            mention: ({ clientName, defaultPrefix, commandId, commandName }: IMention) => `\`📢\` Hey! My name is: **${clientName}** and my prefix is: \`${defaultPrefix}\` and **/** too!\n\`📋\` If you want to see my commands, type: \`${defaultPrefix} ${commandName}\` or </${commandName}:${commandId}>.`,
+            mention: ({ clientName, defaultPrefix, commandName }: IMention) =>
+                `\`📢\` Hey! My name is: **${clientName}** and my prefix is: \`${defaultPrefix}\` and **/** too!\n\`📋\` If you want to see my commands, type: \`${defaultPrefix} ${commandName}\` or /${commandName}.`,
             noCommand: "`❌` I don't have the required command *yet*, try again in a moment.",
             noMembers: "`🎧` Stelle is alone in the **voice channel**... Leaving the channel.",
             hasMembers: "`🎧` Stelle is not alone anymore... Resuming.",
@@ -324,11 +326,11 @@ export default {
         nowplaying: {
             name: "nowplaying",
             description: "Get the current playing song.",
-        }
+        },
     },
 };
 
-type IMention = { clientName: string, defaultPrefix: string, commandName: string, commandId: string };
+type IMention = { clientName: string; defaultPrefix: string; commandName: string };
 type INowplaying = { title: string; url: string; duration: string; requester: string; author: string; bar: string; position: string };
 type IEngine = { engine: string };
 type IPrefix = { prefix: string };
