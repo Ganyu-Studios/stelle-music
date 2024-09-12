@@ -16,7 +16,9 @@
         "prepare": "husky"
     },
     "lint-staged": {
-        "*.ts": ["biome format --write"]
+        "*.ts": [
+            "biome format --write"
+        ]
     },
     "keywords": [],
     "author": "JustEvil",
@@ -32,7 +34,7 @@
         "@prisma/client": "^5.19.1",
         "chalk": "^5.3.0",
         "dotenv": "^16.4.5",
-        "lavalink-client": "github:EvilG-MC/lavalink-client#fix/types",
+        "lavalink-client": "^2.3.3",
         "seyfert": "^2.1.0",
         "yunaforseyfert": "^1.0.2"
     },

@@ -18,8 +18,8 @@ importers:
         specifier: ^16.4.5
         version: 16.4.5
       lavalink-client:
-        specifier: github:EvilG-MC/lavalink-client#fix/types
-        version: https://codeload.github.com/EvilG-MC/lavalink-client/tar.gz/201f6efe0ce8ed6e1cf65a36ec47efe0c9b90691
+        specifier: ^2.3.3
+        version: 2.3.3
       seyfert:
         specifier: ^2.1.0
         version: 2.1.0
@@ -394,9 +394,8 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
-  lavalink-client@https://codeload.github.com/EvilG-MC/lavalink-client/tar.gz/201f6efe0ce8ed6e1cf65a36ec47efe0c9b90691:
-    resolution: {tarball: https://codeload.github.com/EvilG-MC/lavalink-client/tar.gz/201f6efe0ce8ed6e1cf65a36ec47efe0c9b90691}
-    version: 2.3.0
+  lavalink-client@2.3.3:
+    resolution: {integrity: sha512-gPHEDfGI6jHyqoQs/8A9ZriQGw/TUBYroH8IC5k0F5AnARfxo/ZEQsQt7B2+b1GmBaQxl7Org7hZqmtktUYl1A==}
     engines: {node: '>=18.0.0'}
 
   lilconfig@3.1.2:
@@ -819,7 +818,7 @@ snapshots:
 
   isexe@2.0.0: {}
 
-  lavalink-client@https://codeload.github.com/EvilG-MC/lavalink-client/tar.gz/201f6efe0ce8ed6e1cf65a36ec47efe0c9b90691:
+  lavalink-client@2.3.3:
     dependencies:
       tslib: 2.7.0
       ws: 8.18.0
