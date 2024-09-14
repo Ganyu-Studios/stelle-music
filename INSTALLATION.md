@@ -47,6 +47,8 @@ pnpm start #Will start the bot
 
 Run the bot in `Typescript`
 
+> **Note:** This only works if you are on Windows. If yu are on other OS, you need to modify the `OUTPUT` variable in [Constants.ts](/src/structures/utils/data/Constants.ts#L25-L33).
+
 ```bash
 #This is necessary for typescript.
 pnpm prisma generate #Generate types for prisma.
