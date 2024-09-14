@@ -54,7 +54,7 @@ const options = {
                 tracks.slice(0, 25).map((track) => {
                     const duration = track.info.isStream
                         ? messages.commands.play.live
-                        : TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined;
+                        : (TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined);
 
                     return {
                         name: `${sliceText(track.info.title, 20)} (${duration}) - ${sliceText(track.info.author, 30)}`,
@@ -141,7 +141,7 @@ export default class PlayCommand extends Command {
                     const type = player.queue.tracks.length > 1 ? "results" : "result";
                     const status = track.info.isStream
                         ? messages.commands.play.live
-                        : TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined;
+                        : (TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined);
 
                     const embed = new Embed()
                         .setThumbnail(track.info.artworkUrl ?? "")

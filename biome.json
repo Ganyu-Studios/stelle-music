@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+	"$schema": "https://biomejs.dev/schemas/1.9.0/schema.json",
 	"organizeImports": {
 		"enabled": true
 	},
@@ -21,7 +21,9 @@
 				"useBlockStatements": "off",
 				"useFilenamingConvention": "off",
 				"useNamingConvention": "off",
-				"useSingleCaseStatement": "off"
+				"useSingleCaseStatement": "off",
+				"useExplicitLengthCheck": "off",
+				"useDefaultSwitchClause": "off"
 			},
 			"complexity": {
 				"noBannedTypes": "off",
@@ -38,10 +40,12 @@
 			},
 			"correctness": {
 				"noVoidTypeReturn": "off",
-				"noNodejsModules": "off"
+				"noNodejsModules": "off",
+				"noUndeclaredDependencies": "off"
 			},
 			"performance": {
-				"noBarrelFile": "off"
+				"noBarrelFile": "off",
+				"useTopLevelRegex": "off"
 			}
 		}
 	},

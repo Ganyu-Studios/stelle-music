@@ -11,7 +11,7 @@
         "clean": "node ./scripts/clean.js && pnpm build",
         "start": "node ./dist/index.js",
         "dev": "tsx watch ./src/index.ts --debug",
-        "lint": "biome lint --apply ./src",
+        "lint": "biome lint --write ./src",
         "format": "biome check --write ./src",
         "prepare": "husky"
     },

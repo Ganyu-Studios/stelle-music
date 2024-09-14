@@ -10,7 +10,7 @@
 1. Go to [this site](https://adoptium.net/es/temurin/releases/?package=jdks)
 2. Look for your OS. (Windows, Linux, etc...)
 3. Select the Java version of your choice (17 or newer)
-4. Download the `.msi` file
+4. Download the file
 5. Install
 
 ###  📋 Lavalink node

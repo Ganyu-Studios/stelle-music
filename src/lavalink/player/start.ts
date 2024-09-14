@@ -25,7 +25,7 @@ export default new Lavalink({
 
         const duration = track.info.isStream
             ? messages.commands.play.live
-            : TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined;
+            : (TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined);
 
         const embed = new Embed()
             .setDescription(
