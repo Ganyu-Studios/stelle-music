@@ -8,12 +8,13 @@
     "homepage": "https://github.com/Ganyu-Studios/stelle-music#readme",
     "scripts": {
         "build": "tsc",
+        "typecheck": "tsc --noEmit",
         "clean": "node ./scripts/clean.js && pnpm build",
         "start": "node ./dist/index.js",
         "dev": "tsx watch ./src/index.ts --debug",
         "lint": "biome lint --write ./src",
         "format": "biome check --write ./src",
-        "prepare": "husky"
+        "prepare": "pnpm typecheck && husky"
     },
     "lint-staged": {
         "*.ts": [
