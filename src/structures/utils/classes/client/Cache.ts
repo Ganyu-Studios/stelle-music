@@ -13,7 +13,7 @@ interface Cache {
  * Main Stelle cache class.
  */
 export class StelleCache {
-    readonly cache: LimitedCollection<string, LimitedCollection<StelleKeys, unknown>> = new LimitedCollection({
+    readonly internal: LimitedCollection<string, LimitedCollection<StelleKeys, unknown>> = new LimitedCollection({
         limit: Configuration.maxCache,
     });
 
@@ -25,7 +25,7 @@ export class StelleCache {
      * @returns
      */
     public get<T extends StelleKeys = StelleKeys>(guildId: string, key: T): Cache[T] | undefined {
-        return this.cache.get(guildId)?.get(key) as Cache[T] | undefined;
+        return this.internal.get(guildId)?.get(key) as Cache[T] | undefined;
     }
 
     /**
@@ -35,7 +35,7 @@ export class StelleCache {
      * @returns
      */
     public delete(guildId: string): boolean {
-        return this.cache.delete(guildId);
+        return this.internal.delete(guildId);
     }
 
     /**
@@ -47,10 +47,10 @@ export class StelleCache {
      * @returns
      */
     public set<T extends StelleKeys = StelleKeys>(guildId: string, key: T, data: Cache[T]): void {
-        if (this.cache.has(guildId) && !this.cache.get(guildId)?.has(key)) return this.cache.get(guildId)?.set(key, data);
+        if (this.internal.has(guildId) && !this.internal.get(guildId)?.has(key)) return this.internal.get(guildId)?.set(key, data);
 
         const collection = new LimitedCollection<StelleKeys, unknown>();
         collection.set(key, data);
-        return this.cache.set(guildId, collection);
+        return this.internal.set(guildId, collection);
     }
 }
