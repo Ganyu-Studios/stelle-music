@@ -18,8 +18,8 @@ importers:
         specifier: ^16.4.5
         version: 16.4.5
       lavalink-client:
-        specifier: 2.3.3
-        version: 2.3.3
+        specifier: ^2.3.6
+        version: 2.3.6
       seyfert:
         specifier: github:tiramisulabs/seyfert
         version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d388cb5553107a2935028ac4c3021afc57c07dea
@@ -394,9 +394,9 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
-  lavalink-client@2.3.3:
-    resolution: {integrity: sha512-gPHEDfGI6jHyqoQs/8A9ZriQGw/TUBYroH8IC5k0F5AnARfxo/ZEQsQt7B2+b1GmBaQxl7Org7hZqmtktUYl1A==}
-    engines: {node: '>=18.0.0'}
+  lavalink-client@2.3.6:
+    resolution: {integrity: sha512-h1FlGWekdjj9P1UPV/IIbk+JiTGXFrg8oe1qxVb3I0Jd6wUyaXaFpMeJa8Xmn/kiL5h0oghLuguOfiq43MPGHg==}
+    engines: {bun: '>=1.0.0', node: '>=18.0.0'}
 
   lilconfig@3.1.2:
     resolution: {integrity: sha512-eop+wDAvpItUys0FWkHIKeC9ybYrTGbU41U5K7+bttZZeohvnY7M9dZ5kB21GNWiFT2q1OoPTvncPCgSOVO5ow==}
@@ -819,7 +819,7 @@ snapshots:
 
   isexe@2.0.0: {}
 
-  lavalink-client@2.3.3:
+  lavalink-client@2.3.6:
     dependencies:
       tslib: 2.7.0
       ws: 8.18.0
