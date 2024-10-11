@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@prisma/client':
-        specifier: ^5.19.1
-        version: 5.19.1(prisma@5.19.1)
+        specifier: ^5.20.0
+        version: 5.20.0(prisma@5.20.0)
       chalk:
         specifier: ^5.3.0
         version: 5.3.0
@@ -18,21 +18,21 @@ importers:
         specifier: ^16.4.5
         version: 16.4.5
       lavalink-client:
-        specifier: ^2.3.6
-        version: 2.3.6
+        specifier: ^2.4.0
+        version: 2.4.0
       seyfert:
         specifier: github:tiramisulabs/seyfert
-        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d388cb5553107a2935028ac4c3021afc57c07dea
+        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/4dd69aeb14924a6e23cf68fdcefc3d1164309cd8
       yunaforseyfert:
         specifier: ^1.0.2
         version: 1.0.2
     devDependencies:
       '@biomejs/biome':
-        specifier: ^1.9.1
-        version: 1.9.1
+        specifier: ^1.9.3
+        version: 1.9.3
       '@types/node':
-        specifier: ^22.5.5
-        version: 22.5.5
+        specifier: ^22.7.5
+        version: 22.7.5
       husky:
         specifier: ^9.1.6
         version: 9.1.6
@@ -40,66 +40,66 @@ importers:
         specifier: ^15.2.10
         version: 15.2.10
       prisma:
-        specifier: ^5.19.1
-        version: 5.19.1
+        specifier: ^5.20.0
+        version: 5.20.0
       tsx:
         specifier: ^4.19.1
         version: 4.19.1
       typescript:
-        specifier: ^5.6.2
-        version: 5.6.2
+        specifier: ^5.6.3
+        version: 5.6.3
 
 packages:
 
-  '@biomejs/biome@1.9.1':
-    resolution: {integrity: sha512-Ps0Rg0zg3B1zpx+zQHMz5b0n0PBNCAaXttHEDTVrJD5YXR6Uj3T+abTDgeS3wsu4z5i2whqcE1lZxGyWH4bZYg==}
+  '@biomejs/biome@1.9.3':
+    resolution: {integrity: sha512-POjAPz0APAmX33WOQFGQrwLvlu7WLV4CFJMlB12b6ZSg+2q6fYu9kZwLCOA+x83zXfcPd1RpuWOKJW0GbBwLIQ==}
     engines: {node: '>=14.21.3'}
     hasBin: true
 
-  '@biomejs/cli-darwin-arm64@1.9.1':
-    resolution: {integrity: sha512-js0brHswq/BoeKgfSEUJYOjUOlML6p65Nantti+PsoQ61u9+YVGIZ7325LK7iUpDH8KVJT+Bx7K2b/6Q//W1Pw==}
+  '@biomejs/cli-darwin-arm64@1.9.3':
+    resolution: {integrity: sha512-QZzD2XrjJDUyIZK+aR2i5DDxCJfdwiYbUKu9GzkCUJpL78uSelAHAPy7m0GuPMVtF/Uo+OKv97W3P9nuWZangQ==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [darwin]
 
-  '@biomejs/cli-darwin-x64@1.9.1':
-    resolution: {integrity: sha512-2zVyjUg5rN0k8XrytkubQWLbp2r/AS5wPhXs4vgVjvqbLnzo32EGX8p61gzroF2dH9DCUCfskdrigCGqNdEbpg==}
+  '@biomejs/cli-darwin-x64@1.9.3':
+    resolution: {integrity: sha512-vSCoIBJE0BN3SWDFuAY/tRavpUtNoqiceJ5PrU3xDfsLcm/U6N93JSM0M9OAiC/X7mPPfejtr6Yc9vSgWlEgVw==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [darwin]
 
-  '@biomejs/cli-linux-arm64-musl@1.9.1':
-    resolution: {integrity: sha512-L/JmXKvhsZ1lTgqOr3tWkzuY/NRppdIscHeC9aaiR72WjnBgJS94mawl9BWmGB3aWBc0q6oSDWnBS7617EMMmA==}
+  '@biomejs/cli-linux-arm64-musl@1.9.3':
+    resolution: {integrity: sha512-VBzyhaqqqwP3bAkkBrhVq50i3Uj9+RWuj+pYmXrMDgjS5+SKYGE56BwNw4l8hR3SmYbLSbEo15GcV043CDSk+Q==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [linux]
 
-  '@biomejs/cli-linux-arm64@1.9.1':
-    resolution: {integrity: sha512-QgxwfnG+r2aer5RNGR67Ey91Tv7xXW8E9YckHhwuyWjdLEvKWkrSJrhVG/6ub0kVvTSNkYOuT/7/jMOFBuUbRA==}
+  '@biomejs/cli-linux-arm64@1.9.3':
+    resolution: {integrity: sha512-vJkAimD2+sVviNTbaWOGqEBy31cW0ZB52KtpVIbkuma7PlfII3tsLhFa+cwbRAcRBkobBBhqZ06hXoZAN8NODQ==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [linux]
 
-  '@biomejs/cli-linux-x64-musl@1.9.1':
-    resolution: {integrity: sha512-gY+eFLIAW45v3WicQHicvjRfA0ntMZHx7h937bXwBMFNFoKmB6rMi6+fKQ6/hiS6juhsFxZdZIz20m15s49J6A==}
+  '@biomejs/cli-linux-x64-musl@1.9.3':
+    resolution: {integrity: sha512-TJmnOG2+NOGM72mlczEsNki9UT+XAsMFAOo8J0me/N47EJ/vkLXxf481evfHLlxMejTY6IN8SdRSiPVLv6AHlA==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [linux]
 
-  '@biomejs/cli-linux-x64@1.9.1':
-    resolution: {integrity: sha512-F0INygtzI2L2n2R1KtYHGr3YWDt9Up1zrUluwembM+iJ1dXN3qzlSb7deFUsSJm4FaIPriqs6Xa56ukdQW6UeQ==}
+  '@biomejs/cli-linux-x64@1.9.3':
+    resolution: {integrity: sha512-x220V4c+romd26Mu1ptU+EudMXVS4xmzKxPVb9mgnfYlN4Yx9vD5NZraSx/onJnd3Gh/y8iPUdU5CDZJKg9COA==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [linux]
 
-  '@biomejs/cli-win32-arm64@1.9.1':
-    resolution: {integrity: sha512-7Jahxar3OB+aTPOgXisMJmMKMsjcK+UmdlG3UIOQjzN/ZFEsPV+GT3bfrVjZDQaCw/zes0Cqd7VTWFjFTC/+MQ==}
+  '@biomejs/cli-win32-arm64@1.9.3':
+    resolution: {integrity: sha512-lg/yZis2HdQGsycUvHWSzo9kOvnGgvtrYRgoCEwPBwwAL8/6crOp3+f47tPwI/LI1dZrhSji7PNsGKGHbwyAhw==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [win32]
 
-  '@biomejs/cli-win32-x64@1.9.1':
-    resolution: {integrity: sha512-liSRWjWzFhyG7s1jg/Bbv9FL+ha/CEd5tFO3+dFIJNplL4TnvAivtyfRVi/tu/pNjISbV1k9JwdBewtAKAgA0w==}
+  '@biomejs/cli-win32-x64@1.9.3':
+    resolution: {integrity: sha512-cQMy2zanBkVLpmmxXdK6YePzmZx0s5Z7KEnwmrW54rcXK3myCNbQa09SwGZ8i/8sLw0H9F3X7K4rxVNGU8/D4Q==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [win32]
@@ -248,8 +248,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@prisma/client@5.19.1':
-    resolution: {integrity: sha512-x30GFguInsgt+4z5I4WbkZP2CGpotJMUXy+Gl/aaUjHn2o1DnLYNTA+q9XdYmAQZM8fIIkvUiA2NpgosM3fneg==}
+  '@prisma/client@5.20.0':
+    resolution: {integrity: sha512-CLv55ZuMuUawMsxoqxGtLT3bEZoa2W8L3Qnp6rDIFWy+ZBrUcOFKdoeGPSnbBqxc3SkdxJrF+D1veN/WNynZYA==}
     engines: {node: '>=16.13'}
     peerDependencies:
       prisma: '*'
@@ -257,23 +257,23 @@ packages:
       prisma:
         optional: true
 
-  '@prisma/debug@5.19.1':
-    resolution: {integrity: sha512-lAG6A6QnG2AskAukIEucYJZxxcSqKsMK74ZFVfCTOM/7UiyJQi48v6TQ47d6qKG3LbMslqOvnTX25dj/qvclGg==}
+  '@prisma/debug@5.20.0':
+    resolution: {integrity: sha512-oCx79MJ4HSujokA8S1g0xgZUGybD4SyIOydoHMngFYiwEwYDQ5tBQkK5XoEHuwOYDKUOKRn/J0MEymckc4IgsQ==}
 
-  '@prisma/engines-version@5.19.1-2.69d742ee20b815d88e17e54db4a2a7a3b30324e3':
-    resolution: {integrity: sha512-xR6rt+z5LnNqTP5BBc+8+ySgf4WNMimOKXRn6xfNRDSpHvbOEmd7+qAOmzCrddEc4Cp8nFC0txU14dstjH7FXA==}
+  '@prisma/engines-version@5.20.0-12.06fc58a368dc7be9fbbbe894adf8d445d208c284':
+    resolution: {integrity: sha512-Lg8AS5lpi0auZe2Mn4gjuCg081UZf88k3cn0RCwHgR+6cyHHpttPZBElJTHf83ZGsRNAmVCZCfUGA57WB4u4JA==}
 
-  '@prisma/engines@5.19.1':
-    resolution: {integrity: sha512-kR/PoxZDrfUmbbXqqb8SlBBgCjvGaJYMCOe189PEYzq9rKqitQ2fvT/VJ8PDSe8tTNxhc2KzsCfCAL+Iwm/7Cg==}
+  '@prisma/engines@5.20.0':
+    resolution: {integrity: sha512-DtqkP+hcZvPEbj8t8dK5df2b7d3B8GNauKqaddRRqQBBlgkbdhJkxhoJTrOowlS3vaRt2iMCkU0+CSNn0KhqAQ==}
 
-  '@prisma/fetch-engine@5.19.1':
-    resolution: {integrity: sha512-pCq74rtlOVJfn4pLmdJj+eI4P7w2dugOnnTXpRilP/6n5b2aZiA4ulJlE0ddCbTPkfHmOL9BfaRgA8o+1rfdHw==}
+  '@prisma/fetch-engine@5.20.0':
+    resolution: {integrity: sha512-JVcaPXC940wOGpCOwuqQRTz6I9SaBK0c1BAyC1pcz9xBi+dzFgUu3G/p9GV1FhFs9OKpfSpIhQfUJE9y00zhqw==}
 
-  '@prisma/get-platform@5.19.1':
-    resolution: {integrity: sha512-sCeoJ+7yt0UjnR+AXZL7vXlg5eNxaFOwC23h0KvW1YIXUoa7+W2ZcAUhoEQBmJTW4GrFqCuZ8YSP0mkDa4k3Zg==}
+  '@prisma/get-platform@5.20.0':
+    resolution: {integrity: sha512-8/+CehTZZNzJlvuryRgc77hZCWrUDYd/PmlZ7p2yNXtmf2Una4BWnTbak3us6WVdqoz5wmptk6IhsXdG2v5fmA==}
 
-  '@types/node@22.5.5':
-    resolution: {integrity: sha512-Xjs4y5UPO/CLdzpgR6GirZJx36yScjh73+2NlLlkFRSoQN8B0DpfXPdZGnvVmLRLOsqDpOfTNv7D9trgGhmOIA==}
+  '@types/node@22.7.5':
+    resolution: {integrity: sha512-jML7s2NAzMWc//QSJ1a3prpk78cOPchGvXJsC3C6R6PSMoooztvRVQEz89gmBTBY1SPMaqo5teB4uNHPdetShQ==}
 
   ansi-escapes@7.0.0:
     resolution: {integrity: sha512-GdYO7a61mR0fOlAsvC9/rIHf7L96sBc6dEWzeOu+KAea5bZyQRPIpojrVoI4AXGJS/ycu/fBTdLrUkA4ODrvjw==}
@@ -394,8 +394,8 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
-  lavalink-client@2.3.6:
-    resolution: {integrity: sha512-h1FlGWekdjj9P1UPV/IIbk+JiTGXFrg8oe1qxVb3I0Jd6wUyaXaFpMeJa8Xmn/kiL5h0oghLuguOfiq43MPGHg==}
+  lavalink-client@2.4.0:
+    resolution: {integrity: sha512-bBXEJQoICEj+9uZSW8IvpCuPUS9Fs+ynS/5MDSCNI1aQXs9jM/SBNtMygYK68sIPc17Iia8HpOxWXnW+z5n0AQ==}
     engines: {bun: '>=1.0.0', node: '>=18.0.0'}
 
   lilconfig@3.1.2:
@@ -407,8 +407,8 @@ packages:
     engines: {node: '>=18.12.0'}
     hasBin: true
 
-  listr2@8.2.4:
-    resolution: {integrity: sha512-opevsywziHd3zHCVQGAj8zu+Z3yHNkkoYhWIGnq54RrCVwLz0MozotJEDnKsIBLvkfLGN6BLOyAeRrYI0pKA4g==}
+  listr2@8.2.5:
+    resolution: {integrity: sha512-iyAZCeyD+c1gPyE9qpFu8af0Y+MRtmKOncdGoA2S5EY8iFq99dmmvkNnHiWo+pj0s7yH7l3KPIgee77tKpXPWQ==}
     engines: {node: '>=18.0.0'}
 
   log-update@6.1.0:
@@ -462,8 +462,8 @@ packages:
     engines: {node: '>=0.10'}
     hasBin: true
 
-  prisma@5.19.1:
-    resolution: {integrity: sha512-c5K9MiDaa+VAAyh1OiYk76PXOme9s3E992D7kvvIOhCrNsBQfy2mP2QAQtX0WNj140IgG++12kwZpYB9iIydNQ==}
+  prisma@5.20.0:
+    resolution: {integrity: sha512-6obb3ucKgAnsGS9x9gLOe8qa51XxvJ3vLQtmyf52CTey1Qcez3A6W6ROH5HIz5Q5bW+0VpmZb8WBohieMFGpig==}
     engines: {node: '>=16.13'}
     hasBin: true
 
@@ -477,8 +477,8 @@ packages:
   rfdc@1.4.1:
     resolution: {integrity: sha512-q1b3N5QkRUWUl7iyylaaj3kOpIT0N2i9MqIEQXP73GVsN9cw3fdx8X63cEmWhJGi2PPCF23Ijp7ktmd39rawIA==}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d388cb5553107a2935028ac4c3021afc57c07dea:
-    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d388cb5553107a2935028ac4c3021afc57c07dea}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/4dd69aeb14924a6e23cf68fdcefc3d1164309cd8:
+    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/4dd69aeb14924a6e23cf68fdcefc3d1164309cd8}
     version: 2.1.0
 
   shebang-command@2.0.0:
@@ -529,8 +529,8 @@ packages:
     engines: {node: '>=18.0.0'}
     hasBin: true
 
-  typescript@5.6.2:
-    resolution: {integrity: sha512-NW8ByodCSNCwZeghjN3o+JX5OFH0Ojg6sadjEKY4huZ52TqbJTJnDo5+Tw98lSy63NZvi4n+ez5m2u5d4PkZyw==}
+  typescript@5.6.3:
+    resolution: {integrity: sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -568,39 +568,39 @@ packages:
 
 snapshots:
 
-  '@biomejs/biome@1.9.1':
+  '@biomejs/biome@1.9.3':
     optionalDependencies:
-      '@biomejs/cli-darwin-arm64': 1.9.1
-      '@biomejs/cli-darwin-x64': 1.9.1
-      '@biomejs/cli-linux-arm64': 1.9.1
-      '@biomejs/cli-linux-arm64-musl': 1.9.1
-      '@biomejs/cli-linux-x64': 1.9.1
-      '@biomejs/cli-linux-x64-musl': 1.9.1
-      '@biomejs/cli-win32-arm64': 1.9.1
-      '@biomejs/cli-win32-x64': 1.9.1
+      '@biomejs/cli-darwin-arm64': 1.9.3
+      '@biomejs/cli-darwin-x64': 1.9.3
+      '@biomejs/cli-linux-arm64': 1.9.3
+      '@biomejs/cli-linux-arm64-musl': 1.9.3
+      '@biomejs/cli-linux-x64': 1.9.3
+      '@biomejs/cli-linux-x64-musl': 1.9.3
+      '@biomejs/cli-win32-arm64': 1.9.3
+      '@biomejs/cli-win32-x64': 1.9.3
 
-  '@biomejs/cli-darwin-arm64@1.9.1':
+  '@biomejs/cli-darwin-arm64@1.9.3':
     optional: true
 
-  '@biomejs/cli-darwin-x64@1.9.1':
+  '@biomejs/cli-darwin-x64@1.9.3':
     optional: true
 
-  '@biomejs/cli-linux-arm64-musl@1.9.1':
+  '@biomejs/cli-linux-arm64-musl@1.9.3':
     optional: true
 
-  '@biomejs/cli-linux-arm64@1.9.1':
+  '@biomejs/cli-linux-arm64@1.9.3':
     optional: true
 
-  '@biomejs/cli-linux-x64-musl@1.9.1':
+  '@biomejs/cli-linux-x64-musl@1.9.3':
     optional: true
 
-  '@biomejs/cli-linux-x64@1.9.1':
+  '@biomejs/cli-linux-x64@1.9.3':
     optional: true
 
-  '@biomejs/cli-win32-arm64@1.9.1':
+  '@biomejs/cli-win32-arm64@1.9.3':
     optional: true
 
-  '@biomejs/cli-win32-x64@1.9.1':
+  '@biomejs/cli-win32-x64@1.9.3':
     optional: true
 
   '@esbuild/aix-ppc64@0.23.1':
@@ -675,32 +675,32 @@ snapshots:
   '@esbuild/win32-x64@0.23.1':
     optional: true
 
-  '@prisma/client@5.19.1(prisma@5.19.1)':
+  '@prisma/client@5.20.0(prisma@5.20.0)':
     optionalDependencies:
-      prisma: 5.19.1
+      prisma: 5.20.0
 
-  '@prisma/debug@5.19.1': {}
+  '@prisma/debug@5.20.0': {}
 
-  '@prisma/engines-version@5.19.1-2.69d742ee20b815d88e17e54db4a2a7a3b30324e3': {}
+  '@prisma/engines-version@5.20.0-12.06fc58a368dc7be9fbbbe894adf8d445d208c284': {}
 
-  '@prisma/engines@5.19.1':
+  '@prisma/engines@5.20.0':
     dependencies:
-      '@prisma/debug': 5.19.1
-      '@prisma/engines-version': 5.19.1-2.69d742ee20b815d88e17e54db4a2a7a3b30324e3
-      '@prisma/fetch-engine': 5.19.1
-      '@prisma/get-platform': 5.19.1
+      '@prisma/debug': 5.20.0
+      '@prisma/engines-version': 5.20.0-12.06fc58a368dc7be9fbbbe894adf8d445d208c284
+      '@prisma/fetch-engine': 5.20.0
+      '@prisma/get-platform': 5.20.0
 
-  '@prisma/fetch-engine@5.19.1':
+  '@prisma/fetch-engine@5.20.0':
     dependencies:
-      '@prisma/debug': 5.19.1
-      '@prisma/engines-version': 5.19.1-2.69d742ee20b815d88e17e54db4a2a7a3b30324e3
-      '@prisma/get-platform': 5.19.1
+      '@prisma/debug': 5.20.0
+      '@prisma/engines-version': 5.20.0-12.06fc58a368dc7be9fbbbe894adf8d445d208c284
+      '@prisma/get-platform': 5.20.0
 
-  '@prisma/get-platform@5.19.1':
+  '@prisma/get-platform@5.20.0':
     dependencies:
-      '@prisma/debug': 5.19.1
+      '@prisma/debug': 5.20.0
 
-  '@types/node@22.5.5':
+  '@types/node@22.7.5':
     dependencies:
       undici-types: 6.19.8
 
@@ -819,7 +819,7 @@ snapshots:
 
   isexe@2.0.0: {}
 
-  lavalink-client@2.3.6:
+  lavalink-client@2.4.0:
     dependencies:
       tslib: 2.7.0
       ws: 8.18.0
@@ -836,7 +836,7 @@ snapshots:
       debug: 4.3.7
       execa: 8.0.1
       lilconfig: 3.1.2
-      listr2: 8.2.4
+      listr2: 8.2.5
       micromatch: 4.0.8
       pidtree: 0.6.0
       string-argv: 0.3.2
@@ -844,7 +844,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  listr2@8.2.4:
+  listr2@8.2.5:
     dependencies:
       cli-truncate: 4.0.0
       colorette: 2.0.20
@@ -894,9 +894,9 @@ snapshots:
 
   pidtree@0.6.0: {}
 
-  prisma@5.19.1:
+  prisma@5.20.0:
     dependencies:
-      '@prisma/engines': 5.19.1
+      '@prisma/engines': 5.20.0
     optionalDependencies:
       fsevents: 2.3.3
 
@@ -909,7 +909,7 @@ snapshots:
 
   rfdc@1.4.1: {}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d388cb5553107a2935028ac4c3021afc57c07dea: {}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/4dd69aeb14924a6e23cf68fdcefc3d1164309cd8: {}
 
   shebang-command@2.0.0:
     dependencies:
@@ -956,7 +956,7 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  typescript@5.6.2: {}
+  typescript@5.6.3: {}
 
   undici-types@6.19.8: {}
 

@@ -95,7 +95,6 @@ export class Stelle extends Client<true> {
                     emojis: true,
                     overwrites: true,
                     stickers: true,
-                    threads: true,
                     roles: true,
                     presences: true,
                     messages: true,

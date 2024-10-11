@@ -10,7 +10,8 @@
 			"suspicious": {
 				"noExplicitAny": "off",
 				"noConfusingVoidType": "off",
-				"noEmptyBlockStatements": "off"
+				"noEmptyBlockStatements": "off",
+				"noConsole": "off"
 			},
 			"style": {
 				"noNonNullAssertion": "off",

@@ -116,7 +116,7 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next,
         return pass();
     }
 
-    if (command.moreTracks && !(player!.queue.tracks.length + Number(!!player.queue.current) >= 1)) {
+    if (command.moreTracks && !(player!.queue.tracks.length + Number(!!player?.queue.current) >= 1)) {
         await context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [
