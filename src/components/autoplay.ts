@@ -5,7 +5,7 @@ import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType } from 
 
 import { AUTOPLAY_STATE } from "#stelle/data/Constants.js";
 
-@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, moreTracks: true, cooldown: 5, checkNodes: true })
+@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, moreTracks: true, checkNodes: true })
 export default class AutoplayComponent extends ComponentCommand {
     componentType = "Button" as const;
 

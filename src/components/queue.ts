@@ -3,7 +3,7 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleOptions } from "#stelle/decorators";
 import { EmbedPaginator } from "#stelle/utils/Paginator.js";
 
-@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, checkQueue: true, cooldown: 5, checkNodes: true })
+@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, checkQueue: true, checkNodes: true })
 export default class QueueComponent extends ComponentCommand {
     componentType = "Button" as const;
 
