@@ -127,15 +127,6 @@ export const getDepth = (error: any): string => inspect(error, { depth: 0 });
 
 /**
  *
- * Create a new codeblock.
- * @param language
- * @param code
- * @returns
- */
-export const codeBlock = (language: string, code: string) => `\`\`\`${language}\n${code}\n\`\`\``;
-
-/**
- *
  * Slice text.
  * @param text
  * @returns

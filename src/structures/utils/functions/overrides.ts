@@ -1,10 +1,9 @@
 import { type AnyContext, Embed, type PermissionStrings } from "seyfert";
 
-import { EmbedColors } from "seyfert/lib/common/index.js";
+import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
 import { formatOptions } from "./formatter.js";
-import { codeBlock } from "./utils.js";
 
 export async function onRunError(ctx: AnyContext, error: unknown) {
     const { messages } = await ctx.getLocale();
@@ -78,7 +77,7 @@ export async function onOptionsError(ctx: AnyContext) {
         .setThumbnail(ctx.author.avatarURL())
         .setDescription(
             messages.events.invalidOptions({
-                options: codeBlock("js", `${options.map(({ option }) => option).join(" ")}`),
+                options: Formatter.codeBlock(options.map(({ option }) => option).join(" "), "js"),
                 list: options.map(({ option, description, range }) => `* \`${option}\` \`[${range || "---"}]\`: ${description}`).join("\n"),
             }),
         )

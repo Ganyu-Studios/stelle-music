@@ -1,9 +1,9 @@
 import { Command, type CommandContext, Declare, Embed, type Message, Options, type WebhookMessage, createStringOption } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
+import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
 import { StelleOptions } from "#stelle/decorators";
 
 import { Configuration } from "#stelle/data/Configuration.js";
-import { codeBlock, getDepth, sliceText } from "#stelle/utils/functions/utils.js";
+import { getDepth, sliceText } from "#stelle/utils/functions/utils.js";
 
 import { DeclareParserConfig, ParserRecommendedConfig, Watch, Yuna } from "yunaforseyfert";
 import { SECRETS_MESSAGES, SECRETS_REGEX } from "#stelle/data/Constants.js";
@@ -89,13 +89,13 @@ export default class EvalCommand extends Command {
                     new Embed()
                         .setAuthor({ name: author.tag, iconUrl: author.avatarURL() })
                         .setColor(client.config.color.success)
-                        .setDescription(`\`📖\` A code has been evaluated.\n \n${codeBlock("js", sliceText(output, 1900))}`)
+                        .setDescription(`\`📖\` A code has been evaluated.\n \n${Formatter.codeBlock(sliceText(output, 1900), "js")}`)
                         .setThumbnail(client.me.avatarURL())
                         .setTimestamp()
                         .addFields(
                             {
                                 name: "`📖` Type",
-                                value: `${codeBlock("js", typecode)}`,
+                                value: `${Formatter.codeBlock(typecode, "js")}`,
                                 inline: true,
                             },
                             {
@@ -103,7 +103,7 @@ export default class EvalCommand extends Command {
                                 value: `\`${Math.floor(Date.now() - start)}ms\``,
                                 inline: true,
                             },
-                            { name: "`📥` Input", value: `${codeBlock("js", sliceText(options.code, 1024))}` },
+                            { name: "`📥` Input", value: `${Formatter.codeBlock(sliceText(options.code, 1024), "js")}` },
                             { name: "`📤` Output", value: "Check the embed description." },
                         ),
                 ],
@@ -118,7 +118,7 @@ export default class EvalCommand extends Command {
                         .addFields(
                             {
                                 name: "`📖` Type",
-                                value: `${codeBlock("js", typecode)}`,
+                                value: `${Formatter.codeBlock(typecode, "js")}`,
                                 inline: true,
                             },
                             {
@@ -128,11 +128,11 @@ export default class EvalCommand extends Command {
                             },
                             {
                                 name: "`📥` Input",
-                                value: `${codeBlock("js", sliceText(options.code, 1024))}`,
+                                value: `${Formatter.codeBlock(sliceText(options.code, 1024), "js")}`,
                             },
                             {
                                 name: "`📤` Output",
-                                value: `${codeBlock("js", sliceText(`${error}`, 1024))}`,
+                                value: `${Formatter.codeBlock(sliceText(`${error}`, 1024), "js")}`,
                             },
                         ),
                 ],

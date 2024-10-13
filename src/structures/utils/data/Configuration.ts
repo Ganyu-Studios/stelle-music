@@ -16,6 +16,7 @@ export const Configuration: StelleConfiguration = {
     guildIds: [
         "1075885077529120798", // <-- PenwinSquad
         "970508955363188736", // <-- Ganyu Studios
+        "1213361742571241492", // <-- Team Genesis
     ],
     nodes: [
         {
