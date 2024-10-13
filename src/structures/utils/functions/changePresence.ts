@@ -9,10 +9,10 @@ import { ms } from "#stelle/utils/TimeFormat.js";
  * Change Stelle presence.
  * @param client
  */
-export async function changePresence(client: UsingClient): Promise<void> {
+export function changePresence(client: UsingClient): void {
     let activity = 0;
 
-    setInterval(async () => {
+    setInterval(() => {
         if (activity === BOT_ACTIVITIES.length) activity = 0;
 
         const guilds = client.cache.guilds!.count();
@@ -21,7 +21,7 @@ export async function changePresence(client: UsingClient): Promise<void> {
 
         const randomActivity = BOT_ACTIVITIES[activity++ % BOT_ACTIVITIES.length];
 
-        await client.gateway.setPresence({
+        client.gateway.setPresence({
             afk: false,
             since: Date.now(),
             status: PresenceUpdateStatus.Online,
@@ -37,7 +37,7 @@ export async function changePresence(client: UsingClient): Promise<void> {
         });
     }, ms("35s"));
 
-    await client.gateway.setPresence({
+    client.gateway.setPresence({
         activities: [BOT_ACTIVITIES[0]],
         afk: false,
         since: Date.now(),
