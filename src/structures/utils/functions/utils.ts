@@ -111,14 +111,6 @@ export const getFlag = (flag: string) => process.argv.includes(flag);
 
 /**
  *
- * Convert a number color to HEX.
- * @param color - The color number
- * @returns
- */
-export const convertToHEX = (color?: number) => (color ? `#${color.toString(16).padStart(6, "0")}` : "#FFFFFF");
-
-/**
- *
  * Representation of a object.
  * @param error
  * @returns

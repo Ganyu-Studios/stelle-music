@@ -1,12 +1,9 @@
 import { Logger } from "seyfert";
-import { LogLevels } from "seyfert/lib/common/index.js";
+import { LogLevels, gray, italic, red, rgb24, yellow } from "seyfert/lib/common/index.js";
 
 import { Configuration } from "./data/Configuration.js";
 
-import chalk, { type ChalkInstance } from "chalk";
-import { convertToHEX } from "./functions/utils.js";
-
-const customColor = convertToHEX(Configuration.color.success);
+const customColor = (text: string) => rgb24(text, Configuration.color.success);
 
 /**
  *
@@ -50,7 +47,7 @@ function formatMemoryUsage(bytes: number): string {
  */
 export function getWatermark(): void {
     return console.info(
-        chalk.hex(customColor)(`
+        customColor(`
 
 
         ███████╗████████╗███████╗██╗     ██╗     ███████╗
@@ -61,7 +58,7 @@ export function getWatermark(): void {
         ╚══════╝   ╚═╝   ╚══════╝╚══════╝╚══════╝╚══════╝
 														   
 		
-		   ${chalk.italic(`→   ${getRandomText()}`)}
+		   ${italic(`→   ${getRandomText()}`)}
     `),
     );
 }
@@ -121,7 +118,7 @@ export function customLogger(_this: Logger, level: LogLevels, args: unknown[]): 
     const date: Date = new Date();
     const memory: NodeJS.MemoryUsage = process.memoryUsage();
 
-    const label: string = Logger.prefixes.get(level) ?? "---";
+    const label: string = Logger.prefixes.get(level) ?? "UNKNOWN";
     const timeFormat: string = `[${date.toLocaleDateString()} : ${date.toLocaleTimeString()}]`;
 
     const emojis: Record<LogLevels, string> = {
@@ -132,15 +129,15 @@ export function customLogger(_this: Logger, level: LogLevels, args: unknown[]): 
         [LogLevels.Fatal]: "💀",
     };
 
-    const colors: Record<LogLevels, ChalkInstance> = {
-        [LogLevels.Debug]: chalk.grey,
-        [LogLevels.Error]: chalk.red,
-        [LogLevels.Info]: chalk.hex(customColor),
-        [LogLevels.Warn]: chalk.yellow,
-        [LogLevels.Fatal]: chalk.red,
+    const colors: Record<LogLevels, Function> = {
+        [LogLevels.Debug]: gray,
+        [LogLevels.Error]: red,
+        [LogLevels.Info]: customColor,
+        [LogLevels.Warn]: yellow,
+        [LogLevels.Fatal]: red,
     };
 
-    const text = `${chalk.grey(`${timeFormat}`)} ${chalk.grey(formatMemoryUsage(memory.rss))} ${emojis[level]} [${colors[level](
+    const text = `${gray(`${timeFormat}`)} ${gray(formatMemoryUsage(memory.rss))} ${emojis[level]} [${colors[level](
         label,
     )}] ${addPadding(label)}`;
 
