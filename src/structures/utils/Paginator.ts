@@ -1,11 +1,50 @@
-import { ActionRow, type AnyContext, Button, type Embed, type Message, type WebhookMessage } from "seyfert";
+import {
+    ActionRow,
+    type AnyContext,
+    Button,
+    type ComponentContext,
+    type ContextComponentCommandInteractionMap,
+    type Embed,
+    type Message,
+    type MessageBuilderComponents,
+    type WebhookMessage,
+} from "seyfert";
 import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType, MessageFlags } from "seyfert/lib/types/index.js";
 
-import { EmbedColors, type InteractionCreateBodyRequest, type InteractionMessageUpdateBodyRequest } from "seyfert/lib/common/index.js";
+import {
+    type Awaitable,
+    EmbedColors,
+    type InteractionCreateBodyRequest,
+    type InteractionMessageUpdateBodyRequest,
+} from "seyfert/lib/common/index.js";
 import { InvalidEmbedsLength, InvalidMessage, InvalidPageNumber } from "./Errors.js";
 
+interface ComponentOptions<T extends keyof ContextComponentCommandInteractionMap> {
+    customId: string;
+    type: T;
+    run: (ctx: ComponentContext<T>) => Awaitable<any>;
+}
+
+export interface EmbedPaginatorOptions {
+    ctx: AnyContext;
+    rows?: ActionRow<MessageBuilderComponents>[];
+}
+
+export class Component<T extends keyof ContextComponentCommandInteractionMap> {
+    readonly customId: string;
+    readonly type: T;
+
+    public run: (ctx: ComponentContext<T>) => Awaitable<any>;
+
+    constructor(component: ComponentOptions<T>) {
+        this.customId = component.customId;
+        this.type = component.type;
+        this.run = component.run;
+    }
+}
+
 /**
- * Main Stelle paginator class..
+ * Main Stelle paginator class.
  */
 export class EmbedPaginator {
     readonly pages: Record<string, number> = {};
@@ -14,15 +53,17 @@ export class EmbedPaginator {
     private embeds: Embed[] = [];
     private message: Message | WebhookMessage | null = null;
     private ctx: AnyContext;
+    private rows?: EmbedPaginatorOptions["rows"];
 
     /**
      *
      * Create a new EmbedPagination instance.
      * @param ctx
      */
-    constructor(ctx: AnyContext) {
-        this.ctx = ctx;
-        this.userId = ctx.author.id;
+    constructor(options: EmbedPaginatorOptions) {
+        this.ctx = options.ctx;
+        this.userId = options.ctx.author.id;
+        this.rows = options.rows;
     }
 
     /**
@@ -31,24 +72,30 @@ export class EmbedPaginator {
      * @param userId
      * @returns
      */
-    private getRow(userId: string): ActionRow<Button> {
-        return new ActionRow<Button>().addComponents(
-            new Button()
-                .setEmoji("<:forward:1061798317417312306>")
-                .setStyle(ButtonStyle.Secondary)
-                .setCustomId("pagination-pagePrev")
-                .setDisabled(this.pages[userId] === 0),
-            new Button()
-                .setLabel(`${this.currentPage}/${this.maxPages}`)
-                .setStyle(ButtonStyle.Primary)
-                .setDisabled(true)
-                .setCustomId("pagination-pagePos"),
-            new Button()
-                .setEmoji("<:next:1061798311671103528>")
-                .setStyle(ButtonStyle.Secondary)
-                .setCustomId("pagination-pageNext")
-                .setDisabled(this.pages[userId] === this.embeds.length - 1),
-        );
+    private getRows(userId: string): ActionRow<MessageBuilderComponents>[] {
+        const rows: ActionRow<MessageBuilderComponents>[] = [
+            new ActionRow<MessageBuilderComponents>().addComponents(
+                new Button()
+                    .setEmoji("<:forward:1061798317417312306>")
+                    .setStyle(ButtonStyle.Secondary)
+                    .setCustomId("pagination-pagePrev")
+                    .setDisabled(this.pages[userId] === 0),
+                new Button()
+                    .setLabel(`${this.currentPage}/${this.maxPages}`)
+                    .setStyle(ButtonStyle.Primary)
+                    .setDisabled(true)
+                    .setCustomId("pagination-pagePos"),
+                new Button()
+                    .setEmoji("<:next:1061798311671103528>")
+                    .setStyle(ButtonStyle.Secondary)
+                    .setCustomId("pagination-pageNext")
+                    .setDisabled(this.pages[userId] === this.embeds.length - 1),
+            ),
+        ];
+
+        if (this.rows) rows.unshift(...this.rows);
+
+        return rows;
     }
 
     /**
@@ -84,8 +131,6 @@ export class EmbedPaginator {
             },
             onStop: async (reason) => {
                 if (reason === "idle") {
-                    if (!message) return;
-
                     const row = new ActionRow<Button>().setComponents(
                         message.components[0].components
                             .map((builder) => builder.toJSON())
@@ -109,8 +154,10 @@ export class EmbedPaginator {
             if (interaction.customId === "pagination-pageNext" && pages[userId] < embeds.length - 1) ++pages[userId];
 
             await interaction.deferUpdate();
-            await ctx.editOrReply({ embeds: [embeds[pages[userId]]], components: [this.getRow(userId)] }).catch(() => null);
+            await ctx.editOrReply({ embeds: [embeds[pages[userId]]], components: this.getRows(userId) }).catch(() => null);
         });
+
+        collector.run(/./, () => {});
     }
 
     /**
@@ -166,7 +213,7 @@ export class EmbedPaginator {
         ctx.editOrReply({
             content: "",
             embeds: [embeds[pages[userId]]],
-            components: [this.getRow(userId)],
+            components: this.getRows(userId),
         });
 
         return this;
@@ -188,7 +235,7 @@ export class EmbedPaginator {
             {
                 content: "",
                 embeds: [embeds[pages[userId]]],
-                components: [this.getRow(userId)],
+                components: this.getRows(userId),
                 flags,
             },
             true,
