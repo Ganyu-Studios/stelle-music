@@ -47,7 +47,7 @@ export class EmbedPaginator {
     /**
      *
      * Create a new EmbedPagination instance.
-     * @param ctx
+     * @param options
      */
     constructor(options: EmbedPaginatorOptions) {
         this.ctx = options.ctx;
