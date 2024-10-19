@@ -24,7 +24,7 @@ export interface EmbedPaginatorOptions {
 }
 
 export class StelleButton extends Button {
-    public run: (interaction: ButtonInteraction, setPage: (n: number) => void) => Awaitable<any>;
+    public run: (interaction: ButtonInteraction, setPage: (n: number) => void) => Awaitable<unknown>;
     declare data: APIButtonComponentWithCustomId;
     constructor({ run, ...data }: Partial<APIButtonComponentWithCustomId> & { run: StelleButton["run"] }) {
         super(data);
