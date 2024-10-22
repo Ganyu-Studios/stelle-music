@@ -2,8 +2,7 @@ import {
     ActionRow,
     type AnyContext,
     Button,
-    type ComponentContext,
-    type ContextComponentCommandInteractionMap,
+    type ButtonInteraction,
     type Embed,
     type Message,
     type MessageBuilderComponents,
@@ -19,27 +18,17 @@ import {
 } from "seyfert/lib/common/index.js";
 import { InvalidEmbedsLength, InvalidMessage, InvalidPageNumber } from "./Errors.js";
 
-interface ComponentOptions<T extends keyof ContextComponentCommandInteractionMap> {
-    customId: string;
-    type: T;
-    run: (ctx: ComponentContext<T>) => Awaitable<any>;
-}
-
 export interface EmbedPaginatorOptions {
     ctx: AnyContext;
-    rows?: ActionRow<MessageBuilderComponents>[];
+    rows?: ActionRow<StelleButton>[];
 }
 
-export class Component<T extends keyof ContextComponentCommandInteractionMap> {
-    readonly customId: string;
-    readonly type: T;
-
-    public run: (ctx: ComponentContext<T>) => Awaitable<any>;
-
-    constructor(component: ComponentOptions<T>) {
-        this.customId = component.customId;
-        this.type = component.type;
-        this.run = component.run;
+export class StelleButton extends Button {
+    public run: (interaction: ButtonInteraction, setPage: (n: number) => void) => Awaitable<unknown>;
+    declare data: APIButtonComponentWithCustomId;
+    constructor({ run, ...data }: Partial<APIButtonComponentWithCustomId> & { run: StelleButton["run"] }) {
+        super(data);
+        this.run = run;
     }
 }
 
@@ -53,17 +42,17 @@ export class EmbedPaginator {
     private embeds: Embed[] = [];
     private message: Message | WebhookMessage | null = null;
     private ctx: AnyContext;
-    private rows?: EmbedPaginatorOptions["rows"];
+    private rows: NonNullable<EmbedPaginatorOptions["rows"]>;
 
     /**
      *
      * Create a new EmbedPagination instance.
-     * @param ctx
+     * @param options
      */
     constructor(options: EmbedPaginatorOptions) {
         this.ctx = options.ctx;
         this.userId = options.ctx.author.id;
-        this.rows = options.rows;
+        this.rows = options.rows ?? [];
     }
 
     /**
@@ -93,7 +82,7 @@ export class EmbedPaginator {
             ),
         ];
 
-        if (this.rows) rows.unshift(...this.rows);
+        if (this.rows.length) rows.unshift(...this.rows);
 
         return rows;
     }
@@ -111,7 +100,7 @@ export class EmbedPaginator {
         if (!message) return;
 
         const collector = message.createComponentCollector({
-            idle: 60000,
+            idle: 60e3,
             filter: async (interaction) => {
                 if (interaction.user.id !== userId) {
                     await interaction.write({
@@ -157,7 +146,22 @@ export class EmbedPaginator {
             await ctx.editOrReply({ embeds: [embeds[pages[userId]]], components: this.getRows(userId) }).catch(() => null);
         });
 
-        collector.run(/./, () => {});
+        if (!this.rows.length) return;
+        collector.run(/./, (interaction) => {
+            for (const row of this.rows) {
+                for (const component of row.components) {
+                    if ((component.data as { custom_id?: string }).custom_id === interaction.customId) {
+                        // assume the component is correct
+                        return (component as StelleButton).run(interaction as any, async (n) => {
+                            if (n < 0 || n >= embeds.length) return;
+                            pages[userId] = n;
+                            await interaction.deferUpdate();
+                            await ctx.editOrReply({ embeds: [embeds[pages[userId]]], components: this.getRows(userId) }).catch(() => null);
+                        });
+                    }
+                }
+            }
+        });
     }
 
     /**
