@@ -36,7 +36,7 @@
             "#stelle/utils/*": ["./src/structures/utils/*"],
         }
     },
-    "include": ["./src/**/*", "seyfert.config.js"],
+    "include": ["./src/**/*"],
     "exclude": [
         "node_modules",
         "dist"
