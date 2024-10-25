@@ -3,9 +3,9 @@
 import { GatewayIntentBits } from "seyfert/lib/types/index.js";
 import { config } from "seyfert";
 
-import { DEBUG_MODE, IS_WINDOWS } from "#stelle/data/Constants.js";
+import { DEBUG_MODE } from "#stelle/data/Constants.js";
 
-const output = DEBUG_MODE && IS_WINDOWS ? "src" : "dist";
+const output = DEBUG_MODE ? "src" : "dist";
 
 export default config.bot({
     token: process.env.TOKEN ?? "Trailblazer",
