@@ -1,28 +1,112 @@
-import { ActionRow, type AnyContext, Button, type Embed, type Message, type WebhookMessage } from "seyfert";
-import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType, MessageFlags } from "seyfert/lib/types/index.js";
+import {
+    ActionRow,
+    type AnyContext,
+    Button,
+    type ButtonInteraction,
+    type Embed,
+    type Message,
+    type MessageBuilderComponents,
+    type SelectMenuInteraction,
+    StringSelectMenu,
+    type WebhookMessage,
+} from "seyfert";
+import { type APIButtonComponentWithCustomId, type APIStringSelectComponent, ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
 
-import { EmbedColors, type InteractionCreateBodyRequest, type InteractionMessageUpdateBodyRequest } from "seyfert/lib/common/index.js";
+import {
+    type Awaitable,
+    EmbedColors,
+    type InteractionCreateBodyRequest,
+    type InteractionMessageUpdateBodyRequest,
+} from "seyfert/lib/common/index.js";
 import { InvalidEmbedsLength, InvalidMessage, InvalidPageNumber } from "./Errors.js";
 
 /**
- * Main Stelle paginator class..
+ * Stelle button class.
+ */
+export class StelleButton extends Button {
+    /**
+     * The function to run when the button is clicked.
+     */
+    readonly run: (interaction: ButtonInteraction, setPage: (n: number) => void) => Awaitable<unknown>;
+
+    /**
+     * The data of the button.
+     */
+    declare data: APIButtonComponentWithCustomId;
+
+    /**
+     * Create a new StelleButton instance.
+     * @param component
+     */
+    constructor({ run, ...data }: Partial<APIButtonComponentWithCustomId> & { run: StelleButton["run"] }) {
+        super(data);
+        this.run = run;
+    }
+}
+
+/**
+ * Stelle string menu class.
+ */
+export class StelleStringMenu extends StringSelectMenu {
+    /**
+     * The function to run when the string menu is clicked.
+     */
+    readonly run: (interaction: SelectMenuInteraction, setPage: (n: number) => void) => Awaitable<unknown>;
+
+    /**
+     * The data of the string menu.
+     */
+    declare data: StringSelectMenu["data"];
+
+    /**
+     * Create a new StelleStringMenu instance.
+     * @param component
+     */
+    constructor({ run, ...data }: Partial<APIStringSelectComponent> & { run: StelleStringMenu["run"] }) {
+        super(data);
+        this.run = run;
+    }
+}
+
+type StelleComponents = StelleButton | StelleStringMenu;
+
+/**
+ * Main Stelle paginator class.
  */
 export class EmbedPaginator {
-    readonly pages: Record<string, number> = {};
-    readonly userId: string;
+    /**
+     * The pages of the paginator.
+     */
+    protected pages: number = 0;
 
+    /**
+     * The embeds of the paginator.
+     */
     private embeds: Embed[] = [];
+    /**
+     * The message reference of the paginator.
+     */
     private message: Message | WebhookMessage | null = null;
+    /**
+     * The context reference of the paginator.
+     */
     private ctx: AnyContext;
+    /**
+     * The rows of the paginator.
+     */
+    private rows: ActionRow<StelleButton | StelleStringMenu>[] = [];
+    /**
+     * The disabled type of the paginator.
+     */
+    private disabled: boolean = false;
 
     /**
      *
      * Create a new EmbedPagination instance.
-     * @param ctx
+     * @param options
      */
     constructor(ctx: AnyContext) {
         this.ctx = ctx;
-        this.userId = ctx.author.id;
     }
 
     /**
@@ -31,24 +115,30 @@ export class EmbedPaginator {
      * @param userId
      * @returns
      */
-    private getRow(userId: string): ActionRow<Button> {
-        return new ActionRow<Button>().addComponents(
-            new Button()
-                .setEmoji("<:forward:1061798317417312306>")
-                .setStyle(ButtonStyle.Secondary)
-                .setCustomId("pagination-pagePrev")
-                .setDisabled(this.pages[userId] === 0),
-            new Button()
-                .setLabel(`${this.currentPage}/${this.maxPages}`)
-                .setStyle(ButtonStyle.Primary)
-                .setDisabled(true)
-                .setCustomId("pagination-pagePos"),
-            new Button()
-                .setEmoji("<:next:1061798311671103528>")
-                .setStyle(ButtonStyle.Secondary)
-                .setCustomId("pagination-pageNext")
-                .setDisabled(this.pages[userId] === this.embeds.length - 1),
-        );
+    private getRows(): ActionRow<MessageBuilderComponents>[] {
+        const rows: ActionRow<MessageBuilderComponents>[] = [
+            new ActionRow<MessageBuilderComponents>().addComponents(
+                new Button()
+                    .setEmoji("<:forward:1061798317417312306>")
+                    .setStyle(ButtonStyle.Secondary)
+                    .setCustomId("pagination-pagePrev")
+                    .setDisabled(this.disabled || this.pages === 0),
+                new Button()
+                    .setLabel(`${this.currentPage}/${this.maxPages}`)
+                    .setStyle(ButtonStyle.Primary)
+                    .setDisabled(true)
+                    .setCustomId("pagination-pagePos"),
+                new Button()
+                    .setEmoji("<:next:1061798311671103528>")
+                    .setStyle(ButtonStyle.Secondary)
+                    .setCustomId("pagination-pageNext")
+                    .setDisabled(this.disabled || this.pages === this.embeds.length - 1),
+            ),
+        ];
+
+        if (this.rows.length) rows.unshift(...this.rows);
+
+        return rows;
     }
 
     /**
@@ -57,47 +147,42 @@ export class EmbedPaginator {
      * @returns
      */
     private async createCollector() {
-        const { ctx, pages, embeds, message, userId } = this;
+        const { ctx, message } = this;
         const { messages } = await ctx.getLocale();
         const { client } = ctx;
 
         if (!message) return;
 
         const collector = message.createComponentCollector({
-            idle: 60000,
-            filter: async (interaction) => {
-                if (interaction.user.id !== userId) {
-                    await interaction.write({
-                        flags: MessageFlags.Ephemeral,
-                        embeds: [
-                            {
-                                description: messages.events.noCollector({ userId }),
-                                color: EmbedColors.Red,
-                            },
-                        ],
-                    });
-
-                    return false;
-                }
-
-                return true;
+            idle: 60e3,
+            filter: (interaction) => interaction.user.id === ctx.author.id,
+            onPass: async (interaction) => {
+                await interaction.write({
+                    flags: MessageFlags.Ephemeral,
+                    embeds: [
+                        {
+                            description: messages.events.noCollector({ userId: ctx.author.id }),
+                            color: EmbedColors.Red,
+                        },
+                    ],
+                });
             },
             onStop: async (reason) => {
                 if (reason === "idle") {
-                    if (!message) return;
+                    const rows: ActionRow<Button | StringSelectMenu>[] = [];
 
-                    const row = new ActionRow<Button>().setComponents(
-                        message.components[0].components
-                            .map((builder) => builder.toJSON())
-                            .filter((row) => row.type === ComponentType.Button && row.style !== ButtonStyle.Link)
-                            .map((component) => {
-                                if ((component as APIButtonComponentWithCustomId).custom_id === "pagination-pagePos")
-                                    (component as APIButtonComponentWithCustomId).label = "0/0";
-                                return new Button(component as APIButtonComponentWithCustomId).setDisabled(true);
+                    for (const component of message.components) {
+                        rows.push(
+                            new ActionRow({
+                                components: component.components.map((row) => {
+                                    row.data.disabled = true;
+                                    return row.toJSON();
+                                }),
                             }),
-                    );
+                        );
+                    }
 
-                    await client.messages.edit(message.id, message.channelId, { components: [row] }).catch(() => null);
+                    await client.messages.edit(message.id, message.channelId, { components: rows }).catch(() => null);
                 }
             },
         });
@@ -105,19 +190,38 @@ export class EmbedPaginator {
         collector.run(["pagination-pagePrev", "pagination-pageNext"], async (interaction) => {
             if (!interaction.isButton()) return;
 
-            if (interaction.customId === "pagination-pagePrev" && pages[userId] > 0) --pages[userId];
-            if (interaction.customId === "pagination-pageNext" && pages[userId] < embeds.length - 1) ++pages[userId];
+            if (interaction.customId === "pagination-pagePrev" && this.pages > 0) --this.pages;
+            if (interaction.customId === "pagination-pageNext" && this.pages < this.embeds.length - 1) ++this.pages;
 
             await interaction.deferUpdate();
-            await ctx.editOrReply({ embeds: [embeds[pages[userId]]], components: [this.getRow(userId)] }).catch(() => null);
+            await ctx.editOrReply({ embeds: [this.embeds[this.pages]], components: this.getRows() }).catch(() => null);
         });
+
+        if (this.rows.length) {
+            collector.run(/./, (interaction) => {
+                for (const row of this.rows) {
+                    for (const component of row.components) {
+                        if ((component.data as { custom_id?: string }).custom_id === interaction.customId) {
+                            return (component as StelleComponents).run(interaction as any, async (n) => {
+                                if (n < 0 || n >= this.embeds.length) return;
+
+                                this.pages = n;
+
+                                await interaction.deferUpdate();
+                                await ctx.editOrReply({ embeds: [this.embeds[this.pages]], components: this.getRows() }).catch(() => null);
+                            });
+                        }
+                    }
+                }
+            });
+        }
     }
 
     /**
      * Get the current page of the paginator.
      */
     get currentPage(): number {
-        return this.pages[this.userId] + 1;
+        return this.pages + 1;
     }
 
     /**
@@ -149,24 +253,47 @@ export class EmbedPaginator {
 
     /**
      *
+     * Set a new array of rows to display.
+     * @param rows
+     * @returns
+     */
+    public setRows(rows: ActionRow<StelleButton | StelleStringMenu>[]): this {
+        this.rows = rows;
+        return this;
+    }
+
+    /**
+     *
+     * Set if the pagination buttons are disabled. (Exept the custom rows)
+     * @default false
+     * @param disabled
+     * @returns
+     */
+    public setDisabled(disabled: boolean): this {
+        this.disabled = disabled;
+        return this;
+    }
+
+    /**
+     *
      * Set a page to desplay the embed.
      * @param page
      */
     public setPage(page: number): this {
-        const { message, embeds, pages, ctx, userId } = this;
+        const { message, ctx } = this;
 
-        if (!embeds.length) throw new InvalidEmbedsLength("I can't send the pagination without embeds.");
+        if (!this.embeds.length) throw new InvalidEmbedsLength("I can't send the pagination without embeds.");
         if (!message) throw new InvalidMessage("I can't set the page to an unresponded pagination.");
 
-        if (page > embeds.length || page < embeds.length)
-            throw new InvalidPageNumber(`The page: "${page}" is invalid. There are: "${embeds.length}" pages.`);
+        if (page > this.embeds.length || page < this.embeds.length)
+            throw new InvalidPageNumber(`The page: "${page}" is invalid. There are: "${this.embeds.length}" pages.`);
 
-        pages[userId] = page - 1;
+        this.pages = page - 1;
 
         ctx.editOrReply({
             content: "",
-            embeds: [embeds[pages[userId]]],
-            components: [this.getRow(userId)],
+            embeds: [this.embeds[this.pages]],
+            components: this.getRows(),
         });
 
         return this;
@@ -178,17 +305,17 @@ export class EmbedPaginator {
      * @param ephemeral
      */
     public async reply(ephemeral: boolean = false): Promise<this> {
-        const { ctx, pages, embeds, userId } = this;
+        const { ctx } = this;
+
+        if (!this.embeds.length) throw new InvalidEmbedsLength("I can't send the pagination without embeds.");
 
         const flags = ephemeral ? MessageFlags.Ephemeral : undefined;
-
-        pages[userId] = pages[userId] ?? 0;
 
         this.message = await ctx.editOrReply(
             {
                 content: "",
-                embeds: [embeds[pages[userId]]],
-                components: [this.getRow(userId)],
+                embeds: [this.embeds[this.pages]],
+                components: this.getRows(),
                 flags,
             },
             true,
@@ -210,6 +337,25 @@ export class EmbedPaginator {
         if (!message) throw new InvalidMessage("I can't set the page to an unresponded pagination.");
 
         await ctx.editOrReply(body);
+
+        return this;
+    }
+
+    /**
+     *
+     * Update the current embed paginator.
+     * @param reset
+     * @returns
+     */
+    public async update(): Promise<this> {
+        const { message } = this;
+        if (!message) throw new InvalidMessage("I can't set the page to an unresponded pagination.");
+
+        await this.edit({
+            content: "",
+            embeds: [this.embeds[this.pages]],
+            components: this.getRows(),
+        });
 
         return this;
     }

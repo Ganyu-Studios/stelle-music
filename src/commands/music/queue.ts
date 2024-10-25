@@ -24,7 +24,6 @@ export default class QueueCommand extends Command {
         if (!player) return;
 
         const tracksPerPage = 20;
-        const paginator = new EmbedPaginator(ctx);
         const tracks = player.queue.tracks.map(
             (track, i) => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${(track.requester as User).tag}`,
         );
@@ -41,6 +40,8 @@ export default class QueueCommand extends Command {
                 ],
             });
         } else {
+            const paginator = new EmbedPaginator(ctx);
+
             for (let i = 0; i < tracks.length; i += tracksPerPage) {
                 paginator.addEmbed(
                     new Embed()

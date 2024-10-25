@@ -327,6 +327,14 @@ export default {
             name: "nowplaying",
             description: "Get the current playing song.",
         },
+        help: {
+            name: "help",
+            description: "The most useful command in the world!",
+            option: {
+                name: "command",
+                description: "The command to get help for.",
+            },
+        },
     },
 };
 

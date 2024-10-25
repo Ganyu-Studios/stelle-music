@@ -25,7 +25,7 @@ export class StelleHandler extends BaseHandler {
     public async load() {
         const files = await this.loadFilesK<{ default: Lavalink }>(await this.getFiles(await this.client.getRC().then((x) => x.lavalink)));
 
-        for await (const file of files) {
+        for (const file of files) {
             const path = file.path.split(process.cwd()).slice(1).join(process.cwd());
             const event: Lavalink = file.file.default;
 
