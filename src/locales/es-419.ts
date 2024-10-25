@@ -328,5 +328,13 @@ export default {
             name: "sonando",
             description: "Obtén la canción actual.",
         },
+        help: {
+            name: "ayuda",
+            description: "El comando mas útil del mundo!",
+            option: {
+                name: "comando",
+                description: "El comando a obtener ayuda.",
+            },
+        },
     },
 } satisfies DefaultLocale;

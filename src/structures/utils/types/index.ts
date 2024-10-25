@@ -56,7 +56,7 @@ export enum StelleKeys {
 }
 
 export enum StelleCategory {
-    Music = 3,
-    Guild = 2,
     User = 1,
+    Guild = 2,
+    Music = 3,
 }

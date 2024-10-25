@@ -21,7 +21,6 @@ export default class ExampleCommand extends Command {
         const { client } = ctx;
         const { messages } = await ctx.getLocale();
 
-        const pages = new EmbedPaginator({ ctx });
         const maxFields = 25;
         const fields = client.manager.nodeManager.nodes.map((node) => ({
             name: `\`🔰\` ${node.id}`,
@@ -54,6 +53,8 @@ export default class ExampleCommand extends Command {
                 ],
             });
         } else {
+            const pages = new EmbedPaginator(ctx);
+
             for (let i = 0; fields.length < maxFields; i += maxFields) {
                 pages.addEmbed(
                     new Embed()
