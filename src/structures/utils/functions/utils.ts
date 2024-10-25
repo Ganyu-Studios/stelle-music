@@ -1,10 +1,7 @@
 import type { Player } from "lavalink-client";
-
-import { join } from "node:path";
 import { inspect } from "node:util";
 
 import { type AnyContext, type DefaultLocale, extendContext } from "seyfert";
-import { magicImport } from "seyfert/lib/common/index.js";
 
 /**
  * Stelle custom context.
@@ -18,25 +15,6 @@ export const customContext = extendContext((interaction) => ({
     getLocale: async (): Promise<DefaultLocale> =>
         interaction.client.t(await interaction.client.database.getLocale(interaction.guildId!)).get(),
 }));
-
-/**
- *
- * Stelle custom runtime configuration.
- * @returns
- */
-export const stelleRC = async (): Promise<any> => {
-    const { locations, debug, ...env } = await magicImport(join(process.cwd(), "seyfert.config.js")).then((x) => x.default ?? x);
-    return {
-        ...env,
-        debug: !!debug,
-        lavalink: join(process.cwd(), locations.output, locations.lavalink),
-        templates: locations.templates ? join(process.cwd(), locations.base, locations.templates) : undefined,
-        langs: locations.langs ? join(process.cwd(), locations.output, locations.langs) : undefined,
-        events: locations.events ? join(process.cwd(), locations.output, locations.events) : undefined,
-        components: locations.components ? join(process.cwd(), locations.output, locations.components) : undefined,
-        commands: locations.commands ? join(process.cwd(), locations.output, locations.commands) : undefined,
-    };
-};
 
 /**
  *

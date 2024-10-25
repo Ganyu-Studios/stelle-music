@@ -15,11 +15,11 @@ importers:
         specifier: ^16.4.5
         version: 16.4.5
       lavalink-client:
-        specifier: ^2.4.0
-        version: 2.4.0
+        specifier: ^2.4.1
+        version: 2.4.1
       seyfert:
         specifier: github:tiramisulabs/seyfert
-        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/70b1bc1dc58177360e6907b2e42fc8bc9a7e6009
+        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/00c96e6c541cf5f4282372f51d41e49b1fa4e3b7
       yunaforseyfert:
         specifier: ^1.0.2
         version: 1.0.2
@@ -28,8 +28,8 @@ importers:
         specifier: ^1.9.4
         version: 1.9.4
       '@types/node':
-        specifier: ^22.7.6
-        version: 22.7.6
+        specifier: ^22.8.0
+        version: 22.8.0
       husky:
         specifier: ^9.1.6
         version: 9.1.6
@@ -269,8 +269,8 @@ packages:
   '@prisma/get-platform@5.21.1':
     resolution: {integrity: sha512-sRxjL3Igst3ct+e8ya/x//cDXmpLbZQ5vfps2N4tWl4VGKQAmym77C/IG/psSMsQKszc8uFC/q1dgmKFLUgXZQ==}
 
-  '@types/node@22.7.6':
-    resolution: {integrity: sha512-/d7Rnj0/ExXDMcioS78/kf1lMzYk4BZV8MZGTBKzTGZ6/406ukkbYlIsZmMPhcR5KlkunDHQLrtAVmSq7r+mSw==}
+  '@types/node@22.8.0':
+    resolution: {integrity: sha512-84rafSBHC/z1i1E3p0cJwKA+CfYDNSXX9WSZBRopjIzLET8oNt6ht2tei4C7izwDeEiLLfdeSVBv1egOH916hg==}
 
   ansi-escapes@7.0.0:
     resolution: {integrity: sha512-GdYO7a61mR0fOlAsvC9/rIHf7L96sBc6dEWzeOu+KAea5bZyQRPIpojrVoI4AXGJS/ycu/fBTdLrUkA4ODrvjw==}
@@ -391,8 +391,8 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
-  lavalink-client@2.4.0:
-    resolution: {integrity: sha512-bBXEJQoICEj+9uZSW8IvpCuPUS9Fs+ynS/5MDSCNI1aQXs9jM/SBNtMygYK68sIPc17Iia8HpOxWXnW+z5n0AQ==}
+  lavalink-client@2.4.1:
+    resolution: {integrity: sha512-wrRkbzILdjRzadAbdGM9O3bgLEabAebGci2YOUCcQoCumEjAMPz+rj7Xepa+y0oydnodyYZvBrB9ZeSdy7rzuw==}
     engines: {bun: '>=1.0.0', node: '>=18.0.0'}
 
   lilconfig@3.1.2:
@@ -474,8 +474,8 @@ packages:
   rfdc@1.4.1:
     resolution: {integrity: sha512-q1b3N5QkRUWUl7iyylaaj3kOpIT0N2i9MqIEQXP73GVsN9cw3fdx8X63cEmWhJGi2PPCF23Ijp7ktmd39rawIA==}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/70b1bc1dc58177360e6907b2e42fc8bc9a7e6009:
-    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/70b1bc1dc58177360e6907b2e42fc8bc9a7e6009}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/00c96e6c541cf5f4282372f51d41e49b1fa4e3b7:
+    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/00c96e6c541cf5f4282372f51d41e49b1fa4e3b7}
     version: 2.1.0
 
   shebang-command@2.0.0:
@@ -697,7 +697,7 @@ snapshots:
     dependencies:
       '@prisma/debug': 5.21.1
 
-  '@types/node@22.7.6':
+  '@types/node@22.8.0':
     dependencies:
       undici-types: 6.19.8
 
@@ -816,7 +816,7 @@ snapshots:
 
   isexe@2.0.0: {}
 
-  lavalink-client@2.4.0:
+  lavalink-client@2.4.1:
     dependencies:
       tslib: 2.8.0
       ws: 8.18.0
@@ -906,7 +906,7 @@ snapshots:
 
   rfdc@1.4.1: {}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/70b1bc1dc58177360e6907b2e42fc8bc9a7e6009: {}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/00c96e6c541cf5f4282372f51d41e49b1fa4e3b7: {}
 
   shebang-command@2.0.0:
     dependencies:

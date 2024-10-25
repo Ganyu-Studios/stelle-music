@@ -1,20 +1,20 @@
 import { BaseHandler } from "seyfert/lib/common/index.js";
 import type { Lavalink } from "./Lavalink.js";
 
-import type { Stelle } from "#stelle/client";
+import type { UsingClient } from "seyfert";
 
 /**
  * Main Stelle music handler.
  */
 export class StelleHandler extends BaseHandler {
-    readonly client: Stelle;
+    readonly client: UsingClient;
 
     /**
      *
      * Create a new instance of the handler.
      * @param client
      */
-    constructor(client: Stelle) {
+    constructor(client: UsingClient) {
         super(client.logger);
         this.client = client;
     }
@@ -23,7 +23,11 @@ export class StelleHandler extends BaseHandler {
      * Load the handler.
      */
     public async load() {
-        const files = await this.loadFilesK<{ default: Lavalink }>(await this.getFiles(await this.client.getRC().then((x) => x.lavalink)));
+        //@ts-expect-error yup, seems the types do not want to work. 🐐
+        // todo: remove the ts-expect-error when the types are fixed.
+        const files = await this.loadFilesK<{ default: Lavalink }>(
+            await this.getFiles(await this.client.getRC().then((x) => x.locations.lavalink)),
+        );
 
         for (const file of files) {
             const path = file.path.split(process.cwd()).slice(1).join(process.cwd());

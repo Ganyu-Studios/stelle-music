@@ -1,14 +1,14 @@
 import { Client, LimitedCollection } from "seyfert";
 import { ActivityType, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
 
-import type { InternalRuntime, InternalStelleRuntime, StelleConfiguration } from "#stelle/types";
+import type { StelleConfiguration } from "#stelle/types";
 
 import { StelleMiddlewares } from "#stelle/middlwares";
 
 import { Configuration } from "#stelle/data/Configuration.js";
 import { getWatermark } from "#stelle/utils/Logger.js";
 import { onBotPermissionsFail, onOptionsError, onPermissionsFail, onRunError } from "#stelle/utils/functions/overrides.js";
-import { customContext, stelleRC } from "#stelle/utils/functions/utils.js";
+import { customContext } from "#stelle/utils/functions/utils.js";
 
 import { StelleDatabase } from "./modules/Database.js";
 import { StelleManager } from "./modules/Manager.js";
@@ -127,15 +127,6 @@ export class Stelle extends Client<true> {
         await this.uploadCommands({ cachePath: this.config.cachePath });
 
         return "🌟";
-    }
-
-    /**
-     *
-     * Overrides the original `runtime configuration`.
-     * @returns
-     */
-    public override getRC<T extends InternalRuntime = InternalRuntime>(): Promise<InternalStelleRuntime<T>> {
-        return stelleRC();
     }
 
     /**
