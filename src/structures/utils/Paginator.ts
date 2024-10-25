@@ -10,13 +10,7 @@ import {
     StringSelectMenu,
     type WebhookMessage,
 } from "seyfert";
-import {
-    type APIButtonComponentWithCustomId,
-    type APIStringSelectComponent,
-    ButtonStyle,
-    ComponentType,
-    MessageFlags,
-} from "seyfert/lib/types/index.js";
+import { type APIButtonComponentWithCustomId, type APIStringSelectComponent, ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
 
 import {
     type Awaitable,
@@ -175,18 +169,20 @@ export class EmbedPaginator {
             },
             onStop: async (reason) => {
                 if (reason === "idle") {
-                    const row = new ActionRow<Button>().setComponents(
-                        message.components[0].components
-                            .map((builder) => builder.toJSON())
-                            .filter((row) => row.type === ComponentType.Button && row.style !== ButtonStyle.Link)
-                            .map((component) => {
-                                if ((component as APIButtonComponentWithCustomId).custom_id === "pagination-pagePos")
-                                    (component as APIButtonComponentWithCustomId).label = "0/0";
-                                return new Button(component as APIButtonComponentWithCustomId).setDisabled(true);
-                            }),
-                    );
+                    const rows: ActionRow<Button | StringSelectMenu>[] = [];
 
-                    await client.messages.edit(message.id, message.channelId, { components: [row] }).catch(() => null);
+                    for (const component of message.components) {
+                        rows.push(
+                            new ActionRow({
+                                components: component.components.map((row) => {
+                                    row.data.disabled = true;
+                                    return row.toJSON();
+                                }),
+                            }),
+                        );
+                    }
+
+                    await client.messages.edit(message.id, message.channelId, { components: rows }).catch(() => null);
                 }
             },
         });
