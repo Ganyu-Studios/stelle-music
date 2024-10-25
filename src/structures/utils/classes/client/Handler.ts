@@ -23,9 +23,9 @@ export class StelleHandler extends BaseHandler {
      * Load the handler.
      */
     public async load() {
-        // todo: remove the ts-expect-error when the types are fixed.
         const files = await this.loadFilesK<{ default: Lavalink }>(
             //@ts-expect-error yup, seems the types do not want to work. 🐐
+            // todo: remove the ts-expect-error when the types are fixed.
             await this.getFiles(await this.client.getRC().then((x) => x.locations.lavalink)),
         );
 
