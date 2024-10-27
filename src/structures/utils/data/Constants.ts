@@ -25,7 +25,7 @@ export const SECRETS_REGEX: RegExp = /\b(?:client\.(?:config)|config|env|process
 /**
  *
  * Stelle autoplay state.
- * @param boolean
+ * @param boolean The boolean.
  * @returns
  */
 export const AUTOPLAY_STATE = (boolean: boolean) => {
@@ -39,7 +39,7 @@ export const AUTOPLAY_STATE = (boolean: boolean) => {
 /**
  *
  * Stelle pause state.
- * @param boolean
+ * @param boolean The boolean.
  * @returns
  */
 export const PAUSE_STATE = (boolean: boolean) => {
@@ -53,8 +53,8 @@ export const PAUSE_STATE = (boolean: boolean) => {
 /**
  *
  * Stelle loop state.
- * @param mode
- * @param alt
+ * @param mode The mode.
+ * @param alt Return the alternative state.
  * @returns
  */
 export const LOOP_STATE = (mode: RepeatMode, alt?: boolean) => {

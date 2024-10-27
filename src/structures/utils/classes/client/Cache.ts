@@ -20,8 +20,8 @@ export class StelleCache {
     /**
      *
      * Get the data from the cache.
-     * @param guildId
-     * @param key
+     * @param guildId The guild id.
+     * @param key The key.
      * @returns
      */
     public get<T extends StelleKeys = StelleKeys>(guildId: string, key: T): Cache[T] | undefined {
@@ -31,7 +31,7 @@ export class StelleCache {
     /**
      *
      * Delete the data in the cache.
-     * @param guildId
+     * @param guildId The guild id.
      * @returns
      */
     public delete(guildId: string): boolean {
@@ -41,9 +41,9 @@ export class StelleCache {
     /**
      *
      * Set the data to the cache.
-     * @param guildId
-     * @param key
-     * @param data
+     * @param guildId The guild id.
+     * @param key The key.
+     * @param data The data.
      * @returns
      */
     public set<T extends StelleKeys = StelleKeys>(guildId: string, key: T, data: Cache[T]): void {

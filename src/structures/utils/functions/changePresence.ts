@@ -7,7 +7,7 @@ import { ms } from "#stelle/utils/TimeFormat.js";
 /**
  *
  * Change Stelle presence.
- * @param client
+ * @param client The client.
  */
 export function changePresence(client: UsingClient): void {
     let activity = 0;

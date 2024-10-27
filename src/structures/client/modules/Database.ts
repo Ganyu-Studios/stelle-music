@@ -23,7 +23,7 @@ export class StelleDatabase {
     /**
      *
      * Create a instance of the database.
-     * @param client
+     * @param client The client.
      */
     constructor(client: UsingClient) {
         this.client = client;
@@ -58,7 +58,7 @@ export class StelleDatabase {
     /**
      *
      * Get the guild locale from the database.
-     * @param guildId
+     * @param guildId The guild id.
      * @returns
      */
     public async getLocale(guildId: string): Promise<string> {
@@ -72,7 +72,7 @@ export class StelleDatabase {
     /**
      *
      * Get the guild prefix from the database.
-     * @param guildId
+     * @param guildId The guild id.
      * @returns
      */
     public async getPrefix(guildId: string): Promise<string> {
@@ -86,7 +86,7 @@ export class StelleDatabase {
     /**
      *
      * Get the guild player from the database.
-     * @param guildId
+     * @param guildId The guild id.
      * @returns
      */
     public async getPlayer(guildId: string): Promise<Pick<NonNullable<PlayerData>, "defaultVolume" | "searchEngine">> {
@@ -107,8 +107,8 @@ export class StelleDatabase {
     /**
      *
      * Set the guild locale to the database.
-     * @param guildId
-     * @param locale
+     * @param guildId The guild id.
+     * @param locale The locale.
      */
     public async setLocale(guildId: string, locale: string): Promise<void> {
         await this.prisma.guildLocale.upsert({
@@ -129,8 +129,8 @@ export class StelleDatabase {
     /**
      *
      * Set the guild prefix to the database.
-     * @param guildId
-     * @param prefix
+     * @param guildId The guild id.
+     * @param prefix The prefix.
      */
     public async setPrefix(guildId: string, prefix: string): Promise<void> {
         await this.prisma.guildPrefix.upsert({
@@ -151,7 +151,7 @@ export class StelleDatabase {
     /**
      *
      * Set the guild player to the database.
-     * @param param0
+     * @param options The player options.
      * @returns
      */
     public async setPlayer({ guildId, defaultVolume, searchEngine }: PlayerData): Promise<void> {

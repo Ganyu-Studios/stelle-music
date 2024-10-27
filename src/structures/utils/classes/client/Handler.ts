@@ -12,7 +12,7 @@ export class StelleHandler extends BaseHandler {
     /**
      *
      * Create a new instance of the handler.
-     * @param client
+     * @param client The client.
      */
     constructor(client: UsingClient) {
         super(client.logger);

@@ -2,8 +2,8 @@ import { LavalinkManager, type SearchPlatform, type Track } from "lavalink-clien
 
 import { StelleHandler } from "#stelle/utils/classes/client/Handler.js";
 
-import { autoPlayFunction } from "#stelle/utils/functions/autoplay.js";
 import type { UsingClient } from "seyfert";
+import { autoPlayFunction } from "#stelle/utils/functions/autoplay.js";
 
 /**
  * Main music manager class.
@@ -14,7 +14,7 @@ export class StelleManager extends LavalinkManager {
     /**
      *
      * Create a new instance of the manager.
-     * @param client
+     * @param client The client.
      */
     constructor(client: UsingClient) {
         super({
@@ -40,7 +40,7 @@ export class StelleManager extends LavalinkManager {
     /**
      *
      * Search tracks.
-     * @param query
+     * @param query The query.
      * @returns
      */
     public async search(query: string, source?: SearchPlatform): Promise<Track[]> {

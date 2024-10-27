@@ -5,6 +5,13 @@ export class InvalidEnvironment extends Error {
     }
 }
 
+export class InvalidComponentRun extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "Stelle [InvalidComponentRun]";
+    }
+}
+
 export class InvalidEmbedsLength extends Error {
     constructor(message: string) {
         super(message);

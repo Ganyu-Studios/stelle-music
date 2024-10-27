@@ -78,7 +78,7 @@ export async function onOptionsError(ctx: AnyContext) {
         .setDescription(
             messages.events.invalidOptions({
                 options: Formatter.codeBlock(options.map(({ option }) => option).join(" "), "js"),
-                list: options.map(({ option, description, range }) => `* \`${option}\` \`[${range || "---"}]\`: ${description}`).join("\n"),
+                list: options.map(({ option, description, range }) => `* \`${option}\` \`[${range || "N/A"}]\`: ${description}`).join("\n"),
             }),
         )
         .setTimestamp();

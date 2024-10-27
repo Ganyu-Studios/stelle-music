@@ -12,7 +12,7 @@ export class Lavalink<K extends keyof AllEvents = keyof AllEvents> implements La
     /**
      *
      * Create a new lavalink event.
-     * @param event
+     * @param event The event.
      */
     constructor(event: LavalinkEvent<K>) {
         this.name = event.name;

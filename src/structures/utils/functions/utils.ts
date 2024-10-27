@@ -1,5 +1,5 @@
-import type { Player } from "lavalink-client";
 import { inspect } from "node:util";
+import type { Player } from "lavalink-client";
 
 import { type AnyContext, type DefaultLocale, extendContext } from "seyfert";
 
@@ -19,7 +19,7 @@ export const customContext = extendContext((interaction) => ({
 /**
  *
  * Create and Get the cooldown collection key.
- * @param ctx
+ * @param ctx The context.
  * @returns
  */
 export const getCollectionKey = (ctx: AnyContext): string => {
@@ -34,7 +34,7 @@ export const getCollectionKey = (ctx: AnyContext): string => {
 /**
  *
  * Create a new progress bar.
- * @param player
+ * @param player The player.
  * @returns
  */
 export const createBar = (player: Player) => {
@@ -65,7 +65,7 @@ export const createBar = (player: Player) => {
 /**
  *
  * Check a flag in the process command.
- * @param flag
+ * @param flag The flag.
  * @returns
  */
 export const getFlag = (flag: string) => process.argv.includes(flag);
@@ -73,7 +73,7 @@ export const getFlag = (flag: string) => process.argv.includes(flag);
 /**
  *
  * Representation of a object.
- * @param error
+ * @param error The error.
  * @returns
  */
 export const getDepth = (error: any): string => inspect(error, { depth: 0 });
@@ -81,7 +81,7 @@ export const getDepth = (error: any): string => inspect(error, { depth: 0 });
 /**
  *
  * Slice text.
- * @param text
+ * @param text The text.
  * @returns
  */
 export const sliceText = (text: string, max: number = 100) => (text.length > max ? `${text.slice(0, max)}...` : text);

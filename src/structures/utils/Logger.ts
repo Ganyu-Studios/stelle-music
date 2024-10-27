@@ -3,12 +3,20 @@ import { LogLevels, gray, italic, red, rgb24, yellow } from "seyfert/lib/common/
 
 import { Configuration } from "./data/Configuration.js";
 
-const customColor = (text: string) => rgb24(text, Configuration.color.success);
+type ColorFunction = (text: string) => string;
+
+/**
+ *
+ * Custom color function.
+ * @param text The text.
+ * @returns
+ */
+const customColor: ColorFunction = (text: string) => rgb24(text, Configuration.color.success);
 
 /**
  *
  * Add padding to the label.
- * @param label
+ * @param label The label.
  * @returns
  */
 function addPadding(label: string): string {
@@ -109,9 +117,9 @@ function getRandomText(): string {
 /**
  *
  * Customize the Logger.
- * @param _this
- * @param level
- * @param args
+ * @param _this The logger itself.
+ * @param level The log level.
+ * @param args The log arguments.
  * @returns
  */
 export function customLogger(_this: Logger, level: LogLevels, args: unknown[]): unknown[] {
@@ -129,7 +137,7 @@ export function customLogger(_this: Logger, level: LogLevels, args: unknown[]): 
         [LogLevels.Fatal]: "💀",
     };
 
-    const colors: Record<LogLevels, Function> = {
+    const colors: Record<LogLevels, ColorFunction> = {
         [LogLevels.Debug]: gray,
         [LogLevels.Error]: red,
         [LogLevels.Info]: customColor,

@@ -1,4 +1,14 @@
-import { Declare, Command, type CommandContext, LocalesT, createStringOption, Options, ActionRow, Embed } from "seyfert";
+import {
+    ActionRow,
+    Command,
+    type CommandContext,
+    Declare,
+    Embed,
+    LocalesT,
+    Options,
+    StringSelectOption,
+    createStringOption,
+} from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
 import { Configuration } from "#stelle/data/Configuration.js";
@@ -41,11 +51,17 @@ export default class HelpCommand extends Command {
                 new StelleStringMenu({
                     custom_id: "guild-helpMenu",
                     placeholder: "Select a command category.",
-                    options: categoryList.map((category) => ({
-                        label: StelleCategory[category],
-                        value: category.toString(),
-                    })),
-                    run: async (interaction, setPage) => {
+                })
+                    .setOptions(
+                        categoryList.map((category) =>
+                            new StringSelectOption()
+                                .setLabel(StelleCategory[category])
+                                .setValue(category.toString())
+                                .setDescription(`Select the ${StelleCategory[category]} category.`)
+                                .setEmoji("📚"),
+                        ),
+                    )
+                    .setRun((interaction, setPage) => {
                         const category = interaction.values[0];
                         const commands = client.commands!.values.filter((command) => command.category === Number(category));
 
@@ -68,8 +84,7 @@ export default class HelpCommand extends Command {
                         }
 
                         return setPage(0);
-                    },
-                }),
+                    }),
             );
 
             paginator.setRows([row]);
@@ -83,6 +98,23 @@ export default class HelpCommand extends Command {
             return;
         }
 
-        await ctx.editOrReply({ content: "No touching!" });
+        const command = client.commands!.values.find((command) => command.name === options.command);
+        if (!command)
+            return ctx.editOrReply({
+                content: "Command not found!",
+                flags: 64,
+            });
+
+        const embed = new Embed()
+            .setColor("Blurple")
+            .setTitle("Help Menu")
+            .setDescription("Select a command to get more information.")
+            .addFields({
+                name: command.name,
+                value: command.description,
+                inline: true,
+            });
+
+        await ctx.editOrReply({ embeds: [embed] });
     }
 }
