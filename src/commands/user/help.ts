@@ -48,10 +48,9 @@ export default class HelpCommand extends Command {
             const paginator = new EmbedPaginator(ctx).setDisabled(true);
 
             const row = new ActionRow<StelleStringMenu>().addComponents(
-                new StelleStringMenu({
-                    custom_id: "guild-helpMenu",
-                    placeholder: "Select a command category.",
-                })
+                new StelleStringMenu()
+                    .setPlaceholder("Select a command category.")
+                    .setCustomId("guild-helpMenu")
                     .setOptions(
                         categoryList.map((category) =>
                             new StringSelectOption()
