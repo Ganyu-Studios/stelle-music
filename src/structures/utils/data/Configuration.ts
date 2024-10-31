@@ -36,7 +36,7 @@ export const Configuration: StelleConfiguration = {
         extra: 0xece8f1,
     },
     channels: {
-        guildsId: "1061102025548509255", // <-- Add / Removed guilds channel,
+        guildsId: "1061102025548509255", // <-- Added / Removed guilds channel,
         errorsId: "1104515104315289640", // <-- Errors channel.
     },
     cache: {
