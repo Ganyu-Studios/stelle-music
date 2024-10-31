@@ -1,8 +1,8 @@
-import { Command, type CommandContext, createStringOption, Declare, type Guild, Options } from "seyfert";
+import { Command, type CommandContext, Declare, type Guild, Options, createStringOption } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
-import { Configuration } from "#stelle/data/Configuration.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
+import { Configuration } from "#stelle/data/Configuration.js";
 
 const options = {
     event: createStringOption({
