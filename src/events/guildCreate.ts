@@ -15,6 +15,6 @@ export default createEvent({
                 { name: "`👥` Members", value: `\`${guild.memberCount}\``, inline: true },
             );
 
-        await client.messages.write(client.config.channels.guilds, { embeds: [embed] });
+        await client.messages.write(client.config.channels.guildsId, { embeds: [embed] });
     },
 });

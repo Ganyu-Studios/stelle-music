@@ -2,8 +2,10 @@ import { Embed, createEvent } from "seyfert";
 
 export default createEvent({
     data: { name: "guildDelete" },
-    run: async ({ id }, client) => {
-        const guild = await client.guilds.fetch(id).catch(() => null);
+    run: async (api, client) => {
+        if (!api.unavailable) return;
+
+        const guild = await client.guilds.fetch(api.id).catch(() => null);
         if (!guild) return;
 
         const embed = new Embed()
@@ -16,6 +18,6 @@ export default createEvent({
                 { name: "`👥` Members", value: `\`${guild.memberCount}\``, inline: true },
             );
 
-        await client.messages.write(client.config.channels.guilds, { embeds: [embed] });
+        await client.messages.write(client.config.channels.guildsId, { embeds: [embed] });
     },
 });

@@ -14,7 +14,7 @@ interface Cache {
  */
 export class StelleCache {
     readonly internal: LimitedCollection<string, LimitedCollection<StelleKeys, unknown>> = new LimitedCollection({
-        limit: Configuration.maxCache,
+        limit: Configuration.cache.size,
     });
 
     /**
