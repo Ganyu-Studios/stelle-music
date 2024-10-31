@@ -8,6 +8,7 @@ import { Configuration } from "#stelle/data/Configuration.js";
     name: "reload",
     description: "Reload Stelle.",
     guildId: Configuration.guildIds,
+    defaultMemberPermissions: ["ManageGuild", "Administrator"],
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
 })

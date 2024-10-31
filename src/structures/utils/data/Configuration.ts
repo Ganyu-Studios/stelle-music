@@ -17,6 +17,7 @@ export const Configuration: StelleConfiguration = {
         "1075885077529120798", // <-- PenwinSquad
         "970508955363188736", // <-- Ganyu Studios
         "1213361742571241492", // <-- Team Genesis
+        "1003825077969764412", // <-- Seyfert
     ],
     nodes: [
         {
@@ -32,5 +33,9 @@ export const Configuration: StelleConfiguration = {
     color: {
         success: 0x8d86a8,
         extra: 0xece8f1,
+    },
+    channels: {
+        guilds: "1061102025548509255",
+        errors: "1104515104315289640",
     },
 };

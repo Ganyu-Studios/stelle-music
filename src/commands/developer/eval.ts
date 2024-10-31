@@ -21,6 +21,7 @@ const options = {
     description: "Eval code with Stelle.",
     aliases: ["code"],
     guildId: Configuration.guildIds,
+    defaultMemberPermissions: ["ManageGuild", "Administrator"],
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
 })

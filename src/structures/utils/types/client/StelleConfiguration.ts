@@ -7,6 +7,13 @@ interface StelleColors {
     extra: number;
 }
 
+interface StelleChannels {
+    /** Stelle added or removed guilds log channel. */
+    guilds: string;
+    /** Stelle errors log channel. */
+    errors: string;
+}
+
 export interface StelleConfiguration {
     /**
      * Stelle default prefix.
@@ -56,4 +63,6 @@ export interface StelleConfiguration {
     nodes: LavalinkNodeOptions[];
     /** Stelle colors. */
     color: StelleColors;
+    /** Stelle channels. */
+    channels: StelleChannels;
 }
