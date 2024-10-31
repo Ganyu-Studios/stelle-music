@@ -16,7 +16,7 @@ interface StelleChannels {
 
 interface StelleCache {
     /**
-     * Stelle commands cache path.
+     * Stelle commands cache filename.
      * @default "commands.json"
      */
     filename: string;
