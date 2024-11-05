@@ -13,6 +13,11 @@ interface Cache {
  * Main Stelle cache class.
  */
 export class StelleCache {
+    /**
+     *
+     * The internal cache.
+     * @readonly
+     */
     readonly internal: LimitedCollection<string, LimitedCollection<StelleKeys, unknown>> = new LimitedCollection({
         limit: Configuration.cache.size,
     });
@@ -36,6 +41,17 @@ export class StelleCache {
      */
     public delete(guildId: string): boolean {
         return this.internal.delete(guildId);
+    }
+
+    /**
+     *
+     * Delete the data in the cache.
+     * @param guildId The guild id.
+     * @param key The key.
+     * @returns
+     */
+    public deleteKey<T extends StelleKeys = StelleKeys>(guildId: string, key: T): boolean {
+        return this.internal.get(guildId)?.delete(key) ?? false;
     }
 
     /**

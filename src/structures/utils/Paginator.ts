@@ -99,7 +99,7 @@ export class EmbedPaginator {
     /**
      * The rows of the paginator.
      */
-    private rows: ActionRow<StelleButton | StelleStringMenu>[] = [];
+    private rows: ActionRow<StelleComponents>[] = [];
     /**
      * The disabled type of the paginator.
      */
@@ -148,12 +148,21 @@ export class EmbedPaginator {
     /**
      *
      * Create the component collector.
+     * @param flags The message flags.
      * @returns
      */
-    private async createCollector() {
+    private async createCollector(flags?: MessageFlags): Promise<this> {
         const { messages } = await this.ctx.getLocale();
 
-        if (!this.message) return;
+        this.message = await this.ctx.editOrReply(
+            {
+                content: "",
+                embeds: [this.embeds[this.pages]],
+                components: this.getRows(),
+                flags,
+            },
+            true,
+        );
 
         const collector = this.message.createComponentCollector({
             idle: 60e3,
@@ -171,18 +180,15 @@ export class EmbedPaginator {
             },
             onStop: async (reason) => {
                 if (reason === "idle") {
-                    const components: ActionRow<Button | StringSelectMenu>[] = [];
-
-                    for (const component of this.message!.components) {
-                        components.push(
+                    const components: ActionRow<Button | StringSelectMenu>[] = this.message!.components.map(
+                        (component) =>
                             new ActionRow({
                                 components: component.components.map((row) => {
                                     row.data.disabled = true;
                                     return row.toJSON();
                                 }),
                             }),
-                        );
-                    }
+                    );
 
                     await this.ctx.client.messages.edit(this.message!.id, this.message!.channelId, { components }).catch(() => null);
                 }
@@ -222,6 +228,8 @@ export class EmbedPaginator {
                 }
             });
         }
+
+        return this;
     }
 
     /**
@@ -307,25 +315,11 @@ export class EmbedPaginator {
      *
      * Send the embed pagination.
      * @param ephemeral If the message should be ephemeral.
+     * @returns
      */
-    public async reply(ephemeral: boolean = false): Promise<this> {
+    public reply(ephemeral: boolean = false): Promise<this> {
         if (!this.embeds.length) throw new InvalidEmbedsLength("I can't send the pagination without embeds.");
-
-        const flags = ephemeral ? MessageFlags.Ephemeral : undefined;
-
-        this.message = await this.ctx.editOrReply(
-            {
-                content: "",
-                embeds: [this.embeds[this.pages]],
-                components: this.getRows(),
-                flags,
-            },
-            true,
-        );
-
-        await this.createCollector();
-
-        return this;
+        return this.createCollector(ephemeral ? MessageFlags.Ephemeral : undefined);
     }
 
     /**

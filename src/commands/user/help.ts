@@ -11,6 +11,7 @@ import {
 } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
+import { MessageFlags } from "seyfert/lib/types/index.js";
 import { Configuration } from "#stelle/data/Configuration.js";
 import { StelleCategory } from "#stelle/types";
 import { EmbedPaginator, StelleStringMenu } from "#stelle/utils/Paginator.js";
@@ -101,7 +102,7 @@ export default class HelpCommand extends Command {
         if (!command)
             return ctx.editOrReply({
                 content: "Command not found!",
-                flags: 64,
+                flags: MessageFlags.Ephemeral,
             });
 
         const embed = new Embed()
