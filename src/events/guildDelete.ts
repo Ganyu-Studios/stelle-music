@@ -1,12 +1,10 @@
-import { Embed, createEvent } from "seyfert";
+import { Embed, Guild, createEvent } from "seyfert";
 
 export default createEvent({
     data: { name: "guildDelete" },
-    run: async (api, client) => {
-        if (!api.unavailable) return;
-
-        const guild = await client.guilds.fetch(api.id).catch(() => null);
-        if (!guild) return;
+    run: async (guild, client) => {
+        if (guild.unavailable) return;
+        if (!(guild instanceof Guild)) return;
 
         const embed = new Embed()
             .setColor(client.config.color.success)
