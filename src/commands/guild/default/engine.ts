@@ -1,4 +1,3 @@
-import type { SearchPlatform } from "lavalink-client";
 import { type CommandContext, Declare, LocalesT, Options, SubCommand, createStringOption } from "seyfert";
 
 const engines: Record<string, string> = {
@@ -52,8 +51,7 @@ export default class EngineSubcommand extends SubCommand {
 
         const { messages } = await ctx.getLocale();
 
-        // yunaforsefert breaks the type of the engine option
-        await client.database.setPlayer({ guildId, searchEngine: engine as SearchPlatform });
+        await client.database.setPlayer({ guildId, searchEngine: engine });
         await ctx.editOrReply({
             embeds: [
                 {

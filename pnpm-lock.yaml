@@ -21,8 +21,8 @@ importers:
         specifier: github:tiramisulabs/seyfert
         version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/136262f989e6f334fd2f543c398a9574c46d43cd
       yunaforseyfert:
-        specifier: ^1.0.2
-        version: 1.0.2
+        specifier: ^1.0.4
+        version: 1.0.4
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.9.4
@@ -560,8 +560,8 @@ packages:
     engines: {node: '>= 14'}
     hasBin: true
 
-  yunaforseyfert@1.0.2:
-    resolution: {integrity: sha512-RVJ6cUX0OyjBjFEyY2B46gjNvDaItrGmtVtWR6AsfGykECIlE/2SFa4db4JTu0S1AfgLtvosBHsOtqMU6JW7hA==}
+  yunaforseyfert@1.0.4:
+    resolution: {integrity: sha512-32aAitnFe5xCpRfjvYpYV0OQIb1GiMxbDa88UvnIrmyzTr1t6hNeVFsWXxHzYxAkmPQEs+1DIM0glmNHn96dCg==}
 
 snapshots:
 
@@ -971,4 +971,4 @@ snapshots:
 
   yaml@2.5.1: {}
 
-  yunaforseyfert@1.0.2: {}
+  yunaforseyfert@1.0.4: {}

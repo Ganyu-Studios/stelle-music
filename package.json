@@ -36,7 +36,7 @@
         "dotenv": "^16.4.5",
         "lavalink-client": "^2.4.1",
         "seyfert": "github:tiramisulabs/seyfert",
-        "yunaforseyfert": "^1.0.2"
+        "yunaforseyfert": "^1.0.4"
     },
     "devDependencies": {
         "@biomejs/biome": "^1.9.4",
