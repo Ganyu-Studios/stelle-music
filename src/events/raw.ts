@@ -5,5 +5,5 @@ type AnyPacket = VoicePacket | VoiceServer | VoiceState | ChannelDeletePacket;
 
 export default createEvent({
     data: { name: "raw" },
-    run: async (data, client) => await client.manager.sendRawData(data as AnyPacket),
+    run: (data, client) => client.manager.sendRawData(data as AnyPacket),
 });
