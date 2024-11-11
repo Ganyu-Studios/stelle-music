@@ -13,7 +13,6 @@ import { StelleOptions } from "#stelle/decorators";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { type APIApplicationCommandOption, MessageFlags } from "seyfert/lib/types/index.js";
-import { Configuration } from "#stelle/data/Configuration.js";
 import { StelleCategory } from "#stelle/types";
 import { EmbedPaginator, StelleStringMenu } from "#stelle/utils/Paginator.js";
 import { formatOptions } from "#stelle/utils/functions/formatter.js";
@@ -31,7 +30,6 @@ const options = {
 @Declare({
     name: "help",
     description: "The most useful command in the world!",
-    guildId: Configuration.guildIds,
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
 })
