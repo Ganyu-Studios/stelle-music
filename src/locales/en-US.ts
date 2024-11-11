@@ -1,6 +1,6 @@
 import type { RepeatMode } from "lavalink-client";
 import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
-import type { PausedMode, PermissionNames } from "#stelle/types";
+import { type PausedMode, type PermissionNames, StelleCategory } from "#stelle/types";
 
 export default {
     metadata: {
@@ -18,6 +18,26 @@ export default {
             previous: ({ title, uri }: IPrevious) => `\`✅\` The previous track [**${title}**](${uri}) has been added to the queue.`,
             stop: "`👋` Stopping and leaving...",
             shuffle: "`✅` The queue has been shuffled.",
+            help: {
+                noCommand: "`❌` **No command** was found for this search...",
+                title: ({ clientName }: Pick<IMention, "clientName">) => `${clientName} - Help Menu`,
+                description: ({ defaultPrefix }: Pick<IHelp, "defaultPrefix">) =>
+                    `\`📦\` Hello! Here is the information about my commands and stuff.\n\`📜\` Select the command category of your choice.\n\n-# You can search a specific command by typing: \`${defaultPrefix} help <command>\``,
+                selectMenu: {
+                    description: ({ category }: IHelpMenu) => `Select the ${category} category.`,
+                    placeholder: "Select a command category.",
+                    options: {
+                        description: ({ options }: Pick<IHelp, "options">) => `**Optional []**\n**Required <>**\n\n${options}`,
+                        title: ({ clientName, category }: IHelpMenuEmbed) => `${clientName} - Help Menu | ${category}`,
+                    },
+                },
+                aliases: {
+                    [StelleCategory.Unknown]: "Unknown",
+                    [StelleCategory.User]: "User",
+                    [StelleCategory.Music]: "Music",
+                    [StelleCategory.Guild]: "Guild",
+                } satisfies Record<StelleCategory, string>,
+            },
             default: {
                 engine: ({ engine }: IEngine) => `\`✅\` The default search engine of Stelle is now: **${engine}**.`,
                 volume: ({ volume }: IVolume) => `\`✅\` The default volume of Stelle is now: **${volume}%**.`,
@@ -338,6 +358,9 @@ export default {
     },
 };
 
+type IHelpMenuEmbed = Pick<IMention, "clientName"> & IHelpMenu;
+type IHelp = { defaultPrefix: string; options: string };
+type IHelpMenu = { category: string };
 type IMention = { clientName: string; defaultPrefix: string; commandName: string };
 type INowplaying = { title: string; url: string; duration: string; requester: string; author: string; bar: string; position: string };
 type IEngine = { engine: string };

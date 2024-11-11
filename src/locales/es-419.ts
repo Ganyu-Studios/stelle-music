@@ -1,6 +1,7 @@
 import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 
 import type { DefaultLocale } from "seyfert";
+import { StelleCategory } from "#stelle/types";
 
 export default {
     metadata: {
@@ -18,6 +19,26 @@ export default {
             previous: ({ title, uri }) => `\`✅\` La canción anterior [**${title}**](${uri}) ha sido añadida a la cola.`,
             stop: "`👋` Deteniendo y abandonando el canal...",
             shuffle: "`✅` La cola ha sido mezclada.",
+            help: {
+                noCommand: "`❌` **No se encontró** ningún comando para esta búsqueda...",
+                title: ({ clientName }) => `${clientName} - Menú de Ayuda`,
+                description: ({ defaultPrefix }) =>
+                    `\`📦\` ¡Hola! Aquí está la información sobre mis comandos y cosas.\n\`📜\` Selecciona la categoría de comando de tu elección.\n\n-# Puedes buscar un comando específico escribiendo: \`${defaultPrefix} help <comando>\``,
+                selectMenu: {
+                    description: ({ category }) => `Selecciona la categoría ${category}.`,
+                    placeholder: "Selecciona una categoría de comando.",
+                    options: {
+                        description: ({ options }) => `**Opcional []**\n**Requerido <>**\n\n${options}`,
+                        title: ({ clientName, category }) => `${clientName} - Menú de Ayuda | ${category}`,
+                    },
+                },
+                aliases: {
+                    [StelleCategory.Unknown]: "Desconocido",
+                    [StelleCategory.User]: "Usuario",
+                    [StelleCategory.Music]: "Música",
+                    [StelleCategory.Guild]: "Servidor",
+                },
+            },
             default: {
                 engine: ({ engine }) => `\`✅\` El tipo de búsqueda por defecto de Stelle ahora es: **${engine}**.`,
                 volume: ({ volume }) => `\`✅\` El volumen por defecto de Stelle ahora es: **${volume}%**.`,

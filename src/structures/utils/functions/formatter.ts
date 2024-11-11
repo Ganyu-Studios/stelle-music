@@ -1,5 +1,11 @@
 import { type APIApplicationCommandOption, ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 
+type FormattedOption = {
+    option: string;
+    description: string;
+    range: string;
+};
+
 /**
  *
  * Check if the option is required.
@@ -8,12 +14,6 @@ import { type APIApplicationCommandOption, ApplicationCommandOptionType } from "
  * @returns
  */
 const isRequired = (option: string, req?: boolean) => (req ? `<${option}>` : `[${option}]`);
-
-type FormattedOption = {
-    option: string;
-    description: string;
-    range: string;
-};
 
 /**
  *
