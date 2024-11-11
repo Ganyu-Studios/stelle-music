@@ -1,6 +1,7 @@
 import type { RepeatMode } from "lavalink-client";
-import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 import { type PausedMode, type PermissionNames, StelleCategory } from "#stelle/types";
+
+import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 
 export default {
     metadata: {

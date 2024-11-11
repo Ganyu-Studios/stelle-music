@@ -1,6 +1,6 @@
-import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
-
 import type { DefaultLocale } from "seyfert";
+
+import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 
 export default {
