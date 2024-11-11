@@ -7,7 +7,7 @@ const maxTracks = 10;
 
 /**
  * Based on:
- * https://github.com/Tomato6966/lavalink-client/blob/main/testBot/Utils/OptionalFunctions.ts#L18
+ * https://github.com/Tomato6966/lavalink-client/blob/main/testBot/Utils/OptionalFunctions.ts#L20
  *
  * Modified by: https://github.com/NoBody-UU/
  */
