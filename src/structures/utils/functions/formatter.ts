@@ -1,7 +1,5 @@
 import { type APIApplicationCommandOption, ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 
-const isRequired = (option: string, req?: boolean) => (req ? `<${option}>` : `[${option}]`);
-
 type FormattedOption = {
     option: string;
     description: string;
@@ -10,8 +8,17 @@ type FormattedOption = {
 
 /**
  *
+ * Check if the option is required.
+ * @param option The command option.
+ * @param req If the option is required.
+ * @returns
+ */
+const isRequired = (option: string, req?: boolean) => (req ? `<${option}>` : `[${option}]`);
+
+/**
+ *
  * Format the options and descriptions.
- * @param options
+ * @param options The options.
  * @returns
  */
 export function formatOptions(
@@ -45,7 +52,7 @@ export function formatOptions(
 /**
  *
  * Get the option min/max value.
- * @param option
+ * @param option The option.
  * @returns
  */
 function getRange(option: APIApplicationCommandOption): string {

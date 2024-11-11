@@ -1,8 +1,8 @@
 import { LavalinkManager, type SearchPlatform, type Track } from "lavalink-client";
 
-import type { Stelle } from "#stelle/client";
 import { StelleHandler } from "#stelle/utils/classes/client/Handler.js";
 
+import type { UsingClient } from "seyfert";
 import { autoPlayFunction } from "#stelle/utils/functions/autoplay.js";
 
 /**
@@ -14,9 +14,9 @@ export class StelleManager extends LavalinkManager {
     /**
      *
      * Create a new instance of the manager.
-     * @param client
+     * @param client The client.
      */
-    constructor(client: Stelle) {
+    constructor(client: UsingClient) {
         super({
             nodes: client.config.nodes,
             sendToShard: (guildId, payload) => client.gateway.send(client.gateway.calculateShardId(guildId), payload),
@@ -40,7 +40,7 @@ export class StelleManager extends LavalinkManager {
     /**
      *
      * Search tracks.
-     * @param query
+     * @param query The query.
      * @returns
      */
     public async search(query: string, source?: SearchPlatform): Promise<Track[]> {

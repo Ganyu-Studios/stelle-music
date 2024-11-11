@@ -15,6 +15,7 @@ export default createEvent({
 
         await client.database.connect();
         await client.manager.init({ id: user.id, username: clientName });
-        await changePresence(client);
+
+        changePresence(client);
     },
 });

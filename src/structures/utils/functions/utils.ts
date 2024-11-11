@@ -1,11 +1,7 @@
-import type { AnyContext } from "#stelle/types";
+import { inspect } from "node:util";
 import type { Player } from "lavalink-client";
 
-import { join } from "node:path";
-import { inspect } from "node:util";
-
-import { type DefaultLocale, extendContext } from "seyfert";
-import { magicImport } from "seyfert/lib/common/index.js";
+import { type AnyContext, type DefaultLocale, extendContext } from "seyfert";
 
 /**
  * Stelle custom context.
@@ -22,27 +18,8 @@ export const customContext = extendContext((interaction) => ({
 
 /**
  *
- * Stelle custom runtime configuration.
- * @returns
- */
-export const stelleRC = async (): Promise<any> => {
-    const { locations, debug, ...env } = await magicImport(join(process.cwd(), "seyfert.config.js")).then((x) => x.default ?? x);
-    return {
-        ...env,
-        debug: !!debug,
-        lavalink: join(process.cwd(), locations.output, locations.lavalink),
-        templates: locations.templates ? join(process.cwd(), locations.base, locations.templates) : undefined,
-        langs: locations.langs ? join(process.cwd(), locations.output, locations.langs) : undefined,
-        events: locations.events ? join(process.cwd(), locations.output, locations.events) : undefined,
-        components: locations.components ? join(process.cwd(), locations.output, locations.components) : undefined,
-        commands: locations.commands ? join(process.cwd(), locations.output, locations.commands) : undefined,
-    };
-};
-
-/**
- *
  * Create and Get the cooldown collection key.
- * @param ctx
+ * @param ctx The context.
  * @returns
  */
 export const getCollectionKey = (ctx: AnyContext): string => {
@@ -57,7 +34,7 @@ export const getCollectionKey = (ctx: AnyContext): string => {
 /**
  *
  * Create a new progress bar.
- * @param player
+ * @param player The player.
  * @returns
  */
 export const createBar = (player: Player) => {
@@ -87,58 +64,24 @@ export const createBar = (player: Player) => {
 
 /**
  *
- * Make an id from a specific length.
- * @param length
- * @returns
- */
-export const makeId = (length: number) => {
-    let result = "";
-
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const charactersLength = characters.length;
-
-    for (let i = 0; i < length; i++) result += characters.charAt(Math.floor(Math.random() * charactersLength));
-
-    return result;
-};
-
-/**
- *
  * Check a flag in the process command.
- * @param flag
+ * @param flag The flag.
  * @returns
  */
 export const getFlag = (flag: string) => process.argv.includes(flag);
 
 /**
  *
- * Convert a number color to HEX.
- * @param color - The color number
- * @returns
- */
-export const convertToHEX = (color?: number) => (color ? `#${color.toString(16).padStart(6, "0")}` : "#FFFFFF");
-
-/**
- *
  * Representation of a object.
- * @param error
+ * @param error The error.
  * @returns
  */
 export const getDepth = (error: any): string => inspect(error, { depth: 0 });
 
 /**
  *
- * Create a new codeblock.
- * @param language
- * @param code
- * @returns
- */
-export const codeBlock = (language: string, code: string) => `\`\`\`${language}\n${code}\n\`\`\``;
-
-/**
- *
  * Slice text.
- * @param text
+ * @param text The text.
  * @returns
  */
 export const sliceText = (text: string, max: number = 100) => (text.length > max ? `${text.slice(0, max)}...` : text);

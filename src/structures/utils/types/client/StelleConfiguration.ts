@@ -7,6 +7,26 @@ interface StelleColors {
     extra: number;
 }
 
+interface StelleChannels {
+    /** Stelle added or removed guilds log channel id. */
+    guildsId: string;
+    /** Stelle errors log channel id. */
+    errorsId: string;
+}
+
+interface StelleCache {
+    /**
+     * Stelle commands cache filename.
+     * @default "commands.json"
+     */
+    filename: string;
+    /**
+     * Stelle cache max size.
+     * @default 5
+     */
+    size: number;
+}
+
 export interface StelleConfiguration {
     /**
      * Stelle default prefix.
@@ -38,16 +58,6 @@ export interface StelleConfiguration {
      * @default ms("30s")
      */
     disconnectTime: number;
-    /**
-     * Stelle cache max size.
-     * @default 25
-     */
-    maxCache: number;
-    /**
-     * Stelle commands cache path.
-     * @default commands.json
-     */
-    cachePath: string;
     /** Stelle developer id(s). */
     developerIds: string[];
     /** Stelle developer guild id(s). */
@@ -56,4 +66,7 @@ export interface StelleConfiguration {
     nodes: LavalinkNodeOptions[];
     /** Stelle colors. */
     color: StelleColors;
+    /** Stelle channels. */
+    channels: StelleChannels;
+    cache: StelleCache;
 }

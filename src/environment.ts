@@ -12,11 +12,16 @@ declare module "seyfert" {
         withPrefix: true;
     }
 
+    interface ExtendedRCLocations {
+        lavalink: string;
+    }
+
     interface Command extends Options { }
     interface SubCommand extends Options { }
     interface ComponentCommand extends Options { }
     interface ModalCommand extends Options { }
     interface ContextMenuCommand extends Options { }
+    interface EntryPointCommand extends Options { }
 
     interface UsingClient extends ParseClient<Stelle> { }
     interface RegisteredMiddlewares extends ParseMiddlewares<typeof StelleMiddlewares> { }

@@ -1,6 +1,7 @@
-import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
-
 import type { DefaultLocale } from "seyfert";
+
+import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
+import { StelleCategory } from "#stelle/types";
 
 export default {
     metadata: {
@@ -10,13 +11,34 @@ export default {
     },
     messages: {
         commands: {
-            nowplaying: ({ title, url, author, requester, bar, duration, position }) => `\`📻\` Ahora: [\`${title}\`](${url}) - \`${author}\`\n\`👤\` **Solicitado por**: <@${requester}>\n \n\`🕛\` ${bar} | \`${position}\` - \`(${duration})\``,
+            nowplaying: ({ title, url, author, requester, bar, duration, position }) =>
+                `\`📻\` Ahora: [\`${title}\`](${url}) - \`${author}\`\n\`👤\` **Solicitado por**: <@${requester}>\n \n\`🕛\` ${bar} | \`${position}\` - \`(${duration})\``,
             setprefix: ({ prefix }) => `\`✅\` El **nuevo prefijo** para este servidor es: \`${prefix}\``,
             skip: ({ amount }) => `\`✅\` Saltando la cantidad de: \`${amount} canciones\`.`,
             move: ({ textId, voiceId }) => `\`✅\` Me movi al canal de voz <#${voiceId}> y canal de texto: <#${textId}>`,
             previous: ({ title, uri }) => `\`✅\` La canción anterior [**${title}**](${uri}) ha sido añadida a la cola.`,
             stop: "`👋` Deteniendo y abandonando el canal...",
             shuffle: "`✅` La cola ha sido mezclada.",
+            help: {
+                noCommand: "`❌` **No se encontró** ningún comando para esta búsqueda...",
+                title: ({ clientName }) => `${clientName} - Menú de Ayuda`,
+                description: ({ defaultPrefix }) =>
+                    `\`📦\` ¡Hola! Aquí está la información sobre mis comandos y cosas.\n\`📜\` Selecciona la categoría de comando de tu elección.\n\n-# Puedes buscar un comando específico escribiendo: \`${defaultPrefix} help <comando>\``,
+                selectMenu: {
+                    description: ({ category }) => `Selecciona la categoría ${category}.`,
+                    placeholder: "Selecciona una categoría de comando.",
+                    options: {
+                        description: ({ options }) => `**Opcional []**\n**Requerido <>**\n\n${options}`,
+                        title: ({ clientName, category }) => `${clientName} - Menú de Ayuda | ${category}`,
+                    },
+                },
+                aliases: {
+                    [StelleCategory.Unknown]: "Desconocido",
+                    [StelleCategory.User]: "Usuario",
+                    [StelleCategory.Music]: "Música",
+                    [StelleCategory.Guild]: "Servidor",
+                },
+            },
             default: {
                 engine: ({ engine }) => `\`✅\` El tipo de búsqueda por defecto de Stelle ahora es: **${engine}**.`,
                 volume: ({ volume }) => `\`✅\` El volumen por defecto de Stelle ahora es: **${volume}%**.`,
@@ -99,8 +121,9 @@ export default {
                 `\`❌\` Opciones o argumentos del comando inválidos.\n- **Requerido**: \`<>\`\n- **Opcional**: \`[]\`\n\n\`📋\` **Uso**:\n ${options}\n\`📢\` **Opciones Disponibles**:\n${list}`,
             playerQueue: ({ tracks }) => `\`📋\` Aquí está la cola completa del servidor: \n\n${tracks}`,
             channelEmpty: ({ type }) => `\`🎧\` Stelle está sola en el **canal de voz**... Pausando y esperando **${type}**.`,
-            mention: ({ clientName, defaultPrefix, commandId, commandName }) => `\`📢\` Hey! Mi nombre es: **${clientName}** y mi prefijo es: \`${defaultPrefix}\` y **/** también!\n\`📋\` Si tu quieres ver mis comandos, escribe: \`${defaultPrefix} ${commandName}\` o </${commandName}:${commandId}>.`,  
-            noCommand: "`❌` No tengo el comando necesitado *todavía*, intenta de nuevo en un momento.",  
+            mention: ({ clientName, defaultPrefix, commandName }) =>
+                `\`📢\` Hey! Mi nombre es: **${clientName}** y mi prefijo es: \`${defaultPrefix}\` y **/** también!\n\`📋\` Si tu quieres ver mis comandos, escribe: \`${defaultPrefix} ${commandName}\` o /${commandName}.`,
+            noCommand: "`❌` No tengo el comando necesitado *todavía*, intenta de nuevo en un momento.",
             noMembers: "`🎧` Stelle está sola en el **canal de voz**... Abandonando el canal.",
             hasMembers: "`🎧` Stelle dejó de estar sola... Resumiendo.",
             onlyDeveloper: "`❌` Solo el **dueño del bot** puede usar esto.",
@@ -324,7 +347,15 @@ export default {
         },
         nowplaying: {
             name: "sonando",
-            description: "Obtén la canción actual."
-        }
+            description: "Obtén la canción actual.",
+        },
+        help: {
+            name: "ayuda",
+            description: "El comando mas útil del mundo!",
+            option: {
+                name: "comando",
+                description: "El comando a obtener ayuda.",
+            },
+        },
     },
 } satisfies DefaultLocale;

@@ -1,5 +1,4 @@
-
-import { Declare, Command, type CommandContext } from "seyfert";
+import { Command, type CommandContext, Declare } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
@@ -10,9 +9,17 @@ import { StelleCategory } from "#stelle/types";
     contexts: ["Guild"],
     aliases: ["shu", "sh", "shuf"],
 })
-@StelleOptions({ cooldown: 5,  category: StelleCategory.Music, checkNodes: true, checkPlayer: true, checkQueue: true, inVoice: true, sameVoice: true, })
+@StelleOptions({
+    cooldown: 5,
+    category: StelleCategory.Music,
+    checkNodes: true,
+    checkPlayer: true,
+    checkQueue: true,
+    inVoice: true,
+    sameVoice: true,
+})
 export default class ShuffleCommand extends Command {
-    public override async run (ctx: CommandContext) {
+    public override async run(ctx: CommandContext) {
         const { client } = ctx;
 
         const player = client.manager.getPlayer(ctx.guildId!);

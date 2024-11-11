@@ -3,13 +3,12 @@ import { PrismaClient } from "@prisma/client";
 import type { SearchPlatform } from "lavalink-client";
 import type { UsingClient } from "seyfert";
 
-import { Configuration } from "#stelle/data/Configuration.js";
 import { StelleCache } from "#stelle/classes";
+import { Configuration } from "#stelle/data/Configuration.js";
 import { StelleKeys } from "#stelle/types";
 
 //🗿
 const prismaClient = new PrismaClient();
-
 
 /**
  * Main Stelle database class.
@@ -18,13 +17,13 @@ export class StelleDatabase {
     private client: UsingClient;
     private prisma!: PrismaClient;
 
-    private storage: StelleCache = new StelleCache();
+    private cache: StelleCache = new StelleCache();
     private connected: boolean = false;
 
     /**
      *
      * Create a instance of the database.
-     * @param client
+     * @param client The client.
      */
     constructor(client: UsingClient) {
         this.client = client;
@@ -39,7 +38,7 @@ export class StelleDatabase {
     /**
      * Return if Stelle is connected to the Database.
      */
-    public get isConnected(): boolean {
+    public isConnected(): boolean {
         return this.connected;
     }
 
@@ -59,11 +58,11 @@ export class StelleDatabase {
     /**
      *
      * Get the guild locale from the database.
-     * @param guildId
+     * @param guildId The guild id.
      * @returns
      */
     public async getLocale(guildId: string): Promise<string> {
-        const cached = this.storage.get(guildId, StelleKeys.Locale);
+        const cached = this.cache.get(guildId, StelleKeys.Locale);
         if (cached) return cached.locale!;
 
         const data = await this.prisma.guildLocale.findUnique({ where: { id: guildId } });
@@ -73,11 +72,11 @@ export class StelleDatabase {
     /**
      *
      * Get the guild prefix from the database.
-     * @param guildId
+     * @param guildId The guild id.
      * @returns
      */
     public async getPrefix(guildId: string): Promise<string> {
-        const cached = this.storage.get(guildId, StelleKeys.Prefix);
+        const cached = this.cache.get(guildId, StelleKeys.Prefix);
         if (cached) return cached.prefix!;
 
         const data = await this.prisma.guildPrefix.findUnique({ where: { id: guildId } });
@@ -87,15 +86,16 @@ export class StelleDatabase {
     /**
      *
      * Get the guild player from the database.
-     * @param guildId
+     * @param guildId The guild id.
      * @returns
      */
     public async getPlayer(guildId: string): Promise<Pick<NonNullable<PlayerData>, "defaultVolume" | "searchEngine">> {
-        const cached = this.storage.get(guildId, StelleKeys.Player);
-        if (cached) return {
-            defaultVolume: cached.defaultVolume!,
-            searchEngine: cached.searchEngine! as SearchPlatform,
-        };
+        const cached = this.cache.get(guildId, StelleKeys.Player);
+        if (cached)
+            return {
+                defaultVolume: cached.defaultVolume!,
+                searchEngine: cached.searchEngine! as SearchPlatform,
+            };
 
         const data = await this.prisma.guildPlayer.findUnique({ where: { id: guildId } });
         return {
@@ -107,8 +107,8 @@ export class StelleDatabase {
     /**
      *
      * Set the guild locale to the database.
-     * @param guildId
-     * @param locale
+     * @param guildId The guild id.
+     * @param locale The locale.
      */
     public async setLocale(guildId: string, locale: string): Promise<void> {
         await this.prisma.guildLocale.upsert({
@@ -120,7 +120,7 @@ export class StelleDatabase {
             },
         });
 
-        this.storage.set(guildId, StelleKeys.Locale, {
+        this.cache.set(guildId, StelleKeys.Locale, {
             id: guildId,
             locale,
         });
@@ -129,8 +129,8 @@ export class StelleDatabase {
     /**
      *
      * Set the guild prefix to the database.
-     * @param guildId
-     * @param prefix
+     * @param guildId The guild id.
+     * @param prefix The prefix.
      */
     public async setPrefix(guildId: string, prefix: string): Promise<void> {
         await this.prisma.guildPrefix.upsert({
@@ -142,7 +142,7 @@ export class StelleDatabase {
             },
         });
 
-        this.storage.set(guildId, StelleKeys.Prefix, {
+        this.cache.set(guildId, StelleKeys.Prefix, {
             id: guildId,
             prefix,
         });
@@ -151,7 +151,7 @@ export class StelleDatabase {
     /**
      *
      * Set the guild player to the database.
-     * @param param0
+     * @param options The player options.
      * @returns
      */
     public async setPlayer({ guildId, defaultVolume, searchEngine }: PlayerData): Promise<void> {
@@ -166,7 +166,7 @@ export class StelleDatabase {
             create: { id: guildId, defaultVolume, searchEngine },
         });
 
-        this.storage.set(guildId, StelleKeys.Player, {
+        this.cache.set(guildId, StelleKeys.Player, {
             id: guildId,
             defaultVolume: defaultVolume!,
             searchEngine: searchEngine as SearchPlatform,

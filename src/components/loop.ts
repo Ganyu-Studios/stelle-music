@@ -4,7 +4,7 @@ import { StelleOptions } from "#stelle/decorators";
 import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType } from "seyfert/lib/types/index.js";
 import { LOOP_STATE } from "#stelle/data/Constants.js";
 
-@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, cooldown: 5, checkNodes: true })
+@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, checkNodes: true })
 export default class ToggleLoopComponent extends ComponentCommand {
     componentType = "Button" as const;
 

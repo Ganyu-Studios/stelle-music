@@ -1,14 +1,14 @@
 import { Client, LimitedCollection } from "seyfert";
 import { ActivityType, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
 
-import type { InternalRuntime, InternalStelleRuntime, StelleConfiguration } from "#stelle/types";
+import type { StelleConfiguration } from "#stelle/types";
 
 import { StelleMiddlewares } from "#stelle/middlwares";
 
 import { Configuration } from "#stelle/data/Configuration.js";
 import { getWatermark } from "#stelle/utils/Logger.js";
 import { onBotPermissionsFail, onOptionsError, onPermissionsFail, onRunError } from "#stelle/utils/functions/overrides.js";
-import { customContext, stelleRC } from "#stelle/utils/functions/utils.js";
+import { customContext } from "#stelle/utils/functions/utils.js";
 
 import { StelleDatabase } from "./modules/Database.js";
 import { StelleManager } from "./modules/Manager.js";
@@ -95,7 +95,6 @@ export class Stelle extends Client<true> {
                     emojis: true,
                     overwrites: true,
                     stickers: true,
-                    threads: true,
                     roles: true,
                     presences: true,
                     messages: true,
@@ -125,18 +124,9 @@ export class Stelle extends Client<true> {
 
         await this.start();
         await this.manager.load();
-        await this.uploadCommands({ cachePath: this.config.cachePath });
+        await this.uploadCommands({ cachePath: this.config.cache.filename });
 
         return "🌟";
-    }
-
-    /**
-     *
-     * Overrides the original `runtime configuration`.
-     * @returns
-     */
-    public override getRC<T extends InternalRuntime = InternalRuntime>(): Promise<InternalStelleRuntime<T>> {
-        return stelleRC();
     }
 
     /**
@@ -153,7 +143,7 @@ export class Stelle extends Client<true> {
             await this.components?.reloadAll();
             await this.langs?.reloadAll();
             await this.manager.handler.reloadAll();
-            await this.uploadCommands({ cachePath: this.config.cachePath });
+            await this.uploadCommands({ cachePath: this.config.cache.filename });
 
             this.logger.info("Stelle has been reloaded.");
         } catch (error) {

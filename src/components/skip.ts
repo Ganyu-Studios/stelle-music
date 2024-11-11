@@ -1,7 +1,7 @@
 import { ComponentCommand, type ComponentContext } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
-@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, checkQueue: true, cooldown: 5, checkNodes: true })
+@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, checkQueue: true, checkNodes: true })
 export default class SkipTrackComponent extends ComponentCommand {
     componentType = "Button" as const;
 

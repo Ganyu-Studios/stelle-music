@@ -1,12 +1,17 @@
-import { getCollectionKey } from "#stelle/utils/functions/utils.js";
 import { createMiddleware } from "seyfert";
+import { getCollectionKey } from "#stelle/utils/functions/utils.js";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
 export const checkCooldown = createMiddleware<void>(async ({ context, next, pass }) => {
+    // This will make Nobody happy.
+    if (context.isComponent()) return next();
+
     const { client, command } = context;
     const { cooldowns } = client;
+
+    if (command.onlyDeveloper) return next();
 
     if (!command) return pass();
 

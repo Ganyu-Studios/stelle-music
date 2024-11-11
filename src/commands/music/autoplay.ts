@@ -11,7 +11,15 @@ import { StelleCategory } from "#stelle/types";
     contexts: ["Guild"],
     aliases: ["auto", "ap"],
 })
-@StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkPlayer: true, inVoice: true, sameVoice: true, moreTracks: true, checkNodes: true })
+@StelleOptions({
+    cooldown: 5,
+    category: StelleCategory.Music,
+    checkPlayer: true,
+    inVoice: true,
+    sameVoice: true,
+    moreTracks: true,
+    checkNodes: true,
+})
 @LocalesT("locales.autoplay.name", "locales.autoplay.description")
 export default class AutoplayCommand extends Command {
     public override async run(ctx: CommandContext) {

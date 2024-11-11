@@ -4,7 +4,7 @@ import { StelleOptions } from "#stelle/decorators";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
-@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, cooldown: 5, checkNodes: true })
+@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, checkNodes: true })
 export default class PreviousTrackComponent extends ComponentCommand {
     componentType = "Button" as const;
 
@@ -33,8 +33,7 @@ export default class PreviousTrackComponent extends ComponentCommand {
                 ],
             });
 
-        player.queue.add(track);
-
+        await player.queue.add(track);
         await ctx.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [

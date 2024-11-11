@@ -10,7 +10,7 @@
 1. Go to [this site](https://adoptium.net/es/temurin/releases/?package=jdks)
 2. Look for your OS. (Windows, Linux, etc...)
 3. Select the Java version of your choice (17 or newer)
-4. Download the `.msi` file
+4. Download the file
 5. Install
 
 ###  📋 Lavalink node
@@ -29,4 +29,4 @@ You can use my example:
 *Or `sh start.sh` if you are on a ubuntu server*
 
 ### 📋 Using the node
-* Just, go to the [configuration](/src/structures/utils/data/Configuration.ts#L21) of Stelle and add the node to the list.
+* Just, go to the [configuration](/src/structures/utils/data/Configuration.ts#L20) of Stelle and add the node to the list.

@@ -1,6 +1,7 @@
 import type { RepeatMode } from "lavalink-client";
+import { type PausedMode, type PermissionNames, StelleCategory } from "#stelle/types";
+
 import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
-import type { PausedMode, PermissionNames } from "#stelle/types";
 
 export default {
     metadata: {
@@ -10,13 +11,34 @@ export default {
     },
     messages: {
         commands: {
-            nowplaying: ({ title, url, author, requester, bar, duration, position }: INowplaying) => `\`📻\` Now playing: [\`${title}\`](${url}) - \`${author}\`\n\`👤\` **Requested by**: <@${requester}>\n \n\`🕛\` ${bar} | \`${position}\` - \`(${duration})\``,
+            nowplaying: ({ title, url, author, requester, bar, duration, position }: INowplaying) =>
+                `\`📻\` Now playing: [\`${title}\`](${url}) - \`${author}\`\n\`👤\` **Requested by**: <@${requester}>\n \n\`🕛\` ${bar} | \`${position}\` - \`(${duration})\``,
             setprefix: ({ prefix }: IPrefix) => `\`✅\` The **new prefix** for this guild is now: \`${prefix}\``,
             skip: ({ amount }: IAmount) => `\`✅\` Skipped the amount of: \`${amount} tracks\`.`,
             move: ({ textId, voiceId }: IMove) => `\`✅\` Moved to the voice channel <#${voiceId}> and the text channel: <#${textId}>`,
             previous: ({ title, uri }: IPrevious) => `\`✅\` The previous track [**${title}**](${uri}) has been added to the queue.`,
             stop: "`👋` Stopping and leaving...",
             shuffle: "`✅` The queue has been shuffled.",
+            help: {
+                noCommand: "`❌` **No command** was found for this search...",
+                title: ({ clientName }: Pick<IMention, "clientName">) => `${clientName} - Help Menu`,
+                description: ({ defaultPrefix }: Pick<IHelp, "defaultPrefix">) =>
+                    `\`📦\` Hello! Here is the information about my commands and stuff.\n\`📜\` Select the command category of your choice.\n\n-# You can search a specific command by typing: \`${defaultPrefix} help <command>\``,
+                selectMenu: {
+                    description: ({ category }: IHelpMenu) => `Select the ${category} category.`,
+                    placeholder: "Select a command category.",
+                    options: {
+                        description: ({ options }: Pick<IHelp, "options">) => `**Optional []**\n**Required <>**\n\n${options}`,
+                        title: ({ clientName, category }: IHelpMenuEmbed) => `${clientName} - Help Menu | ${category}`,
+                    },
+                },
+                aliases: {
+                    [StelleCategory.Unknown]: "Unknown",
+                    [StelleCategory.User]: "User",
+                    [StelleCategory.Music]: "Music",
+                    [StelleCategory.Guild]: "Guild",
+                } satisfies Record<StelleCategory, string>,
+            },
             default: {
                 engine: ({ engine }: IEngine) => `\`✅\` The default search engine of Stelle is now: **${engine}**.`,
                 volume: ({ volume }: IVolume) => `\`✅\` The default volume of Stelle is now: **${volume}%**.`,
@@ -99,7 +121,8 @@ export default {
                 `\`❌\` Invalid command options or arguments.\n- **Required**: \`<>\`\n- **Optional**: \`[]\`\n\n\`📋\` **Usage**:\n ${options}\n\`📢\` **Options Available**:\n${list}`,
             playerQueue: ({ tracks }: ITracks) => `\`📋\` Here is the full server queue: \n\n${tracks}`,
             channelEmpty: ({ type }: IType) => `\`🎧\` Stelle is alone in the **voice channel**... Pausing and waiting **${type}**.`,
-            mention: ({ clientName, defaultPrefix, commandId, commandName }: IMention) => `\`📢\` Hey! My name is: **${clientName}** and my prefix is: \`${defaultPrefix}\` and **/** too!\n\`📋\` If you want to see my commands, type: \`${defaultPrefix} ${commandName}\` or </${commandName}:${commandId}>.`,
+            mention: ({ clientName, defaultPrefix, commandName }: IMention) =>
+                `\`📢\` Hey! My name is: **${clientName}** and my prefix is: \`${defaultPrefix}\` and **/** too!\n\`📋\` If you want to see my commands, type: \`${defaultPrefix} ${commandName}\` or /${commandName}.`,
             noCommand: "`❌` I don't have the required command *yet*, try again in a moment.",
             noMembers: "`🎧` Stelle is alone in the **voice channel**... Leaving the channel.",
             hasMembers: "`🎧` Stelle is not alone anymore... Resuming.",
@@ -324,11 +347,22 @@ export default {
         nowplaying: {
             name: "nowplaying",
             description: "Get the current playing song.",
-        }
+        },
+        help: {
+            name: "help",
+            description: "The most useful command in the world!",
+            option: {
+                name: "command",
+                description: "The command to get help for.",
+            },
+        },
     },
 };
 
-type IMention = { clientName: string, defaultPrefix: string, commandName: string, commandId: string };
+type IHelpMenuEmbed = Pick<IMention, "clientName"> & IHelpMenu;
+type IHelp = { defaultPrefix: string; options: string };
+type IHelpMenu = { category: string };
+type IMention = { clientName: string; defaultPrefix: string; commandName: string };
 type INowplaying = { title: string; url: string; duration: string; requester: string; author: string; bar: string; position: string };
 type IEngine = { engine: string };
 type IPrefix = { prefix: string };

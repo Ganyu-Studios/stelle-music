@@ -23,19 +23,9 @@ export const DEBUG_MODE: boolean = getFlag("--debug");
 export const SECRETS_REGEX: RegExp = /\b(?:client\.(?:config)|config|env|process\.env|eval|atob|btoa)\b/;
 
 /**
- * Check if Stelle is running on Windows.
- */
-export const IS_WINDOWS: boolean = process.platform === "win32";
-
-/**
- * Stelle working directory.
- */
-export const OUTPUT: "src" | "dist" = DEBUG_MODE && IS_WINDOWS ? "src" : "dist";
-
-/**
  *
  * Stelle autoplay state.
- * @param boolean
+ * @param boolean The boolean.
  * @returns
  */
 export const AUTOPLAY_STATE = (boolean: boolean) => {
@@ -49,7 +39,7 @@ export const AUTOPLAY_STATE = (boolean: boolean) => {
 /**
  *
  * Stelle pause state.
- * @param boolean
+ * @param boolean The boolean.
  * @returns
  */
 export const PAUSE_STATE = (boolean: boolean) => {
@@ -63,8 +53,8 @@ export const PAUSE_STATE = (boolean: boolean) => {
 /**
  *
  * Stelle loop state.
- * @param mode
- * @param alt
+ * @param mode The mode.
+ * @param alt Return the alternative state.
  * @returns
  */
 export const LOOP_STATE = (mode: RepeatMode, alt?: boolean) => {

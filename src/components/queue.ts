@@ -3,7 +3,7 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleOptions } from "#stelle/decorators";
 import { EmbedPaginator } from "#stelle/utils/Paginator.js";
 
-@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, checkQueue: true, cooldown: 5, checkNodes: true })
+@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, checkQueue: true, checkNodes: true })
 export default class QueueComponent extends ComponentCommand {
     componentType = "Button" as const;
 
@@ -22,7 +22,6 @@ export default class QueueComponent extends ComponentCommand {
         if (!player) return;
 
         const tracksPerPage = 20;
-        const paginator = new EmbedPaginator(ctx);
         const tracks = player.queue.tracks.map(
             (track, i) => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${(track.requester as User).tag}`,
         );
@@ -40,6 +39,8 @@ export default class QueueComponent extends ComponentCommand {
                 ],
             });
         } else {
+            const paginator = new EmbedPaginator(ctx);
+
             for (let i = 0; i < tracks.length; i += tracksPerPage) {
                 paginator.addEmbed(
                     new Embed()

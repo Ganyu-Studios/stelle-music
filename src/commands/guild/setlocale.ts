@@ -15,12 +15,14 @@ const options = {
         autocomplete: async (interaction) => {
             const { client } = interaction;
 
-            const locales = Object.entries<DefaultLocale>(client.langs!.values).map(([value, l]) => ({
-                name: `${l.metadata.name} [${l.metadata.emoji}] - ${l.metadata.translators.join(", ")}`,
-                value,
-            }));
-
-            await interaction.respond(locales.slice(0, 25));
+            await interaction.respond(
+                Object.entries<DefaultLocale>(client.langs!.values)
+                    .map(([value, l]) => ({
+                        name: `${l.metadata.name} [${l.metadata.emoji}] - ${l.metadata.translators.join(", ")}`,
+                        value,
+                    }))
+                    .slice(0, 25),
+            );
         },
     }),
 };

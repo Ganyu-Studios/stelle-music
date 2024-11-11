@@ -1,5 +1,5 @@
-import { Lavalink } from "#stelle/classes";
 import { ActionRow, Button, type CommandContext, Embed, type User } from "seyfert";
+import { Lavalink } from "#stelle/classes";
 
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 
@@ -11,6 +11,7 @@ export default new Lavalink({
     type: "manager",
     run: async (client, player, track) => {
         if (!(player.textChannelId && player.voiceChannelId)) return;
+        if (!track) return;
 
         const isAutoplay = player.get<boolean | undefined>("enabledAutoplay") ?? false;
 
@@ -24,7 +25,7 @@ export default new Lavalink({
 
         const duration = track.info.isStream
             ? messages.commands.play.live
-            : TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined;
+            : (TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined);
 
         const embed = new Embed()
             .setDescription(
