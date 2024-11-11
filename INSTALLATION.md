@@ -19,7 +19,7 @@ pnpm i
 ###  📋 Configuration
 * Stelle has a configuration to save a specific data.
 
-> 1. Go to [the configuration](/src/structures/utils/data/Configuration.ts#L16-L19)
+> 1. Go to [the configuration](/src/structures/utils/data/Configuration.ts#L17-L22)
 > 2. Replace the IDs with your IDs.
 
 > Example:
@@ -46,8 +46,6 @@ pnpm start #Will start the bot
 ```
 
 Run the bot in `Typescript`
-
-> **Note:** This only works if you are on Windows. If yu are on other OS, you need to modify the `OUTPUT` variable in [Constants.ts](/src/structures/utils/data/Constants.ts#L25-L33).
 
 ```bash
 #This is necessary for typescript.
