@@ -16,7 +16,7 @@ importers:
         version: 2.4.1
       seyfert:
         specifier: github:tiramisulabs/seyfert
-        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/e4233e6a4019734abc4824964acff1a49a69691d
+        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/7e55ba9e3ce72d29b0aeac87c66823a5d41778a0
       yunaforseyfert:
         specifier: ^1.0.4
         version: 1.0.4
@@ -28,8 +28,8 @@ importers:
         specifier: ^22.9.0
         version: 22.9.0
       husky:
-        specifier: ^9.1.6
-        version: 9.1.6
+        specifier: ^9.1.7
+        version: 9.1.7
       lint-staged:
         specifier: ^15.2.10
         version: 15.2.10
@@ -304,8 +304,8 @@ packages:
     resolution: {integrity: sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==}
     engines: {node: '>=18'}
 
-  cross-spawn@7.0.5:
-    resolution: {integrity: sha512-ZVJrKKYunU38/76t0RMOulHOnUcbU9GbpWKAOZ0mhjr7CX6FVrH+4FrAapSOekrgFQ3f/8gwMEuIft0aKq6Hug==}
+  cross-spawn@7.0.6:
+    resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
     engines: {node: '>= 8'}
 
   debug@4.3.7:
@@ -360,8 +360,8 @@ packages:
     resolution: {integrity: sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ==}
     engines: {node: '>=16.17.0'}
 
-  husky@9.1.6:
-    resolution: {integrity: sha512-sqbjZKK7kf44hfdE94EoX8MZNk0n7HeW37O4YrVGCF4wzgQjp+akPAkfUK5LZ6KuR/6sqeAVuXHji+RzQgOn5A==}
+  husky@9.1.7:
+    resolution: {integrity: sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -467,8 +467,8 @@ packages:
   rfdc@1.4.1:
     resolution: {integrity: sha512-q1b3N5QkRUWUl7iyylaaj3kOpIT0N2i9MqIEQXP73GVsN9cw3fdx8X63cEmWhJGi2PPCF23Ijp7ktmd39rawIA==}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/e4233e6a4019734abc4824964acff1a49a69691d:
-    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/e4233e6a4019734abc4824964acff1a49a69691d}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/7e55ba9e3ce72d29b0aeac87c66823a5d41778a0:
+    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/7e55ba9e3ce72d29b0aeac87c66823a5d41778a0}
     version: 2.1.0
 
   shebang-command@2.0.0:
@@ -721,7 +721,7 @@ snapshots:
 
   commander@12.1.0: {}
 
-  cross-spawn@7.0.5:
+  cross-spawn@7.0.6:
     dependencies:
       path-key: 3.1.1
       shebang-command: 2.0.0
@@ -766,7 +766,7 @@ snapshots:
 
   execa@8.0.1:
     dependencies:
-      cross-spawn: 7.0.5
+      cross-spawn: 7.0.6
       get-stream: 8.0.1
       human-signals: 5.0.0
       is-stream: 3.0.0
@@ -793,7 +793,7 @@ snapshots:
 
   human-signals@5.0.0: {}
 
-  husky@9.1.6: {}
+  husky@9.1.7: {}
 
   is-fullwidth-code-point@4.0.0: {}
 
@@ -897,7 +897,7 @@ snapshots:
 
   rfdc@1.4.1: {}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/e4233e6a4019734abc4824964acff1a49a69691d: {}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/7e55ba9e3ce72d29b0aeac87c66823a5d41778a0: {}
 
   shebang-command@2.0.0:
     dependencies:
