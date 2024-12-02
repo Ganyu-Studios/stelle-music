@@ -1,5 +1,7 @@
-import type { LavalinkNodeOptions } from "lavalink-client";
+import type { LavalinkNodeOptions, PlayerJson } from "lavalink-client";
 import { InvalidSessionId } from "#stelle/errors";
+
+import MeowDB from "meowdb";
 
 /**
  * Lavalink node options without the `sessionId`.
@@ -11,20 +13,50 @@ type NonResumableOptions = Omit<LavalinkNodeOptions, "sessionId">;
  */
 export class StelleSessions {
     /**
-     * The Lavalink sessions map.
+     * The storage instance.
      */
-    readonly sessions: Map<string, string> = new Map();
+    readonly storage = new MeowDB({
+        dir: process.cwd(),
+        name: "sessions",
+    });
+
+    /**
+     * The nodes map.
+     */
+    readonly nodes: Map<string, string> = new Map(
+        Object.entries<PlayerJson>(this.storage.all()).map(([_, session]) => [session.nodeId!, session.nodeSessionId!]),
+    );
 
     /**
      *
-     * Set a node session.
-     * @param nodeId The node id.
-     * @param sessionId The session id.
+     * Set a player session.
+     * @param guildId The node id.
+     * @param object The session id.
      * @returns The current instance.
      */
-    public set(nodeId: string, sessionId: string): this {
-        this.sessions.set(nodeId, sessionId);
+    public set<T>(guildId: string, object: T): this {
+        this.storage.set<T>(guildId, object);
         return this;
+    }
+
+    /**
+     *
+     * Get a player session.
+     * @param guildId The node id.
+     * @returns The session id.
+     */
+    public get<T>(guildId: string): T | undefined {
+        return this.storage.get<T>(guildId);
+    }
+
+    /**
+     *
+     * Delete a player session.
+     * @param guildId The node id.
+     * @returns If the session was deleted.
+     */
+    public delete(guildId: string): boolean {
+        return this.storage.delete(guildId);
     }
 
     /**
@@ -33,8 +65,8 @@ export class StelleSessions {
      * @param nodeId The node id.
      * @returns The session id.
      */
-    public get(nodeId: string): string | undefined {
-        return this.sessions.get(nodeId);
+    public getNode(nodeId: string): string | undefined {
+        return this.nodes.get(nodeId);
     }
 
     /**
@@ -46,9 +78,10 @@ export class StelleSessions {
     public resolve(nodes: NonResumableOptions[]): LavalinkNodeOptions[] {
         if (nodes.some((node) => "sessionId" in node && typeof node.sessionId === "string"))
             throw new InvalidSessionId("The 'sessionId' property is not allowed in the node options.");
+
         return nodes.map((node) => ({
             ...node,
-            sessionId: this.get(node.id ?? `${node.host}:${node.port}`),
+            sessionId: this.getNode(node.id ?? `${node.host}:${node.port}`),
         }));
     }
 }

@@ -1,5 +1,5 @@
 import type { Player, SourceNames, Track, UnresolvedTrack } from "lavalink-client";
-import type { CommandContext } from "seyfert";
+import type { ClientUser } from "seyfert";
 
 type ResolvableTrack = UnresolvedTrack | Track;
 
@@ -29,8 +29,8 @@ export async function autoPlayFunction(player: Player, lastTrack?: Track): Promi
         await player.queue.utils.save();
     }
 
-    const ctx = player.get<CommandContext | undefined>("commandContext");
-    if (!ctx) return;
+    const me = player.get<ClientUser | undefined>("me");
+    if (!me) return;
 
     const filterTracks = (tracks: ResolvableTrack[]) =>
         tracks.filter(
@@ -42,8 +42,8 @@ export async function autoPlayFunction(player: Player, lastTrack?: Track): Promi
         );
 
     const requester = {
-        ...ctx.client.me,
-        tag: ctx.client.me.username,
+        ...me,
+        tag: me.username,
     };
 
     if (lastTrack.info.sourceName === "spotify") {

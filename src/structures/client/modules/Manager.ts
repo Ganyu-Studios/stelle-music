@@ -3,6 +3,7 @@ import { LavalinkManager, type SearchPlatform, type Track } from "lavalink-clien
 import { StelleHandler } from "#stelle/utils/classes/client/Handler.js";
 
 import type { UsingClient } from "seyfert";
+import { DEBUG_MODE } from "#stelle/data/Constants.js";
 import { autoPlayFunction } from "#stelle/utils/functions/autoplay.js";
 
 /**
@@ -22,6 +23,17 @@ export class StelleManager extends LavalinkManager {
             sendToShard: (guildId, payload) => client.gateway.send(client.gateway.calculateShardId(guildId), payload),
             queueOptions: {
                 maxPreviousTracks: 25,
+            },
+            advancedOptions: {
+                enableDebugEvents: DEBUG_MODE,
+                debugOptions: {
+                    logCustomSearches: DEBUG_MODE,
+                    noAudio: DEBUG_MODE,
+                    playerDestroy: {
+                        debugLog: DEBUG_MODE,
+                        dontThrowError: DEBUG_MODE,
+                    },
+                },
             },
             playerOptions: {
                 defaultSearchPlatform: "spsearch",
