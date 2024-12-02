@@ -32,3 +32,10 @@ export class InvalidPageNumber extends Error {
         this.name = "Stelle [InvalidPageNumber]";
     }
 }
+
+export class InvalidSessionId extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "Stelle [InvalidSessionId]";
+    }
+}

@@ -1,7 +1,7 @@
 import type { BaseCommand } from "seyfert";
 import type { NonCommandOptions, Options } from "#stelle/types";
 
-type Instantiable<T> = { new (...arg: any[]): T };
+type Instantiable<T> = new (...arg: any[]) => T;
 
 export function StelleOptions<A extends Instantiable<any>>(options: A extends Instantiable<BaseCommand> ? Options : NonCommandOptions) {
     return (target: A) =>

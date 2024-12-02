@@ -2,6 +2,7 @@ import { Command, type CommandContext, Declare, LocalesT, type User } from "seyf
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
+import { EmbedColors } from "seyfert/lib/common/index.js";
 import { TimeFormat } from "#stelle/utils/TimeFormat.js";
 import { createBar } from "#stelle/utils/functions/utils.js";
 
@@ -26,7 +27,15 @@ export default class NowPlayingCommand extends Command {
         if (!player) return;
 
         const track = player.queue.current;
-        if (!track) return;
+        if (!track)
+            return ctx.editOrReply({
+                embeds: [
+                    {
+                        description: messages.events.noPlayer,
+                        color: EmbedColors.Red,
+                    },
+                ],
+            });
 
         await ctx.editOrReply({
             embeds: [
@@ -36,9 +45,9 @@ export default class NowPlayingCommand extends Command {
                     description: messages.commands.nowplaying({
                         title: track.info.title,
                         url: track.info.uri,
-                        duration: TimeFormat.toHumanize(track.info.duration),
+                        duration: TimeFormat.toDotted(track.info.duration),
                         author: track.info.author,
-                        position: TimeFormat.toHumanize(player.position),
+                        position: TimeFormat.toDotted(player.position),
                         requester: (track.requester as User).id,
                         bar: createBar(player),
                     }),

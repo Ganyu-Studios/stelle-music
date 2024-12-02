@@ -1,4 +1,4 @@
-import type { CommandContext, UsingClient, VoiceState } from "seyfert";
+import type { UsingClient, VoiceState } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 
 import { TimeFormat } from "#stelle/utils/TimeFormat.js";
@@ -14,10 +14,11 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
     if (!player) return;
 
     if (!(player.textChannelId && player.voiceChannelId)) return;
-    const ctx = player.get<CommandContext | undefined>("commandContext");
-    if (!ctx) return;
 
-    const { messages } = await ctx.getLocale();
+    const locale = player.get<string | undefined>("localeString");
+    if (!locale) return;
+
+    const { messages } = client.t(locale).get();
 
     const channel = await client.channels.fetch(player.voiceChannelId);
     if (!channel.is(["GuildStageVoice", "GuildVoice"])) return;

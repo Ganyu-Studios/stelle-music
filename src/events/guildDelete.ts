@@ -6,12 +6,15 @@ export default createEvent({
         if (guild.unavailable) return;
         if (!(guild instanceof Guild)) return;
 
+        const owner = await guild.fetchOwner();
+
         const embed = new Embed()
             .setColor(client.config.color.success)
             .setTitle("A guild removed me!")
             .setDescription("`📦` A guild removed me... I think I was not helpful...")
             .addFields(
                 { name: "`📜` Name", value: `\`${guild.name}\``, inline: true },
+                { name: "`👤` Owner", value: `\`${owner?.displayName ?? "Unknown"}\``, inline: true },
                 { name: "`🏮` ID", value: `\`${guild.id}\``, inline: true },
                 { name: "`👥` Members", value: `\`${guild.memberCount}\``, inline: true },
             );

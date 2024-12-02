@@ -5,15 +5,14 @@ import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
 export const checkCooldown = createMiddleware<void>(async ({ context, next, pass }) => {
-    // This will make Nobody happy.
+    // This will make someone happy.
     if (context.isComponent()) return next();
 
     const { client, command } = context;
     const { cooldowns } = client;
 
-    if (command.onlyDeveloper) return next();
-
     if (!command) return pass();
+    if (command.onlyDeveloper) return next();
 
     const cooldown = (command.cooldown ?? 3) * 1000;
     const timeNow = Date.now();

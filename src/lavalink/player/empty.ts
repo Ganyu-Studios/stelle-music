@@ -1,6 +1,6 @@
 import { Lavalink } from "#stelle/classes";
 
-import { type CommandContext, Embed } from "seyfert";
+import { Embed } from "seyfert";
 
 export default new Lavalink({
     name: "queueEnd",
@@ -13,13 +13,13 @@ export default new Lavalink({
 
         await client.messages.edit(messageId, player.textChannelId, { components: [] }).catch(() => null);
 
-        const ctx = player.get<CommandContext | undefined>("commandContext");
-        if (!ctx) return;
+        const locale = player.get<string | undefined>("localeString");
+        if (!locale) return;
 
         const voice = await client.channels.fetch(player.voiceChannelId);
         if (!voice.is(["GuildStageVoice", "GuildVoice"])) return;
 
-        const { messages } = await ctx.getLocale();
+        const { messages } = client.t(locale).get();
 
         const embed = new Embed().setDescription(messages.events.playerEnd).setColor(client.config.color.success).setTimestamp();
 

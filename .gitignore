@@ -3,4 +3,6 @@ dist
 logs
 
 .env
+
 commands.json
+sessions.json

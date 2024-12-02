@@ -22,7 +22,6 @@ const createMsFormater = (isNormalMode = true, order: typeof TimeUnitsOrder = Ti
 
     const isDottedMode = isNormalMode === false;
 
-    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: 🐧
     function baseFormater(time: number = 0, isChild = false): [string, number] {
         let targetPosition = 0;
         let targetUnitValue = 1;

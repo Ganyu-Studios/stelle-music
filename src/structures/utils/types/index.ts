@@ -1,4 +1,5 @@
-import type { InternalRuntimeConfig, InternalRuntimeConfigHTTP } from "seyfert/lib/client/base.js";
+import type { PlayerJson } from "lavalink-client";
+import type { ClientUser } from "seyfert";
 import type { PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
 export type { StelleConfiguration } from "./client/StelleConfiguration.js";
@@ -7,10 +8,14 @@ export type { AllEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } fr
 export type PermissionNames = keyof typeof PermissionFlagsBits;
 export type AutoplayMode = "enabled" | "disabled";
 export type PausedMode = "pause" | "resume";
-export type InternalRuntime = InternalRuntimeConfigHTTP | InternalRuntimeConfig;
-
 export type NonCommandOptions = Omit<Options, "category">;
 
+export type StellePlayerJson = PlayerJson & {
+    messageId?: string;
+    enabledAutoplay?: boolean;
+    me?: ClientUser;
+    localeString?: string;
+};
 export interface Options {
     /** The cooldown. */
     cooldown?: number;

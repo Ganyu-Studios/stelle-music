@@ -58,6 +58,11 @@ export interface StelleConfiguration {
      * @default ms("30s")
      */
     disconnectTime: number;
+    /**
+     * Stelle node(s) resume time.
+     * @default ms("1min")
+     */
+    resumeTime: number;
     /** Stelle developer id(s). */
     developerIds: string[];
     /** Stelle developer guild id(s). */
@@ -68,5 +73,8 @@ export interface StelleConfiguration {
     color: StelleColors;
     /** Stelle channels. */
     channels: StelleChannels;
+    /**
+     * Stelle cache.
+     */
     cache: StelleCache;
 }
