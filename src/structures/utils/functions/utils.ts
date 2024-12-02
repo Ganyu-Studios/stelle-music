@@ -76,7 +76,7 @@ export const getFlag = (flag: string) => process.argv.includes(flag);
  * @param error The error.
  * @returns
  */
-export const getDepth = (error: any): string => inspect(error, { depth: 0 });
+export const getDepth = (error: any, depth: number = 0): string => inspect(error, { depth });
 
 /**
  *

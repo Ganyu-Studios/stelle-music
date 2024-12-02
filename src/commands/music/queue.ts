@@ -10,7 +10,15 @@ import { EmbedPaginator } from "#stelle/utils/Paginator.js";
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
 })
-@StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
+@StelleOptions({
+    cooldown: 5,
+    category: StelleCategory.Music,
+    checkPlayer: true,
+    inVoice: true,
+    sameVoice: true,
+    checkNodes: true,
+    checkQueue: true,
+})
 @LocalesT("locales.queue.name", "locales.queue.description")
 export default class QueueCommand extends Command {
     public override async run(ctx: CommandContext) {

@@ -5,6 +5,13 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
 
 import { formatOptions } from "./formatter.js";
 
+/**
+ *
+ * The Stelle's default error handler.
+ * @param ctx The context of the command.
+ * @param error The error that was thrown.
+ * @returns
+ */
 export async function onRunError(ctx: AnyContext, error: unknown) {
     const { messages } = await ctx.getLocale();
 
@@ -22,6 +29,13 @@ export async function onRunError(ctx: AnyContext, error: unknown) {
     });
 }
 
+/**
+ *
+ * The Stelle's default error handler for missing permissions.
+ * @param ctx The context of the command.
+ * @param permissions The permissions that the user is missing.
+ * @returns
+ */
 export async function onPermissionsFail(ctx: AnyContext, permissions: PermissionStrings) {
     const { messages } = await ctx.getLocale();
 
@@ -43,6 +57,13 @@ export async function onPermissionsFail(ctx: AnyContext, permissions: Permission
     });
 }
 
+/**
+ *
+ * The Stelle's default error handler for missing bot permissions.
+ * @param ctx The context of the command.
+ * @param permissions The permissions that the bot is missing.
+ * @returns
+ */
 export async function onBotPermissionsFail(ctx: AnyContext, permissions: PermissionStrings) {
     const { messages } = await ctx.getLocale();
 
@@ -64,6 +85,12 @@ export async function onBotPermissionsFail(ctx: AnyContext, permissions: Permiss
     });
 }
 
+/**
+ *
+ * The Stelle's default error handler for invalid options.
+ * @param ctx The context of the command.
+ * @returns
+ */
 export async function onOptionsError(ctx: AnyContext) {
     if (!ctx.isChat()) return;
 
