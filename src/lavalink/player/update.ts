@@ -24,8 +24,19 @@ export default new Lavalink({
         ) {
             if (newPlayerJson.queue?.current) newPlayerJson.queue.current.userData = {};
 
+            const {
+                ping: _p,
+                createdTimeStamp: _cts,
+                lavalinkVolume: _lv,
+                equalizer: _eq,
+                lastPositionChange: _lpc,
+                paused: _pd,
+                playing: _pg,
+                ...newJson
+            } = newPlayerJson;
+
             sessions.set<StellePlayerJson>(newPlayer.guildId, {
-                ...newPlayerJson,
+                ...newJson,
                 messageId: newPlayer.get("messageId"),
                 enabledAutoplay: newPlayer.get("enabledAutoplay"),
                 localeString: newPlayer.get<string | undefined>("localeString"),

@@ -1,5 +1,6 @@
-import type { LavalinkNodeOptions, PlayerJson } from "lavalink-client";
+import type { LavalinkNodeOptions } from "lavalink-client";
 import { InvalidSessionId } from "#stelle/errors";
+import type { StellePlayerJson } from "#stelle/types";
 
 import MeowDB from "meowdb";
 
@@ -24,7 +25,7 @@ export class StelleSessions {
      * The nodes map.
      */
     readonly nodes: Map<string, string> = new Map(
-        Object.entries<PlayerJson>(this.storage.all()).map(([_, session]) => [session.nodeId!, session.nodeSessionId!]),
+        Object.entries<StellePlayerJson>(this.storage.all()).map(([_, session]) => [session.nodeId!, session.nodeSessionId!]),
     );
 
     /**
