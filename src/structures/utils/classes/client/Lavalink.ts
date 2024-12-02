@@ -5,8 +5,17 @@ import type { AllEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } fr
  * Stelle Lavalink events main class.
  */
 export class Lavalink<K extends keyof AllEvents = keyof AllEvents> implements LavalinkEvent<K> {
+    /**
+     * The event name.
+     */
     readonly name: K;
+    /**
+     * The event type.
+     */
     readonly type: LavalinkEventType<K>;
+    /**
+     * The event run function.
+     */
     readonly run: LavalinkEventRun<K>;
 
     /**

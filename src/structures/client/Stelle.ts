@@ -22,13 +22,34 @@ import { DEBUG_MODE, THINK_MESSAGES } from "#stelle/data/Constants.js";
  * Main Stelle class.
  */
 export class Stelle extends Client<true> {
+    /**
+     * Stelle cooldowns collection.
+     */
     public readonly cooldowns: LimitedCollection<string, number> = new LimitedCollection();
+
+    /**
+     * Stelle configuration.
+     */
     public readonly config: StelleConfiguration = Configuration;
+
+    /**
+     * Stelle "token".
+     */
     public readonly token = "🌟" as const;
 
+    /**
+     * The timestamp when Stelle is ready.
+     */
     public readyTimestamp: number = 0;
 
+    /**
+     * Stelle manager instance.
+     */
     public readonly manager: StelleManager;
+
+    /**
+     * Stelle database instance.
+     */
     public readonly database: StelleDatabase;
 
     /**

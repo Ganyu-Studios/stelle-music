@@ -13,7 +13,7 @@ const packageJSON = JSON.parse(await readFile("./package.json", "utf-8"));
 export const BOT_VERSION: string = packageJSON.version;
 
 /**
- * Check if Stelle is running un DEBUG MODE.
+ * Check if Stelle is running in DEBUG MODE.
  */
 export const DEBUG_MODE: boolean = getFlag("--debug");
 

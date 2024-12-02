@@ -1,4 +1,4 @@
-import { ActionRow, Button, type CommandContext, Embed, type User } from "seyfert";
+import { ActionRow, Button, Embed, type User } from "seyfert";
 import { Lavalink } from "#stelle/classes";
 
 import { ButtonStyle } from "seyfert/lib/types/index.js";
@@ -15,13 +15,13 @@ export default new Lavalink({
 
         const isAutoplay = player.get<boolean | undefined>("enabledAutoplay") ?? false;
 
-        const ctx = player.get<CommandContext | undefined>("commandContext");
-        if (!ctx) return;
+        const locale = player.get<string | undefined>("localeString");
+        if (!locale) return;
 
         const voice = await client.channels.fetch(player.voiceChannelId);
         if (!voice.is(["GuildStageVoice", "GuildVoice"])) return;
 
-        const { messages } = await ctx.getLocale();
+        const { messages } = client.t(locale).get();
 
         const duration = track.info.isStream
             ? messages.commands.play.live

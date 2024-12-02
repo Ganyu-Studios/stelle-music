@@ -78,7 +78,7 @@ const options = {
 @LocalesT("locales.play.name", "locales.play.description")
 export default class PlayCommand extends Command {
     public override async run(ctx: CommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
-        const { options, client, guildId, channelId, member, author } = ctx;
+        const { options, client, guildId, channelId, member } = ctx;
         const { query } = options;
 
         if (!(guildId && member)) return;
@@ -102,11 +102,21 @@ export default class PlayCommand extends Command {
             selfDeaf: true,
         });
 
+        const { client: _c1, ...clientUser } = client.me;
+        const { client: _c2, ...trackRequester } = ctx.author;
+
         if (!player.connected) await player.connect();
 
-        const { loadType, playlist, tracks } = await player.search({ query, source: searchEngine }, author);
+        const { loadType, playlist, tracks } = await player.search(
+            { query, source: searchEngine },
+            {
+                ...trackRequester,
+                tag: ctx.author.tag,
+            },
+        );
 
-        player.set("commandContext", ctx);
+        player.set("me", clientUser);
+        player.set("localeString", await ctx.getLocaleString());
 
         if (!bot) bot = client.cache.voiceStates?.get(client.me.id, guildId);
         if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);

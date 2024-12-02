@@ -10,10 +10,16 @@ export const customContext = extendContext((interaction) => ({
     /**
      *
      * Get the locale from the database.
-     * @returns
+     * @returns The locales object.
      */
     getLocale: async (): Promise<DefaultLocale> =>
         interaction.client.t(await interaction.client.database.getLocale(interaction.guildId!)).get(),
+    /**
+     *
+     * Get the locale string from the database.
+     * @returns The locale string.
+     */
+    getLocaleString: () => interaction.client.database.getLocale(interaction.guildId!),
 }));
 
 /**
@@ -76,7 +82,7 @@ export const getFlag = (flag: string) => process.argv.includes(flag);
  * @param error The error.
  * @returns
  */
-export const getDepth = (error: any): string => inspect(error, { depth: 0 });
+export const getDepth = (error: any, depth: number = 0): string => inspect(error, { depth });
 
 /**
  *

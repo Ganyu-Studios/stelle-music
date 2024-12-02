@@ -151,3 +151,15 @@ export function customLogger(_this: Logger, level: LogLevels, args: unknown[]): 
 
     return [text, ...args];
 }
+
+Logger.customize(customLogger);
+Logger.dirname = "logs";
+
+/**
+ * The logger instance.
+ */
+export const logger = new Logger({
+    name: "[Stelle]",
+    saveOnFile: true,
+    active: true,
+});
