@@ -10,7 +10,10 @@ export type AutoplayMode = "enabled" | "disabled";
 export type PausedMode = "pause" | "resume";
 export type NonCommandOptions = Omit<Options, "category">;
 
-export type StellePlayerJson = PlayerJson & {
+export type StellePlayerJson = Omit<
+    PlayerJson,
+    "ping" | "createdTimeStamp" | "lavalinkVolume" | "equalizer" | "lastPositionChange" | "paused" | "playing"
+> & {
     messageId?: string;
     enabledAutoplay?: boolean;
     me?: ClientUser;

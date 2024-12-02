@@ -35,6 +35,7 @@ export default new Lavalink({
                 await player.connect();
 
                 player.filterManager.data = data.filters;
+                player.repeatMode = session.repeatMode;
 
                 if (data.track) player.queue.current = client.manager.utils.buildTrack(data.track, session.me);
 
