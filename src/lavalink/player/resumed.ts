@@ -34,20 +34,21 @@ export default new Lavalink({
 
                 await player.connect();
 
-                player.filterManager.data = data.filters;
+                Object.assign(player.filterManager, { data: data.filters });
                 player.repeatMode = session.repeatMode;
 
                 if (data.track) player.queue.current = client.manager.utils.buildTrack(data.track, session.me);
-
                 if (!player.queue.previous.length) player.queue.previous.unshift(...session.queue!.previous);
                 if (!player.queue.tracks.length) player.queue.add(session.queue!.tracks);
 
-                player.lastPosition = data.state.position;
-                player.lastPositionChange = Date.now();
-                player.ping.lavalink = data.state.ping;
+                Object.assign(player, {
+                    lastPosition: data.state.position,
+                    lastPositionChange: Date.now(),
+                    paused: data.paused,
+                    playing: !data.paused && !!data.track,
+                });
 
-                player.paused = data.paused;
-                player.playing = !data.paused && !!data.track;
+                player.ping.lavalink = data.state.ping;
 
                 await player.queue.utils.save();
             } else {
