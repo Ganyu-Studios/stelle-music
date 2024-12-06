@@ -28,13 +28,7 @@ export const SECRETS_REGEX: RegExp = /\b(?:client\.(?:config)|config|env|process
  * @param boolean The boolean.
  * @returns
  */
-export const AUTOPLAY_STATE = (boolean: boolean) => {
-    const states: Record<string, AutoplayMode> = {
-        true: "enabled",
-        false: "disabled",
-    };
-    return states[String(boolean)];
-};
+export const AUTOPLAY_STATE = (boolean: boolean): AutoplayMode => (boolean ? "enabled" : "disabled");
 
 /**
  *
@@ -42,13 +36,7 @@ export const AUTOPLAY_STATE = (boolean: boolean) => {
  * @param boolean The boolean.
  * @returns
  */
-export const PAUSE_STATE = (boolean: boolean) => {
-    const states: Record<string, PausedMode> = {
-        true: "resume",
-        false: "pause",
-    };
-    return states[String(boolean)];
-};
+export const PAUSE_STATE = (boolean: boolean): PausedMode => (boolean ? "resume" : "pause");
 
 /**
  *

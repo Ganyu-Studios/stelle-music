@@ -5,6 +5,7 @@ export default new Lavalink({
     name: "resumed",
     type: "node",
     run: async (client, node, _, players) => {
+        if (!client.config.sessions.enabled) return;
         if (!Array.isArray(players)) return;
 
         for (const data of players) {
@@ -27,17 +28,17 @@ export default new Lavalink({
                     vcRegion: session.options.vcRegion,
                 });
 
-                if (!player.get("messageId")) player.set("messageId", session.messageId);
-                if (!player.get("enabledAutoplay")) player.set("enabledAutoplay", session.enabledAutoplay);
-                if (!player.get("me")) player.set("me", session.me);
-                if (!player.get("localeString")) player.set("localeString", session.localeString);
+                player.set("messageId", session.messageId);
+                player.set("enabledAutoplay", session.enabledAutoplay);
+                player.set("me", session.me);
+                player.set("localeString", session.localeString);
 
                 await player.connect();
 
                 Object.assign(player.filterManager, { data: data.filters });
-                player.repeatMode = session.repeatMode;
 
                 if (data.track) player.queue.current = client.manager.utils.buildTrack(data.track, session.me);
+
                 if (!player.queue.previous.length) player.queue.previous.unshift(...session.queue!.previous);
                 if (!player.queue.tracks.length) player.queue.add(session.queue!.tracks);
 
@@ -46,6 +47,7 @@ export default new Lavalink({
                     lastPositionChange: Date.now(),
                     paused: data.paused,
                     playing: !data.paused && !!data.track,
+                    repeatMode: session.repeatMode,
                 });
 
                 player.ping.lavalink = data.state.ping;

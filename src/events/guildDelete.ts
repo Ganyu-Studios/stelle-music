@@ -9,7 +9,7 @@ export default createEvent({
         const owner = await guild.fetchOwner();
 
         const embed = new Embed()
-            .setColor(client.config.color.success)
+            .setColor("Red")
             .setTitle("A guild removed me!")
             .setDescription("`📦` A guild removed me... I think I was not helpful...")
             .addFields(

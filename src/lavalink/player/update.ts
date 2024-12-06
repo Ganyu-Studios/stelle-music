@@ -8,6 +8,8 @@ export default new Lavalink({
     name: "playerUpdate",
     type: "manager",
     run: (client, oldPlayer, newPlayer) => {
+        if (!client.config.sessions.enabled) return;
+
         const newPlayerJson = newPlayer.toJSON();
 
         if (
