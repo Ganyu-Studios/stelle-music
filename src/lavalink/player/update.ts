@@ -26,6 +26,8 @@ export default new Lavalink({
         ) {
             if (newPlayerJson.queue?.current) newPlayerJson.queue.current.userData = {};
 
+            // yeah, we don't need specific data from the new player json.
+            // but I hate the way of destructuring the object...
             const {
                 ping: _p,
                 createdTimeStamp: _cts,

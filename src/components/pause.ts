@@ -2,7 +2,7 @@ import { ActionRow, Button, ComponentCommand, type ComponentContext } from "seyf
 import { StelleOptions } from "#stelle/decorators";
 
 import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType } from "seyfert/lib/types/index.js";
-import { PAUSE_STATE } from "#stelle/data/Constants.js";
+import { getPauseState } from "#stelle/utils/functions/utils.js";
 
 @StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, checkNodes: true })
 export default class PauseTrackComponent extends ComponentCommand {
@@ -38,7 +38,7 @@ export default class PauseTrackComponent extends ComponentCommand {
                     if ((button as APIButtonComponentWithCustomId).custom_id === "player-pauseTrack") {
                         (button as APIButtonComponentWithCustomId).style = player.paused ? ButtonStyle.Secondary : ButtonStyle.Primary;
                         (button as APIButtonComponentWithCustomId).label =
-                            messages.events.trackStart.components.paused[PAUSE_STATE(player.paused)];
+                            messages.events.trackStart.components.paused[getPauseState(player.paused)];
                     }
 
                     return new Button(button as APIButtonComponentWithCustomId);

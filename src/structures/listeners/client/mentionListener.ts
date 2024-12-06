@@ -1,6 +1,13 @@
 import type { Message, UsingClient } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 
+/**
+ *
+ * The message mention listener.
+ * @param client The client instance.
+ * @param message The message instance.
+ * @returns
+ */
 export async function mentionListener(client: UsingClient, message: Message) {
     const { guildId, content } = message;
 
@@ -13,7 +20,7 @@ export async function mentionListener(client: UsingClient, message: Message) {
         const command = client.commands?.values.find((command) => command.name === "help");
         if (!command) {
             await message.react("❌");
-            return message.reply({
+            await message.reply({
                 allowed_mentions: {
                     replied_user: true,
                 },
@@ -24,6 +31,8 @@ export async function mentionListener(client: UsingClient, message: Message) {
                     },
                 ],
             });
+
+            return;
         }
 
         await message.react("🌟");

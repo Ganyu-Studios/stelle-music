@@ -3,7 +3,7 @@ import { StelleOptions } from "#stelle/decorators";
 
 import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType } from "seyfert/lib/types/index.js";
 
-import { AUTOPLAY_STATE } from "#stelle/data/Constants.js";
+import { getAutoplayState } from "#stelle/utils/functions/utils.js";
 
 @StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, moreTracks: true, checkNodes: true })
 export default class AutoplayComponent extends ComponentCommand {
@@ -39,7 +39,7 @@ export default class AutoplayComponent extends ComponentCommand {
                 .map((button) => {
                     if ((button as APIButtonComponentWithCustomId).custom_id === "player-toggleAutoplay")
                         (button as APIButtonComponentWithCustomId).label = messages.events.trackStart.components.autoplay({
-                            type: messages.commands.autoplay.autoplayType[AUTOPLAY_STATE(isAutoplay)],
+                            type: messages.commands.autoplay.autoplayType[getAutoplayState(isAutoplay)],
                         });
 
                     return new Button(button as APIButtonComponentWithCustomId);

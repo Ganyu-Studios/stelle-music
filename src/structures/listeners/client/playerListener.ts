@@ -5,6 +5,14 @@ import { TimeFormat } from "#stelle/utils/TimeFormat.js";
 
 const timeouts: Map<string, NodeJS.Timeout> = new Map();
 
+/**
+ *
+ * The player voice state listener.
+ * @param client The client instance.
+ * @param newState The new voice state.
+ * @param oldState The old voice state.
+ * @returns
+ */
 export async function playerListener(client: UsingClient, newState: VoiceState, oldState?: VoiceState): Promise<void> {
     if (oldState?.channelId === newState.channelId) return;
 
@@ -23,7 +31,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
     const channel = await client.channels.fetch(player.voiceChannelId);
     if (!channel.is(["GuildStageVoice", "GuildVoice"])) return;
 
-    const members = await Promise.all((await channel.states()).map(async (c) => await c.member()));
+    const members = await Promise.all(channel.states().map(async (c) => await c.member()));
     const isEmpty = members.filter(({ user }) => !user.bot).length === 0;
 
     if (

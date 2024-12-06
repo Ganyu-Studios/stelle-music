@@ -1,9 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { getFlag } from "#stelle/utils/functions/utils.js";
 
-import type { RepeatMode } from "lavalink-client";
 import { ActivityType, type GatewayActivityUpdateData } from "seyfert/lib/types/index.js";
-import type { AutoplayMode, PausedMode } from "#stelle/types";
 
 const packageJSON = JSON.parse(await readFile("./package.json", "utf-8"));
 
@@ -21,45 +19,6 @@ export const DEBUG_MODE: boolean = getFlag("--debug");
  * Stelle eval secrets regex.
  */
 export const SECRETS_REGEX: RegExp = /\b(?:client\.(?:config)|config|env|process\.(?:env|exit)|eval|atob|btoa)\b/;
-
-/**
- *
- * Stelle autoplay state.
- * @param boolean The boolean.
- * @returns
- */
-export const AUTOPLAY_STATE = (boolean: boolean): AutoplayMode => (boolean ? "enabled" : "disabled");
-
-/**
- *
- * Stelle pause state.
- * @param boolean The boolean.
- * @returns
- */
-export const PAUSE_STATE = (boolean: boolean): PausedMode => (boolean ? "resume" : "pause");
-
-/**
- *
- * Stelle loop state.
- * @param mode The mode.
- * @param alt Return the alternative state.
- * @returns
- */
-export const LOOP_STATE = (mode: RepeatMode, alt?: boolean) => {
-    const states: Record<RepeatMode, RepeatMode> = {
-        off: "track",
-        track: "queue",
-        queue: "off",
-    };
-
-    if (alt) {
-        states.off = "off";
-        states.track = "track";
-        states.queue = "queue";
-    }
-
-    return states[mode];
-};
 
 /**
  * Stelle think messages.

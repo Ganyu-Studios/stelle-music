@@ -6,9 +6,7 @@ export default new Lavalink({
     run: async (client, node) => {
         const players = [...client.manager.players.values()].filter((player) => player.node.id === node.id);
         if (client.config.sessions.resumePlayers && players.length && !node.resuming.enabled) {
-            if (players.length) {
-                // make this shit works.
-            }
+            // make this shit works.
         }
 
         if (client.config.sessions.enabled) await node.updateSession(true, client.config.sessions.resumeTime);
