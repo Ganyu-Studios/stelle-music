@@ -6,7 +6,16 @@ export default new Lavalink({
     run: async (client, node) => {
         const players = [...client.manager.players.values()].filter((player) => player.node.id === node.id);
         if (client.config.sessions.resumePlayers && players.length && !node.resuming.enabled) {
-            // make this shit works.
+            for (const player of players) {
+                await player.queue.utils.sync(true, true);
+                await player.play({
+                    track: player.queue.current ?? undefined,
+                    paused: player.paused,
+                    volume: player.volume,
+                    position: player.position,
+                    voice: player.voice,
+                });
+            }
         }
 
         if (client.config.sessions.enabled) await node.updateSession(true, client.config.sessions.resumeTime);

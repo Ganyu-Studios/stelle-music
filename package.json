@@ -33,7 +33,7 @@
     },
     "dependencies": {
         "@prisma/client": "^6.0.1",
-        "lavalink-client": "^2.4.1",
+        "lavalink-client": "https://pkg.pr.new/Tomato6966/lavalink-client@81",
         "meowdb": "^2.2.3",
         "seyfert": "github:tiramisulabs/seyfert",
         "yunaforseyfert": "^1.0.4"
