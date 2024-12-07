@@ -33,6 +33,8 @@ export default new Lavalink({
                 player.set("me", session.me);
                 player.set("localeString", session.localeString);
 
+                player.voice = data.voice;
+
                 await player.connect();
 
                 Object.assign(player.filterManager, { data: data.filters });
