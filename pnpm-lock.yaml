@@ -12,8 +12,8 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1(prisma@6.0.1)
       lavalink-client:
-        specifier: https://pkg.pr.new/Tomato6966/lavalink-client@81
-        version: https://pkg.pr.new/Tomato6966/lavalink-client@81
+        specifier: https://pkg.pr.new/Tomato6966/lavalink-client@1df6a93
+        version: https://pkg.pr.new/Tomato6966/lavalink-client@1df6a93
       meowdb:
         specifier: ^2.2.3
         version: 2.2.3
@@ -488,8 +488,8 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
-  lavalink-client@https://pkg.pr.new/Tomato6966/lavalink-client@81:
-    resolution: {tarball: https://pkg.pr.new/Tomato6966/lavalink-client@81}
+  lavalink-client@https://pkg.pr.new/Tomato6966/lavalink-client@1df6a93:
+    resolution: {tarball: https://pkg.pr.new/Tomato6966/lavalink-client@1df6a93}
     version: 2.4.1
     engines: {bun: '>=1.0.0', node: '>=18.0.0'}
 
@@ -1088,7 +1088,7 @@ snapshots:
 
   isexe@2.0.0: {}
 
-  lavalink-client@https://pkg.pr.new/Tomato6966/lavalink-client@81:
+  lavalink-client@https://pkg.pr.new/Tomato6966/lavalink-client@1df6a93:
     dependencies:
       pkg-pr-new: 0.0.35
       tslib: 2.8.1
