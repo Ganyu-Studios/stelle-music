@@ -26,8 +26,8 @@ When prisma is installed the first time (or update prisma) prisma needs to gener
 This also applies when you make changes in the [schema](/prisma/schema.prisma), you need to generate the new types.
 
 > [!NOTE]
-> You can execute also `pnpm prisma db push` to synchronize the database.<br>
-> This needs to be executed when you make changes in the [schema](/prisma/schema.prisma)
+> You can execute also `pnpm prisma db push` to synchronize the database.<br/>
+> This needs to be executed when you make changes in the [schema](/prisma/schema.prisma) (It's not mandatory, but I recommend it.)
 
 
 ###  📋 Environment Variables
@@ -38,7 +38,7 @@ This also applies when you make changes in the [schema](/prisma/schema.prisma), 
 3. Fill the required variables. ([available variables](/.env.example))
 
 > [!IMPORTANT]
-> You need to follow the example url format.<br>
+> You need to follow the example url format.<br/>
 > You can learn more about the prisma url format [here](https://www.prisma.io/docs/orm/overview/databases/mongodb#connection-details)
 
 
@@ -86,10 +86,6 @@ developerIds: [
 Run the bot in `Javascript`
 
 ```bash
-# This is necessary for typescript.
-pnpm prisma generate # Generate types for prisma.
-
-# Or you can do it step-by-step
 pnpm clean # Will re-create the dist folder
 pnpm start # Will start the bot
 ```
@@ -97,14 +93,11 @@ pnpm start # Will start the bot
 Run the bot in `Typescript`
 
 ```bash
-# This is necessary for typescript.
-pnpm prisma generate # Generate types for prisma.
-
 # And run it!
 pnpm dev
 
 ``` 
 
 ### 🔎 Looking for a lavalink node?
-> Stelle needs a [`Lavalink node`](https://github.com/lavalink-devs/Lavalink) to play music.
+> Stelle needs a [`Lavalink node`](https://github.com/lavalink-devs/Lavalink) to play music.<br/>
 > See [self hosting a node](/LAVALINK.md) for more.
