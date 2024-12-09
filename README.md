@@ -23,6 +23,7 @@ She has been created with the following technologies:
 - [PNPM v9.15.0x](pnpm.io/installation)
 - [NodeJS v.22.11.0x](https://nodejs.org/en/download/prebuilt-installer)
 - [Visual Studio Code](https://code.visualstudio.com)
+- [MongoDB Database](https://www.mongodb.com/) (You can create a _free*_ mongodb cluster)
 
 See the the [how to install](/INSTALLATION.md) for more.
 
