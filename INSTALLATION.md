@@ -38,9 +38,8 @@ This also applies when you make changes in the [schema](/prisma/schema.prisma), 
 3. Fill the required variables. ([available variables](/.env.example))
 
 > [!IMPORTANT]
-> You need to follow the example url format.<br/>
+> You need to follow the `DATABASE_URL` example url format.<br/>
 > You can learn more about the prisma url format [here](https://www.prisma.io/docs/orm/overview/databases/mongodb#connection-details)
-
 
 ###  📋 Configuration
 * Stelle has a configuration to save a specific data.
@@ -97,7 +96,7 @@ pnpm start # Will start the bot
 Run the bot in `Typescript`
 
 ```bash
-# And run it!
+# Run it!
 pnpm dev
 
 ``` 
