@@ -16,6 +16,13 @@ cd stelle-music
 pnpm i
 ```
 
+###  📋 Environment Variables
+* Stelle needs some environment variables to work.
+
+1. Copy the `.env.example` file. (localed in the root of the project)
+2. Rename the file to: `.env`.
+3. Fill the required variables. ([available variables](/.env.example))
+
 ###  📋 Configuration
 * Stelle has a configuration to save a specific data.
 
