@@ -58,8 +58,9 @@ plugins:
     # See: https://github.com/lavalink-devs/youtube-source?tab=readme-ov-file#using-oauth-tokens
     oauth:
       enabled: true
-      refreshToken: "your account access token"
-      skipInitialization: true
+      # Uncomment the 'refreshToken' section when you get a valid refresh token.
+      #refreshToken: "your account access token"
+      skipInitialization: false
     # Only if you need/want use the pot data
     # See: https://github.com/lavalink-devs/youtube-source?tab=readme-ov-file#using-a-potoken
     #pot:
