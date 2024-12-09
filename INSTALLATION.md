@@ -26,7 +26,7 @@ When prisma is installed the first time (or update prisma) prisma needs to gener
 This also applies when you make changes in the [schema](/prisma/schema.prisma), you need to generate the new types.
 
 > [!NOTE]
-> You can execute also `pnpm prisma db push` to synchronize the database.
+> You can execute also `pnpm prisma db push` to synchronize the database.<br>
 > This needs to be executed when you make changes in the [schema](/prisma/schema.prisma)
 
 
@@ -38,7 +38,7 @@ This also applies when you make changes in the [schema](/prisma/schema.prisma), 
 3. Fill the required variables. ([available variables](/.env.example))
 
 > [!IMPORTANT]
-> You need to follow the example url format.
+> You need to follow the example url format.<br>
 > You can learn more about the prisma url format [here](https://www.prisma.io/docs/orm/overview/databases/mongodb#connection-details)
 
 
