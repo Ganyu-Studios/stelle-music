@@ -20,8 +20,8 @@ She has been created with the following technologies:
 
 ## ⚙️ Minimum Requeriments
 
-- [PNPM v9.2x](pnpm.io/installation)
-- [NodeJS v.20.14x](https://nodejs.org/en/download/prebuilt-installer)
+- [PNPM v9.15.0x](pnpm.io/installation)
+- [NodeJS v.22.11.0x](https://nodejs.org/en/download/prebuilt-installer)
 - [Visual Studio Code](https://code.visualstudio.com)
 
 See the the [how to install](/INSTALLATION.md) for more.
