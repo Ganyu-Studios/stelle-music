@@ -57,8 +57,10 @@ guildIds: [
 ];
 ```
 
+---
+
 * Don't forget to change the channel ids.
-> 1. Go to [the configuration](/src/structures/utils/data/Configuration.ts#L39-L41)
+> 1. Go to [the configuration](/src/structures/utils/data/Configuration.ts#L39-L42)
 > 2. Replace the IDs with your IDs.
 
 ```js
@@ -67,6 +69,8 @@ channels: {
     errorsId: "45678", // Another example channel id
 }
 ```
+
+---
 
 * Don't forget to change the user ids.
 > 1. Go to [the configuration](/src/structures/utils/data/Configuration.ts#L15-L17)
