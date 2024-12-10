@@ -1,7 +1,8 @@
 import { inspect } from "node:util";
-import type { Player } from "lavalink-client";
+import type { Player, RepeatMode } from "lavalink-client";
 
 import { type AnyContext, type DefaultLocale, extendContext } from "seyfert";
+import type { AutoplayMode, PausedMode } from "#stelle/types";
 
 /**
  * Stelle custom context.
@@ -43,30 +44,61 @@ export const getCollectionKey = (ctx: AnyContext): string => {
  * @param player The player.
  * @returns
  */
-export const createBar = (player: Player) => {
+export const createBar = (player: Player): string => {
     const size = 15;
     const line = "▬";
     const slider = "🔘";
 
-    if (!player.queue.current) return `${slider}${line.repeat(size - 1)}]`;
+    if (!player.queue.current) return `${slider}${line.repeat(size - 1)}`;
 
-    const current = player.queue.current.info.duration !== 0 ? player.position : player.queue.current.info.duration;
+    const current = player.position;
     const total = player.queue.current.info.duration;
 
-    const bar =
-        current > total
-            ? [line.repeat((size / 2) * 2), (current / total) * 100]
-            : [
-                  line.repeat(Math.round((size / 2) * (current / total))).replace(/.$/, slider) +
-                      line.repeat(size - Math.round(size * (current / total)) + 1),
+    const progress = Math.min(current / total, 1);
+    const filledLength = Math.round(size * progress);
+    const emptyLength = size - filledLength;
 
-                  current / total,
-              ];
-
-    if (!String(bar).includes(slider)) return `${slider}${line.repeat(size - 1)}`;
-
-    return `${bar[0]}`;
+    return `${line.repeat(filledLength).slice(0, -1)}${slider}${line.repeat(emptyLength)}`;
 };
+
+/**
+ *
+ * Stelle loop state.
+ * @param mode The mode.
+ * @param alt Return the alternative state.
+ * @returns
+ */
+export const getLoopState = (mode: RepeatMode, alt?: boolean) => {
+    const states: Record<RepeatMode, RepeatMode> = {
+        off: "track",
+        track: "queue",
+        queue: "off",
+    };
+
+    if (alt) {
+        states.off = "off";
+        states.track = "track";
+        states.queue = "queue";
+    }
+
+    return states[mode];
+};
+
+/**
+ *
+ * Stelle autoplay state.
+ * @param boolean The boolean.
+ * @returns
+ */
+export const getAutoplayState = (boolean: boolean): AutoplayMode => (boolean ? "enabled" : "disabled");
+
+/**
+ *
+ * Stelle pause state.
+ * @param boolean The boolean.
+ * @returns
+ */
+export const getPauseState = (boolean: boolean): PausedMode => (boolean ? "resume" : "pause");
 
 /**
  *

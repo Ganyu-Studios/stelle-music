@@ -3,8 +3,8 @@ import { Lavalink } from "#stelle/classes";
 
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 
-import { AUTOPLAY_STATE, PAUSE_STATE } from "#stelle/data/Constants.js";
 import { TimeFormat } from "#stelle/utils/TimeFormat.js";
+import { getAutoplayState, getPauseState } from "#stelle/utils/functions/utils.js";
 
 export default new Lavalink({
     name: "trackStart",
@@ -65,7 +65,7 @@ export default new Lavalink({
                 .setStyle(ButtonStyle.Primary)
                 .setLabel(
                     messages.events.trackStart.components.autoplay({
-                        type: messages.commands.autoplay.autoplayType[AUTOPLAY_STATE(isAutoplay)],
+                        type: messages.commands.autoplay.autoplayType[getAutoplayState(isAutoplay)],
                     }),
                 ),
             new Button()
@@ -79,7 +79,7 @@ export default new Lavalink({
             new Button()
                 .setCustomId("player-pauseTrack")
                 .setStyle(ButtonStyle.Primary)
-                .setLabel(messages.events.trackStart.components.paused[PAUSE_STATE(player.paused)]),
+                .setLabel(messages.events.trackStart.components.paused[getPauseState(player.paused)]),
         );
 
         const message = await client.messages.write(player.textChannelId, { embeds: [embed], components: [row, newRow] }).catch(() => null);

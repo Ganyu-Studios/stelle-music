@@ -1,8 +1,8 @@
 import { Command, type CommandContext, Declare, LocalesT } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
-import { AUTOPLAY_STATE } from "#stelle/data/Constants.js";
 import { StelleCategory } from "#stelle/types";
+import { getAutoplayState } from "#stelle/utils/functions/utils.js";
 
 @Declare({
     name: "autoplay",
@@ -41,7 +41,7 @@ export default class AutoplayCommand extends Command {
                 {
                     color: client.config.color.success,
                     description: messages.commands.autoplay.toggled({
-                        type: messages.commands.autoplay.autoplayType[AUTOPLAY_STATE(isAutoplay)],
+                        type: messages.commands.autoplay.autoplayType[getAutoplayState(isAutoplay)],
                     }),
                 },
             ],

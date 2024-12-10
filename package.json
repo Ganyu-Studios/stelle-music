@@ -1,11 +1,14 @@
 {
     "name": "stelle-music",
-    "version": "0.3.0.1-BLAZER",
+    "version": "0.3.1.1-BLAZER",
     "description": "A music bot.",
     "main": "./dist/index.js",
     "type": "module",
-    "packageManager": "pnpm@9.14.4+sha512.c8180b3fbe4e4bca02c94234717896b5529740a6cbadf19fa78254270403ea2f27d4e1d46a08a0f56c89b63dc8ebfd3ee53326da720273794e6200fcf0d184ab",
+    "packageManager": "pnpm@9.15.0+sha512.76e2379760a4328ec4415815bcd6628dee727af3779aaa4c914e3944156c4299921a89f976381ee107d41f12cfa4b66681ca9c718f0668fa0831ed4c6d8ba56c",
     "homepage": "https://github.com/Ganyu-Studios/stelle-music#readme",
+    "engines": {
+        "node": ">= 22.11.0"
+    },
     "scripts": {
         "build": "tsc",
         "typecheck": "tsc --noEmit",
@@ -32,8 +35,8 @@
         "url": "https://github.com/Ganyu-Studios/stelle-music/issues"
     },
     "dependencies": {
-        "@prisma/client": "^5.22.0",
-        "lavalink-client": "^2.4.1",
+        "@prisma/client": "^6.0.1",
+        "lavalink-client": "^2.4.2",
         "meowdb": "^2.2.3",
         "seyfert": "github:tiramisulabs/seyfert",
         "yunaforseyfert": "^1.0.4"
@@ -42,8 +45,8 @@
         "@biomejs/biome": "^1.9.4",
         "@types/node": "^22.10.1",
         "husky": "^9.1.7",
-        "lint-staged": "^15.2.10",
-        "prisma": "^5.22.0",
+        "lint-staged": "^15.2.11",
+        "prisma": "^6.0.1",
         "tsx": "^4.19.2",
         "typescript": "^5.7.2"
     },

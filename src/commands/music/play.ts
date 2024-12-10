@@ -31,8 +31,8 @@ const options = {
             const { client, member, guildId } = interaction;
 
             if (!guildId) return;
-            const { searchEngine } = await client.database.getPlayer(guildId);
 
+            const { searchEngine } = await client.database.getPlayer(guildId);
             const { messages } = client.t(await client.database.getLocale(guildId)).get();
 
             if (!client.manager.useable)
@@ -47,7 +47,7 @@ const options = {
                     { name: messages.commands.play.autocomplete.noQuery, value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT" },
                 ]);
 
-            const tracks = await client.manager.search(query, searchEngine);
+            const { tracks } = await client.manager.search(query, searchEngine);
             if (!tracks.length) return interaction.respond([{ name: messages.commands.play.autocomplete.noTracks, value: "noTracks" }]);
 
             await interaction.respond(
@@ -115,8 +115,11 @@ export default class PlayCommand extends Command {
             },
         );
 
-        player.set("me", clientUser);
         player.set("localeString", await ctx.getLocaleString());
+        player.set("me", {
+            ...clientUser,
+            tag: client.me.username,
+        });
 
         if (!bot) bot = client.cache.voiceStates?.get(client.me.id, guildId);
         if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);

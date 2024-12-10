@@ -5,6 +5,7 @@ export default new Lavalink({
     name: "resumed",
     type: "node",
     run: async (client, node, _, players) => {
+        if (!client.config.sessions.enabled) return;
         if (!Array.isArray(players)) return;
 
         for (const data of players) {
@@ -27,27 +28,31 @@ export default new Lavalink({
                     vcRegion: session.options.vcRegion,
                 });
 
-                if (!player.get("messageId")) player.set("messageId", session.messageId);
-                if (!player.get("enabledAutoplay")) player.set("enabledAutoplay", session.enabledAutoplay);
-                if (!player.get("me")) player.set("me", session.me);
-                if (!player.get("localeString")) player.set("localeString", session.localeString);
+                player.set("messageId", session.messageId);
+                player.set("enabledAutoplay", session.enabledAutoplay);
+                player.set("me", session.me);
+                player.set("localeString", session.localeString);
+
+                player.voice = data.voice;
 
                 await player.connect();
 
-                player.filterManager.data = data.filters;
-                player.repeatMode = session.repeatMode;
+                Object.assign(player.filterManager, { data: data.filters });
 
                 if (data.track) player.queue.current = client.manager.utils.buildTrack(data.track, session.me);
 
                 if (!player.queue.previous.length) player.queue.previous.unshift(...session.queue!.previous);
                 if (!player.queue.tracks.length) player.queue.add(session.queue!.tracks);
 
-                player.lastPosition = data.state.position;
-                player.lastPositionChange = Date.now();
-                player.ping.lavalink = data.state.ping;
+                Object.assign(player, {
+                    lastPosition: data.state.position,
+                    lastPositionChange: Date.now(),
+                    paused: data.paused,
+                    playing: !data.paused && !!data.track,
+                    repeatMode: session.repeatMode,
+                });
 
-                player.paused = data.paused;
-                player.playing = !data.paused && !!data.track;
+                player.ping.lavalink = data.state.ping;
 
                 await player.queue.utils.save();
             } else {

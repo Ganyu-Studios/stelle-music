@@ -12,7 +12,6 @@ export const Configuration: StelleConfiguration = {
     prefixes: ["st!"],
     defaultLocale: "en-US",
     disconnectTime: ms("30s"),
-    resumeTime: ms("1min"),
     developerIds: [
         "391283181665517568", // <-- JustEvil
     ],
@@ -44,5 +43,10 @@ export const Configuration: StelleConfiguration = {
     cache: {
         filename: "commands.json",
         size: 5,
+    },
+    sessions: {
+        enabled: true,
+        resumeTime: ms("1min"),
+        resumePlayers: true,
     },
 };

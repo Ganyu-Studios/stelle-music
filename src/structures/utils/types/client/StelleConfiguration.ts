@@ -27,6 +27,24 @@ interface StelleCache {
     size: number;
 }
 
+interface StelleSessions {
+    /**
+     * Enable the sessions feature.
+     * @default true
+     */
+    enabled: boolean;
+    /**
+     * Stelle node(s) resume time.
+     * @default ms("1min")
+     */
+    resumeTime: number;
+    /**
+     * Force the players to resume.
+     * @default true
+     */
+    resumePlayers: boolean;
+}
+
 export interface StelleConfiguration {
     /**
      * Stelle default prefix.
@@ -58,11 +76,6 @@ export interface StelleConfiguration {
      * @default ms("30s")
      */
     disconnectTime: number;
-    /**
-     * Stelle node(s) resume time.
-     * @default ms("1min")
-     */
-    resumeTime: number;
     /** Stelle developer id(s). */
     developerIds: string[];
     /** Stelle developer guild id(s). */
@@ -73,8 +86,8 @@ export interface StelleConfiguration {
     color: StelleColors;
     /** Stelle channels. */
     channels: StelleChannels;
-    /**
-     * Stelle cache.
-     */
+    /** Stelle cache.*/
     cache: StelleCache;
+    /** Stelle sessions. */
+    sessions: StelleSessions;
 }

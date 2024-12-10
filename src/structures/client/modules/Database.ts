@@ -27,12 +27,7 @@ export class StelleDatabase {
      */
     constructor(client: UsingClient) {
         this.client = client;
-
-        //cuz prisma makes weird stuff
-        //credits: NoBody-UU for the tip
-        Object.defineProperty(this, "prisma", {
-            get: () => prismaClient,
-        });
+        this.prisma = prismaClient;
     }
 
     /**

@@ -3,8 +3,8 @@ import { StelleOptions } from "#stelle/decorators";
 
 import type { RepeatMode } from "lavalink-client";
 
-import { LOOP_STATE } from "#stelle/data/Constants.js";
 import { StelleCategory } from "#stelle/types";
+import { getLoopState } from "#stelle/utils/functions/utils.js";
 
 const options = {
     mode: createStringOption({
@@ -59,7 +59,7 @@ export default class LoopCommand extends Command {
                 {
                     color: client.config.color.success,
                     description: messages.commands.autoplay.toggled({
-                        type: messages.commands.loop.loopType[LOOP_STATE(player.repeatMode, true)],
+                        type: messages.commands.loop.loopType[getLoopState(player.repeatMode, true)],
                     }),
                 },
             ],

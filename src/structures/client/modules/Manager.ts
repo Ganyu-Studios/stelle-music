@@ -1,4 +1,4 @@
-import { LavalinkManager, type SearchPlatform, type Track } from "lavalink-client";
+import { LavalinkManager, type SearchPlatform, type SearchResult } from "lavalink-client";
 
 import { StelleHandler } from "#stelle/utils/classes/client/Handler.js";
 
@@ -55,11 +55,11 @@ export class StelleManager extends LavalinkManager {
      * @param query The query.
      * @returns
      */
-    public async search(query: string, source?: SearchPlatform): Promise<Track[]> {
+    public search(query: string, source?: SearchPlatform): Promise<SearchResult> {
         const nodes = this.nodeManager.leastUsedNodes();
         const node = nodes[Math.floor(Math.random() * nodes.length)];
-        const result = await node.search({ query, source }, null, false);
-        return result.tracks;
+
+        return node.search({ query, source }, null, false);
     }
 
     /**
