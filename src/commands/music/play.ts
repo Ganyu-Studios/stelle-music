@@ -115,8 +115,11 @@ export default class PlayCommand extends Command {
             },
         );
 
-        player.set("me", clientUser);
         player.set("localeString", await ctx.getLocaleString());
+        player.set("me", {
+            ...clientUser,
+            tag: client.me.username,
+        });
 
         if (!bot) bot = client.cache.voiceStates?.get(client.me.id, guildId);
         if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);

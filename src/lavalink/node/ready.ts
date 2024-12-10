@@ -7,14 +7,18 @@ export default new Lavalink({
         const players = [...client.manager.players.values()].filter((player) => player.node.id === node.id);
         if (client.config.sessions.resumePlayers && players.length && !node.resuming.enabled) {
             for (const player of players) {
-                await player.queue.utils.sync(true, true);
-                await player.play({
-                    track: player.queue.current ?? undefined,
-                    paused: player.paused,
-                    volume: player.volume,
-                    position: player.position,
-                    voice: player.voice,
-                });
+                try {
+                    await player.queue.utils.sync(true, true);
+                    await player.play({
+                        track: player.queue.current ?? undefined,
+                        paused: player.paused,
+                        volume: player.volume,
+                        position: player.position,
+                        voice: player.voice,
+                    });
+                } catch (error) {
+                    return client.logger.error(`Music - Error resuming the player: ${player.guildId}`, error);
+                }
             }
         }
 

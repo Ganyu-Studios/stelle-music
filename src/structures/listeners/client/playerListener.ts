@@ -31,7 +31,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
     const channel = await client.channels.fetch(player.voiceChannelId);
     if (!channel.is(["GuildStageVoice", "GuildVoice"])) return;
 
-    const members = await Promise.all(channel.states().map(async (c) => await c.member()));
+    const members = await Promise.all(channel.states().map((c) => c.member()));
     const isEmpty = members.filter(({ user }) => !user.bot).length === 0;
 
     if (

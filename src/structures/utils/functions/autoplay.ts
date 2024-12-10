@@ -41,17 +41,12 @@ export async function autoPlayFunction(player: Player, lastTrack?: Track): Promi
                 ),
         );
 
-    const requester = {
-        ...me,
-        tag: me.username,
-    };
-
     if (lastTrack.info.sourceName === "spotify") {
         const filtered = player.queue.previous.filter(({ info }) => info.sourceName === "spotify").slice(0, 1);
         if (!filtered.length) filtered.push(lastTrack);
 
         const ids = filtered.map(({ info }) => info.identifier ?? info.uri.split("/").reverse()?.[0] ?? info.uri.split("/").reverse()?.[1]);
-        const res = await player.search({ query: `seed_tracks=${ids.join(",")}`, source: "sprec" }, requester);
+        const res = await player.search({ query: `seed_tracks=${ids.join(",")}`, source: "sprec" }, me);
 
         if (res.tracks.length) {
             const track = filterTracks(res.tracks)[Math.floor(Math.random() * res.tracks.length)] as Track;
@@ -59,7 +54,7 @@ export async function autoPlayFunction(player: Player, lastTrack?: Track): Promi
         }
     } else if ((["youtube", "youtubemusic"] as SourceNames[]).includes(lastTrack.info.sourceName)) {
         const search = `https://www.youtube.com/watch?v=${lastTrack.info.identifier}&list=RD${lastTrack.info.identifier}`;
-        const res = await player.search({ query: search }, requester);
+        const res = await player.search({ query: search }, me);
 
         if (res.tracks.length) {
             const random = Math.floor(Math.random() * res.tracks.length);

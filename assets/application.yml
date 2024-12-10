@@ -46,7 +46,7 @@ lavalink:
     - dependency: "com.github.devoxin:lavadspx-plugin:0.0.5" # https://github.com/devoxin/LavaDSPX-Plugin
       repository: "https://jitpack.io"
       snapshot: false
-    - dependency: "dev.lavalink.youtube:youtube-plugin:1.11.0" # https://github.com/lavalink-devs/youtube-source
+    - dependency: "dev.lavalink.youtube:youtube-plugin:1.11.1" # https://github.com/lavalink-devs/youtube-source
       snapshot: false
     - dependency: "com.github.topi314.lavalyrics:lavalyrics-plugin:1.0.0" # https://github.com/topi314/LavaLyrics
       snapshot: false
