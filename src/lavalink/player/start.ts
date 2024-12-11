@@ -82,6 +82,16 @@ export default new Lavalink({
                 .setLabel(messages.events.trackStart.components.paused[getPauseState(player.paused)]),
         );
 
+        await client.channels
+            .setVoiceStatus(
+                player.voiceChannelId,
+                messages.events.voiceStatus.trackStart({
+                    author: track.info.author,
+                    title: track.info.title,
+                }),
+            )
+            .catch(() => null);
+
         const message = await client.messages.write(player.textChannelId, { embeds: [embed], components: [row, newRow] }).catch(() => null);
         if (message) player.set("messageId", message.id);
     },

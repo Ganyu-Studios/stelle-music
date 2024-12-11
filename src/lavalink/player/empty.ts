@@ -23,6 +23,7 @@ export default new Lavalink({
 
         const embed = new Embed().setDescription(messages.events.playerEnd).setColor(client.config.color.success).setTimestamp();
 
+        await client.channels.setVoiceStatus(player.voiceChannelId, messages.events.voiceStatus.queueEnd).catch(() => null);
         await client.messages.write(player.textChannelId, { embeds: [embed] }).catch(() => null);
     },
 });

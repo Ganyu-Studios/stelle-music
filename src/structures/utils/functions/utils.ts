@@ -32,7 +32,7 @@ export const customContext = extendContext((interaction) => ({
 export const getCollectionKey = (ctx: AnyContext): string => {
     const authorId = ctx.author.id;
 
-    if (ctx.isChat() || ctx.isMenu()) return `${authorId}-${ctx.fullCommandName}-command`;
+    if (ctx.isChat() || ctx.isMenu() || ctx.isEntryPoint()) return `${authorId}-${ctx.fullCommandName}-command`;
     if (ctx.isComponent() || ctx.isModal()) return `${authorId}-${ctx.customId}-component`;
 
     return `${authorId}-all`;
