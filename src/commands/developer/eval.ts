@@ -2,7 +2,7 @@ import { Command, type CommandContext, Declare, Embed, type Message, Options, ty
 import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
 import { StelleOptions } from "#stelle/decorators";
 
-import { Configuration } from "#stelle/data/Configuration.js";
+import { Configuration } from "#stelle/data/configuration/index.js";
 import { getDepth, sliceText } from "#stelle/utils/functions/utils.js";
 
 import { DeclareParserConfig, ParserRecommendedConfig, Watch, Yuna } from "yunaforseyfert";

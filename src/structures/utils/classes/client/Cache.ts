@@ -1,6 +1,6 @@
 import type { guildLocale, guildPlayer, guildPrefix } from "@prisma/client";
 import { LimitedCollection } from "seyfert";
-import { Configuration } from "#stelle/data/Configuration.js";
+import { Configuration } from "#stelle/data/configuration/index.js";
 import { StelleKeys } from "#stelle/types";
 
 interface Cache {

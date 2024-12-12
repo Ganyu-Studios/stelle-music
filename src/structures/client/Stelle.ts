@@ -5,7 +5,7 @@ import type { StelleConfiguration } from "#stelle/types";
 
 import { StelleMiddlewares } from "#stelle/middlwares";
 
-import { Configuration } from "#stelle/data/Configuration.js";
+import { Configuration } from "#stelle/data/configuration/index.js";
 import { getWatermark } from "#stelle/utils/Logger.js";
 import { onBotPermissionsFail, onOptionsError, onPermissionsFail, onRunError } from "#stelle/utils/functions/overrides.js";
 import { customContext } from "#stelle/utils/functions/utils.js";

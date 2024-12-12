@@ -2,7 +2,7 @@ import { Command, type CommandContext, Declare } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
-import { Configuration } from "#stelle/data/Configuration.js";
+import { Configuration } from "#stelle/data/configuration/index.js";
 
 @Declare({
     name: "reload",

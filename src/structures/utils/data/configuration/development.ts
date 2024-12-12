@@ -1,11 +1,7 @@
 import type { StelleConfiguration } from "#stelle/types";
 import { ms } from "#stelle/utils/TimeFormat.js";
-import { sessions } from "../classes/client/Sessions.js";
-
-/**
- * Stelle configuration.
- */
-export const Configuration: StelleConfiguration = {
+import { sessions } from "#stelle/utils/classes/client/Sessions.js";
+export const DevConfiguration: StelleConfiguration = {
     defaultPrefix: "stelle",
     defaultVolume: 60,
     defaultSearchEngine: "spotify",

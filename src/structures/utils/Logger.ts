@@ -1,7 +1,7 @@
 import { Logger } from "seyfert";
 import { LogLevels, gray, italic, red, rgb24, yellow } from "seyfert/lib/common/index.js";
 
-import { Configuration } from "./data/Configuration.js";
+import { Configuration } from "./data/configuration/index.js";
 
 type ColorFunction = (text: string) => string;
 

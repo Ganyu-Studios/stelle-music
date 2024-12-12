@@ -4,7 +4,7 @@ import type { SearchPlatform } from "lavalink-client";
 import type { UsingClient } from "seyfert";
 
 import { StelleCache } from "#stelle/classes";
-import { Configuration } from "#stelle/data/Configuration.js";
+import { Configuration } from "#stelle/data/configuration/index.js";
 import { StelleKeys } from "#stelle/types";
 
 //🗿
