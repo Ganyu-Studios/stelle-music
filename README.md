@@ -1,4 +1,3 @@
-
 <h1 align="center">🌟 STELLE 🌟</h1>
 
 ### 🏠 [Homepage](https://github.com/Ganyu-Studios/stelle-music)
@@ -38,6 +37,12 @@ See [CONTRIBUTING](/CONTRIBUTING.md) for more.
 ## ⭐️ Show your support
 
 Give a ⭐️ if this project helped you!
+
+## 💸 Donations
+
+If you would like to support the development of Stelle, you can make a donation via the following platforms:
+
+- [![Ko-Fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/justevil)
 
 ## 🔰 Features
 
