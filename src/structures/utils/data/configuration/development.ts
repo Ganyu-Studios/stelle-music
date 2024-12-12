@@ -1,6 +1,7 @@
 import type { StelleConfiguration } from "#stelle/types";
 import { ms } from "#stelle/utils/TimeFormat.js";
 import { sessions } from "#stelle/utils/classes/client/Sessions.js";
+
 export const DevConfiguration: StelleConfiguration = {
     defaultPrefix: "stelle",
     defaultVolume: 60,
