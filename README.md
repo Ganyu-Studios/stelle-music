@@ -39,7 +39,7 @@ See [CONTRIBUTING](/CONTRIBUTING.md) for more.
 Give a ⭐️ if this project helped you!<br/>
 If you would like to support the development of Stelle, you can make a donation via the following platforms:
 
-> [![Ko-Fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/justevil)
+[![Ko-Fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/justevil)
 
 ## 🔰 Features
 
