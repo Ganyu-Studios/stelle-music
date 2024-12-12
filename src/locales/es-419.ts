@@ -7,7 +7,7 @@ export default {
     metadata: {
         name: "Spanish",
         emoji: "🇲🇽",
-        translators: ["MARCROCK22"],
+        translators: ["MARCROCK22", "JustEvil"],
     },
     messages: {
         commands: {
@@ -149,6 +149,10 @@ export default {
                 [ApplicationCommandOptionType.Mentionable]: "@mencionable",
                 [ApplicationCommandOptionType.Number]: "numero",
                 [ApplicationCommandOptionType.Attachment]: "achivo",
+            },
+            voiceStatus: {
+                trackStart: ({ title, author }) => `${title} por ${author}`,
+                queueEnd: "La cola está vacía.",
             },
             trackStart: {
                 embed: ({ duration, requester, title, url, volume, author, size }) =>

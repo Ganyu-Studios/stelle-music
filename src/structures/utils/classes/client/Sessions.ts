@@ -73,7 +73,7 @@ export class StelleSessions {
     /**
      *
      * Resolve the nodes options.
-     * @param nodes The array of nodes.
+     * @param nodes The array of nodes to resolve.
      * @returns
      */
     public resolve(nodes: NonResumableOptions[]): LavalinkNodeOptions[] {

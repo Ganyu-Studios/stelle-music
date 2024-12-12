@@ -149,6 +149,10 @@ export default {
                 [ApplicationCommandOptionType.Number]: "number",
                 [ApplicationCommandOptionType.Attachment]: "attachment",
             } satisfies Record<ApplicationCommandOptionType, string>,
+            voiceStatus: {
+                trackStart: ({ title, author }: IVoiceStatus) => `${title} by ${author}`,
+                queueEnd: "The queue is empty.",
+            },
             trackStart: {
                 embed: ({ duration, requester, title, url, volume, author, size }: ITrackStart) =>
                     `\`📻\` Now playing [\`${title}\`](${url})\n\n\`🎤\` **Author**: \`${author}\`\n\`🕛\` **Duration**: \`${duration}\`\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>\n\n\`📋\` **In queue**: \`${size} tracks\``,
@@ -360,6 +364,7 @@ export default {
 };
 
 type IHelpMenuEmbed = Pick<IMention, "clientName"> & IHelpMenu;
+type IVoiceStatus = Pick<ITrackStart, "title" | "author">;
 type IHelp = { defaultPrefix: string; options: string };
 type IHelpMenu = { category: string };
 type IMention = { clientName: string; defaultPrefix: string; commandName: string };

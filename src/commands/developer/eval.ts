@@ -112,7 +112,7 @@ export default class EvalCommand extends Command {
                     new Embed()
                         .setAuthor({ name: author.tag, iconUrl: author.avatarURL() })
                         .setColor("Red")
-                        .setDescription("`❌`~  An error occurred while trying to evaluate.")
+                        .setDescription("`❌` - An error occurred while trying to evaluate.")
                         .addFields(
                             {
                                 name: "`📖` Type",

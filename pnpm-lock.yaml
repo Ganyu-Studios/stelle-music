@@ -19,7 +19,7 @@ importers:
         version: 2.2.3
       seyfert:
         specifier: github:tiramisulabs/seyfert
-        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/4bad71399a26c22c8ea25f1aca9f8891409f304e
+        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/bad33536b98c7f633a89dd984bc65128979d69d0
       yunaforseyfert:
         specifier: ^1.0.4
         version: 1.0.4
@@ -28,8 +28,8 @@ importers:
         specifier: ^1.9.4
         version: 1.9.4
       '@types/node':
-        specifier: ^22.10.1
-        version: 22.10.1
+        specifier: ^22.10.2
+        version: 22.10.2
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -269,8 +269,8 @@ packages:
   '@prisma/get-platform@6.0.1':
     resolution: {integrity: sha512-zspC9vlxAqx4E6epMPMLLBMED2VD8axDe8sPnquZ8GOsn6tiacWK0oxrGK4UAHYzYUVuMVUApJbdXB2dFpLhvg==}
 
-  '@types/node@22.10.1':
-    resolution: {integrity: sha512-qKgsUwfHZV2WCWLAnVP1JqnpE6Im6h3Y0+fYgMTasNQ7V++CBX5OT1as0g0f+OyubbFqhf6XVNIsmN4IIhEgGQ==}
+  '@types/node@22.10.2':
+    resolution: {integrity: sha512-Xxr6BBRCAOQixvonOye19wnzyDiUtTeqldOOmj3CkeblonbccA12PFwlufvRdrpjXxqnmUaeiU5EOA+7s5diUQ==}
 
   ansi-escapes@7.0.0:
     resolution: {integrity: sha512-GdYO7a61mR0fOlAsvC9/rIHf7L96sBc6dEWzeOu+KAea5bZyQRPIpojrVoI4AXGJS/ycu/fBTdLrUkA4ODrvjw==}
@@ -473,8 +473,8 @@ packages:
   rfdc@1.4.1:
     resolution: {integrity: sha512-q1b3N5QkRUWUl7iyylaaj3kOpIT0N2i9MqIEQXP73GVsN9cw3fdx8X63cEmWhJGi2PPCF23Ijp7ktmd39rawIA==}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/4bad71399a26c22c8ea25f1aca9f8891409f304e:
-    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/4bad71399a26c22c8ea25f1aca9f8891409f304e}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/bad33536b98c7f633a89dd984bc65128979d69d0:
+    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/bad33536b98c7f633a89dd984bc65128979d69d0}
     version: 2.1.0
 
   shebang-command@2.0.0:
@@ -696,7 +696,7 @@ snapshots:
     dependencies:
       '@prisma/debug': 6.0.1
 
-  '@types/node@22.10.1':
+  '@types/node@22.10.2':
     dependencies:
       undici-types: 6.20.0
 
@@ -905,7 +905,7 @@ snapshots:
 
   rfdc@1.4.1: {}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/4bad71399a26c22c8ea25f1aca9f8891409f304e: {}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/bad33536b98c7f633a89dd984bc65128979d69d0: {}
 
   shebang-command@2.0.0:
     dependencies:
