@@ -1,7 +1,7 @@
 import { Client, LimitedCollection } from "seyfert";
-import { ActivityType, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
+import { ActivityType, ApplicationCommandType, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
 
-import type { StelleConfiguration } from "#stelle/types";
+import type { NonGlobalCommands, StelleConfiguration } from "#stelle/types";
 
 import { StelleMiddlewares } from "#stelle/middlwares";
 
@@ -107,6 +107,15 @@ export class Stelle extends Client<true> {
      */
     private async run(): Promise<typeof this.token> {
         getWatermark();
+
+        this.commands.onCommand = (file) => {
+            const command = new file();
+
+            if (command.type === ApplicationCommandType.PrimaryEntryPoint) return command;
+            if (command.onlyDeveloper) (command as NonGlobalCommands).guildId = this.config.guildIds;
+
+            return command;
+        };
 
         this.setServices({
             middlewares: StelleMiddlewares,
