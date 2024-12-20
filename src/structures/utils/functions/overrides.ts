@@ -49,7 +49,7 @@ export async function onPermissionsFail(ctx: AnyContext, permissions: Permission
                 fields: [
                     {
                         name: messages.events.permissions.user.field,
-                        value: permissions.map((p) => `- ${messages.events.permissions.list[p]}`).join("\n- "),
+                        value: permissions.map((p) => `- ${messages.events.permissions.list[p]}`).join("\n"),
                     },
                 ],
             },
@@ -77,7 +77,7 @@ export async function onBotPermissionsFail(ctx: AnyContext, permissions: Permiss
                 fields: [
                     {
                         name: messages.events.permissions.bot.field,
-                        value: permissions.map((p) => `${messages.events.permissions.list[p]}`).join("\n- "),
+                        value: permissions.map((p) => `- ${messages.events.permissions.list[p]}`).join("\n"),
                     },
                 ],
             },
