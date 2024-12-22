@@ -21,7 +21,7 @@ export default new Lavalink({
 
         const { messages } = client.t(locale).get();
 
-        if (voice.is(["GuildVoice"])) await voice.setVoiceState(messages.events.voiceStatus.queueEnd).catch(() => null);
+        if (voice.is(["GuildVoice"])) await voice.setVoiceStatus(messages.events.voiceStatus.queueEnd).catch(() => null);
 
         const embed = new Embed().setDescription(messages.events.playerEnd).setColor(client.config.color.success).setTimestamp();
 

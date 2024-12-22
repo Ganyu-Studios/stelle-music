@@ -126,7 +126,9 @@ export default class HelpCommand extends Command {
             return;
         }
 
-        const command = client.commands!.values.find((command) => command.name === options.command) as Command | undefined;
+        const command = client.commands!.values.filter((command) => !command.guildId).find((command) => command.name === options.command) as
+            | Command
+            | undefined;
         if (!command)
             return ctx.editOrReply({
                 flags: MessageFlags.Ephemeral,
