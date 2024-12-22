@@ -33,11 +33,6 @@ export class Stelle extends Client<true> {
     public readonly config: StelleConfiguration = Configuration;
 
     /**
-     * Stelle "token".
-     */
-    public readonly token = "🌟" as const;
-
-    /**
      * The timestamp when Stelle is ready.
      */
     public readyTimestamp: number = 0;
@@ -105,7 +100,7 @@ export class Stelle extends Client<true> {
      * Start the main Stelle process.
      * @returns
      */
-    private async run(): Promise<typeof this.token> {
+    private async run(): Promise<"🌟"> {
         getWatermark();
 
         this.commands.onCommand = (file) => {

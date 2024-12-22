@@ -1,4 +1,14 @@
-import { Command, type CommandContext, Declare, Embed, type Message, Options, type WebhookMessage, createStringOption } from "seyfert";
+import {
+    Command,
+    type CommandContext,
+    Declare,
+    Embed,
+    type Message,
+    Options,
+    type WebhookMessage,
+    createIntegerOption,
+    createStringOption,
+} from "seyfert";
 import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
 import { StelleOptions } from "#stelle/decorators";
 
@@ -12,6 +22,10 @@ const options = {
     code: createStringOption({
         description: "Enter some code.",
         required: true,
+    }),
+    depth: createIntegerOption({
+        description: "Enter the depth of the result.",
+        min_value: 0,
     }),
 };
 
@@ -51,6 +65,7 @@ export default class EvalCommand extends Command {
         const { client, options, author, channelId } = ctx;
 
         const start = Date.now();
+        const depth = options.depth;
 
         let code: string = options.code;
         let output: string | null = null;
@@ -77,7 +92,7 @@ export default class EvalCommand extends Command {
 
                 output = await eval(code);
                 typecode = typeof output;
-                output = getDepth(output).replaceAll(process.env.TOKEN!, client.token);
+                output = getDepth(output, depth).replaceAll(process.env.TOKEN!, "🌟").replace(process.env.DATABASE_URL!, "🌟");
             }
 
             await ctx.editOrReply({
