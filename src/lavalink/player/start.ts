@@ -84,7 +84,7 @@ export default new Lavalink({
 
         if (voice.is(["GuildVoice"]))
             await voice
-                .setVoiceState(
+                .setVoiceStatus(
                     messages.events.voiceStatus.trackStart({
                         author: track.info.author,
                         title: track.info.title,
