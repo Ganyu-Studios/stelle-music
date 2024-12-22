@@ -20,11 +20,6 @@ export const DEBUG_MODE: boolean = process.argv.includes("--debug");
 export const DEV_MODE: boolean = process.argv.includes("--dev");
 
 /**
- * Stelle eval secrets regex.
- */
-export const SECRETS_REGEX: RegExp = /\b(?:client\.(?:config)|config|env|process\.(?:env|exit)|eval|atob|btoa)\b/;
-
-/**
  * Stelle think messages.
  */
 export const THINK_MESSAGES: string[] = [

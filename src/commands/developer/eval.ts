@@ -15,8 +15,11 @@ import { StelleOptions } from "#stelle/decorators";
 import { getDepth, sliceText } from "#stelle/utils/functions/utils.js";
 
 import { DeclareParserConfig, ParserRecommendedConfig, Watch, Yuna } from "yunaforseyfert";
-import { SECRETS_MESSAGES, SECRETS_REGEX } from "#stelle/data/Constants.js";
+import { SECRETS_MESSAGES } from "#stelle/data/Constants.js";
 import { ms } from "#stelle/utils/TimeFormat.js";
+
+const secretsRegex = /\b(?:client\.(?:config)|config|env|process\.(?:env|exit)|eval|atob|btoa)\b/;
+const concatRegex = /".*?"\s*\+\s*".*?"(?:\s*\+\s*".*?")*/;
 
 const options = {
     code: createStringOption({
@@ -84,8 +87,7 @@ export default class EvalCommand extends Command {
             });
 
         try {
-            const concatText = /".*?"\s*\+\s*".*?"(?:\s*\+\s*".*?")*/;
-            if (SECRETS_REGEX.test(code.toLowerCase()) || concatText.test(code.toLowerCase()))
+            if (secretsRegex.test(code.toLowerCase()) || concatRegex.test(code.toLowerCase()))
                 output = SECRETS_MESSAGES[Math.floor(Math.random() * SECRETS_MESSAGES.length)];
             else if (typeof output !== "string") {
                 if (/^(?:\(?)\s*await\b/.test(code.toLowerCase())) code = `(async () => ${code})()`;
