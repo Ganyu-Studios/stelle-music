@@ -28,7 +28,7 @@ export default {
                     description: ({ category }) => `Selecciona la categoría ${category}.`,
                     placeholder: "Selecciona una categoría de comando.",
                     options: {
-                        description: ({ options }) => `**Opcional []**\n**Requerido <>**\n\n${options}`,
+                        description: ({ options }) => `-# **Opcional []**\n-# **Requerido <>**\n\n${options}`,
                         title: ({ clientName, category }) => `${clientName} - Menú de Ayuda | ${category}`,
                     },
                 },

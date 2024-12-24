@@ -102,14 +102,6 @@ export const getPauseState = (boolean: boolean): PausedMode => (boolean ? "resum
 
 /**
  *
- * Check a flag in the process command.
- * @param flag The flag.
- * @returns
- */
-export const getFlag = (flag: string) => process.argv.includes(flag);
-
-/**
- *
  * Representation of a object.
  * @param error The error.
  * @returns

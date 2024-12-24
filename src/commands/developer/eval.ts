@@ -1,18 +1,34 @@
-import { Command, type CommandContext, Declare, Embed, type Message, Options, type WebhookMessage, createStringOption } from "seyfert";
+import {
+    Command,
+    type CommandContext,
+    Declare,
+    Embed,
+    type Message,
+    Options,
+    type WebhookMessage,
+    createIntegerOption,
+    createStringOption,
+} from "seyfert";
 import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
 import { StelleOptions } from "#stelle/decorators";
 
-import { Configuration } from "#stelle/data/Configuration.js";
 import { getDepth, sliceText } from "#stelle/utils/functions/utils.js";
 
 import { DeclareParserConfig, ParserRecommendedConfig, Watch, Yuna } from "yunaforseyfert";
-import { SECRETS_MESSAGES, SECRETS_REGEX } from "#stelle/data/Constants.js";
+import { SECRETS_MESSAGES } from "#stelle/data/Constants.js";
 import { ms } from "#stelle/utils/TimeFormat.js";
+
+const secretsRegex = /\b(?:client\.(?:config)|config|env|process\.(?:env|exit)|eval|atob|btoa)\b/;
+const concatRegex = /".*?"\s*\+\s*".*?"(?:\s*\+\s*".*?")*/;
 
 const options = {
     code: createStringOption({
         description: "Enter some code.",
         required: true,
+    }),
+    depth: createIntegerOption({
+        description: "Enter the depth of the result.",
+        min_value: 0,
     }),
 };
 
@@ -20,7 +36,6 @@ const options = {
     name: "eval",
     description: "Eval code with Stelle.",
     aliases: ["code"],
-    guildId: Configuration.guildIds,
     defaultMemberPermissions: ["ManageGuild", "Administrator"],
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
@@ -53,6 +68,7 @@ export default class EvalCommand extends Command {
         const { client, options, author, channelId } = ctx;
 
         const start = Date.now();
+        const depth = options.depth;
 
         let code: string = options.code;
         let output: string | null = null;
@@ -71,15 +87,14 @@ export default class EvalCommand extends Command {
             });
 
         try {
-            const concatText = /".*?"\s*\+\s*".*?"(?:\s*\+\s*".*?")*/;
-            if (SECRETS_REGEX.test(code.toLowerCase()) || concatText.test(code.toLowerCase()))
+            if (secretsRegex.test(code.toLowerCase()) || concatRegex.test(code.toLowerCase()))
                 output = SECRETS_MESSAGES[Math.floor(Math.random() * SECRETS_MESSAGES.length)];
             else if (typeof output !== "string") {
                 if (/^(?:\(?)\s*await\b/.test(code.toLowerCase())) code = `(async () => ${code})()`;
 
                 output = await eval(code);
                 typecode = typeof output;
-                output = getDepth(output).replaceAll(process.env.TOKEN!, client.token);
+                output = getDepth(output, depth).replaceAll(process.env.TOKEN!, "🌟").replace(process.env.DATABASE_URL!, "🌟");
             }
 
             await ctx.editOrReply({

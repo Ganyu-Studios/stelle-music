@@ -7,7 +7,10 @@ export default new Lavalink({
     run: async (client, player) => {
         sessions.delete(player.guildId);
 
-        if (player.voiceChannelId) await client.channels.setVoiceStatus(player.voiceChannelId, null).catch(() => null);
+        if (player.voiceChannelId) {
+            const voice = await client.channels.fetch(player.voiceChannelId);
+            if (voice.is(["GuildVoice"])) await voice.setVoiceStatus(null).catch(() => null);
+        }
 
         return DEBUG_MODE && client.logger.debug(`[Lavalink PlayerDestroy] Destroyed player for guild ${player.guildId}`);
     },

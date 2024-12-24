@@ -28,7 +28,7 @@ export default {
                     description: ({ category }: IHelpMenu) => `Select the ${category} category.`,
                     placeholder: "Select a command category.",
                     options: {
-                        description: ({ options }: Pick<IHelp, "options">) => `**Optional []**\n**Required <>**\n\n${options}`,
+                        description: ({ options }: Pick<IHelp, "options">) => `-# **Optional []**\n-# **Required <>**\n\n${options}`,
                         title: ({ clientName, category }: IHelpMenuEmbed) => `${clientName} - Help Menu | ${category}`,
                     },
                 },

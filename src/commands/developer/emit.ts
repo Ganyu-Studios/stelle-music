@@ -2,7 +2,6 @@ import { Command, type CommandContext, Declare, type Guild, Options, createStrin
 import { StelleOptions } from "#stelle/decorators";
 
 import { MessageFlags } from "seyfert/lib/types/index.js";
-import { Configuration } from "#stelle/data/Configuration.js";
 
 const options = {
     event: createStringOption({
@@ -24,7 +23,6 @@ const options = {
 @Declare({
     name: "emit",
     description: "Emit a event.",
-    guildId: Configuration.guildIds,
     defaultMemberPermissions: ["ManageGuild", "Administrator"],
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],

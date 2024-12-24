@@ -1,5 +1,4 @@
 import { readFile } from "node:fs/promises";
-import { getFlag } from "#stelle/utils/functions/utils.js";
 
 import { ActivityType, type GatewayActivityUpdateData } from "seyfert/lib/types/index.js";
 
@@ -13,12 +12,12 @@ export const BOT_VERSION: string = packageJSON.version;
 /**
  * Check if Stelle is running in DEBUG MODE.
  */
-export const DEBUG_MODE: boolean = getFlag("--debug");
+export const DEBUG_MODE: boolean = process.argv.includes("--debug");
 
 /**
- * Stelle eval secrets regex.
+ * Check if Stelle is running in DEV MODE.
  */
-export const SECRETS_REGEX: RegExp = /\b(?:client\.(?:config)|config|env|process\.(?:env|exit)|eval|atob|btoa)\b/;
+export const DEV_MODE: boolean = process.argv.includes("--dev");
 
 /**
  * Stelle think messages.

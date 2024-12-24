@@ -2,12 +2,10 @@ import { Command, type CommandContext, Declare } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
-import { Configuration } from "#stelle/data/Configuration.js";
 
 @Declare({
     name: "reload",
     description: "Reload Stelle.",
-    guildId: Configuration.guildIds,
     defaultMemberPermissions: ["ManageGuild", "Administrator"],
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
