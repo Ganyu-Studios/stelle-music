@@ -5,6 +5,7 @@ import {
     Embed,
     LocalesT,
     type Message,
+    Middlewares,
     Options,
     type User,
     type WebhookMessage,
@@ -73,9 +74,10 @@ const options = {
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
 })
-@StelleOptions({ cooldown: 5, category: StelleCategory.Music, inVoice: true, sameVoice: true, checkNodes: true })
+@StelleOptions({ cooldown: 5, category: StelleCategory.Music })
 @Options(options)
 @LocalesT("locales.play.name", "locales.play.description")
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkVoicePermissions", "checkBotVoiceChannel"])
 export default class PlayCommand extends Command {
     public override async run(ctx: CommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
         const { options, client, guildId, channelId, member } = ctx;

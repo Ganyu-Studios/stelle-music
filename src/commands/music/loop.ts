@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, LocalesT, Options, createStringOption } from "seyfert";
+import { Command, type CommandContext, Declare, LocalesT, Middlewares, Options, createStringOption } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
 import type { RepeatMode } from "lavalink-client";
@@ -38,9 +38,10 @@ const options = {
     contexts: ["Guild"],
     aliases: ["l"],
 })
-@StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
+@StelleOptions({ cooldown: 5, category: StelleCategory.Music })
 @Options(options)
 @LocalesT("locales.loop.name", "locales.loop.description")
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class LoopCommand extends Command {
     public override async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;

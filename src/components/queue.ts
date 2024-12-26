@@ -1,9 +1,8 @@
-import { ComponentCommand, type ComponentContext, Embed, type User } from "seyfert";
+import { ComponentCommand, type ComponentContext, Embed, Middlewares, type User } from "seyfert";
 import { MessageFlags } from "seyfert/lib/types/index.js";
-import { StelleOptions } from "#stelle/decorators";
 import { EmbedPaginator } from "#stelle/utils/Paginator.js";
 
-@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, checkQueue: true, checkNodes: true })
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
 export default class QueueComponent extends ComponentCommand {
     componentType = "Button" as const;
 
@@ -12,13 +11,14 @@ export default class QueueComponent extends ComponentCommand {
     }
 
     async run(ctx: ComponentContext<typeof this.componentType>): Promise<void> {
-        const { client, guildId, author } = ctx;
+        const { client, author } = ctx;
 
-        if (!guildId) return;
+        const guild = await ctx.guild();
+        if (!guild) return;
 
         const { messages } = await ctx.getLocale();
 
-        const player = client.manager.getPlayer(guildId);
+        const player = client.manager.getPlayer(guild.id);
         if (!player) return;
 
         const tracksPerPage = 20;
@@ -33,7 +33,7 @@ export default class QueueComponent extends ComponentCommand {
                     new Embed()
                         .setDescription(messages.events.playerQueue({ tracks: tracks.slice(0, tracksPerPage).join("\n") }))
                         .setColor(client.config.color.extra)
-                        .setThumbnail(ctx.guild()!.iconURL())
+                        .setThumbnail(guild.iconURL())
                         .setTimestamp()
                         .setAuthor({ name: author.tag, iconUrl: author.avatarURL() }),
                 ],
@@ -46,7 +46,7 @@ export default class QueueComponent extends ComponentCommand {
                     new Embed()
                         .setDescription(messages.events.playerQueue({ tracks: tracks.slice(i, i + tracksPerPage).join("\n") }))
                         .setColor(client.config.color.extra)
-                        .setThumbnail(ctx.guild()!.iconURL())
+                        .setThumbnail(guild.iconURL())
                         .setTimestamp()
                         .setAuthor({ name: author.tag, iconUrl: author.avatarURL() }),
                 );

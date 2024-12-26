@@ -1,10 +1,9 @@
-import { ActionRow, Button, ComponentCommand, type ComponentContext } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
+import { ActionRow, Button, ComponentCommand, type ComponentContext, Middlewares } from "seyfert";
 
 import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType } from "seyfert/lib/types/index.js";
 import { getPauseState } from "#stelle/utils/functions/utils.js";
 
-@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, checkNodes: true })
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class PauseTrackComponent extends ComponentCommand {
     componentType = "Button" as const;
 

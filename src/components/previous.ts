@@ -1,10 +1,9 @@
-import { ComponentCommand, type ComponentContext } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
+import { ComponentCommand, type ComponentContext, Middlewares } from "seyfert";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
-@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, checkNodes: true })
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class PreviousTrackComponent extends ComponentCommand {
     componentType = "Button" as const;
 

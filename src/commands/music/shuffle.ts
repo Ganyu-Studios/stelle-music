@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare } from "seyfert";
+import { Command, type CommandContext, Declare, Middlewares } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
@@ -12,12 +12,8 @@ import { StelleCategory } from "#stelle/types";
 @StelleOptions({
     cooldown: 5,
     category: StelleCategory.Music,
-    checkNodes: true,
-    checkPlayer: true,
-    checkQueue: true,
-    inVoice: true,
-    sameVoice: true,
 })
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
 export default class ShuffleCommand extends Command {
     public override async run(ctx: CommandContext) {
         const { client } = ctx;
