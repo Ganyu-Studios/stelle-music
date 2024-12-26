@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, LocalesT } from "seyfert";
+import { Command, type CommandContext, Declare, LocalesT, Middlewares } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
 import { StelleCategory } from "#stelle/types";
@@ -14,13 +14,9 @@ import { getAutoplayState } from "#stelle/utils/functions/utils.js";
 @StelleOptions({
     cooldown: 5,
     category: StelleCategory.Music,
-    checkPlayer: true,
-    inVoice: true,
-    sameVoice: true,
-    moreTracks: true,
-    checkNodes: true,
 })
 @LocalesT("locales.autoplay.name", "locales.autoplay.description")
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
 export default class AutoplayCommand extends Command {
     public override async run(ctx: CommandContext) {
         const { client, guildId } = ctx;

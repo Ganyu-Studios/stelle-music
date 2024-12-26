@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, LocalesT, Options, createIntegerOption } from "seyfert";
+import { Command, type CommandContext, Declare, LocalesT, Middlewares, Options, createIntegerOption } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
@@ -22,9 +22,10 @@ const options = {
     contexts: ["Guild"],
     aliases: ["v", "vol"],
 })
-@StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
+@StelleOptions({ cooldown: 5, category: StelleCategory.Music })
 @Options(options)
 @LocalesT("locales.volume.name", "locales.volume.description")
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class VolumeCommand extends Command {
     public override async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;

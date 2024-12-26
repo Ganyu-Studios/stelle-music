@@ -1,11 +1,9 @@
-import { ActionRow, Button, ComponentCommand, type ComponentContext } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
-
+import { ActionRow, Button, ComponentCommand, type ComponentContext, Middlewares } from "seyfert";
 import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType } from "seyfert/lib/types/index.js";
 
 import { getAutoplayState } from "#stelle/utils/functions/utils.js";
 
-@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, moreTracks: true, checkNodes: true })
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
 export default class AutoplayComponent extends ComponentCommand {
     componentType = "Button" as const;
 

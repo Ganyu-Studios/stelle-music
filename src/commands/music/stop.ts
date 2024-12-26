@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, LocalesT } from "seyfert";
+import { Command, type CommandContext, Declare, LocalesT, Middlewares } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
@@ -9,8 +9,9 @@ import { StelleCategory } from "#stelle/types";
     contexts: ["Guild"],
     aliases: ["sp"],
 })
-@StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkPlayer: true, inVoice: true, sameVoice: true, checkNodes: true })
+@StelleOptions({ cooldown: 5, category: StelleCategory.Music })
 @LocalesT("locales.stop.name", "locales.stop.description")
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class StopCommand extends Command {
     public override async run(ctx: CommandContext) {
         const { client, guildId } = ctx;

@@ -1,7 +1,6 @@
-import { ComponentCommand, type ComponentContext } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
+import { ComponentCommand, type ComponentContext, Middlewares } from "seyfert";
 
-@StelleOptions({ inVoice: true, sameVoice: true, checkPlayer: true, checkNodes: true })
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class StopComponent extends ComponentCommand {
     componentType = "Button" as const;
 

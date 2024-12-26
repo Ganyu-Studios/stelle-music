@@ -118,7 +118,6 @@ export class Stelle extends Client<true> {
                 disabledCache: {
                     bans: true,
                     emojis: true,
-                    overwrites: true,
                     stickers: true,
                     roles: true,
                     presences: true,

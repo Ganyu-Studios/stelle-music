@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, LocalesT, Options, createChannelOption } from "seyfert";
+import { Command, type CommandContext, Declare, LocalesT, Middlewares, Options, createChannelOption } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
@@ -31,9 +31,10 @@ const options = {
     contexts: ["Guild"],
     aliases: ["mov", "m"],
 })
-@StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkPlayer: true, inVoice: true, checkNodes: true })
+@StelleOptions({ cooldown: 5, category: StelleCategory.Music })
 @Options(options)
 @LocalesT("locales.move.name", "locales.move.description")
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkPlayer"])
 export default class MoveCommand extends Command {
     public override async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;
@@ -54,6 +55,8 @@ export default class MoveCommand extends Command {
         player.options.voiceChannelId = voice.id;
         player.voiceChannelId = voice.id;
 
+        const channel = await ctx.channel();
+
         await player.connect();
         await ctx.editOrReply({
             embeds: [
@@ -61,7 +64,7 @@ export default class MoveCommand extends Command {
                     color: client.config.color.success,
                     description: messages.commands.move({
                         voiceId: voice.id,
-                        textId: text?.id ?? ctx.channel()?.id ?? "1143606303850483280",
+                        textId: text?.id ?? channel?.id ?? "1143606303850483280",
                     }),
                 },
             ],

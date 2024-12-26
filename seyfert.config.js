@@ -5,7 +5,7 @@ import { config } from "seyfert";
 
 import { DEV_MODE, DEBUG_MODE } from "#stelle/data/Constants.js";
 
-const output = DEV_MODE ? "src" : "dist";
+const base = DEV_MODE ? "src" : "dist";
 
 export default config.bot({
     token: process.env.TOKEN ?? "Trailblazer",
@@ -22,8 +22,8 @@ export default config.bot({
      * @type {import("seyfert").RuntimeConfig["locations"] & { lavalink: string }}
      */
     locations: {
-        output,
-        base: "src",
+        base,
+        output: base,
         lavalink: "lavalink",
         commands: "commands",
         components: "components",

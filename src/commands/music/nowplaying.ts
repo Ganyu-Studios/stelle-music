@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, LocalesT, type User } from "seyfert";
+import { Command, type CommandContext, Declare, LocalesT, Middlewares, type User } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
@@ -13,8 +13,9 @@ import { createBar } from "#stelle/utils/functions/utils.js";
     contexts: ["Guild"],
     aliases: ["np"],
 })
-@StelleOptions({ cooldown: 5, category: StelleCategory.Music, checkNodes: true, checkPlayer: true })
+@StelleOptions({ cooldown: 5, category: StelleCategory.Music })
 @LocalesT("locales.nowplaying.name", "locales.nowplaying.description")
+@Middlewares(["checkNodes", "checkPlayer"])
 export default class NowPlayingCommand extends Command {
     public override async run(ctx: CommandContext) {
         const { client, guildId } = ctx;

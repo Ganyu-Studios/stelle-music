@@ -42,42 +42,6 @@ export interface Options {
     onlyGuildOwner?: boolean;
     /**
      *
-     * Only a member in a voice channel can use the command.
-     * @default false
-     */
-    inVoice?: boolean;
-    /**
-     *
-     * Only a member on the same voice channel with Stelle will be able to use the command.
-     * @default false
-     */
-    sameVoice?: boolean;
-    /**
-     *
-     * Check if Stelle is connected atleast in one node.
-     * @default false
-     */
-    checkNodes?: boolean;
-    /**
-     *
-     * Check if a player exists in a guild.
-     * @default false
-     */
-    checkPlayer?: boolean;
-    /**
-     *
-     * Check if the player queue has more than one track.
-     * @default false
-     */
-    checkQueue?: boolean;
-    /**
-     *
-     * Check if the queue has two or more tracks.
-     * @default false
-     */
-    moreTracks?: boolean;
-    /**
-     *
      * The command category.
      * @default StelleCategory.Unknown
      */

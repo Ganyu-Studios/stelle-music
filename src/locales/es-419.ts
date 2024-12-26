@@ -231,6 +231,10 @@ export default {
                     description: "`📢` ¡Oye! Me faltan algunos permisos para hacer esto.",
                     field: "`📋` Permisos Faltantes",
                 },
+                channel: {
+                    description: ({ channelId }) => `\`📢\` ¡Oye! Me faltan algunos permisos en el canal: <#${channelId}>`,
+                    field: "`📋` Permisos Faltantes",
+                },
             },
         },
     },

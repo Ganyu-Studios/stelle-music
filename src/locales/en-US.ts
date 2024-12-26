@@ -118,7 +118,7 @@ export default {
             noSameVoice: ({ channelId }: IChannel) => `\`❌\` You are not in the **same voice channel** as me. (<#${channelId}>)`,
             noCollector: ({ userId }: IUser) => `\`❌\` Only the user: <@${userId}> can use this.`,
             invalidOptions: ({ options, list }: IOptions) =>
-                `\`❌\` Invalid command options or arguments.\n- **Required**: \`<>\`\n- **Optional**: \`[]\`\n\n\`📋\` **Usage**:\n ${options}\n\`📢\` **Options Available**:\n${list}`,
+                `\`❌\` Invalid command options or arguments.\n-# - **Required**: \`<>\`\n-# - **Optional**: \`[]\`\n\n\`📋\` **Usage**:\n ${options}\n\`📢\` **Options Available**:\n${list}`,
             playerQueue: ({ tracks }: ITracks) => `\`📋\` Here is the full server queue: \n\n${tracks}`,
             channelEmpty: ({ type }: IType) => `\`🎧\` Stelle is alone in the **voice channel**... Pausing and waiting **${type}**.`,
             mention: ({ clientName, defaultPrefix, commandName }: IMention) =>
@@ -228,6 +228,10 @@ export default {
                 },
                 bot: {
                     description: "`📢` Hey! I'm missing some permissions to do this.",
+                    field: "`📋` Permissions",
+                },
+                channel: {
+                    description: ({ channelId }: IChannel) => `\`📢\` Hey! I'm missing some permissions in the channel. <#${channelId}>`,
                     field: "`📋` Missing Permissions",
                 },
             },

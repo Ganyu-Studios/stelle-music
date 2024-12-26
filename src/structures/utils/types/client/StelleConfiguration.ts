@@ -1,4 +1,5 @@
 import type { LavalinkNodeOptions, SearchPlatform } from "lavalink-client";
+import type { PermissionStrings } from "seyfert";
 
 interface StelleColors {
     /** The success color. */
@@ -43,6 +44,19 @@ interface StelleSessions {
      * @default true
      */
     resumePlayers: boolean;
+}
+
+interface StellePermissions {
+    /**
+     * Stelle voice channel permissions.
+     * @default ["ViewChannel", "Connect", "Speak"]
+     */
+    voicePermissions: PermissionStrings;
+    /**
+     * Stelle stage channel permissions.
+     * @default ["MuteMembers"]
+     */
+    stagePermissions: PermissionStrings;
 }
 
 export interface StelleConfiguration {
@@ -90,4 +104,6 @@ export interface StelleConfiguration {
     cache: StelleCache;
     /** Stelle sessions. */
     sessions: StelleSessions;
+    /** Stelle permissions. */
+    permissions: StellePermissions;
 }

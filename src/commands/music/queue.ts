@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, Embed, LocalesT, type User } from "seyfert";
+import { Command, type CommandContext, Declare, Embed, LocalesT, Middlewares, type User } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
 import { StelleCategory } from "#stelle/types";
@@ -13,22 +13,19 @@ import { EmbedPaginator } from "#stelle/utils/Paginator.js";
 @StelleOptions({
     cooldown: 5,
     category: StelleCategory.Music,
-    checkPlayer: true,
-    inVoice: true,
-    sameVoice: true,
-    checkNodes: true,
-    checkQueue: true,
 })
 @LocalesT("locales.queue.name", "locales.queue.description")
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
 export default class QueueCommand extends Command {
     public override async run(ctx: CommandContext) {
-        const { client, guildId, author } = ctx;
-
-        if (!guildId) return;
+        const { client, author } = ctx;
 
         const { messages } = await ctx.getLocale();
 
-        const player = client.manager.getPlayer(guildId);
+        const guild = await ctx.guild();
+        if (!guild) return;
+
+        const player = client.manager.getPlayer(guild.id);
         if (!player) return;
 
         const tracksPerPage = 20;
@@ -42,7 +39,7 @@ export default class QueueCommand extends Command {
                     new Embed()
                         .setDescription(messages.events.playerQueue({ tracks: tracks.slice(0, tracksPerPage).join("\n") }))
                         .setColor(client.config.color.extra)
-                        .setThumbnail(ctx.guild()!.iconURL())
+                        .setThumbnail(guild.iconURL())
                         .setTimestamp()
                         .setAuthor({ name: author.tag, iconUrl: author.avatarURL() }),
                 ],
@@ -55,7 +52,7 @@ export default class QueueCommand extends Command {
                     new Embed()
                         .setDescription(messages.events.playerQueue({ tracks: tracks.slice(i, i + tracksPerPage).join("\n") }))
                         .setColor(client.config.color.extra)
-                        .setThumbnail(ctx.guild()!.iconURL())
+                        .setThumbnail(guild.iconURL())
                         .setTimestamp()
                         .setAuthor({ name: author.tag, iconUrl: author.avatarURL() }),
                 );

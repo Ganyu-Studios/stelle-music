@@ -49,4 +49,8 @@ export const Configuration: StelleConfiguration = {
         resumeTime: ms("1min"),
         resumePlayers: true,
     },
+    permissions: {
+        stagePermissions: ["MuteMembers"],
+        voicePermissions: ["ViewChannel", "Connect", "Speak"],
+    },
 };

@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, LocalesT, Options, createIntegerOption } from "seyfert";
+import { Command, type CommandContext, Declare, LocalesT, Middlewares, Options, createIntegerOption } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
@@ -22,14 +22,10 @@ const options = {
 @StelleOptions({
     cooldown: 5,
     category: StelleCategory.Music,
-    checkPlayer: true,
-    inVoice: true,
-    sameVoice: true,
-    checkNodes: true,
-    checkQueue: true,
 })
 @Options(options)
 @LocalesT("locales.skip.name", "locales.skip.description")
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
 export default class SkipCommand extends Command {
     public override async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;
