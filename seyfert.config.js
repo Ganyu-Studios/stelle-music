@@ -23,7 +23,6 @@ export default config.bot({
      */
     locations: {
         base,
-        output: base,
         lavalink: "lavalink",
         commands: "commands",
         components: "components",
