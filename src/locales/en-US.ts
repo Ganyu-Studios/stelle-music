@@ -184,7 +184,6 @@ export default {
                     EmbedLinks: "Embed Links",
                     KickMembers: "Kick Members",
                     ManageChannels: "Manage Channels",
-                    ManageEmojisAndStickers: "Manage Stickers & Emojis",
                     ManageEvents: "Manage Events",
                     ManageGuild: "Manage Server",
                     ManageMessages: "Manage Messages",
