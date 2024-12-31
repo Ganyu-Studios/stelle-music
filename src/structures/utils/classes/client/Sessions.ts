@@ -57,7 +57,7 @@ export class StelleSessions {
      * @returns If the session was deleted.
      */
     public delete(guildId: string): boolean {
-        return this.storage.delete(guildId);
+        return this.storage.exists(guildId) && this.storage.delete(guildId);
     }
 
     /**
