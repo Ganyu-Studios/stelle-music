@@ -1,5 +1,5 @@
 import type { LavalinkNodeOptions } from "lavalink-client";
-import { InvalidSessionId } from "#stelle/errors";
+import { InvalidSession } from "#stelle/errors";
 import type { StellePlayerJson } from "#stelle/types";
 
 import MeowDB from "meowdb";
@@ -78,7 +78,7 @@ export class StelleSessions {
      */
     public resolve(nodes: NonResumableOptions[]): LavalinkNodeOptions[] {
         if (nodes.some((node) => "sessionId" in node && typeof node.sessionId === "string"))
-            throw new InvalidSessionId("The 'sessionId' property is not allowed in the node options.");
+            throw new InvalidSession("The 'sessionId' property is not allowed in the node options.");
 
         return nodes.map((node) => ({
             ...node,

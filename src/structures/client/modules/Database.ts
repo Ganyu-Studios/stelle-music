@@ -40,8 +40,8 @@ export class StelleDatabase {
     /**
      * Connect Stelle to the database.
      */
-    public async connect(): Promise<void> {
-        await this.prisma
+    public connect(): Promise<void> {
+        return this.prisma
             .$connect()
             .then(() => {
                 this.connected = true;

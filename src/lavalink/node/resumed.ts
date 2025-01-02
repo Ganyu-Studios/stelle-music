@@ -12,17 +12,20 @@ export default new Lavalink({
             const session = sessions.get<StellePlayerJson>(data.guildId);
             if (!session) continue;
 
+            if (!data.state.connected) {
+                sessions.delete(data.guildId);
+                continue;
+            }
+
             if (data.state.connected) {
                 const player = client.manager.createPlayer({
                     guildId: data.guildId,
+                    volume: data.volume,
+                    node: node.id,
                     voiceChannelId: session.voiceChannelId,
                     textChannelId: session.textChannelId,
                     selfDeaf: session.options?.selfDeaf,
                     selfMute: session.options?.selfMute,
-                    volume: client.manager.options.playerOptions?.volumeDecrementer
-                        ? Math.round(data.volume / client.manager.options.playerOptions.volumeDecrementer)
-                        : data.volume,
-                    node: node.id,
                     applyVolumeAsFilter: session.options.applyVolumeAsFilter,
                     instaUpdateFiltersFix: session.options.instaUpdateFiltersFix,
                     vcRegion: session.options.vcRegion,

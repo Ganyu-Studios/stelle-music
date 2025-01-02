@@ -10,6 +10,9 @@ import { autoPlayFunction } from "#stelle/utils/functions/autoplay.js";
  * Main music manager class.
  */
 export class StelleManager extends LavalinkManager {
+    /**
+     * The lavalink manager handler.
+     */
     readonly handler: StelleHandler;
 
     /**
