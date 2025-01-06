@@ -1,7 +1,7 @@
 import { createEvent } from "seyfert";
 
 import { BOT_VERSION } from "#stelle/data/Constants.js";
-import { changePresence } from "#stelle/utils/functions/changePresence.js";
+import { changePresence } from "#stelle/utils/functions/presence.js";
 
 export default createEvent({
     data: { name: "botReady", once: true },
@@ -15,6 +15,7 @@ export default createEvent({
 
         await client.database.connect();
         await client.manager.init({ id: user.id, username: clientName });
+        await client.uploadCommands({ cachePath: client.config.cache.filename });
 
         changePresence(client);
     },

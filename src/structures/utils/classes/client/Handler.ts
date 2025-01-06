@@ -7,6 +7,9 @@ import type { UsingClient } from "seyfert";
  * Main Stelle music handler.
  */
 export class StelleHandler extends BaseHandler {
+    /**
+     * The client instance.
+     */
     readonly client: UsingClient;
 
     /**

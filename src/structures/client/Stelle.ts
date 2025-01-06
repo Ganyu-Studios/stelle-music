@@ -148,7 +148,6 @@ export class Stelle extends Client<true> {
 
         await this.start();
         await this.manager.load();
-        await this.uploadCommands({ cachePath: this.config.cache.filename });
 
         return "🌟";
     }
@@ -167,6 +166,7 @@ export class Stelle extends Client<true> {
             await this.components?.reloadAll();
             await this.langs?.reloadAll();
             await this.manager.handler.reloadAll();
+
             await this.uploadCommands({ cachePath: this.config.cache.filename });
 
             this.logger.info("Stelle has been reloaded.");
