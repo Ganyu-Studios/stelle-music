@@ -2,17 +2,20 @@ import {
     ActionRow,
     Command,
     type CommandContext,
+    ContextMenuCommand,
     Declare,
     Embed,
     LocalesT,
     Options,
     StringSelectOption,
+    SubCommand,
     createStringOption,
 } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
-import { type APIApplicationCommandOption, MessageFlags } from "seyfert/lib/types/index.js";
+import type { ApplicationCommandOptionType, LocaleString } from "seyfert/lib/types/index.js";
+import { MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { EmbedPaginator, StelleStringMenu } from "#stelle/utils/Paginator.js";
 import { formatOptions } from "#stelle/utils/functions/formatter.js";
@@ -47,7 +50,6 @@ export default class HelpCommand extends Command {
             .filter((item, index, commands) => commands.indexOf(item) === index);
 
         const getAlias = (category: StelleCategory) => messages.commands.help.aliases[category];
-        const getFormat = (options: APIApplicationCommandOption[]) => formatOptions(options, messages.events.optionTypes);
 
         if (!options.command) {
             const paginator = new EmbedPaginator(ctx).setDisabled(true);
@@ -71,16 +73,7 @@ export default class HelpCommand extends Command {
                         paginator.setEmbeds([]).setDisabled(false);
 
                         for (let i = 0; i < commands.length; i += 5) {
-                            const commandList = commands.slice(i, i + 5).map((x) => {
-                                // cuz this types are weird
-                                const command = x.toJSON() as ReturnType<Command["toJSON"]>;
-                                return {
-                                    name: command.name,
-                                    description: command.description,
-                                    description_localizations: command.description_localizations,
-                                    options: getFormat(command.options).map((option) => option.option),
-                                };
-                            });
+                            const commandList = commands.slice(i, i + 5);
 
                             paginator.addEmbed(
                                 new Embed()
@@ -95,9 +88,8 @@ export default class HelpCommand extends Command {
                                     .setDescription(
                                         messages.commands.help.selectMenu.options.description({
                                             options: commandList
-                                                .map(
-                                                    (command) =>
-                                                        `\`${command.name} ${command.options.length ? `${command.options.join(" ")}` : ""}\`\n* ${command.description_localizations?.[ctx.interaction?.locale!] ?? command.description}`,
+                                                .map((command) =>
+                                                    parseCommand(command, messages.events.optionTypes, ctx.interaction?.locale),
                                                 )
                                                 .join("\n\n"),
                                         }),
@@ -140,9 +132,6 @@ export default class HelpCommand extends Command {
                 ],
             });
 
-        const commandJson = command.toJSON();
-        const commandOptions = getFormat(commandJson.options).map((option) => option.option);
-
         const embed = new Embed()
             .setColor(client.config.color.success)
             .setThumbnail(ctx.author.avatarURL())
@@ -154,10 +143,47 @@ export default class HelpCommand extends Command {
             )
             .setDescription(
                 messages.commands.help.selectMenu.options.description({
-                    options: `\`${command.name} ${commandOptions.length ? commandOptions.join(" ") : ""}\`\n* ${command.description_localizations?.[ctx.interaction?.locale!] ?? command.description}`,
+                    options: parseCommand(command, messages.events.optionTypes, ctx.interaction?.locale),
                 }),
             );
 
         await ctx.editOrReply({ embeds: [embed] });
     }
+}
+
+function parseCommand(
+    command: Command | ContextMenuCommand,
+    optionsType: Record<ApplicationCommandOptionType, string>,
+    locale?: string,
+): string {
+    if (command instanceof ContextMenuCommand) return command.name;
+    let content = command.name;
+    for (const option of command.options ?? []) {
+        if (option instanceof SubCommand) {
+            content += `\n    ${parseSubCommand(option, optionsType)}`;
+        } else {
+            content += ` ${
+                formatOptions(
+                    [
+                        //@ts-expect-error
+                        option,
+                    ],
+                    optionsType,
+                ).at(0)?.option
+            }`;
+        }
+    }
+
+    return `\`\`\`\n${content}\n${command.description_localizations?.[locale as LocaleString] ?? command.description}\`\`\``;
+}
+
+function parseSubCommand(subCommand: SubCommand, optionsType: Record<ApplicationCommandOptionType, string>): string {
+    if (!subCommand.options?.length) return subCommand.name;
+    return `${subCommand.group ? `${subCommand.group} ` : ""}${subCommand.name} ${formatOptions(
+        //@ts-expect-error
+        subCommand.options,
+        optionsType,
+    )
+        .map((x) => x.option)
+        .join(" ")}`;
 }
