@@ -14,7 +14,7 @@ import {
 import { StelleOptions } from "#stelle/decorators";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
-import type { ApplicationCommandOptionType, LocaleString } from "seyfert/lib/types/index.js";
+import type { APIApplicationCommandOption, ApplicationCommandOptionType, LocaleString } from "seyfert/lib/types/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { EmbedPaginator, StelleStringMenu } from "#stelle/utils/Paginator.js";
@@ -118,9 +118,7 @@ export default class HelpCommand extends Command {
             return;
         }
 
-        const command = client.commands!.values.filter((command) => !command.guildId).find((command) => command.name === options.command) as
-            | Command
-            | undefined;
+        const command = client.commands!.values.filter((command) => !command.guildId).find((command) => command.name === options.command);
         if (!command)
             return ctx.editOrReply({
                 flags: MessageFlags.Ephemeral,
@@ -151,10 +149,18 @@ export default class HelpCommand extends Command {
     }
 }
 
+/**
+ *
+ * Parses a command to a string.
+ * @param command The command to parse.
+ * @param optionsType The options type.
+ * @param locale The locale to use.
+ * @returns
+ */
 function parseCommand(
     command: Command | ContextMenuCommand,
     optionsType: Record<ApplicationCommandOptionType, string>,
-    locale?: string,
+    locale?: LocaleString,
 ): string {
     if (command instanceof ContextMenuCommand) return command.name;
     let content = command.name;
@@ -162,28 +168,26 @@ function parseCommand(
         if (option instanceof SubCommand) {
             content += `\n    ${parseSubCommand(option, optionsType)}`;
         } else {
-            content += ` ${
-                formatOptions(
-                    [
-                        //@ts-expect-error
-                        option,
-                    ],
-                    optionsType,
-                ).at(0)?.option
-            }`;
+            content += ` ${formatOptions([option as APIApplicationCommandOption], optionsType).at(0)?.option}`;
         }
     }
 
-    return `\`\`\`\n${content}\n${command.description_localizations?.[locale as LocaleString] ?? command.description}\`\`\``;
+    return `\`${content}\`\n* ${command.description_localizations?.[locale!] ?? command.description}`;
 }
 
+/**
+ *
+ * Parses a subcommand to a string.
+ * @param subCommand The subcommand to parse.
+ * @param optionsType The options type.
+ * @returns
+ */
 function parseSubCommand(subCommand: SubCommand, optionsType: Record<ApplicationCommandOptionType, string>): string {
     if (!subCommand.options?.length) return subCommand.name;
-    return `${subCommand.group ? `${subCommand.group} ` : ""}${subCommand.name} ${formatOptions(
-        //@ts-expect-error
-        subCommand.options,
+    return `↪ ${subCommand.group ? subCommand.group : ""} ${subCommand.name} ${formatOptions(
+        subCommand.options as APIApplicationCommandOption[],
         optionsType,
     )
         .map((x) => x.option)
-        .join(" ")}`;
+        .join(" ")}`.trim();
 }
