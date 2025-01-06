@@ -16,7 +16,6 @@ export default config.bot({
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildVoiceStates,
-        GatewayIntentBits.GuildPresences,
     ],
     /**
      * @type {import("seyfert").RuntimeConfig["locations"] & { lavalink: string }}
