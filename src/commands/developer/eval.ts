@@ -15,6 +15,7 @@ import { StelleOptions } from "#stelle/decorators";
 import { getDepth, sliceText } from "#stelle/utils/functions/utils.js";
 
 import { DeclareParserConfig, ParserRecommendedConfig, Watch, Yuna } from "yunaforseyfert";
+import { Environment } from "#stelle/data/Configuration.js";
 import { SECRETS_MESSAGES } from "#stelle/data/Constants.js";
 import { ms } from "#stelle/utils/TimeFormat.js";
 
@@ -94,7 +95,10 @@ export default class EvalCommand extends Command {
 
                 output = await eval(code);
                 typecode = typeof output;
-                output = getDepth(output, depth).replaceAll(process.env.TOKEN!, "🌟").replace(process.env.DATABASE_URL!, "🌟");
+                output = getDepth(output, depth)
+                    .replaceAll(Environment.Token!, "🌟")
+                    .replace(Environment.DatabaseUrl!, "🌟")
+                    .replaceAll(Environment.ErrorsWebhook!, "🌟");
             }
 
             await ctx.editOrReply({

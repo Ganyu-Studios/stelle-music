@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import type { SearchPlatform } from "lavalink-client";
 import type { UsingClient } from "seyfert";
 
-import { StelleCache } from "#stelle/classes";
+import { Cache } from "#stelle/classes";
 import { Configuration } from "#stelle/data/Configuration.js";
 import { StelleKeys } from "#stelle/types";
 
@@ -17,7 +17,7 @@ export class StelleDatabase {
     private client: UsingClient;
     private prisma!: PrismaClient;
 
-    private cache: StelleCache = new StelleCache();
+    private cache: Cache = new Cache();
     private connected: boolean = false;
 
     /**

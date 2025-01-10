@@ -2,7 +2,7 @@ import type { PlayerJson } from "lavalink-client";
 import type { ClientUser, Command, ContextMenuCommand, SubCommand } from "seyfert";
 import type { PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
-export type { StelleConfiguration } from "./client/StelleConfiguration.js";
+export type { StelleConfiguration, StelleEnvironment } from "./client/StelleConfiguration.js";
 export type { AllEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "./client/StelleLavalink.js";
 
 export type PermissionNames = keyof typeof PermissionFlagsBits;

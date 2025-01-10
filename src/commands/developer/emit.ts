@@ -36,7 +36,7 @@ export default class ReloadCommand extends Command {
 
         await ctx.deferReply(true);
 
-        const guild = ctx.guild();
+        const guild = await ctx.guild();
         if (!guild) return;
 
         switch (event) {

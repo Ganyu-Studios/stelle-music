@@ -107,3 +107,12 @@ export interface StelleConfiguration {
     /** Stelle permissions. */
     permissions: StellePermissions;
 }
+
+export interface StelleEnvironment {
+    /** Stelle token. */
+    Token?: string;
+    /** Stelle database url. */
+    DatabaseUrl?: string;
+    /** Stelle errors webhook. */
+    ErrorsWebhook?: string;
+}

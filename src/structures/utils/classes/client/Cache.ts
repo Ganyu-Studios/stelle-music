@@ -3,7 +3,7 @@ import { LimitedCollection } from "seyfert";
 import { Configuration } from "#stelle/data/Configuration.js";
 import { StelleKeys } from "#stelle/types";
 
-interface Cache {
+interface CacheKeys {
     [StelleKeys.Locale]: guildLocale;
     [StelleKeys.Player]: guildPlayer;
     [StelleKeys.Prefix]: guildPrefix;
@@ -12,7 +12,7 @@ interface Cache {
 /**
  * Main Stelle cache class.
  */
-export class StelleCache {
+export class Cache {
     /**
      *
      * The internal cache.
@@ -29,8 +29,8 @@ export class StelleCache {
      * @param key The key.
      * @returns
      */
-    public get<T extends StelleKeys = StelleKeys>(guildId: string, key: T): Cache[T] | undefined {
-        return this.internal.get(guildId)?.get(key) as Cache[T] | undefined;
+    public get<T extends StelleKeys = StelleKeys>(guildId: string, key: T): CacheKeys[T] | undefined {
+        return this.internal.get(guildId)?.get(key) as CacheKeys[T] | undefined;
     }
 
     /**
@@ -62,7 +62,7 @@ export class StelleCache {
      * @param data The data.
      * @returns
      */
-    public set<T extends StelleKeys = StelleKeys>(guildId: string, key: T, data: Cache[T]): void {
+    public set<T extends StelleKeys = StelleKeys>(guildId: string, key: T, data: CacheKeys[T]): void {
         if (this.internal.has(guildId) && !this.internal.get(guildId)?.has(key)) return this.internal.get(guildId)?.set(key, data);
 
         const collection = new LimitedCollection<StelleKeys, unknown>();

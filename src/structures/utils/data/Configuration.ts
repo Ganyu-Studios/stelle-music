@@ -1,6 +1,17 @@
-import type { StelleConfiguration } from "#stelle/types";
+import type { StelleConfiguration, StelleEnvironment } from "#stelle/types";
 import { ms } from "#stelle/utils/TimeFormat.js";
 import { sessions } from "../classes/client/Sessions.js";
+
+const { TOKEN, DATABASE_URL, ERRORS_WEBHOOK } = process.env;
+
+/**
+ * Stelle environment.
+ */
+export const Environment: StelleEnvironment = {
+    Token: TOKEN,
+    DatabaseUrl: DATABASE_URL,
+    ErrorsWebhook: ERRORS_WEBHOOK,
+};
 
 /**
  * Stelle configuration.

@@ -62,16 +62,6 @@ export class StelleSessions {
 
     /**
      *
-     * Get a node session.
-     * @param nodeId The node id.
-     * @returns The session id.
-     */
-    public getNode(nodeId: string): string | undefined {
-        return this.nodes.get(nodeId);
-    }
-
-    /**
-     *
      * Resolve the nodes options.
      * @param nodes The array of nodes to resolve.
      * @returns
@@ -82,7 +72,7 @@ export class StelleSessions {
 
         return nodes.map((node) => ({
             ...node,
-            sessionId: this.getNode(node.id ?? `${node.host}:${node.port}`),
+            sessionId: this.nodes.get(node.id ?? `${node.host}:${node.port}`),
         }));
     }
 }

@@ -58,6 +58,7 @@ export default {
                 live: "🔴 LIVE",
                 noResults: "`❌` **No results** was found for this search...\n`🪶` Try searching something different.",
                 autocomplete: {
+                    noAnything: "Stelle - Something unexpected happened using this autocomplete.",
                     noNodes: "Stelle - I'm not connected to any of my nodes.",
                     noVoiceChannel: "Stelle - You are not in a voice channel... Join to play music.",
                     noSameVoice: "Stelle - You are not in the same voice channel as me.",

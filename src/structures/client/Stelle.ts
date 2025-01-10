@@ -17,6 +17,7 @@ import { HandleCommand } from "seyfert/lib/commands/handle.js";
 import { Yuna } from "yunaforseyfert";
 
 import { DEBUG_MODE, THINK_MESSAGES } from "#stelle/data/Constants.js";
+import { sendErrorReport } from "#stelle/utils/functions/errors.js";
 
 /**
  * Main Stelle class.
@@ -67,7 +68,7 @@ export class Stelle extends Client<true> {
                 reply: () => true,
                 prefix: async (message) => {
                     const guildPrefix = await this.database.getPrefix(message.guildId!);
-                    return [...new Set([guildPrefix, this.config.defaultPrefix, ...this.config.prefixes])];
+                    return [guildPrefix, this.config.defaultPrefix, ...this.config.prefixes];
                 },
                 defaults: {
                     onBotPermissionsFail,
@@ -111,6 +112,8 @@ export class Stelle extends Client<true> {
 
             return command;
         };
+
+        this.events.onFail = (_, error) => sendErrorReport({ error });
 
         this.setServices({
             middlewares: StelleMiddlewares,

@@ -20,8 +20,11 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
 import { TimeFormat } from "#stelle/utils/TimeFormat.js";
 import { sliceText } from "#stelle/utils/functions/utils.js";
 
+import { onAutocompleteError } from "#stelle/utils/functions/overrides.js";
+
 const options = {
     query: createStringOption({
+        onAutocompleteError,
         description: "Enter the track name or url.",
         required: true,
         locales: {

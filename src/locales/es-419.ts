@@ -58,6 +58,7 @@ export default {
                 live: "🔴 EN DIRECTO",
                 noResults: "`❌` **Sin resultados** para esta búsqueda...\n`🪶` Intenta buscando otra cosa.",
                 autocomplete: {
+                    noAnything: "Stelle - Algo ocurrió intentando usar este autocompletado.",
                     noNodes: "Stelle - No estoy conectada a ninguno de mis nodos.",
                     noVoiceChannel: "Stelle - No estás en un canal de voz... Únete a uno para reproducir música.",
                     noSameVoice: "Stelle - No estás en el mismo canal de voz que yo.",

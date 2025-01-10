@@ -86,6 +86,19 @@ export const getLoopState = (mode: RepeatMode, alt?: boolean) => {
 
 /**
  *
+ * Parses a webhook url.
+ * @param url The webhook url.
+ * @returns
+ */
+export const parseWebhook = (url: string) => {
+    const webhookRegex = /https?:\/\/(?:ptb\.|canary\.)?discord\.com\/api(?:\/v\d{1,2})?\/webhooks\/(\d{17,19})\/([\w-]{68})/i;
+    const match = webhookRegex.exec(url);
+
+    return match ? { id: match[1], token: match[2] } : null;
+};
+
+/**
+ *
  * Stelle autoplay state.
  * @param boolean The boolean.
  * @returns

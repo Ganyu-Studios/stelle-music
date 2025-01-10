@@ -1,8 +1,9 @@
-import { type AnyContext, Embed, type PermissionStrings } from "seyfert";
+import { type AnyContext, type AutocompleteInteraction, Embed, type PermissionStrings } from "seyfert";
 
 import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
+import { sendErrorReport } from "./errors.js";
 import { formatOptions } from "./formatter.js";
 
 /**
@@ -15,7 +16,7 @@ import { formatOptions } from "./formatter.js";
 export async function onRunError(ctx: AnyContext, error: unknown) {
     const { messages } = await ctx.getLocale();
 
-    ctx.client.logger.error(error);
+    await sendErrorReport({ error, ctx });
 
     return ctx.editOrReply({
         content: "",
@@ -27,6 +28,26 @@ export async function onRunError(ctx: AnyContext, error: unknown) {
             },
         ],
     });
+}
+
+/**
+ *
+ * @param interaction The interaction.
+ * @param error The error that was thrown.
+ */
+export async function onAutocompleteError(interaction: AutocompleteInteraction, error: unknown) {
+    if (!interaction.guildId) return;
+
+    const { messages } = interaction.client.t(await interaction.client.database.getLocale(interaction.guildId)).get();
+
+    await sendErrorReport({ error });
+
+    return interaction.respond([
+        {
+            name: messages.commands.play.autocomplete.noAnything,
+            value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT",
+        },
+    ]);
 }
 
 /**
