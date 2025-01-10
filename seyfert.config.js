@@ -1,10 +1,10 @@
 //@ts-check
 
 import { GatewayIntentBits } from "seyfert/lib/types/index.js";
+import { Environment } from "#stelle/data/Configuration.js";
 import { config } from "seyfert";
 
 import { DEV_MODE, DEBUG_MODE } from "#stelle/data/Constants.js";
-import { Environment } from "#stelle/data/Configuration.js";
 
 const base = DEV_MODE ? "src" : "dist";
 

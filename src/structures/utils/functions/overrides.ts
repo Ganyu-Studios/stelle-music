@@ -32,6 +32,7 @@ export async function onRunError(ctx: AnyContext, error: unknown) {
 
 /**
  *
+ * The Stelle's default error handler for autocomplete.
  * @param interaction The interaction.
  * @param error The error that was thrown.
  */

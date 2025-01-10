@@ -1,5 +1,12 @@
 ## 📦 Changelogs
 
+## [v3.4.1](https://github.com/Ganyu-Studios/stelle-music/releases/tag/v3.4.1) - 2025-01-06
+### What's changed
+* Le pire c'est toi et moi by [@MARCROCK22](https://github.com/MARCROCK22) in [#36](https://github.com/Ganyu-Studios/stelle-music/pull/36)
+* ⚡ Feat (release 🤖): Stelle v3.4.1 🎉 by [@EvilG-MC](https://github.com/EvilG-MC) in [#37](https://github.com/Ganyu-Studios/stelle-music/pull/37)
+
+**Full Changelog**: https://github.com/Ganyu-Studios/stelle-music/compare/v3.3.0...v3.4.1
+
 ## [v3.3.0](https://github.com/Ganyu-Studios/stelle-music/releases/tag/v3.3.0) - 2024-12-26
 ### What's changed
 * ⚡ Feat (release 🤖): Stelle v3.3.0 🎉 by [@EvilG-MC](https://github.com/EvilG-MC) in [#34](https://github.com/Ganyu-Studios/stelle-music/pull/34)

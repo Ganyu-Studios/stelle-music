@@ -7,6 +7,7 @@ import { StelleMiddlewares } from "#stelle/middlwares";
 
 import { Configuration } from "#stelle/data/Configuration.js";
 import { getWatermark } from "#stelle/utils/Logger.js";
+import { sendErrorReport } from "#stelle/utils/functions/errors.js";
 import { onBotPermissionsFail, onOptionsError, onPermissionsFail, onRunError } from "#stelle/utils/functions/overrides.js";
 import { customContext } from "#stelle/utils/functions/utils.js";
 
@@ -17,7 +18,6 @@ import { HandleCommand } from "seyfert/lib/commands/handle.js";
 import { Yuna } from "yunaforseyfert";
 
 import { DEBUG_MODE, THINK_MESSAGES } from "#stelle/data/Constants.js";
-import { sendErrorReport } from "#stelle/utils/functions/errors.js";
 
 /**
  * Main Stelle class.
