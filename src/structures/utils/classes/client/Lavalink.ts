@@ -1,22 +1,24 @@
+import type { LavalinkEventType, LavalinkEventRun, LavalinkEvent, AllEvents } from "#stelle/types";
 import type { LavalinkManagerEvents, NodeManagerEvents } from "lavalink-client";
-import type { AllEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "#stelle/types";
 
 /**
  * Stelle Lavalink events main class.
  */
 export class Lavalink<K extends keyof AllEvents = keyof AllEvents> implements LavalinkEvent<K> {
     /**
-     * The event name.
-     */
-    readonly name: K;
-    /**
      * The event type.
      */
     readonly type: LavalinkEventType<K>;
+
     /**
      * The event run function.
      */
     readonly run: LavalinkEventRun<K>;
+
+    /**
+     * The event name.
+     */
+    readonly name: K;
 
     /**
      *
@@ -31,20 +33,20 @@ export class Lavalink<K extends keyof AllEvents = keyof AllEvents> implements La
 
     /**
      *
-     * Check if the event is a `node` event.
-     * @returns
-     */
-    public isNode(): this is LavalinkNode {
-        return this.type === "node";
-    }
-
-    /**
-     *
      * Check if the event is a `manager` event.
      * @returns
      */
     public isManager(): this is LavalinkManager {
         return this.type === "manager";
+    }
+
+    /**
+     *
+     * Check if the event is a `node` event.
+     * @returns
+     */
+    public isNode(): this is LavalinkNode {
+        return this.type === "node";
     }
 }
 

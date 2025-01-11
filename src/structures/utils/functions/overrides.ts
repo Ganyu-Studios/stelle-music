@@ -1,10 +1,9 @@
-import { type AnyContext, type AutocompleteInteraction, Embed, type PermissionStrings } from "seyfert";
-
+import { type AutocompleteInteraction, type PermissionStrings, type AnyContext, Embed } from "seyfert";
 import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
-import { sendErrorReport } from "./errors.js";
 import { formatOptions } from "./formatter.js";
+import { sendErrorReport } from "./errors.js";
 
 /**
  *
@@ -16,7 +15,10 @@ import { formatOptions } from "./formatter.js";
 export async function onRunError(ctx: AnyContext, error: unknown) {
     const { messages } = await ctx.getLocale();
 
-    await sendErrorReport({ error, ctx });
+    await sendErrorReport({
+        error,
+        ctx
+    });
 
     return ctx.editOrReply({
         content: "",
@@ -24,9 +26,9 @@ export async function onRunError(ctx: AnyContext, error: unknown) {
         embeds: [
             {
                 description: messages.events.commandError,
-                color: EmbedColors.Red,
-            },
-        ],
+                color: EmbedColors.Red
+            }
+        ]
     });
 }
 
@@ -37,7 +39,9 @@ export async function onRunError(ctx: AnyContext, error: unknown) {
  * @param error The error that was thrown.
  */
 export async function onAutocompleteError(interaction: AutocompleteInteraction, error: unknown) {
-    if (!interaction.guildId) return;
+    if (!interaction.guildId) {
+        return;
+    }
 
     const { messages } = interaction.client.t(await interaction.client.database.getLocale(interaction.guildId)).get();
 
@@ -46,8 +50,8 @@ export async function onAutocompleteError(interaction: AutocompleteInteraction, 
     return interaction.respond([
         {
             name: messages.commands.play.autocomplete.noAnything,
-            value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT",
-        },
+            value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT"
+        }
     ]);
 }
 
@@ -71,11 +75,11 @@ export async function onPermissionsFail(ctx: AnyContext, permissions: Permission
                 fields: [
                     {
                         name: messages.events.permissions.user.field,
-                        value: permissions.map((p) => `- ${messages.events.permissions.list[p]}`).join("\n"),
-                    },
-                ],
-            },
-        ],
+                        value: permissions.map((p) => `- ${messages.events.permissions.list[p]}`).join("\n")
+                    }
+                ]
+            }
+        ]
     });
 }
 
@@ -99,11 +103,11 @@ export async function onBotPermissionsFail(ctx: AnyContext, permissions: Permiss
                 fields: [
                     {
                         name: messages.events.permissions.bot.field,
-                        value: permissions.map((p) => `- ${messages.events.permissions.list[p]}`).join("\n"),
-                    },
-                ],
-            },
-        ],
+                        value: permissions.map((p) => `- ${messages.events.permissions.list[p]}`).join("\n")
+                    }
+                ]
+            }
+        ]
     });
 }
 
@@ -114,7 +118,9 @@ export async function onBotPermissionsFail(ctx: AnyContext, permissions: Permiss
  * @returns
  */
 export async function onOptionsError(ctx: AnyContext) {
-    if (!ctx.isChat()) return;
+    if (!ctx.isChat()) {
+        return;
+    }
 
     const { messages } = await ctx.getLocale();
 
@@ -127,14 +133,14 @@ export async function onOptionsError(ctx: AnyContext) {
         .setDescription(
             messages.events.invalidOptions({
                 options: Formatter.codeBlock(options.map(({ option }) => option).join(" "), "js"),
-                list: options.map(({ option, description, range }) => `* \`${option}\` \`[${range || "N/A"}]\`: ${description}`).join("\n"),
-            }),
+                list: options.map(({ option, description, range }) => `* \`${option}\` \`[${range || "N/A"}]\`: ${description}`).join("\n")
+            })
         )
         .setTimestamp();
 
     return ctx.editOrReply({
         content: "",
         flags: MessageFlags.Ephemeral,
-        embeds: [embed],
+        embeds: [embed]
     });
 }

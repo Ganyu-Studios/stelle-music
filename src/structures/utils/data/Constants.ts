@@ -1,8 +1,7 @@
+import { type GatewayActivityUpdateData, ActivityType } from "seyfert/lib/types/index.js";
 import { readFile } from "node:fs/promises";
 
-import { ActivityType, type GatewayActivityUpdateData } from "seyfert/lib/types/index.js";
-
-const packageJSON = JSON.parse(await readFile("./package.json", "utf-8"));
+const packageJSON = JSON.parse(await readFile("./package.json", "utf-8")) as { version: string };
 
 /**
  * Stelle version.
@@ -38,7 +37,7 @@ export const THINK_MESSAGES: string[] = [
     "is stellar considering...",
     "is spacebound reflecting...",
     "is nebulae pondering...",
-    "is lunar musing...",
+    "is lunar musing..."
 ];
 
 /**
@@ -55,17 +54,35 @@ export const SECRETS_MESSAGES: string[] = [
     "ENOUGH!",
     "I'm serious... I'm tired...",
     "...",
-    "I will restrict you if you continue...",
+    "I will restrict you if you continue..."
 ];
 
 /**
  * Stelle presence activities.
  */
 export const BOT_ACTIVITIES: GatewayActivityUpdateData[] = [
-    { name: "the Space. 🌠", type: ActivityType.Listening },
-    { name: `v${BOT_VERSION}. 🐐`, type: ActivityType.Listening },
-    { name: "with {users} users. 🎧", type: ActivityType.Listening },
-    { name: "in {guilds} guilds. ❤️", type: ActivityType.Streaming },
-    { name: "with {users} users. 👤", type: ActivityType.Playing },
-    { name: "{players} players. 🌐", type: ActivityType.Watching },
+    {
+        name: "the Space. 🌠",
+        type: ActivityType.Listening
+    },
+    {
+        name: `v${BOT_VERSION}. 🐐`,
+        type: ActivityType.Listening
+    },
+    {
+        name: "with {users} users. 🎧",
+        type: ActivityType.Listening
+    },
+    {
+        name: "in {guilds} guilds. ❤️",
+        type: ActivityType.Streaming
+    },
+    {
+        name: "with {users} users. 👤",
+        type: ActivityType.Playing
+    },
+    {
+        name: "{players} players. 🌐",
+        type: ActivityType.Watching
+    }
 ];

@@ -14,16 +14,18 @@ export default new Lavalink({
                         paused: player.paused,
                         volume: player.volume,
                         position: player.position,
-                        voice: player.voice,
+                        voice: player.voice
                     });
                 } catch (error) {
-                    return client.logger.error(`Music - Error resuming the player: ${player.guildId}`, error);
+                    client.logger.error(`Music - Error resuming the player: ${player.guildId}`, error); return;
                 }
             }
         }
 
-        if (client.config.sessions.enabled) await node.updateSession(true, client.config.sessions.resumeTime);
+        if (client.config.sessions.enabled) {
+            await node.updateSession(true, client.config.sessions.resumeTime);
+        }
 
-        return client.logger.info(`Music - The node: ${node.id} is now connected.`);
-    },
+        client.logger.info(`Music - The node: ${node.id} is now connected.`);
+    }
 });

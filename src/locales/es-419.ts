@@ -7,12 +7,11 @@ export default {
     metadata: {
         name: "Spanish",
         emoji: "🇲🇽",
-        translators: ["MARCROCK22", "JustEvil"],
+        translators: ["MARCROCK22", "JustEvil"]
     },
     messages: {
         commands: {
-            nowplaying: ({ title, url, author, requester, bar, duration, position }) =>
-                `\`📻\` Ahora: [\`${title}\`](${url}) - \`${author}\`\n\`👤\` **Solicitado por**: <@${requester}>\n \n\`🕛\` ${bar} | \`${position}\` - \`(${duration})\``,
+            nowplaying: ({ title, url, author, requester, bar, duration, position }) => `\`📻\` Ahora: [\`${title}\`](${url}) - \`${author}\`\n\`👤\` **Solicitado por**: <@${requester}>\n \n\`🕛\` ${bar} | \`${position}\` - \`(${duration})\``,
             setprefix: ({ prefix }) => `\`✅\` El **nuevo prefijo** para este servidor es: \`${prefix}\``,
             skip: ({ amount }) => `\`✅\` Saltando la cantidad de: \`${amount} canciones\`.`,
             move: ({ textId, voiceId }) => `\`✅\` Me movi al canal de voz <#${voiceId}> y canal de texto: <#${textId}>`,
@@ -22,36 +21,33 @@ export default {
             help: {
                 noCommand: "`❌` **No se encontró** ningún comando para esta búsqueda...",
                 title: ({ clientName }) => `${clientName} - Menú de Ayuda`,
-                description: ({ defaultPrefix }) =>
-                    `\`📦\` ¡Hola! Aquí está la información sobre mis comandos y cosas.\n\`📜\` Selecciona la categoría de comando de tu elección.\n\n-# Puedes buscar un comando específico escribiendo: \`${defaultPrefix} help <comando>\``,
+                description: ({ defaultPrefix }) => `\`📦\` ¡Hola! Aquí está la información sobre mis comandos y cosas.\n\`📜\` Selecciona la categoría de comando de tu elección.\n\n-# Puedes buscar un comando específico escribiendo: \`${defaultPrefix} help <comando>\``,
                 selectMenu: {
                     description: ({ category }) => `Selecciona la categoría ${category}.`,
                     placeholder: "Selecciona una categoría de comando.",
                     options: {
                         description: ({ options }) => `-# **Opcional []**\n-# **Requerido <>**\n\n${options}`,
-                        title: ({ clientName, category }) => `${clientName} - Menú de Ayuda | ${category}`,
-                    },
+                        title: ({ clientName, category }) => `${clientName} - Menú de Ayuda | ${category}`
+                    }
                 },
                 aliases: {
                     [StelleCategory.Unknown]: "Desconocido",
                     [StelleCategory.User]: "Usuario",
                     [StelleCategory.Music]: "Música",
-                    [StelleCategory.Guild]: "Servidor",
-                },
+                    [StelleCategory.Guild]: "Servidor"
+                }
             },
             default: {
                 engine: ({ engine }) => `\`✅\` El tipo de búsqueda por defecto de Stelle ahora es: **${engine}**.`,
-                volume: ({ volume }) => `\`✅\` El volumen por defecto de Stelle ahora es: **${volume}%**.`,
+                volume: ({ volume }) => `\`✅\` El volumen por defecto de Stelle ahora es: **${volume}%**.`
             },
             setlocale: {
-                invalidLocale: ({ locale, available }) =>
-                    `\`❌\` El idioma : \`${locale}\` es inválido.\n\`📢\` **Idiomas disponibles**: \`${available}\``,
-                newLocale: ({ locale }) => `\`✅\` El idioma de **Stelle** ahora es: \`${locale}\``,
+                invalidLocale: ({ locale, available }) => `\`❌\` El idioma : \`${locale}\` es inválido.\n\`📢\` **Idiomas disponibles**: \`${available}\``,
+                newLocale: ({ locale }) => `\`✅\` El idioma de **Stelle** ahora es: \`${locale}\``
             },
             ping: {
                 message: "`🪶` Calculando...",
-                response: ({ wsPing, clientPing, shardPing }) =>
-                    `\`🌐\` Pong! (**Cliente**: \`${wsPing}ms\` - **API**: \`${clientPing}ms\` - **Fragmento**: \`${shardPing}ms\`)`,
+                response: ({ wsPing, clientPing, shardPing }) => `\`🌐\` Pong! (**Cliente**: \`${wsPing}ms\` - **API**: \`${clientPing}ms\` - **Fragmento**: \`${shardPing}ms\`)`
             },
             play: {
                 undetermined: "Indeterminado",
@@ -63,45 +59,41 @@ export default {
                     noVoiceChannel: "Stelle - No estás en un canal de voz... Únete a uno para reproducir música.",
                     noSameVoice: "Stelle - No estás en el mismo canal de voz que yo.",
                     noQuery: "Stelle - Introduce el nombre o el URL para reproducir.",
-                    noTracks: "Stelle - No encontre la canción. Introduce otro nombre o el URL.",
+                    noTracks: "Stelle - No encontre la canción. Introduce otro nombre o el URL."
                 },
                 embed: {
-                    playlist: ({ playlist, tracks, volume, query, requester }) =>
-                        `\`🎵\` La lista de canciones [\`${playlist}\`](${query}) ha sido añadida a la cola.\n\n\`🔊\` **Volumen**: \`${volume}%\`\n\`👤\` **Solicitada por**: <@${requester}>\n\`🔰\` **Con**: \`${tracks} canciones\``,
-                    result: ({ title, url, duration, volume, requester }) =>
-                        `\`🎵\` Añadida [\`${title}\`](${url}) a la cola.\n\n\`🕛\` **Duración**: \`${duration}\`\n\`🔊\` **Volumen**: \`${volume}%\`\n\`👤\` **Solicitada por**: <@${requester}>`,
-                    results: ({ title, url, duration, volume, requester, position }) =>
-                        `\`🎵\` Añadida [\`${title}\`](${url}) a la cola.\n\n\`🕛\` **Duración**: \`${duration}\`\n\`🔊\` **Volumen**: \`${volume}%\`\n\`👤\` **Solicitada por**: <@${requester}>\n\n\`📋\` **Posición en la cola**: \`#${position}\``,
-                },
+                    playlist: ({ playlist, tracks, volume, query, requester }) => `\`🎵\` La lista de canciones [\`${playlist}\`](${query}) ha sido añadida a la cola.\n\n\`🔊\` **Volumen**: \`${volume}%\`\n\`👤\` **Solicitada por**: <@${requester}>\n\`🔰\` **Con**: \`${tracks} canciones\``,
+                    result: ({ title, url, duration, volume, requester }) => `\`🎵\` Añadida [\`${title}\`](${url}) a la cola.\n\n\`🕛\` **Duración**: \`${duration}\`\n\`🔊\` **Volumen**: \`${volume}%\`\n\`👤\` **Solicitada por**: <@${requester}>`,
+                    results: ({ title, url, duration, volume, requester, position }) => `\`🎵\` Añadida [\`${title}\`](${url}) a la cola.\n\n\`🕛\` **Duración**: \`${duration}\`\n\`🔊\` **Volumen**: \`${volume}%\`\n\`👤\` **Solicitada por**: <@${requester}>\n\n\`📋\` **Posición en la cola**: \`#${position}\``
+                }
             },
             loop: {
                 toggled: ({ type }) => `\`✅\` El **modo de bucle** ahora es: \`${type}\``,
                 loopType: {
                     off: "Desactivado",
                     queue: "Cola",
-                    track: "Canción",
-                },
+                    track: "Canción"
+                }
             },
             autoplay: {
                 toggled: ({ type }) => `\`✅\` El modo de la **reproducción automática** ahora es: \`${type}\``,
                 autoplayType: {
                     enabled: "Activado",
-                    disabled: "Desactivado",
-                },
+                    disabled: "Desactivado"
+                }
             },
             nodes: {
-                value: ({ state, uptime, players }) =>
-                    `\`📘\` Estado: \`${state}\`\n\`🕛\` Tiempo de actividad: \`${uptime}\`\n\`🎤\` Reproductores: \`${players}\``,
+                value: ({ state, uptime, players }) => `\`📘\` Estado: \`${state}\`\n\`🕛\` Tiempo de actividad: \`${uptime}\`\n\`🎤\` Reproductores: \`${players}\``,
                 description: "`📋` Lista de los nodos de Stelle.",
                 noNodes: "`❌` No hay nodos disponibles por el momento.",
                 states: {
                     connected: "🟢 Conectado.",
-                    disconnected: "🔴 Desconectado.",
-                },
+                    disconnected: "🔴 Desconectado."
+                }
             },
             volume: {
                 changed: ({ volume }) => `\`✅\` El volumen ha sido establecido a: **${volume}%**.`,
-                paused: "`🔰` El volumen es **1%**, así que el reproductor ha sido pausado.",
+                paused: "`🔰` El volumen es **1%**, así que el reproductor ha sido pausado."
             },
             seek: {
                 invalidTime: ({ time }) => `\`❌\` El tiempo \`${time}\` no es válido.`,
@@ -110,20 +102,18 @@ export default {
                 noSeekable: "`❌` La **canción actual** no es `adelantable`.",
                 type: {
                     seeked: "adelantada",
-                    rewond: "devuelta",
-                },
-            },
+                    rewond: "devuelta"
+                }
+            }
         },
         events: {
             inCooldown: ({ time }) => `\`❌\` Necesitas esperar: <t:${time}:R> (<t:${time}:t>) para usar esto.`,
             noSameVoice: ({ channelId }) => `\`❌\` No estás en el **mismo canal de voz** que yo. (<#${channelId}>)`,
             noCollector: ({ userId }) => `\`❌\` Solo el usuario: <@${userId}> puede usar esto.`,
-            invalidOptions: ({ options, list }) =>
-                `\`❌\` Opciones o argumentos del comando inválidos.\n- **Requerido**: \`<>\`\n- **Opcional**: \`[]\`\n\n\`📋\` **Uso**:\n ${options}\n\`📢\` **Opciones Disponibles**:\n${list}`,
+            invalidOptions: ({ options, list }) => `\`❌\` Opciones o argumentos del comando inválidos.\n- **Requerido**: \`<>\`\n- **Opcional**: \`[]\`\n\n\`📋\` **Uso**:\n ${options}\n\`📢\` **Opciones Disponibles**:\n${list}`,
             playerQueue: ({ tracks }) => `\`📋\` Aquí está la cola completa del servidor: \n\n${tracks}`,
             channelEmpty: ({ type }) => `\`🎧\` Stelle está sola en el **canal de voz**... Pausando y esperando **${type}**.`,
-            mention: ({ clientName, defaultPrefix, commandName }) =>
-                `\`📢\` Hey! Mi nombre es: **${clientName}** y mi prefijo es: \`${defaultPrefix}\` y **/** también!\n\`📋\` Si tu quieres ver mis comandos, escribe: \`${defaultPrefix} ${commandName}\` o /${commandName}.`,
+            mention: ({ clientName, defaultPrefix, commandName }) => `\`📢\` Hey! Mi nombre es: **${clientName}** y mi prefijo es: \`${defaultPrefix}\` y **/** también!\n\`📋\` Si tu quieres ver mis comandos, escribe: \`${defaultPrefix} ${commandName}\` o /${commandName}.`,
             noCommand: "`❌` No tengo el comando necesitado *todavía*, intenta de nuevo en un momento.",
             noMembers: "`🎧` Stelle está sola en el **canal de voz**... Abandonando el canal.",
             hasMembers: "`🎧` Stelle dejó de estar sola... Resumiendo.",
@@ -149,15 +139,14 @@ export default {
                 [ApplicationCommandOptionType.Role]: "@rol",
                 [ApplicationCommandOptionType.Mentionable]: "@mencionable",
                 [ApplicationCommandOptionType.Number]: "numero",
-                [ApplicationCommandOptionType.Attachment]: "achivo",
+                [ApplicationCommandOptionType.Attachment]: "achivo"
             },
             voiceStatus: {
                 trackStart: ({ title, author }) => `${title} por ${author}`,
-                queueEnd: "La cola está vacía.",
+                queueEnd: "La cola está vacía."
             },
             trackStart: {
-                embed: ({ duration, requester, title, url, volume, author, size }) =>
-                    `\`📻\` Reproduciendo ahora [\`${title}\`](${url})\n\n\`🎤\` **Autor**: \`${author}\`\n\`🕛\` **Duración**: \`${duration}\`\n\`🔊\` **Volumen**: \`${volume}%\`\n\`👤\` **Solicitado por**: <@${requester}>\n\n\`📋\` **En cola**: \`${size} canciones\``,
+                embed: ({ duration, requester, title, url, volume, author, size }) => `\`📻\` Reproduciendo ahora [\`${title}\`](${url})\n\n\`🎤\` **Autor**: \`${author}\`\n\`🕛\` **Duración**: \`${duration}\`\n\`🔊\` **Volumen**: \`${volume}%\`\n\`👤\` **Solicitado por**: <@${requester}>\n\n\`📋\` **En cola**: \`${size} canciones\``,
                 components: {
                     loop: ({ type }) => `Bucle: ${type}`,
                     autoplay: ({ type }) => `Aleatorio: ${type}`,
@@ -167,9 +156,9 @@ export default {
                     queue: "Cola",
                     paused: {
                         resume: "Resumir",
-                        pause: "Pausar",
-                    },
-                },
+                        pause: "Pausar"
+                    }
+                }
             },
             permissions: {
                 list: {
@@ -221,22 +210,22 @@ export default {
                     CreateEvents: "Crear Eventos",
                     CreateGuildExpressions: "Crear Expresiones del Servidor",
                     SendPolls: "Enviar Encuestas",
-                    UseExternalApps: "Usar Aplicaciones Externas",
+                    UseExternalApps: "Usar Aplicaciones Externas"
                 },
                 user: {
                     description: "`📢` ¡Oye! Te faltan algunos permisos para hacer esto.",
-                    field: "`📋` Permisos Faltantes",
+                    field: "`📋` Permisos Faltantes"
                 },
                 bot: {
                     description: "`📢` ¡Oye! Me faltan algunos permisos para hacer esto.",
-                    field: "`📋` Permisos Faltantes",
+                    field: "`📋` Permisos Faltantes"
                 },
                 channel: {
                     description: ({ channelId }) => `\`📢\` ¡Oye! Me faltan algunos permisos en el canal: <#${channelId}>`,
-                    field: "`📋` Permisos Faltantes",
-                },
-            },
-        },
+                    field: "`📋` Permisos Faltantes"
+                }
+            }
+        }
     },
     locales: {
         play: {
@@ -244,44 +233,44 @@ export default {
             description: "Reproduce música con Stelle.",
             option: {
                 name: "nombre",
-                description: "Introduce el URL o nombre de la canción.",
-            },
+                description: "Introduce el URL o nombre de la canción."
+            }
         },
         ping: {
             name: "latencia",
-            description: "Obten la latencia de Stelle.",
+            description: "Obten la latencia de Stelle."
         },
         nodes: {
             name: "nodos",
-            description: "Obten el estado de todos los nodos de Stelle.",
+            description: "Obten el estado de todos los nodos de Stelle."
         },
         setlocale: {
             name: "idioma",
             description: "Establece el idioma de Stelle.",
             option: {
                 name: "idioma",
-                description: "Introduce el nuevo idioma.",
-            },
+                description: "Introduce el nuevo idioma."
+            }
         },
         autoplay: {
             name: "aleatoria",
-            description: "Alterna la reproducción automática.",
+            description: "Alterna la reproducción automática."
         },
         volume: {
             name: "volumen",
             description: "Modifica el volumen.",
             option: {
                 name: "volumen",
-                description: "Introduce el volumen.",
-            },
+                description: "Introduce el volumen."
+            }
         },
         loop: {
             name: "bucle",
             description: "Alterna el modo de bucle.",
             option: {
                 name: "modo",
-                description: "Selecciona el modo de bucle.",
-            },
+                description: "Selecciona el modo de bucle."
+            }
         },
         move: {
             name: "mover",
@@ -289,17 +278,17 @@ export default {
             options: {
                 voice: {
                     name: "voz",
-                    description: "Selecciona el canal.",
+                    description: "Selecciona el canal."
                 },
                 text: {
                     name: "texto",
-                    description: "Selecciona el canal",
-                },
-            },
+                    description: "Selecciona el canal"
+                }
+            }
         },
         stop: {
             name: "detener",
-            description: "Detiene el reproductor.",
+            description: "Detiene el reproductor."
         },
         skip: {
             name: "saltar",
@@ -307,29 +296,29 @@ export default {
             option: {
                 to: {
                     name: "cantidad",
-                    description: "Salta una cantidad especifica de canciones.",
-                },
-            },
+                    description: "Salta una cantidad especifica de canciones."
+                }
+            }
         },
         queue: {
             name: "cola",
-            description: "Mira la cola de reproducción.",
+            description: "Mira la cola de reproducción."
         },
         seek: {
             name: "adelantar",
             description: "Adelantar la canción actual.",
             option: {
                 name: "tiempo",
-                description: "Introduce el tiempo. (Ej: 2min)",
-            },
+                description: "Introduce el tiempo. (Ej: 2min)"
+            }
         },
         setprefix: {
             name: "prefijo",
             description: "Establece el prefijo de Stelle.",
             option: {
                 name: "prefijo",
-                description: "Introduce el prefijo nuevo.",
-            },
+                description: "Introduce el prefijo nuevo."
+            }
         },
         default: {
             name: "defecto",
@@ -340,30 +329,30 @@ export default {
                     description: "Cambia el modo de búsqueda.",
                     option: {
                         name: "tipo",
-                        description: "Selecciona el tipo.",
-                    },
+                        description: "Selecciona el tipo."
+                    }
                 },
                 volume: {
                     name: "volumen",
-                    description: "Cambia el volumen por defecto.",
-                },
-            },
+                    description: "Cambia el volumen por defecto."
+                }
+            }
         },
         shuffle: {
             name: "mezclar",
-            description: "Mezcla la cola.",
+            description: "Mezcla la cola."
         },
         nowplaying: {
             name: "sonando",
-            description: "Obtén la canción actual.",
+            description: "Obtén la canción actual."
         },
         help: {
             name: "ayuda",
             description: "El comando mas útil del mundo!",
             option: {
                 name: "comando",
-                description: "El comando a obtener ayuda.",
-            },
-        },
-    },
+                description: "El comando a obtener ayuda."
+            }
+        }
+    }
 } satisfies DefaultLocale;

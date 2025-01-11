@@ -1,30 +1,29 @@
-import { Command, type CommandContext, Declare, type DefaultLocale, LocalesT, Options, createStringOption } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
-
+import { type CommandContext, type DefaultLocale, createStringOption, LocalesT, Command, Declare, Options } from "seyfert";
 import { MessageFlags } from "seyfert/lib/types/index.js";
+import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
-const options = {
+const cmdOptions = {
     locale: createStringOption({
         description: "Enter the new locale.",
         required: true,
         locales: {
             name: "locales.setlocale.option.name",
-            description: "locales.setlocale.option.description",
+            description: "locales.setlocale.option.description"
         },
         autocomplete: async (interaction) => {
             const { client } = interaction;
 
             await interaction.respond(
-                Object.entries<DefaultLocale>(client.langs!.values)
+                Object.entries<DefaultLocale>(client.langs.values)
                     .map(([value, l]) => ({
                         name: `${l.metadata.name} [${l.metadata.emoji}] - ${l.metadata.translators.join(", ")}`,
-                        value,
+                        value
                     }))
-                    .slice(0, 25),
+                    .slice(0, 25)
             );
-        },
-    }),
+        }
+    })
 };
 
 @Declare({
@@ -33,31 +32,40 @@ const options = {
     aliases: ["locale", "lang", "language"],
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
-    defaultMemberPermissions: ["ManageGuild"],
+    defaultMemberPermissions: ["ManageGuild"]
 })
-@StelleOptions({ cooldown: 10, category: StelleCategory.Guild })
+@StelleOptions({
+    cooldown: 10,
+    category: StelleCategory.Guild
+})
 @LocalesT("locales.setlocale.name", "locales.setlocale.description")
-@Options(options)
+@Options(cmdOptions)
 export default class SetlangCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: CommandContext<typeof cmdOptions>) {
         const { client, options } = ctx;
         const { locale } = options;
 
-        if (!ctx.guildId) return;
+        if (!ctx.guildId) {
+            return;
+        }
 
         const { messages } = await ctx.getLocale();
 
-        const locales = Object.keys(client.langs!.values);
-        if (!locales.includes(locale))
+        const locales = Object.keys(client.langs.values);
+        if (!locales.includes(locale)) {
             return ctx.editOrReply({
                 flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
-                        description: messages.commands.setlocale.invalidLocale({ locale, available: locales.join(", ") }),
-                        color: client.config.color.success,
-                    },
-                ],
+                        description: messages.commands.setlocale.invalidLocale({
+                            locale,
+                            available: locales.join(", ")
+                        }),
+                        color: client.config.color.success
+                    }
+                ]
             });
+        }
 
         await client.database.setLocale(ctx.guildId, locale);
         await ctx.editOrReply({
@@ -65,9 +73,9 @@ export default class SetlangCommand extends Command {
             embeds: [
                 {
                     description: ctx.t.get(locale).messages.commands.setlocale.newLocale({ locale }),
-                    color: client.config.color.success,
-                },
-            ],
+                    color: client.config.color.success
+                }
+            ]
         });
     }
 }

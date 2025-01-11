@@ -1,29 +1,29 @@
-import { Command, type CommandContext, Declare, LocalesT, Middlewares, type OKFunction, Options, createStringOption } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
-
-import { EmbedColors } from "seyfert/lib/common/index.js";
-
-import { StelleCategory } from "#stelle/types";
+import { type CommandContext, createStringOption, type OKFunction, Middlewares, LocalesT, Command, Declare, Options } from "seyfert";
 import { TimeFormat, ms } from "#stelle/utils/TimeFormat.js";
+import { EmbedColors } from "seyfert/lib/common/index.js";
+import { StelleOptions } from "#stelle/decorators";
+import { StelleCategory } from "#stelle/types";
 
-const options = {
+const cmdOptions = {
     time: createStringOption({
         description: "Enter the time. (Ex: 2min=",
         required: true,
         locales: {
             name: "locales.seek.option.name",
-            description: "locales.seek.option.description",
+            description: "locales.seek.option.description"
         },
         value: ({ value }, ok: OKFunction<number | string>) => {
             const time = value.split(/\s*,\s*|\s+/);
             const milis = time.map((x) => ms(x));
             const result = milis.reduce((a, b) => a + b, 0);
 
-            if (Number.isNaN(result)) return ok(value);
+            if (Number.isNaN(result)) {
+                ok(value); return;
+            }
 
-            return ok(result);
-        },
-    }),
+            ok(result);
+        }
+    })
 };
 
 @Declare({
@@ -31,56 +31,66 @@ const options = {
     description: "Seek the current track.",
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
-    aliases: ["sk"],
+    aliases: ["sk"]
 })
-@StelleOptions({ cooldown: 5, category: StelleCategory.Music })
-@Options(options)
-@LocalesT("locales.seek.name", "locales.seek.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
+@StelleOptions({
+    cooldown: 5,
+    category: StelleCategory.Music
+})
+@LocalesT("locales.seek.name", "locales.seek.description")
+@Options(cmdOptions)
 export default class SeekCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: CommandContext<typeof cmdOptions>) {
         const { client, options, guildId } = ctx;
         const { time } = options;
 
-        if (!guildId) return;
+        if (!guildId) {
+            return;
+        }
 
         const { messages } = await ctx.getLocale();
 
         const player = client.manager.getPlayer(guildId);
-        if (!player) return;
+        if (!player) {
+            return;
+        }
 
         const position = player.position;
         const track = player.queue.current;
 
-        if (typeof time === "string" || Number.isNaN(time) || !Number.isFinite(time))
+        if (typeof time === "string" || Number.isNaN(time) || !Number.isFinite(time)) {
             return ctx.editOrReply({
                 embeds: [
                     {
                         description: messages.commands.seek.invalidTime({ time }),
-                        color: EmbedColors.Red,
-                    },
-                ],
+                        color: EmbedColors.Red
+                    }
+                ]
             });
+        }
 
-        if (!track?.info.isSeekable)
+        if (!track?.info.isSeekable) {
             return ctx.editOrReply({
                 embeds: [
                     {
                         description: messages.commands.seek.noSeekable,
-                        color: EmbedColors.Red,
-                    },
-                ],
+                        color: EmbedColors.Red
+                    }
+                ]
             });
+        }
 
-        if (time > track.info.duration)
+        if (time > track.info.duration) {
             return ctx.editOrReply({
                 embeds: [
                     {
                         description: messages.commands.seek.exeedsTime({ time: TimeFormat.toHumanize(time) }),
-                        color: EmbedColors.Red,
-                    },
-                ],
+                        color: EmbedColors.Red
+                    }
+                ]
             });
+        }
 
         await player.seek(time);
         await ctx.editOrReply({
@@ -89,10 +99,12 @@ export default class SeekCommand extends Command {
                     color: client.config.color.success,
                     description: messages.commands.seek.seeked({
                         time: TimeFormat.toHumanize(time),
-                        type: messages.commands.seek.type[time < position ? "rewond" : "seeked"],
-                    }),
-                },
-            ],
+                        type: messages.commands.seek.type[time < position
+                            ? "rewond"
+                            : "seeked"]
+                    })
+                }
+            ]
         });
     }
 }

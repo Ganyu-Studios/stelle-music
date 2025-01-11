@@ -30,20 +30,20 @@ interface StelleCache {
 
 interface StelleSessions {
     /**
-     * Enable the sessions feature.
+     * Force the players to resume.
      * @default true
      */
-    enabled: boolean;
+    resumePlayers: boolean;
     /**
      * Stelle node(s) resume time.
      * @default ms("1min")
      */
     resumeTime: number;
     /**
-     * Force the players to resume.
+     * Enable the sessions feature.
      * @default true
      */
-    resumePlayers: boolean;
+    enabled: boolean;
 }
 
 interface StellePermissions {
@@ -61,6 +61,26 @@ interface StellePermissions {
 
 export interface StelleConfiguration {
     /**
+     * Stelle default player search engine.
+     * @default "spotify"
+     */
+    defaultSearchEngine: SearchPlatform;
+    /** Stelle permissions. */
+    permissions: StellePermissions;
+    /** Stelle nodes. */
+    nodes: LavalinkNodeOptions[];
+    /** Stelle channels. */
+    channels: StelleChannels;
+    /** Stelle sessions. */
+    sessions: StelleSessions;
+    /**
+     * Stelle disconnect time.
+     * @default ms("30s")
+     */
+    disconnectTime: number;
+    /** Stelle developer id(s). */
+    developerIds: string[];
+    /**
      * Stelle default prefix.
      * @default "stelle"
      */
@@ -71,48 +91,28 @@ export interface StelleConfiguration {
      */
     defaultVolume: number;
     /**
-     * Stelle default player search engine.
-     * @default "spotify"
+     * Stelle default locale.
+     * @default "en-US"
      */
-    defaultSearchEngine: SearchPlatform;
+    defaultLocale: string;
+    /** Stelle colors. */
+    color: StelleColors;
     /**
      * Stelle prefixes.
      * @default ["st!"]
      */
     prefixes: string[];
-    /**
-     * Stelle default locale.
-     * @default "en-US"
-     */
-    defaultLocale: string;
-    /**
-     * Stelle disconnect time.
-     * @default ms("30s")
-     */
-    disconnectTime: number;
-    /** Stelle developer id(s). */
-    developerIds: string[];
     /** Stelle developer guild id(s). */
     guildIds: string[];
-    /** Stelle nodes. */
-    nodes: LavalinkNodeOptions[];
-    /** Stelle colors. */
-    color: StelleColors;
-    /** Stelle channels. */
-    channels: StelleChannels;
     /** Stelle cache.*/
     cache: StelleCache;
-    /** Stelle sessions. */
-    sessions: StelleSessions;
-    /** Stelle permissions. */
-    permissions: StellePermissions;
 }
 
 export interface StelleEnvironment {
-    /** Stelle token. */
-    Token?: string;
-    /** Stelle database url. */
-    DatabaseUrl?: string;
     /** Stelle errors webhook. */
     ErrorsWebhook?: string;
+    /** Stelle database url. */
+    DatabaseUrl?: string;
+    /** Stelle token. */
+    Token?: string;
 }

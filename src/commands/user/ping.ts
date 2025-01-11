@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, Embed, LocalesT } from "seyfert";
+import { type CommandContext, LocalesT, Command, Declare, Embed } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
@@ -6,9 +6,12 @@ import { StelleCategory } from "#stelle/types";
     name: "ping",
     description: "Get the Stelle ping.",
     integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    contexts: ["Guild"]
 })
-@StelleOptions({ cooldown: 5, category: StelleCategory.User })
+@StelleOptions({
+    cooldown: 5,
+    category: StelleCategory.User
+})
 @LocalesT("locales.ping.name", "locales.ping.description")
 export default class PingCommand extends Command {
     public override async run(ctx: CommandContext): Promise<void> {
@@ -21,9 +24,13 @@ export default class PingCommand extends Command {
 
         const wsPing = Math.floor(client.gateway.latency);
         const clientPing = Math.floor(Date.now() - (ctx.message ?? ctx.interaction)!.createdTimestamp);
-        const shardPing = Math.floor((await ctx.client.gateway.get(ctx.shardId)?.ping()) ?? 0);
+        const shardPing = Math.floor(await ctx.client.gateway.get(ctx.shardId)?.ping() ?? 0);
 
-        embed.setColor(client.config.color.success).setDescription(messages.commands.ping.response({ wsPing, clientPing, shardPing }));
+        embed.setColor(client.config.color.success).setDescription(messages.commands.ping.response({
+            wsPing,
+            clientPing,
+            shardPing
+        }));
 
         await ctx.editOrReply({ embeds: [embed] });
     }

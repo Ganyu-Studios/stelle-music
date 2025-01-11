@@ -1,10 +1,10 @@
 import { type APIApplicationCommandOption, ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 
-type FormattedOption = {
-    option: string;
+interface FormattedOption {
     description: string;
+    option: string;
     range: string;
-};
+}
 
 /**
  *
@@ -13,7 +13,9 @@ type FormattedOption = {
  * @param req If the option is required.
  * @returns
  */
-const isRequired = (option: string, req?: boolean) => (req ? `<${option}>` : `[${option}]`);
+const isRequired = (option: string, req?: boolean) => req
+    ? `<${option}>`
+    : `[${option}]`;
 
 /**
  *
@@ -23,16 +25,18 @@ const isRequired = (option: string, req?: boolean) => (req ? `<${option}>` : `[$
  */
 export function formatOptions(
     options?: APIApplicationCommandOption[],
-    types?: Record<ApplicationCommandOptionType, string>,
+    types?: Record<ApplicationCommandOptionType, string>
 ): FormattedOption[] {
-    if (!(options && types)) return [];
+    if (!(options && types)) {
+        return [];
+    }
 
     const result: FormattedOption[] = [];
 
     for (const option of options) {
         switch (option.type) {
-            case ApplicationCommandOptionType.Subcommand:
-            case ApplicationCommandOptionType.SubcommandGroup: {
+            case ApplicationCommandOptionType.SubcommandGroup:
+            case ApplicationCommandOptionType.Subcommand: {
                 return formatOptions(option.options, types);
             }
 
@@ -40,7 +44,7 @@ export function formatOptions(
                 result.push({
                     option: `--${option.name} ${isRequired(types[option.type], option.required)}`,
                     description: option.description,
-                    range: `${getRange(option).trim()}`,
+                    range: getRange(option).trim()
                 });
             }
         }
@@ -56,22 +60,25 @@ export function formatOptions(
  * @returns
  */
 function getRange(option: APIApplicationCommandOption): string {
-    let text: string = "";
+    let text = "";
 
     switch (option.type) {
-        case ApplicationCommandOptionType.String:
-            {
-                text += option.max_length ? ` Max: ${option.max_length}` : "";
-                text += option.min_length ? ` Min: ${option.min_length}` : "";
-            }
-            break;
-
         case ApplicationCommandOptionType.Integer:
         case ApplicationCommandOptionType.Number:
-            {
-                text += option.max_value ? ` Max: ${option.max_value}` : "";
-                text += option.min_value ? ` Min: ${option.min_value}` : "";
-            }
+            text += option.max_value
+                ? ` Max: ${option.max_value}`
+                : "";
+            text += option.min_value
+                ? ` Min: ${option.min_value}`
+                : "";
+            break;
+        case ApplicationCommandOptionType.String:
+            text += option.max_length
+                ? ` Max: ${option.max_length}`
+                : "";
+            text += option.min_length
+                ? ` Min: ${option.min_length}`
+                : "";
             break;
     }
 

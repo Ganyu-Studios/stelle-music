@@ -1,15 +1,15 @@
-import { Command, type CommandContext, Declare, LocalesT, Middlewares, Options, createIntegerOption } from "seyfert";
+import { type CommandContext, createIntegerOption, Middlewares, LocalesT, Command, Declare, Options } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
-const options = {
+const cmdOptions = {
     to: createIntegerOption({
         description: "Skip a specific amount of songs.",
         locales: {
             name: "locales.skip.option.to.name",
-            description: "locales.skip.option.to.description",
-        },
-    }),
+            description: "locales.skip.option.to.description"
+        }
+    })
 };
 
 @Declare({
@@ -17,37 +17,44 @@ const options = {
     description: "Skip the current track.",
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
-    aliases: ["sk"],
+    aliases: ["sk"]
 })
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
 @StelleOptions({
     cooldown: 5,
-    category: StelleCategory.Music,
+    category: StelleCategory.Music
 })
-@Options(options)
 @LocalesT("locales.skip.name", "locales.skip.description")
-@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
+@Options(cmdOptions)
 export default class SkipCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: CommandContext<typeof cmdOptions>) {
         const { client, options, guildId } = ctx;
         const { to } = options;
 
-        if (!guildId) return;
+        if (!guildId) {
+            return;
+        }
 
         const { messages } = await ctx.getLocale();
 
         const player = client.manager.getPlayer(guildId);
-        if (!player) return;
+        if (!player) {
+            return;
+        }
 
-        if (to) await player.skip(to - 1, !player.get("enabledAutoplay"));
-        else await player.skip(undefined, !player.get("enabledAutoplay"));
+        if (to) {
+            await player.skip(to - 1, !player.get("enabledAutoplay"));
+        } else {
+            await player.skip(undefined, !player.get("enabledAutoplay"));
+        }
 
         await ctx.editOrReply({
             embeds: [
                 {
                     description: messages.commands.skip({ amount: to ?? 1 }),
-                    color: client.config.color.success,
-                },
-            ],
+                    color: client.config.color.success
+                }
+            ]
         });
     }
 }

@@ -1,7 +1,8 @@
-import { BaseHandler } from "seyfert/lib/common/index.js";
-import type { Lavalink } from "./Lavalink.js";
-
 import type { UsingClient } from "seyfert";
+
+import { BaseHandler } from "seyfert/lib/common/index.js";
+
+import type { Lavalink } from "./Lavalink.js";
 
 /**
  * Main Stelle music handler.
@@ -27,19 +28,19 @@ export class StelleHandler extends BaseHandler {
      */
     public async load() {
         const files = await this.loadFilesK<{ default: Lavalink }>(
-            await this.getFiles(await this.client.getRC().then((x) => x.locations.lavalink)),
+            await this.getFiles(await this.client.getRC().then((x) => x.locations.lavalink))
         );
 
         for (const file of files) {
             const path = file.path.split(process.cwd()).slice(1).join(process.cwd());
-            const event: Lavalink = file.file.default;
+            const event = file.file.default as undefined | Lavalink;
 
             if (!event) {
                 this.logger.warn(`${path} doesn't export by \`export default new Lavaink({ ... })\``);
                 continue;
             }
 
-            if (!event.name) {
+            if (!("name" in event)) {
                 this.logger.warn(`${path} doesn't have a \`name\``);
                 continue;
             }
@@ -49,10 +50,13 @@ export class StelleHandler extends BaseHandler {
                 continue;
             }
 
-            const run = (...args: any) => event.run(this.client, ...args);
+            const run = (...args: any) => event.run(this.client, ...args) as unknown;
 
-            if (event.isNode()) this.client.manager.nodeManager.on(event.name, run);
-            else if (event.isManager()) this.client.manager.on(event.name, run);
+            if (event.isNode()) {
+                this.client.manager.nodeManager.on(event.name, run);
+            } else if (event.isManager()) {
+                this.client.manager.on(event.name, run);
+            }
         }
     }
 
@@ -61,7 +65,7 @@ export class StelleHandler extends BaseHandler {
      * Reload all `lavalink-client` events.
      * @returns
      */
-    //well,.. this is weird, but works.
+    // Well,.. this is weird, but works.
     reloadAll(): Promise<void> {
         this.client.manager.removeAllListeners();
         this.client.manager.nodeManager.removeAllListeners();

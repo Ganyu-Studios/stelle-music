@@ -1,6 +1,6 @@
-import { type CommandContext, Declare, LocalesT, Options, SubCommand, createIntegerOption } from "seyfert";
+import { type CommandContext, createIntegerOption, SubCommand, LocalesT, Declare, Options } from "seyfert";
 
-const options = {
+const cmdOptions = {
     volume: createIntegerOption({
         description: "Enter the volume.",
         required: true,
@@ -8,34 +8,39 @@ const options = {
         max_value: 100,
         locales: {
             name: "locales.volume.option.name",
-            description: "locales.volume.option.description",
-        },
-    }),
+            description: "locales.volume.option.description"
+        }
+    })
 };
 
+@LocalesT("locales.default.subcommands.volume.name", "locales.default.subcommands.volume.description")
 @Declare({
     name: "volume",
-    description: "Change the player default volume.",
+    description: "Change the player default volume."
 })
-@Options(options)
-@LocalesT("locales.default.subcommands.volume.name", "locales.default.subcommands.volume.description")
+@Options(cmdOptions)
 export default class VolumeSubcommand extends SubCommand {
-    async run(ctx: CommandContext<typeof options>): Promise<void> {
+    async run(ctx: CommandContext<typeof cmdOptions>): Promise<void> {
         const { client, options, guildId } = ctx;
         const { volume } = options;
 
-        if (!guildId) return;
+        if (!guildId) {
+            return;
+        }
 
         const { messages } = await ctx.getLocale();
 
-        await client.database.setPlayer({ guildId, defaultVolume: volume });
+        await client.database.setPlayer({
+            guildId,
+            defaultVolume: volume
+        });
         await ctx.editOrReply({
             embeds: [
                 {
                     color: client.config.color.success,
-                    description: messages.commands.default.volume({ volume }),
-                },
-            ],
+                    description: messages.commands.default.volume({ volume })
+                }
+            ]
         });
     }
 }

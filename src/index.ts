@@ -1,10 +1,9 @@
 import "dotenv/config";
-
-import { Logger } from "seyfert";
-import { Stelle } from "#stelle/client";
-import { customLogger } from "#stelle/utils/Logger.js";
-import { sendErrorReport } from "#stelle/utils/functions/errors.js";
 import { validateEnv } from "#stelle/utils/functions/validations.js";
+import { sendErrorReport } from "#stelle/utils/functions/errors.js";
+import { customLogger } from "#stelle/utils/Logger.js";
+import { Stelle } from "#stelle/client";
+import { Logger } from "seyfert";
 
 Logger.customize(customLogger);
 Logger.saveOnFile = "all";

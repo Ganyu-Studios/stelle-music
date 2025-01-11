@@ -1,9 +1,10 @@
 import type { ChannelDeletePacket, VoicePacket, VoiceServer, VoiceState } from "lavalink-client";
+
 import { createEvent } from "seyfert";
 
-type AnyPacket = VoicePacket | VoiceServer | VoiceState | ChannelDeletePacket;
+type AnyPacket = ChannelDeletePacket | VoicePacket | VoiceServer | VoiceState;
 
 export default createEvent({
     data: { name: "raw" },
-    run: (data, client) => client.manager.sendRawData(data as AnyPacket),
+    run: (data, client) => client.manager.sendRawData(data as AnyPacket)
 });

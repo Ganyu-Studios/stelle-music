@@ -1,8 +1,8 @@
-import { inspect } from "node:util";
-import type { Player, RepeatMode } from "lavalink-client";
-
-import { type AnyContext, type DefaultLocale, extendContext } from "seyfert";
 import type { AutoplayMode, PausedMode } from "#stelle/types";
+import type { RepeatMode, Player } from "lavalink-client";
+
+import { type DefaultLocale, type AnyContext, extendContext } from "seyfert";
+import { inspect } from "node:util";
 
 /**
  * Stelle custom context.
@@ -13,14 +13,13 @@ export const customContext = extendContext((interaction) => ({
      * Get the locale from the database.
      * @returns The locales object.
      */
-    getLocale: async (): Promise<DefaultLocale> =>
-        interaction.client.t(await interaction.client.database.getLocale(interaction.guildId!)).get(),
+    getLocale: async (): Promise<DefaultLocale> => interaction.client.t(await interaction.client.database.getLocale(interaction.guildId!)).get(),
     /**
      *
      * Get the locale string from the database.
      * @returns The locale string.
      */
-    getLocaleString: () => interaction.client.database.getLocale(interaction.guildId!),
+    getLocaleString: () => interaction.client.database.getLocale(interaction.guildId!)
 }));
 
 /**
@@ -32,8 +31,12 @@ export const customContext = extendContext((interaction) => ({
 export const getCollectionKey = (ctx: AnyContext): string => {
     const authorId = ctx.author.id;
 
-    if (ctx.isChat() || ctx.isMenu() || ctx.isEntryPoint()) return `${authorId}-${ctx.fullCommandName}-command`;
-    if (ctx.isComponent() || ctx.isModal()) return `${authorId}-${ctx.customId}-component`;
+    if (ctx.isChat() || ctx.isMenu() || ctx.isEntryPoint()) {
+        return `${authorId}-${ctx.fullCommandName}-command`;
+    }
+    if (ctx.isComponent() || ctx.isModal()) {
+        return `${authorId}-${ctx.customId}-component`;
+    }
 
     return `${authorId}-all`;
 };
@@ -49,7 +52,9 @@ export const createBar = (player: Player): string => {
     const line = "▬";
     const slider = "🔘";
 
-    if (!player.queue.current) return `${slider}${line.repeat(size - 1)}`;
+    if (!player.queue.current) {
+        return `${slider}${line.repeat(size - 1)}`;
+    }
 
     const current = player.position;
     const total = player.queue.current.info.duration;
@@ -72,7 +77,7 @@ export const getLoopState = (mode: RepeatMode, alt?: boolean) => {
     const states: Record<RepeatMode, RepeatMode> = {
         off: "track",
         track: "queue",
-        queue: "off",
+        queue: "off"
     };
 
     if (alt) {
@@ -94,7 +99,12 @@ export const parseWebhook = (url: string) => {
     const webhookRegex = /https?:\/\/(?:ptb\.|canary\.)?discord\.com\/api(?:\/v\d{1,2})?\/webhooks\/(\d{17,19})\/([\w-]{68})/i;
     const match = webhookRegex.exec(url);
 
-    return match ? { id: match[1], token: match[2] } : null;
+    return match
+        ? {
+            id: match[1],
+            token: match[2]
+        }
+        : null;
 };
 
 /**
@@ -103,7 +113,9 @@ export const parseWebhook = (url: string) => {
  * @param boolean The boolean.
  * @returns
  */
-export const getAutoplayState = (boolean: boolean): AutoplayMode => (boolean ? "enabled" : "disabled");
+export const getAutoplayState = (boolean: boolean): AutoplayMode => boolean
+    ? "enabled"
+    : "disabled";
 
 /**
  *
@@ -111,7 +123,9 @@ export const getAutoplayState = (boolean: boolean): AutoplayMode => (boolean ? "
  * @param boolean The boolean.
  * @returns
  */
-export const getPauseState = (boolean: boolean): PausedMode => (boolean ? "resume" : "pause");
+export const getPauseState = (boolean: boolean): PausedMode => boolean
+    ? "resume"
+    : "pause";
 
 /**
  *
@@ -119,7 +133,7 @@ export const getPauseState = (boolean: boolean): PausedMode => (boolean ? "resum
  * @param error The error.
  * @returns
  */
-export const getDepth = (error: any, depth: number = 0): string => inspect(error, { depth });
+export const getDepth = (error: any, depth = 0): string => inspect(error, { depth });
 
 /**
  *
@@ -127,4 +141,6 @@ export const getDepth = (error: any, depth: number = 0): string => inspect(error
  * @param text The text.
  * @returns
  */
-export const sliceText = (text: string, max: number = 100) => (text.length > max ? `${text.slice(0, max)}...` : text);
+export const sliceText = (text: string, max = 100) => text.length > max
+    ? `${text.slice(0, max)}...`
+    : text;

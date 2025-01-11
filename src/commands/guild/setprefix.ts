@@ -1,16 +1,16 @@
-import { Command, type CommandContext, Declare, LocalesT, Options, createStringOption } from "seyfert";
+import { type CommandContext, createStringOption, LocalesT, Command, Declare, Options } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
-const options = {
+const cmdOptions = {
     prefix: createStringOption({
         description: "Enter the new prefix.",
         required: true,
         locales: {
             name: "locales.setprefix.option.name",
-            description: "locales.setprefix.option.description",
-        },
-    }),
+            description: "locales.setprefix.option.description"
+        }
+    })
 };
 
 @Declare({
@@ -18,17 +18,22 @@ const options = {
     description: "Set the prefix of Stelle.",
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
-    defaultMemberPermissions: ["ManageGuild"],
+    defaultMemberPermissions: ["ManageGuild"]
 })
-@StelleOptions({ cooldown: 10, category: StelleCategory.Guild })
+@StelleOptions({
+    cooldown: 10,
+    category: StelleCategory.Guild
+})
 @LocalesT("locales.setprefix.name", "locales.setprefix.description")
-@Options(options)
+@Options(cmdOptions)
 export default class SetlangCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: CommandContext<typeof cmdOptions>) {
         const { client, options } = ctx;
         const { prefix } = options;
 
-        if (!ctx.guildId) return;
+        if (!ctx.guildId) {
+            return;
+        }
 
         const { messages } = await ctx.getLocale();
 
@@ -37,9 +42,9 @@ export default class SetlangCommand extends Command {
             embeds: [
                 {
                     description: messages.commands.setprefix({ prefix }),
-                    color: client.config.color.success,
-                },
-            ],
+                    color: client.config.color.success
+                }
+            ]
         });
     }
 }

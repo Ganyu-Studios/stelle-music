@@ -1,6 +1,6 @@
 import type { LavalinkManagerEvents, NodeManagerEvents } from "lavalink-client";
-import type { UsingClient } from "seyfert";
 import type { Awaitable } from "seyfert/lib/common/index.js";
+import type { UsingClient } from "seyfert";
 
 /**
  * All lavalink events.
@@ -21,10 +21,10 @@ export type LavalinkEventType<K extends keyof AllEvents> = K extends keyof NodeM
  * Lavalink event interface.
  */
 export interface LavalinkEvent<K extends keyof AllEvents> {
-    /** The event name. */
-    name: K;
     /** The event type. */
     type: LavalinkEventType<K>;
     /** The event run. */
     run: LavalinkEventRun<K>;
+    /** The event name. */
+    name: K;
 }

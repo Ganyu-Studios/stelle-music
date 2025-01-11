@@ -1,21 +1,20 @@
-import { Command, type CommandContext, Declare, Embed, LocalesT, Middlewares, type User } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
-
-import { StelleCategory } from "#stelle/types";
+import { type CommandContext, Middlewares, type User, LocalesT, Command, Declare, Embed } from "seyfert";
 import { EmbedPaginator } from "#stelle/utils/Paginator.js";
+import { StelleOptions } from "#stelle/decorators";
+import { StelleCategory } from "#stelle/types";
 
 @Declare({
     name: "queue",
     description: "See the queue.",
     integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    contexts: ["Guild"]
 })
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
 @StelleOptions({
     cooldown: 5,
-    category: StelleCategory.Music,
+    category: StelleCategory.Music
 })
 @LocalesT("locales.queue.name", "locales.queue.description")
-@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
 export default class QueueCommand extends Command {
     public override async run(ctx: CommandContext) {
         const { client, author } = ctx;
@@ -23,14 +22,18 @@ export default class QueueCommand extends Command {
         const { messages } = await ctx.getLocale();
 
         const guild = await ctx.guild();
-        if (!guild) return;
+        if (!guild) {
+            return;
+        }
 
         const player = client.manager.getPlayer(guild.id);
-        if (!player) return;
+        if (!player) {
+            return;
+        }
 
         const tracksPerPage = 20;
         const tracks = player.queue.tracks.map(
-            (track, i) => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${(track.requester as User).tag}`,
+            (track, i) => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${(track.requester as User).tag}`
         );
 
         if (tracks.length < tracksPerPage) {
@@ -41,8 +44,11 @@ export default class QueueCommand extends Command {
                         .setColor(client.config.color.extra)
                         .setThumbnail(guild.iconURL())
                         .setTimestamp()
-                        .setAuthor({ name: author.tag, iconUrl: author.avatarURL() }),
-                ],
+                        .setAuthor({
+                            name: author.tag,
+                            iconUrl: author.avatarURL()
+                        })
+                ]
             });
         } else {
             const paginator = new EmbedPaginator(ctx);
@@ -54,7 +60,10 @@ export default class QueueCommand extends Command {
                         .setColor(client.config.color.extra)
                         .setThumbnail(guild.iconURL())
                         .setTimestamp()
-                        .setAuthor({ name: author.tag, iconUrl: author.avatarURL() }),
+                        .setAuthor({
+                            name: author.tag,
+                            iconUrl: author.avatarURL()
+                        })
                 );
 
                 await paginator.reply();

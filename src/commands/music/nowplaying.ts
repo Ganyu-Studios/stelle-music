@@ -1,42 +1,49 @@
-import { Command, type CommandContext, Declare, LocalesT, Middlewares, type User } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
-import { StelleCategory } from "#stelle/types";
-
+import { type CommandContext, Middlewares, type User, LocalesT, Command, Declare } from "seyfert";
+import { createBar } from "#stelle/utils/functions/utils.js";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { TimeFormat } from "#stelle/utils/TimeFormat.js";
-import { createBar } from "#stelle/utils/functions/utils.js";
+import { StelleOptions } from "#stelle/decorators";
+import { StelleCategory } from "#stelle/types";
 
 @Declare({
     name: "nowplaying",
     description: "Get the current playing song.",
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
-    aliases: ["np"],
+    aliases: ["np"]
 })
-@StelleOptions({ cooldown: 5, category: StelleCategory.Music })
+@StelleOptions({
+    cooldown: 5,
+    category: StelleCategory.Music
+})
 @LocalesT("locales.nowplaying.name", "locales.nowplaying.description")
 @Middlewares(["checkNodes", "checkPlayer"])
 export default class NowPlayingCommand extends Command {
     public override async run(ctx: CommandContext) {
         const { client, guildId } = ctx;
 
-        if (!guildId) return;
+        if (!guildId) {
+            return;
+        }
 
         const { messages } = await ctx.getLocale();
 
         const player = client.manager.getPlayer(guildId);
-        if (!player) return;
+        if (!player) {
+            return;
+        }
 
         const track = player.queue.current;
-        if (!track)
+        if (!track) {
             return ctx.editOrReply({
                 embeds: [
                     {
                         description: messages.events.noPlayer,
-                        color: EmbedColors.Red,
-                    },
-                ],
+                        color: EmbedColors.Red
+                    }
+                ]
             });
+        }
 
         await ctx.editOrReply({
             embeds: [
@@ -50,10 +57,10 @@ export default class NowPlayingCommand extends Command {
                         author: track.info.author,
                         position: TimeFormat.toDotted(player.position),
                         requester: (track.requester as User).id,
-                        bar: createBar(player),
-                    }),
-                },
-            ],
+                        bar: createBar(player)
+                    })
+                }
+            ]
         });
     }
 }

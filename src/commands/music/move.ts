@@ -1,27 +1,26 @@
-import { Command, type CommandContext, Declare, LocalesT, Middlewares, Options, createChannelOption } from "seyfert";
+import { type CommandContext, createChannelOption, Middlewares, LocalesT, Command, Declare, Options } from "seyfert";
+import { ChannelType } from "seyfert/lib/types/index.js";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
-import { ChannelType } from "seyfert/lib/types/index.js";
-
-const options = {
+const cmdOptions = {
     voice: createChannelOption({
         description: "Select the channel.",
         channel_types: [ChannelType.GuildVoice],
         required: true,
         locales: {
             name: "locales.move.options.voice.name",
-            description: "locales.move.options.voice.description",
-        },
+            description: "locales.move.options.voice.description"
+        }
     }),
     text: createChannelOption({
         description: "Select the channel.",
         channel_types: [ChannelType.GuildText],
         locales: {
             name: "locales.move.options.text.name",
-            description: "locales.move.options.text.description",
-        },
-    }),
+            description: "locales.move.options.text.description"
+        }
+    })
 };
 
 @Declare({
@@ -29,23 +28,30 @@ const options = {
     description: "Move the player.",
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
-    aliases: ["mov", "m"],
+    aliases: ["mov", "m"]
 })
-@StelleOptions({ cooldown: 5, category: StelleCategory.Music })
-@Options(options)
-@LocalesT("locales.move.name", "locales.move.description")
+@StelleOptions({
+    cooldown: 5,
+    category: StelleCategory.Music
+})
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkPlayer"])
+@LocalesT("locales.move.name", "locales.move.description")
+@Options(cmdOptions)
 export default class MoveCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: CommandContext<typeof cmdOptions>) {
         const { client, options, guildId } = ctx;
         const { voice, text } = options;
 
-        if (!guildId) return;
+        if (!guildId) {
+            return;
+        }
 
         const { messages } = await ctx.getLocale();
 
         const player = client.manager.getPlayer(guildId);
-        if (!player) return;
+        if (!player) {
+            return;
+        }
 
         if (text) {
             player.options.textChannelId = text.id;
@@ -64,10 +70,10 @@ export default class MoveCommand extends Command {
                     color: client.config.color.success,
                     description: messages.commands.move({
                         voiceId: voice.id,
-                        textId: text?.id ?? channel?.id ?? "1143606303850483280",
-                    }),
-                },
-            ],
+                        textId: text?.id ?? channel?.id ?? "1143606303850483280"
+                    })
+                }
+            ]
         });
     }
 }

@@ -1,25 +1,24 @@
-import { ActionRow, Button, ComponentCommand, type ComponentContext, Middlewares } from "seyfert";
-import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType } from "seyfert/lib/types/index.js";
-
+import { type APIButtonComponentWithCustomId, ComponentType, ButtonStyle } from "seyfert/lib/types/index.js";
+import { type ComponentContext, ComponentCommand, Middlewares, ActionRow, Button } from "seyfert";
 import { getAutoplayState } from "#stelle/utils/functions/utils.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
 export default class AutoplayComponent extends ComponentCommand {
     componentType = "Button" as const;
 
-    filter(ctx: ComponentContext<typeof this.componentType>): boolean {
-        return ctx.customId === "player-toggleAutoplay";
-    }
-
     async run(ctx: ComponentContext<typeof this.componentType>) {
         const { client, guildId } = ctx;
 
-        if (!guildId) return;
+        if (!guildId) {
+            return;
+        }
 
         const { messages } = await ctx.getLocale();
 
         const player = client.manager.getPlayer(guildId);
-        if (!player) return;
+        if (!player) {
+            return;
+        }
 
         player.set("enabledAutoplay", !player.get("enabledAutoplay"));
 
@@ -29,22 +28,27 @@ export default class AutoplayComponent extends ComponentCommand {
         const newComponents = ctx.interaction.message.components[1].toJSON();
 
         const row = new ActionRow<Button>().setComponents(
-            components.components.map((button) => new Button(button as APIButtonComponentWithCustomId)),
+            components.components.map((button) => new Button(button as APIButtonComponentWithCustomId))
         );
         const newRow = new ActionRow<Button>().setComponents(
             newComponents.components
-                .filter((row) => row.type === ComponentType.Button && row.style !== ButtonStyle.Link)
+                .filter((r) => r.type === ComponentType.Button && r.style !== ButtonStyle.Link)
                 .map((button) => {
-                    if ((button as APIButtonComponentWithCustomId).custom_id === "player-toggleAutoplay")
+                    if ((button as APIButtonComponentWithCustomId).custom_id === "player-toggleAutoplay") {
                         (button as APIButtonComponentWithCustomId).label = messages.events.trackStart.components.autoplay({
-                            type: messages.commands.autoplay.autoplayType[getAutoplayState(isAutoplay)],
+                            type: messages.commands.autoplay.autoplayType[getAutoplayState(isAutoplay)]
                         });
+                    }
 
                     return new Button(button as APIButtonComponentWithCustomId);
-                }),
+                })
         );
 
         await ctx.interaction.message.edit({ components: [row, newRow] });
         await ctx.interaction.deferUpdate();
+    }
+
+    filter(ctx: ComponentContext<typeof this.componentType>): boolean {
+        return ctx.customId === "player-toggleAutoplay";
     }
 }

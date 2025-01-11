@@ -1,7 +1,8 @@
 import type { guildLocale, guildPlayer, guildPrefix } from "@prisma/client";
-import { LimitedCollection } from "seyfert";
+import type { StelleKeys } from "#stelle/types";
+
 import { Configuration } from "#stelle/data/Configuration.js";
-import { StelleKeys } from "#stelle/types";
+import { LimitedCollection } from "seyfert";
 
 interface CacheKeys {
     [StelleKeys.Locale]: guildLocale;
@@ -18,9 +19,27 @@ export class Cache {
      * The internal cache.
      * @readonly
      */
-    readonly internal: LimitedCollection<string, LimitedCollection<StelleKeys, unknown>> = new LimitedCollection({
-        limit: Configuration.cache.size,
+    readonly internal = new LimitedCollection<string, LimitedCollection<StelleKeys, unknown>>({
+        limit: Configuration.cache.size
     });
+
+    /**
+     *
+     * Set the data to the cache.
+     * @param guildId The guild id.
+     * @param key The key.
+     * @param data The data.
+     * @returns
+     */
+    public set<T extends StelleKeys = StelleKeys>(guildId: string, key: T, data: CacheKeys[T]): void {
+        if (this.internal.has(guildId) && !this.internal.get(guildId)?.has(key)) {
+            return this.internal.get(guildId)?.set(key, data);
+        }
+
+        const collection = new LimitedCollection<StelleKeys, unknown>();
+        collection.set(key, data);
+        this.internal.set(guildId, collection);
+    }
 
     /**
      *
@@ -37,16 +56,6 @@ export class Cache {
      *
      * Delete the data in the cache.
      * @param guildId The guild id.
-     * @returns
-     */
-    public delete(guildId: string): boolean {
-        return this.internal.delete(guildId);
-    }
-
-    /**
-     *
-     * Delete the data in the cache.
-     * @param guildId The guild id.
      * @param key The key.
      * @returns
      */
@@ -56,17 +65,11 @@ export class Cache {
 
     /**
      *
-     * Set the data to the cache.
+     * Delete the data in the cache.
      * @param guildId The guild id.
-     * @param key The key.
-     * @param data The data.
      * @returns
      */
-    public set<T extends StelleKeys = StelleKeys>(guildId: string, key: T, data: CacheKeys[T]): void {
-        if (this.internal.has(guildId) && !this.internal.get(guildId)?.has(key)) return this.internal.get(guildId)?.set(key, data);
-
-        const collection = new LimitedCollection<StelleKeys, unknown>();
-        collection.set(key, data);
-        return this.internal.set(guildId, collection);
+    public delete(guildId: string): boolean {
+        return this.internal.delete(guildId);
     }
 }

@@ -1,31 +1,37 @@
-import { ActionRow, Button, Embed, type User } from "seyfert";
-import { Lavalink } from "#stelle/classes";
-
-import { ButtonStyle } from "seyfert/lib/types/index.js";
-
-import { TimeFormat } from "#stelle/utils/TimeFormat.js";
 import { getAutoplayState, getPauseState } from "#stelle/utils/functions/utils.js";
+import { ActionRow, type User, Button, Embed } from "seyfert";
+import { ButtonStyle } from "seyfert/lib/types/index.js";
+import { TimeFormat } from "#stelle/utils/TimeFormat.js";
+import { Lavalink } from "#stelle/classes";
 
 export default new Lavalink({
     name: "trackStart",
     type: "manager",
     run: async (client, player, track) => {
-        if (!(player.textChannelId && player.voiceChannelId)) return;
-        if (!track) return;
+        if (!(player.textChannelId && player.voiceChannelId)) {
+            return;
+        }
+        if (!track) {
+            return;
+        }
 
-        const isAutoplay = player.get<boolean | undefined>("enabledAutoplay") ?? false;
+        const isAutoplay = player.get<undefined | boolean>("enabledAutoplay") ?? false;
 
-        const locale = player.get<string | undefined>("localeString");
-        if (!locale) return;
+        const locale = player.get<undefined | string>("localeString");
+        if (!locale) {
+            return;
+        }
 
         const voice = await client.channels.fetch(player.voiceChannelId);
-        if (!voice.is(["GuildStageVoice", "GuildVoice"])) return;
+        if (!voice.is(["GuildStageVoice", "GuildVoice"])) {
+            return;
+        }
 
         const { messages } = client.t(locale).get();
 
         const duration = track.info.isStream
             ? messages.commands.play.live
-            : (TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined);
+            : TimeFormat.toDotted(track.info.duration);
 
         const embed = new Embed()
             .setDescription(
@@ -36,8 +42,8 @@ export default new Lavalink({
                     url: track.info.uri,
                     volume: player.volume,
                     author: track.info.author,
-                    size: player.queue.tracks.length,
-                }),
+                    size: player.queue.tracks.length
+                })
             )
             .setThumbnail(track.info.artworkUrl ?? "")
             .setColor(client.config.color.extra)
@@ -56,7 +62,7 @@ export default new Lavalink({
             new Button()
                 .setCustomId("player-guildQueue")
                 .setStyle(ButtonStyle.Primary)
-                .setLabel(messages.events.trackStart.components.queue),
+                .setLabel(messages.events.trackStart.components.queue)
         );
 
         const newRow = new ActionRow<Button>().addComponents(
@@ -65,34 +71,40 @@ export default new Lavalink({
                 .setStyle(ButtonStyle.Primary)
                 .setLabel(
                     messages.events.trackStart.components.autoplay({
-                        type: messages.commands.autoplay.autoplayType[getAutoplayState(isAutoplay)],
-                    }),
+                        type: messages.commands.autoplay.autoplayType[getAutoplayState(isAutoplay)]
+                    })
                 ),
             new Button()
                 .setCustomId("player-toggleLoop")
                 .setStyle(ButtonStyle.Secondary)
                 .setLabel(
                     messages.events.trackStart.components.loop({
-                        type: messages.commands.loop.loopType[player.repeatMode],
-                    }),
+                        type: messages.commands.loop.loopType[player.repeatMode]
+                    })
                 ),
             new Button()
                 .setCustomId("player-pauseTrack")
                 .setStyle(ButtonStyle.Primary)
-                .setLabel(messages.events.trackStart.components.paused[getPauseState(player.paused)]),
+                .setLabel(messages.events.trackStart.components.paused[getPauseState(player.paused)])
         );
 
-        if (voice.is(["GuildVoice"]))
+        if (voice.is(["GuildVoice"])) {
             await voice
                 .setVoiceStatus(
                     messages.events.voiceStatus.trackStart({
                         author: track.info.author,
-                        title: track.info.title,
-                    }),
+                        title: track.info.title
+                    })
                 )
                 .catch(() => null);
+        }
 
-        const message = await client.messages.write(player.textChannelId, { embeds: [embed], components: [row, newRow] }).catch(() => null);
-        if (message) player.set("messageId", message.id);
-    },
+        const message = await client.messages.write(player.textChannelId, {
+            embeds: [embed],
+            components: [row, newRow]
+        }).catch(() => null);
+        if (message) {
+            player.set("messageId", message.id);
+        }
+    }
 });

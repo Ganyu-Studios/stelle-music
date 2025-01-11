@@ -1,9 +1,11 @@
-import { Embed, createEvent } from "seyfert";
+import { createEvent, Embed } from "seyfert";
 
 export default createEvent({
     data: { name: "guildCreate" },
     run: async (guild, client) => {
-        if (guild.unavailable) return;
+        if (guild.unavailable) {
+            return;
+        }
 
         const owner = await guild.fetchOwner();
 
@@ -12,12 +14,28 @@ export default createEvent({
             .setTitle("A new guild added me!")
             .setDescription("`📦` A new guild has added me! I hope I can be helpful in this journey.")
             .addFields(
-                { name: "`📜` Name", value: `\`${guild.name}\``, inline: true },
-                { name: "`👤` Owner", value: `\`${owner?.displayName ?? "Unknown"}\``, inline: true },
-                { name: "`🏮` ID", value: `\`${guild.id}\``, inline: true },
-                { name: "`👥` Members", value: `\`${guild.memberCount}\``, inline: true },
+                {
+                    name: "`📜` Name",
+                    value: `\`${guild.name}\``,
+                    inline: true
+                },
+                {
+                    name: "`👤` Owner",
+                    value: `\`${owner?.displayName ?? "Unknown"}\``,
+                    inline: true
+                },
+                {
+                    name: "`🏮` ID",
+                    value: `\`${guild.id}\``,
+                    inline: true
+                },
+                {
+                    name: "`👥` Members",
+                    value: `\`${guild.memberCount}\``,
+                    inline: true
+                }
             );
 
         await client.messages.write(client.config.channels.guildsId, { embeds: [embed] });
-    },
+    }
 });

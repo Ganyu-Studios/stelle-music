@@ -1,7 +1,6 @@
-import { createMiddleware } from "seyfert";
-
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
+import { createMiddleware } from "seyfert";
 
 export const checkVerifications = createMiddleware<void>(async ({ context, next, pass }) => {
     const { client, author, member, command } = context;
@@ -9,7 +8,9 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next,
 
     const guild = await context.guild();
 
-    if (!(member && command && guild)) return pass();
+    if (!(member && guild)) {
+        pass(); return;
+    }
 
     const { messages } = await context.getLocale();
 
@@ -19,12 +20,12 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next,
             embeds: [
                 {
                     description: messages.events.onlyDeveloper,
-                    color: EmbedColors.Red,
-                },
-            ],
+                    color: EmbedColors.Red
+                }
+            ]
         });
 
-        return pass();
+        pass(); return;
     }
 
     if (command.onlyGuildOwner && member.id !== guild.ownerId) {
@@ -33,13 +34,13 @@ export const checkVerifications = createMiddleware<void>(async ({ context, next,
             embeds: [
                 {
                     description: messages.events.onlyGuildOwner,
-                    color: EmbedColors.Red,
-                },
-            ],
+                    color: EmbedColors.Red
+                }
+            ]
         });
 
-        return pass();
+        pass(); return;
     }
 
-    return next();
+    next();
 });

@@ -1,7 +1,7 @@
 import type { LavalinkNodeOptions } from "lavalink-client";
-import { InvalidSession } from "#stelle/errors";
 import type { StellePlayerJson } from "#stelle/types";
 
+import { InvalidSession } from "#stelle/errors";
 import MeowDB from "meowdb";
 
 /**
@@ -18,15 +18,42 @@ export class StelleSessions {
      */
     readonly storage = new MeowDB({
         dir: process.cwd(),
-        name: "sessions",
+        name: "sessions"
     });
 
     /**
      * The nodes map.
      */
-    readonly nodes: Map<string, string> = new Map(
-        Object.entries<StellePlayerJson>(this.storage.all()).map(([_, session]) => [session.nodeId!, session.nodeSessionId!]),
+    readonly nodes = new Map<string, string>(
+        Object.entries<StellePlayerJson>(this.storage.all()).map(([_, session]) => [session.nodeId!, session.nodeSessionId!])
     );
+
+    /**
+     *
+     * Resolve the nodes options.
+     * @param nodes The array of nodes to resolve.
+     * @returns
+     */
+    public resolve(nodes: NonResumableOptions[]): LavalinkNodeOptions[] {
+        if (nodes.some((node) => "sessionId" in node && typeof node.sessionId === "string")) {
+            throw new InvalidSession("The 'sessionId' property is not allowed in the node options.");
+        }
+
+        return nodes.map((node) => ({
+            ...node,
+            sessionId: this.nodes.get(node.id ?? `${node.host}:${node.port}`)
+        }));
+    }
+
+    /**
+     *
+     * Delete a player session.
+     * @param guildId The node id.
+     * @returns If the session was deleted.
+     */
+    public delete(guildId: string): boolean {
+        return this.storage.exists(guildId) && this.storage.delete(guildId);
+    }
 
     /**
      *
@@ -46,34 +73,8 @@ export class StelleSessions {
      * @param guildId The node id.
      * @returns The session id.
      */
-    public get<T>(guildId: string): T | undefined {
+    public get<T>(guildId: string): undefined | T {
         return this.storage.get<T>(guildId);
-    }
-
-    /**
-     *
-     * Delete a player session.
-     * @param guildId The node id.
-     * @returns If the session was deleted.
-     */
-    public delete(guildId: string): boolean {
-        return this.storage.exists(guildId) && this.storage.delete(guildId);
-    }
-
-    /**
-     *
-     * Resolve the nodes options.
-     * @param nodes The array of nodes to resolve.
-     * @returns
-     */
-    public resolve(nodes: NonResumableOptions[]): LavalinkNodeOptions[] {
-        if (nodes.some((node) => "sessionId" in node && typeof node.sessionId === "string"))
-            throw new InvalidSession("The 'sessionId' property is not allowed in the node options.");
-
-        return nodes.map((node) => ({
-            ...node,
-            sessionId: this.nodes.get(node.id ?? `${node.host}:${node.port}`),
-        }));
     }
 }
 

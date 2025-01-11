@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, Middlewares } from "seyfert";
+import { type CommandContext, Middlewares, Command, Declare } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
@@ -7,19 +7,21 @@ import { StelleCategory } from "#stelle/types";
     description: "Shuffle the queue.",
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
-    aliases: ["shu", "sh", "shuf"],
-})
-@StelleOptions({
-    cooldown: 5,
-    category: StelleCategory.Music,
+    aliases: ["shu", "sh", "shuf"]
 })
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
+@StelleOptions({
+    cooldown: 5,
+    category: StelleCategory.Music
+})
 export default class ShuffleCommand extends Command {
     public override async run(ctx: CommandContext) {
         const { client } = ctx;
 
         const player = client.manager.getPlayer(ctx.guildId!);
-        if (!player) return;
+        if (!player) {
+            return;
+        }
 
         const { messages } = await ctx.getLocale();
 
@@ -28,9 +30,9 @@ export default class ShuffleCommand extends Command {
             embeds: [
                 {
                     description: messages.commands.shuffle,
-                    color: client.config.color.success,
-                },
-            ],
+                    color: client.config.color.success
+                }
+            ]
         });
     }
 }

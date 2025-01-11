@@ -1,10 +1,10 @@
 export enum TimeUnits {
     Millisecond = 1,
-    Second = 1000,
-    Minute = 60 * TimeUnits.Second, // 60_000
-    Hour = 60 * TimeUnits.Minute, // 3_600_000
-    Day = 24 * TimeUnits.Hour, // 8_640_000
-    Week = 7 * TimeUnits.Day, // 604_800_000
+    Second = 1_000,
+    Minute = 60 * Second, // 60_000
+    Hour = 60 * Minute, // 3_600_000
+    Day = 24 * Hour, // 8_640_000
+    Week = 7 * Day // 604_800_000
 }
 
 const TimeUnitsOrder = {
@@ -13,29 +13,31 @@ const TimeUnitsOrder = {
     m: TimeUnits.Minute,
     h: TimeUnits.Hour,
     d: TimeUnits.Day,
-    w: TimeUnits.Week,
+    w: TimeUnits.Week
 };
 
 const createMsFormater = (isNormalMode = true, order: typeof TimeUnitsOrder = TimeUnitsOrder) => {
     const unitsLabels = Object.keys(order) as (keyof typeof order)[];
     const unitsValues = Object.values(order) as number[];
 
-    const isDottedMode = isNormalMode === false;
+    const isDottedMode = !isNormalMode;
 
-    function baseFormater(time: number = 0, isChild = false): [string, number] {
+    function baseFormater(time = 0, isChild = false): [string, number] {
         let targetPosition = 0;
         let targetUnitValue = 1;
 
         for (let i = 0; i < unitsValues.length; i++) {
-            const unitValue = unitsValues[i]!;
+            const unitValue = unitsValues[i];
 
-            if (time < unitValue) break;
+            if (time < unitValue) {
+                break;
+            }
 
             targetPosition = i;
             targetUnitValue = unitValue;
         }
 
-        const unitName = unitsLabels[targetPosition]!;
+        const unitName = unitsLabels[targetPosition];
 
         const resultTime = Math.floor(time / targetUnitValue).toString();
 
@@ -43,21 +45,26 @@ const createMsFormater = (isNormalMode = true, order: typeof TimeUnitsOrder = Ti
         let result = resultTime + unitName;
 
         if (isDottedMode) {
-            if (more < 1000) more = 0;
-            if (targetPosition === 0) return ["00:00", targetPosition];
+            if (more < 1_000) {
+                more = 0;
+            }
+            if (targetPosition === 0) {
+                return ["00:00", targetPosition];
+            }
 
             result = isChild
                 ? resultTime.padStart(2, "0")
-                : // do 00:05
-                  targetPosition <= 1
-                  ? "00:".repeat(targetPosition) + resultTime.padStart(2, "0")
-                  : resultTime;
+                : // Do 00:05
+                targetPosition <= 1
+                    ? "00:".repeat(targetPosition) + resultTime.padStart(2, "0")
+                    : resultTime;
         }
 
         if (more !== 0) {
             const [rest, pos] = baseFormater(more, true);
-            if (isNormalMode) result += ` ${rest}`;
-            else if (pos !== 0) {
+            if (isNormalMode) {
+                result += ` ${rest}`;
+            } else if (pos !== 0) {
                 result += `${":00".repeat(targetPosition - pos - 1)}:${rest}`;
             }
         } else if (isDottedMode && targetPosition >= 1) {
@@ -69,16 +76,18 @@ const createMsFormater = (isNormalMode = true, order: typeof TimeUnitsOrder = Ti
 
     function formater(time: undefined): void;
     function formater(time: number): string;
-    function formater(time: number | undefined): string | void;
-    function formater(time: number | undefined): string | void {
-        if (time === undefined) return;
+    function formater(time: undefined | number): string | void;
+    function formater(time: undefined | number): string | void {
+        if (time === undefined) {
+            return;
+        }
         return baseFormater(time)[0];
     }
 
     return formater;
 };
 
-type TimeRecord = Record<string, number>;
+type TimeRecord = Partial<Record<string, number>>;
 
 const createAliases = <const R extends TimeRecord, M extends Record<keyof R, string[]>>(base: R, modifiers: M) => {
     const result = { ...base } as TimeRecord;
@@ -100,11 +109,11 @@ const TimeUnitsAliases = createAliases(TimeUnitsOrder, {
     m: ["minutes", "min", "minute", "mins"],
     h: ["hours", "hour", "hr", "hrs"],
     d: ["days", "day"],
-    w: ["weeks", "week"],
+    w: ["weeks", "week"]
 });
 
-const stringToMsRegex = /([0-9][_,\.0-9]*)\s*([a-zA-Z]+)/g;
-const undescoreAndLastCommaRegex = /\_|[,.]+$/g;
+const stringToMsRegex = /([0-9][_,.0-9]*)\s*([a-zA-Z]+)/g;
+const undescoreAndLastCommaRegex = /_|[,.]+$/g;
 
 const sanitizeNumber = (value: string) => Number(value.replaceAll(undescoreAndLastCommaRegex, "").replaceAll(",", "."));
 
@@ -115,23 +124,14 @@ const formatToMs = (date: string) => {
 
     for (const [, value, unit] of matches) {
         const unitValue = TimeUnitsAliases[unit.toLowerCase()];
-        if (unitValue === undefined) continue;
+        if (unitValue === undefined) {
+            continue;
+        }
         result += sanitizeNumber(value) * unitValue;
     }
 
     return result;
 };
-/**
- * Convert milliseconds to a string and string to milliseconds.
- * @example "3600000 => 1h"
- * @example "1h => 3600000"
- */
-export function ms(from: string): number;
-export function ms(from: number): string;
-export function ms(from: string | number): string | number {
-    if (typeof from === "string") return formatToMs(from);
-    return TimeFormat.toHumanize(from);
-}
 
 export const TimeFormat = {
     /**
@@ -150,5 +150,19 @@ export const TimeFormat = {
      * @example "1h => 3600000"
      */
     toMs: formatToMs,
-    ms,
+    ms
 };
+
+/**
+ * Convert milliseconds to a string and string to milliseconds.
+ * @example "3600000 => 1h"
+ * @example "1h => 3600000"
+ */
+export function ms(from: string): number;
+export function ms(from: number): string;
+export function ms(from: string | number): string | number {
+    if (typeof from === "string") {
+        return formatToMs(from);
+    }
+    return TimeFormat.toHumanize(from);
+}

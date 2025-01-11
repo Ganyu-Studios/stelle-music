@@ -1,9 +1,8 @@
 import type { UsingClient } from "seyfert";
 
 import { PresenceUpdateStatus } from "seyfert/lib/types/index.js";
-import { ms } from "#stelle/utils/TimeFormat.js";
-
 import { BOT_ACTIVITIES } from "#stelle/data/Constants.js";
+import { ms } from "#stelle/utils/TimeFormat.js";
 
 /**
  *
@@ -14,7 +13,9 @@ export function changePresence(client: UsingClient): void {
     let activity = 0;
 
     setInterval(() => {
-        if (activity === BOT_ACTIVITIES.length) activity = 0;
+        if (activity === BOT_ACTIVITIES.length) {
+            activity = 0;
+        }
 
         const guilds = client.cache.guilds!.count();
         const users = client.cache.users!.count();
@@ -32,9 +33,9 @@ export function changePresence(client: UsingClient): void {
                     name: randomActivity.name
                         .replaceAll("{guilds}", `${guilds}`)
                         .replaceAll("{users}", `${users}`)
-                        .replaceAll("{players}", `${players}`),
-                },
-            ],
+                        .replaceAll("{players}", `${players}`)
+                }
+            ]
         });
     }, ms("35s"));
 
@@ -42,6 +43,6 @@ export function changePresence(client: UsingClient): void {
         activities: [BOT_ACTIVITIES[0]],
         afk: false,
         since: Date.now(),
-        status: PresenceUpdateStatus.Online,
+        status: PresenceUpdateStatus.Online
     });
 }

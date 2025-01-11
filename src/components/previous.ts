@@ -1,5 +1,4 @@
-import { ComponentCommand, type ComponentContext, Middlewares } from "seyfert";
-
+import { type ComponentContext, ComponentCommand, Middlewares } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
@@ -7,40 +6,48 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
 export default class PreviousTrackComponent extends ComponentCommand {
     componentType = "Button" as const;
 
-    filter(ctx: ComponentContext<typeof this.componentType>): boolean {
-        return ctx.customId === "player-previousTrack";
-    }
-
     async run(ctx: ComponentContext<typeof this.componentType>) {
         const { client, guildId } = ctx;
-        if (!guildId) return;
+        if (!guildId) {
+            return;
+        }
 
         const { messages } = await ctx.getLocale();
 
         const player = client.manager.getPlayer(guildId);
-        if (!player) return;
+        if (!player) {
+            return;
+        }
 
-        const track = await player.queue.shiftPrevious();
-        if (!track)
+        const track = await player.queue.shiftPrevious().catch(() => undefined);
+        if (!track) {
             return ctx.editOrReply({
                 flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
                         description: messages.events.noPrevious,
-                        color: EmbedColors.Red,
-                    },
-                ],
+                        color: EmbedColors.Red
+                    }
+                ]
             });
+        }
 
         await player.queue.add(track);
         await ctx.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [
                 {
-                    description: messages.commands.previous({ title: track.info.title, uri: track.info.uri! }),
-                    color: client.config.color.success,
-                },
-            ],
+                    description: messages.commands.previous({
+                        title: track.info.title,
+                        uri: track.info.uri
+                    }),
+                    color: client.config.color.success
+                }
+            ]
         });
+    }
+
+    filter(ctx: ComponentContext<typeof this.componentType>): boolean {
+        return ctx.customId === "player-previousTrack";
     }
 }

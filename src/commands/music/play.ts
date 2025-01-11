@@ -1,73 +1,90 @@
 import {
-    Command,
     type CommandContext,
-    Declare,
-    Embed,
-    LocalesT,
-    type Message,
-    Middlewares,
-    Options,
-    type User,
     type WebhookMessage,
     createStringOption,
+    type Message,
+    Middlewares,
+    type User,
+    LocalesT,
+    Command,
+    Declare,
+    Options,
+    Embed
 } from "seyfert";
+import { onAutocompleteError } from "#stelle/utils/functions/overrides.js";
+import { sliceText } from "#stelle/utils/functions/utils.js";
+import { EmbedColors } from "seyfert/lib/common/index.js";
+import { MessageFlags } from "seyfert/lib/types/index.js";
+import { TimeFormat } from "#stelle/utils/TimeFormat.js";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
-import { EmbedColors } from "seyfert/lib/common/index.js";
-import { MessageFlags } from "seyfert/lib/types/index.js";
-
-import { TimeFormat } from "#stelle/utils/TimeFormat.js";
-import { sliceText } from "#stelle/utils/functions/utils.js";
-
-import { onAutocompleteError } from "#stelle/utils/functions/overrides.js";
-
-const options = {
+const cmdOptions = {
     query: createStringOption({
         onAutocompleteError,
         description: "Enter the track name or url.",
         required: true,
         locales: {
             name: "locales.play.option.name",
-            description: "locales.play.option.description",
+            description: "locales.play.option.description"
         },
         autocomplete: async (interaction) => {
             const { client, member, guildId } = interaction;
 
-            if (!guildId) return;
+            if (!guildId) {
+                return;
+            }
 
             const { searchEngine } = await client.database.getPlayer(guildId);
             const { messages } = client.t(await client.database.getLocale(guildId)).get();
 
-            if (!client.manager.useable)
-                return interaction.respond([{ name: messages.commands.play.autocomplete.noNodes, value: "noNodes" }]);
+            if (!client.manager.useable) {
+                return interaction.respond([{
+                    name: messages.commands.play.autocomplete.noNodes,
+                    value: "noNodes"
+                }]);
+            }
 
             const voice = client.cache.voiceStates?.get(member!.id, guildId);
-            if (!voice) return interaction.respond([{ name: messages.commands.play.autocomplete.noVoiceChannel, value: "noVoice" }]);
+            if (!voice) {
+                return interaction.respond([{
+                    name: messages.commands.play.autocomplete.noVoiceChannel,
+                    value: "noVoice"
+                }]);
+            }
 
             const query = interaction.getInput();
-            if (!query)
+            if (!query) {
                 return interaction.respond([
-                    { name: messages.commands.play.autocomplete.noQuery, value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT" },
+                    {
+                        name: messages.commands.play.autocomplete.noQuery,
+                        value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT"
+                    }
                 ]);
+            }
 
             const { tracks } = await client.manager.search(query, searchEngine);
-            if (!tracks.length) return interaction.respond([{ name: messages.commands.play.autocomplete.noTracks, value: "noTracks" }]);
+            if (!tracks.length) {
+                return interaction.respond([{
+                    name: messages.commands.play.autocomplete.noTracks,
+                    value: "noTracks"
+                }]);
+            }
 
             await interaction.respond(
                 tracks.slice(0, 25).map((track) => {
                     const duration = track.info.isStream
                         ? messages.commands.play.live
-                        : (TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined);
+                        : TimeFormat.toDotted(track.info.duration);
 
                     return {
                         name: `${sliceText(track.info.title, 20)} (${duration}) - ${sliceText(track.info.author, 30)}`,
-                        value: track.info.uri!,
+                        value: track.info.uri
                     };
-                }),
+                })
             );
-        },
-    }),
+        }
+    })
 };
 
 @Declare({
@@ -75,24 +92,33 @@ const options = {
     description: "Play music with Stelle.",
     aliases: ["p"],
     integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    contexts: ["Guild"]
 })
-@StelleOptions({ cooldown: 5, category: StelleCategory.Music })
-@Options(options)
-@LocalesT("locales.play.name", "locales.play.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkVoicePermissions", "checkBotVoiceChannel"])
+@StelleOptions({
+    cooldown: 5,
+    category: StelleCategory.Music
+})
+@LocalesT("locales.play.name", "locales.play.description")
+@Options(cmdOptions)
 export default class PlayCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
+    public override async run(ctx: CommandContext<typeof cmdOptions>): Promise<WebhookMessage | Message | void> {
         const { options, client, guildId, channelId, member } = ctx;
         const { query } = options;
 
-        if (!(guildId && member)) return;
+        if (!(guildId && member)) {
+            return;
+        }
 
-        const voice = await client.cache.voiceStates?.get(member!.id, guildId)?.channel();
-        if (!voice?.is(["GuildVoice", "GuildStageVoice"])) return;
+        const voice = await client.cache.voiceStates?.get(member.id, guildId)?.channel();
+        if (!voice?.is(["GuildVoice", "GuildStageVoice"])) {
+            return;
+        }
 
         let bot = client.cache.voiceStates?.get(client.me.id, guildId);
-        if (bot && bot.channelId !== voice.id) return;
+        if (bot && bot.channelId !== voice.id) {
+            return;
+        }
 
         const { messages } = await ctx.getLocale();
         const { defaultVolume, searchEngine } = await client.database.getPlayer(guildId);
@@ -100,66 +126,80 @@ export default class PlayCommand extends Command {
         await ctx.deferReply();
 
         const player = client.manager.createPlayer({
-            guildId: guildId,
+            guildId,
             textChannelId: channelId,
             voiceChannelId: voice.id,
             volume: defaultVolume,
-            selfDeaf: true,
+            selfDeaf: true
         });
 
         const { client: _c1, ...clientUser } = client.me;
         const { client: _c2, ...trackRequester } = ctx.author;
 
-        if (!player.connected) await player.connect();
+        if (!player.connected) {
+            await player.connect();
+        }
 
         const { loadType, playlist, tracks } = await player.search(
-            { query, source: searchEngine },
+            {
+                query,
+                source: searchEngine
+            },
             {
                 ...trackRequester,
-                tag: ctx.author.tag,
-            },
+                tag: ctx.author.tag
+            }
         );
 
         player.set("localeString", await ctx.getLocaleString());
         player.set("me", {
             ...clientUser,
-            tag: client.me.username,
+            tag: client.me.username
         });
 
-        if (!bot) bot = client.cache.voiceStates?.get(client.me.id, guildId);
-        if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);
+        if (!bot) {
+            bot = client.cache.voiceStates?.get(client.me.id, guildId);
+        }
+        if (voice.isStage() && bot?.suppress) {
+            await bot.setSuppress(false);
+        }
 
         switch (loadType) {
             case "empty":
             case "error":
-                {
-                    if (!player.queue.current) await player.destroy();
-
-                    await ctx.editOrReply({
-                        flags: MessageFlags.Ephemeral,
-                        content: "",
-                        embeds: [
-                            {
-                                color: EmbedColors.Red,
-                                description: messages.commands.play.noResults,
-                            },
-                        ],
-                    });
+                if (!player.queue.current) {
+                    await player.destroy();
                 }
+
+                await ctx.editOrReply({
+                    flags: MessageFlags.Ephemeral,
+                    content: "",
+                    embeds: [
+                        {
+                            color: EmbedColors.Red,
+                            description: messages.commands.play.noResults
+                        }
+                    ]
+                });
                 break;
 
-            case "track":
             case "search":
+            case "track":
                 {
                     const track = tracks[0];
 
-                    if (player.get("enabledAutoplay")) await player.queue.add(track, 0);
-                    else await player.queue.add(track);
+                    if (player.get("enabledAutoplay")) {
+                        await player.queue.add(track, 0);
+                    } else {
+                        await player.queue.add(track);
+                    }
 
-                    const type = player.queue.tracks.length > 1 ? "results" : "result";
+                    const type = player.queue.tracks.length > 1
+                        ? "results"
+                        : "result";
                     const status = track.info.isStream
                         ? messages.commands.play.live
-                        : (TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined);
+                        : TimeFormat.toDotted(track.info.duration) || messages.commands.play.undetermined;
 
                     const embed = new Embed()
                         .setThumbnail(track.info.artworkUrl ?? "")
@@ -171,17 +211,19 @@ export default class PlayCommand extends Command {
                                 requester: (track.requester as User).id,
                                 title: track.info.title,
                                 url: track.info.uri!,
-                                volume: player.volume,
-                            }),
+                                volume: player.volume
+                            })
                         )
                         .setTimestamp();
 
                     await ctx.editOrReply({
                         content: "",
-                        embeds: [embed],
+                        embeds: [embed]
                     });
 
-                    if (!player.playing) await player.play();
+                    if (!player.playing) {
+                        await player.play();
+                    }
                 }
                 break;
 
@@ -189,8 +231,11 @@ export default class PlayCommand extends Command {
                 {
                     const track = tracks[0];
 
-                    if (player.get("enabledAutoplay")) await player.queue.add(tracks, 0);
-                    else await player.queue.add(tracks);
+                    if (player.get("enabledAutoplay")) {
+                        await player.queue.add(tracks, 0);
+                    } else {
+                        await player.queue.add(tracks);
+                    }
 
                     const embed = new Embed()
                         .setColor(client.config.color.success)
@@ -201,17 +246,19 @@ export default class PlayCommand extends Command {
                                 playlist: playlist?.name ?? playlist?.title ?? track.info.title,
                                 requester: (track.requester as User).id,
                                 tracks: tracks.length,
-                                volume: player.volume,
-                            }),
+                                volume: player.volume
+                            })
                         )
                         .setTimestamp();
 
                     await ctx.editOrReply({
                         content: "",
-                        embeds: [embed],
+                        embeds: [embed]
                     });
 
-                    if (!player.playing) await player.play();
+                    if (!player.playing) {
+                        await player.play();
+                    }
                 }
                 break;
         }

@@ -1,19 +1,20 @@
-import type { ClientUser } from "seyfert";
-import { Lavalink, sessions } from "#stelle/classes";
 import type { StellePlayerJson } from "#stelle/types";
+import type { ClientUser } from "seyfert";
 
 import { DEBUG_MODE } from "#stelle/data/Constants.js";
+import { Lavalink, sessions } from "#stelle/classes";
 
 export default new Lavalink({
     name: "playerUpdate",
     type: "manager",
     run: (client, oldPlayer, newPlayer) => {
-        if (!client.config.sessions.enabled) return;
+        if (!client.config.sessions.enabled) {
+            return;
+        }
 
         const newPlayerJson = newPlayer.toJSON();
 
         if (
-            !oldPlayer ||
             oldPlayer.voiceChannelId !== newPlayerJson.voiceChannelId ||
             oldPlayer.textChannelId !== newPlayerJson.textChannelId ||
             oldPlayer.options.selfDeaf !== newPlayerJson.options.selfDeaf ||
@@ -24,10 +25,12 @@ export default new Lavalink({
             oldPlayer.options.instaUpdateFiltersFix !== newPlayerJson.options.instaUpdateFiltersFix ||
             oldPlayer.options.vcRegion !== newPlayerJson.options.vcRegion
         ) {
-            if (newPlayerJson.queue?.current) newPlayerJson.queue.current.userData = {};
+            if (newPlayerJson.queue?.current) {
+                newPlayerJson.queue.current.userData = {};
+            }
 
-            // yeah, we don't need specific data from the new player json.
-            // but I hate the way of destructuring the object...
+            // Yeah, we don't need specific data from the new player json.
+            // But I hate the way of destructuring the object...
             const {
                 ping: _p,
                 createdTimeStamp: _cts,
@@ -43,11 +46,13 @@ export default new Lavalink({
                 ...newJson,
                 messageId: newPlayer.get("messageId"),
                 enabledAutoplay: newPlayer.get("enabledAutoplay"),
-                localeString: newPlayer.get<string | undefined>("localeString"),
-                me: newPlayer.get<ClientUser | undefined>("me"),
+                localeString: newPlayer.get<undefined | string>("localeString"),
+                me: newPlayer.get<ClientUser | undefined>("me")
             });
 
-            return DEBUG_MODE && client.logger.debug(`[Lavalink PlayerUpdate] Saved new player data for guild ${newPlayer.guildId}`);
+            if (DEBUG_MODE) {
+                client.logger.debug(`[Lavalink PlayerUpdate] Saved new player data for guild ${newPlayer.guildId}`);
+            }
         }
-    },
+    }
 });

@@ -1,11 +1,10 @@
-import type { ParseClient, ParseLocales, ParseMiddlewares } from "seyfert";
+import type { ParseMiddlewares, ParseLocales, ParseClient } from "seyfert";
+import type { customContext } from "#stelle/utils/functions/utils.js";
+import type { StelleMiddlewares } from "#stelle/middlwares";
 import type { Stelle } from "#stelle/client";
 import type { Options } from "#stelle/types";
-import type { StelleMiddlewares } from "#stelle/middlwares";
 
-import { customContext } from "#stelle/utils/functions/utils.js";
-
-import defaultLocale from "./locales/en-US.js";
+import type defaultLocale from "./locales/en-US.js";
 
 declare module "seyfert" {
     interface InternalOptions {

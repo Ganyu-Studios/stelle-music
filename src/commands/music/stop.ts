@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, LocalesT, Middlewares } from "seyfert";
+import { type CommandContext, Middlewares, LocalesT, Command, Declare } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
@@ -7,30 +7,37 @@ import { StelleCategory } from "#stelle/types";
     description: "Stop the player.",
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
-    aliases: ["sp"],
+    aliases: ["sp"]
 })
-@StelleOptions({ cooldown: 5, category: StelleCategory.Music })
-@LocalesT("locales.stop.name", "locales.stop.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
+@StelleOptions({
+    cooldown: 5,
+    category: StelleCategory.Music
+})
+@LocalesT("locales.stop.name", "locales.stop.description")
 export default class StopCommand extends Command {
     public override async run(ctx: CommandContext) {
         const { client, guildId } = ctx;
 
-        if (!guildId) return;
+        if (!guildId) {
+            return;
+        }
 
         const { messages } = await ctx.getLocale();
 
         const player = client.manager.getPlayer(guildId);
-        if (!player) return;
+        if (!player) {
+            return;
+        }
 
         await player.destroy();
         await ctx.editOrReply({
             embeds: [
                 {
                     description: messages.commands.stop,
-                    color: client.config.color.success,
-                },
-            ],
+                    color: client.config.color.success
+                }
+            ]
         });
     }
 }

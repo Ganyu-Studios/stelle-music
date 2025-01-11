@@ -1,5 +1,5 @@
-import { Lavalink, sessions } from "#stelle/classes";
 import { DEBUG_MODE } from "#stelle/data/Constants.js";
+import { Lavalink, sessions } from "#stelle/classes";
 
 export default new Lavalink({
     name: "playerDestroy",
@@ -8,8 +8,12 @@ export default new Lavalink({
         sessions.delete(player.guildId);
 
         const voice = await client.channels.fetch(player.voiceChannelId ?? player.options.voiceChannelId);
-        if (voice.is(["GuildVoice"])) await voice.setVoiceStatus(null).catch(() => null);
+        if (voice.is(["GuildVoice"])) {
+            await voice.setVoiceStatus(null).catch(() => null);
+        }
 
-        return DEBUG_MODE && client.logger.debug(`[Lavalink PlayerDestroy] Destroyed player for guild ${player.guildId}`);
-    },
+        if (DEBUG_MODE) {
+            client.logger.debug(`[Lavalink PlayerDestroy] Destroyed player for guild ${player.guildId}`);
+        }
+    }
 });

@@ -1,8 +1,8 @@
-import { Command, type CommandContext, Declare, LocalesT, Middlewares, Options, createIntegerOption } from "seyfert";
+import { type CommandContext, createIntegerOption, Middlewares, LocalesT, Command, Declare, Options } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
-const options = {
+const cmdOptions = {
     volume: createIntegerOption({
         description: "Enter the volume.",
         required: true,
@@ -10,9 +10,9 @@ const options = {
         max_value: 100,
         locales: {
             name: "locales.volume.option.name",
-            description: "locales.volume.option.description",
-        },
-    }),
+            description: "locales.volume.option.description"
+        }
+    })
 };
 
 @Declare({
@@ -20,23 +20,30 @@ const options = {
     description: "Modify the volume.",
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
-    aliases: ["v", "vol"],
+    aliases: ["v", "vol"]
 })
-@StelleOptions({ cooldown: 5, category: StelleCategory.Music })
-@Options(options)
-@LocalesT("locales.volume.name", "locales.volume.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
+@StelleOptions({
+    cooldown: 5,
+    category: StelleCategory.Music
+})
+@LocalesT("locales.volume.name", "locales.volume.description")
+@Options(cmdOptions)
 export default class VolumeCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: CommandContext<typeof cmdOptions>) {
         const { client, options, guildId } = ctx;
         const { volume } = options;
 
-        if (!guildId) return;
+        if (!guildId) {
+            return;
+        }
 
         const { messages } = await ctx.getLocale();
 
         const player = client.manager.getPlayer(guildId);
-        if (!player) return;
+        if (!player) {
+            return;
+        }
 
         if (volume === 1) {
             await player.pause();
@@ -46,9 +53,9 @@ export default class VolumeCommand extends Command {
                 embeds: [
                     {
                         description: messages.commands.volume.paused,
-                        color: client.config.color.extra,
-                    },
-                ],
+                        color: client.config.color.extra
+                    }
+                ]
             });
         }
 
@@ -60,9 +67,9 @@ export default class VolumeCommand extends Command {
                 embeds: [
                     {
                         description: messages.commands.volume.changed({ volume }),
-                        color: client.config.color.success,
-                    },
-                ],
+                        color: client.config.color.success
+                    }
+                ]
             });
         }
 
@@ -71,9 +78,9 @@ export default class VolumeCommand extends Command {
             embeds: [
                 {
                     description: messages.commands.volume.changed({ volume }),
-                    color: client.config.color.success,
-                },
-            ],
+                    color: client.config.color.success
+                }
+            ]
         });
     }
 }

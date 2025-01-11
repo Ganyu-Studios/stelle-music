@@ -1,34 +1,33 @@
-import { Command, type CommandContext, Declare, LocalesT, Middlewares, Options, createStringOption } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
-
 import type { RepeatMode } from "lavalink-client";
 
-import { StelleCategory } from "#stelle/types";
+import { type CommandContext, createStringOption, Middlewares, LocalesT, Command, Declare, Options } from "seyfert";
 import { getLoopState } from "#stelle/utils/functions/utils.js";
+import { StelleOptions } from "#stelle/decorators";
+import { StelleCategory } from "#stelle/types";
 
-const options = {
+const cmdOptions = {
     mode: createStringOption({
         description: "Select the loop mode.",
         required: true,
         choices: [
             {
                 name: "Off",
-                value: "off",
+                value: "off"
             },
             {
                 name: "Track",
-                value: "track",
+                value: "track"
             },
             {
                 name: "Queue",
-                value: "queue",
-            },
+                value: "queue"
+            }
         ],
         locales: {
             name: "locales.loop.option.name",
-            description: "locales.loop.option.description",
-        },
-    }),
+            description: "locales.loop.option.description"
+        }
+    })
 };
 
 @Declare({
@@ -36,23 +35,30 @@ const options = {
     description: "Toggle the loop mode.",
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
-    aliases: ["l"],
+    aliases: ["l"]
 })
-@StelleOptions({ cooldown: 5, category: StelleCategory.Music })
-@Options(options)
-@LocalesT("locales.loop.name", "locales.loop.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
+@StelleOptions({
+    cooldown: 5,
+    category: StelleCategory.Music
+})
+@LocalesT("locales.loop.name", "locales.loop.description")
+@Options(cmdOptions)
 export default class LoopCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: CommandContext<typeof cmdOptions>) {
         const { client, options, guildId } = ctx;
         const { mode } = options;
 
-        if (!guildId) return;
+        if (!guildId) {
+            return;
+        }
 
         const { messages } = await ctx.getLocale();
 
         const player = client.manager.getPlayer(guildId);
-        if (!player) return;
+        if (!player) {
+            return;
+        }
 
         await player.setRepeatMode(mode as RepeatMode);
         await ctx.editOrReply({
@@ -60,10 +66,10 @@ export default class LoopCommand extends Command {
                 {
                     color: client.config.color.success,
                     description: messages.commands.autoplay.toggled({
-                        type: messages.commands.loop.loopType[getLoopState(player.repeatMode, true)],
-                    }),
-                },
-            ],
+                        type: messages.commands.loop.loopType[getLoopState(player.repeatMode, true)]
+                    })
+                }
+            ]
         });
     }
 }

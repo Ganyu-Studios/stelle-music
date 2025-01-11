@@ -1,51 +1,54 @@
+import type { ApplicationCommandOptionType, APIApplicationCommandOption, LocaleString } from "seyfert/lib/types/index.js";
+
 import {
-    ActionRow,
-    Command,
     type CommandContext,
     ContextMenuCommand,
-    Declare,
-    Embed,
-    LocalesT,
-    Options,
     StringSelectOption,
-    SubCommand,
     createStringOption,
+    SubCommand,
+    ActionRow,
+    LocalesT,
+    Command,
+    Declare,
+    Options,
+    Embed
 } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
-
-import { EmbedColors } from "seyfert/lib/common/index.js";
-import type { APIApplicationCommandOption, ApplicationCommandOptionType, LocaleString } from "seyfert/lib/types/index.js";
-import { MessageFlags } from "seyfert/lib/types/index.js";
-import { StelleCategory } from "#stelle/types";
-import { EmbedPaginator, StelleStringMenu } from "#stelle/utils/Paginator.js";
+import { StelleStringMenu, EmbedPaginator } from "#stelle/utils/Paginator.js";
 import { formatOptions } from "#stelle/utils/functions/formatter.js";
+import { EmbedColors } from "seyfert/lib/common/index.js";
+import { MessageFlags } from "seyfert/lib/types/index.js";
+import { StelleOptions } from "#stelle/decorators";
+import { StelleCategory } from "#stelle/types";
 
-const options = {
+const cmdOptions = {
     command: createStringOption({
         description: "The command to get help for.",
         locales: {
             name: "locales.help.option.name",
-            description: "locales.help.option.description",
-        },
-    }),
+            description: "locales.help.option.description"
+        }
+    })
 };
 
 @Declare({
     name: "help",
     description: "The most useful command in the world!",
     integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    contexts: ["Guild"]
+})
+@StelleOptions({
+    category: StelleCategory.User,
+    cooldown: 5
 })
 @LocalesT("locales.help.name", "locales.help.description")
-@StelleOptions({ category: StelleCategory.User, cooldown: 5 })
-@Options(options)
+@Options(cmdOptions)
 export default class HelpCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: CommandContext<typeof cmdOptions>) {
         const { client, options } = ctx;
         const { messages } = await ctx.getLocale();
 
         const categoryList = client
-            .commands!.values.filter((command) => !command.guildId)
+            .commands.values.filter((command) => !command.guildId)
             .map((command) => Number(command.category))
             .filter((item, index, commands) => commands.indexOf(item) === index);
 
@@ -58,17 +61,15 @@ export default class HelpCommand extends Command {
                     .setPlaceholder(messages.commands.help.selectMenu.placeholder)
                     .setCustomId("guild-helpMenu")
                     .setOptions(
-                        categoryList.map((category) =>
-                            new StringSelectOption()
-                                .setLabel(getAlias(category))
-                                .setValue(category.toString())
-                                .setDescription(messages.commands.help.selectMenu.description({ category: getAlias(category) }))
-                                .setEmoji("📚"),
-                        ),
+                        categoryList.map((category) => new StringSelectOption()
+                            .setLabel(getAlias(category))
+                            .setValue(category.toString())
+                            .setDescription(messages.commands.help.selectMenu.description({ category: getAlias(category) }))
+                            .setEmoji("📚"))
                     )
                     .setRun((interaction, setPage) => {
                         const category = Number(interaction.values[0]);
-                        const commands = client.commands!.values.filter((command) => command.category === Number(category));
+                        const commands = client.commands.values.filter((command) => command.category === Number(category));
 
                         paginator.setEmbeds([]).setDisabled(false);
 
@@ -82,23 +83,21 @@ export default class HelpCommand extends Command {
                                     .setTitle(
                                         messages.commands.help.selectMenu.options.title({
                                             category: getAlias(category),
-                                            clientName: client.me.username,
-                                        }),
+                                            clientName: client.me.username
+                                        })
                                     )
                                     .setDescription(
                                         messages.commands.help.selectMenu.options.description({
                                             options: commandList
-                                                .map((command) =>
-                                                    parseCommand(command, messages.events.optionTypes, ctx.interaction?.locale),
-                                                )
-                                                .join("\n\n"),
-                                        }),
-                                    ),
+                                                .map((command) => parseCommand(command, messages.events.optionTypes, ctx.interaction?.locale))
+                                                .join("\n\n")
+                                        })
+                                    )
                             );
                         }
 
-                        return setPage(0);
-                    }),
+                        setPage(0);
+                    })
             );
 
             await paginator
@@ -109,26 +108,27 @@ export default class HelpCommand extends Command {
                         .setTitle(messages.commands.help.title({ clientName: client.me.username }))
                         .setDescription(
                             messages.commands.help.description({
-                                defaultPrefix: client.config.defaultPrefix,
-                            }),
-                        ),
+                                defaultPrefix: client.config.defaultPrefix
+                            })
+                        )
                 )
                 .reply();
 
             return;
         }
 
-        const command = client.commands!.values.filter((command) => !command.guildId).find((command) => command.name === options.command);
-        if (!command)
+        const command = client.commands.values.filter((cmd) => !cmd.guildId).find((cmd) => cmd.name === options.command);
+        if (!command) {
             return ctx.editOrReply({
                 flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
                         color: EmbedColors.Red,
-                        description: messages.commands.help.noCommand,
-                    },
-                ],
+                        description: messages.commands.help.noCommand
+                    }
+                ]
             });
+        }
 
         const embed = new Embed()
             .setColor(client.config.color.success)
@@ -136,13 +136,13 @@ export default class HelpCommand extends Command {
             .setTitle(
                 messages.commands.help.selectMenu.options.title({
                     category: getAlias(command.category ?? StelleCategory.Unknown),
-                    clientName: client.me.username,
-                }),
+                    clientName: client.me.username
+                })
             )
             .setDescription(
                 messages.commands.help.selectMenu.options.description({
-                    options: parseCommand(command, messages.events.optionTypes, ctx.interaction?.locale),
-                }),
+                    options: parseCommand(command, messages.events.optionTypes, ctx.interaction?.locale)
+                })
             );
 
         await ctx.editOrReply({ embeds: [embed] });
@@ -158,11 +158,13 @@ export default class HelpCommand extends Command {
  * @returns
  */
 function parseCommand(
-    command: Command | ContextMenuCommand,
+    command: ContextMenuCommand | Command,
     optionsType: Record<ApplicationCommandOptionType, string>,
-    locale?: LocaleString,
+    locale?: LocaleString
 ): string {
-    if (command instanceof ContextMenuCommand) return command.name;
+    if (command instanceof ContextMenuCommand) {
+        return command.name;
+    }
     let content = command.name;
     for (const option of command.options ?? []) {
         if (option instanceof SubCommand) {
@@ -183,7 +185,9 @@ function parseCommand(
  * @returns
  */
 function parseSubCommand(subCommand: SubCommand, optionsType: Record<ApplicationCommandOptionType, string>): string {
-    if (!subCommand.options?.length) return subCommand.name;
+    if (!subCommand.options?.length) {
+        return subCommand.name;
+    }
     return `↪ ${subCommand.group ?? ""} ${subCommand.name} ${formatOptions(subCommand.options as APIApplicationCommandOption[], optionsType)
         .map((x) => x.option)
         .join(" ")}`.trim();

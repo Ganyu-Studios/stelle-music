@@ -1,10 +1,9 @@
-import { LavalinkManager, type SearchPlatform, type SearchResult } from "lavalink-client";
-
-import { StelleHandler } from "#stelle/utils/classes/client/Handler.js";
-
 import type { UsingClient } from "seyfert";
-import { DEBUG_MODE } from "#stelle/data/Constants.js";
+
+import { type SearchPlatform, type SearchResult, LavalinkManager } from "lavalink-client";
+import { StelleHandler } from "#stelle/utils/classes/client/Handler.js";
 import { autoPlayFunction } from "#stelle/utils/functions/autoplay.js";
+import { DEBUG_MODE } from "#stelle/data/Constants.js";
 
 /**
  * Main music manager class.
@@ -23,9 +22,11 @@ export class StelleManager extends LavalinkManager {
     constructor(client: UsingClient) {
         super({
             nodes: client.config.nodes,
-            sendToShard: (guildId, payload) => client.gateway.send(client.gateway.calculateShardId(guildId), payload),
+            sendToShard: (guildId, payload) => {
+                client.gateway.send(client.gateway.calculateShardId(guildId), payload);
+            },
             queueOptions: {
-                maxPreviousTracks: 25,
+                maxPreviousTracks: 25
             },
             advancedOptions: {
                 enableDebugEvents: DEBUG_MODE,
@@ -34,19 +35,19 @@ export class StelleManager extends LavalinkManager {
                     noAudio: DEBUG_MODE,
                     playerDestroy: {
                         debugLog: DEBUG_MODE,
-                        dontThrowError: DEBUG_MODE,
-                    },
-                },
+                        dontThrowError: DEBUG_MODE
+                    }
+                }
             },
             playerOptions: {
                 defaultSearchPlatform: "spsearch",
                 onDisconnect: {
-                    destroyPlayer: true,
+                    destroyPlayer: true
                 },
                 onEmptyQueue: {
-                    autoPlayFunction,
-                },
-            },
+                    autoPlayFunction
+                }
+            }
         });
 
         this.handler = new StelleHandler(client);
@@ -62,14 +63,17 @@ export class StelleManager extends LavalinkManager {
         const nodes = this.nodeManager.leastUsedNodes();
         const node = nodes[Math.floor(Math.random() * nodes.length)];
 
-        return node.search({ query, source }, null, false);
+        return node.search({
+            query,
+            source
+        }, null, false);
     }
 
     /**
      * Load the manager.
      */
     public async load(): Promise<void> {
-        //... no.
+        // ... no.
         await this.handler.load();
         this.handler.client.logger.info("MusicHandler loaded");
     }

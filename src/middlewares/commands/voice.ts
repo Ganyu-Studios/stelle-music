@@ -1,6 +1,6 @@
-import { createMiddleware } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
+import { createMiddleware } from "seyfert";
 
 /**
  * Check if the bot is in a voice channel and if is the same as the author.
@@ -11,7 +11,9 @@ export const checkBotVoiceChannel = createMiddleware<void>(async ({ context, pas
     const me = await context.me();
 
     const state = context.client.cache.voiceStates!.get(context.author.id, context.guildId!);
-    if (!state) return pass();
+    if (!state) {
+        pass(); return;
+    }
 
     const bot = context.client.cache.voiceStates!.get(me.id, context.guildId!);
 
@@ -21,15 +23,15 @@ export const checkBotVoiceChannel = createMiddleware<void>(async ({ context, pas
             embeds: [
                 {
                     description: messages.events.noSameVoice({ channelId: bot.channelId! }),
-                    color: EmbedColors.Red,
-                },
-            ],
+                    color: EmbedColors.Red
+                }
+            ]
         });
 
-        return pass();
+        pass(); return;
     }
 
-    return next();
+    next();
 });
 
 /**
@@ -47,15 +49,15 @@ export const checkVoiceChannel = createMiddleware<void>(async ({ context, pass, 
             embeds: [
                 {
                     description: messages.events.noVoiceChannel,
-                    color: EmbedColors.Red,
-                },
-            ],
+                    color: EmbedColors.Red
+                }
+            ]
         });
 
-        return pass();
+        pass(); return;
     }
 
-    return next();
+    next();
 });
 
 /**
@@ -63,17 +65,23 @@ export const checkVoiceChannel = createMiddleware<void>(async ({ context, pass, 
  */
 export const checkVoicePermissions = createMiddleware<void>(async ({ context, pass, next }) => {
     const state = context.client.cache.voiceStates!.get(context.author.id, context.guildId!);
-    if (!state) return pass();
+    if (!state) {
+        pass(); return;
+    }
 
     const channel = await state.channel().catch(() => null);
-    if (!channel?.is(["GuildVoice", "GuildStageVoice"])) return pass();
+    if (!channel?.is(["GuildVoice", "GuildStageVoice"])) {
+        pass(); return;
+    }
 
     const { stagePermissions, voicePermissions } = context.client.config.permissions;
     const { messages } = await context.getLocale();
 
     const me = await context.me();
     const permissions = await context.client.channels.memberPermissions(channel.id, me);
-    const missings = permissions.keys(permissions.missings(channel.isStage() ? stagePermissions : voicePermissions));
+    const missings = permissions.keys(permissions.missings(channel.isStage()
+        ? stagePermissions
+        : voicePermissions));
 
     if (missings.length) {
         await context.editOrReply({
@@ -82,21 +90,21 @@ export const checkVoicePermissions = createMiddleware<void>(async ({ context, pa
             embeds: [
                 {
                     description: messages.events.permissions.channel.description({
-                        channelId: channel.id,
+                        channelId: channel.id
                     }),
                     color: EmbedColors.Red,
                     fields: [
                         {
                             name: messages.events.permissions.user.field,
-                            value: missings.map((p) => `- ${messages.events.permissions.list[p]}`).join("\n"),
-                        },
-                    ],
-                },
-            ],
+                            value: missings.map((p) => `- ${messages.events.permissions.list[p]}`).join("\n")
+                        }
+                    ]
+                }
+            ]
         });
 
-        return pass();
+        pass(); return;
     }
 
-    return next();
+    next();
 });

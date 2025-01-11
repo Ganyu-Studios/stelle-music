@@ -1,4 +1,4 @@
-import { AutoLoad, Command, Declare, LocalesT } from "seyfert";
+import { AutoLoad, LocalesT, Command, Declare } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
@@ -7,9 +7,12 @@ import { StelleCategory } from "#stelle/types";
     description: "Change Stelle default settings.",
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
-    defaultMemberPermissions: ["ManageGuild"],
+    defaultMemberPermissions: ["ManageGuild"]
 })
-@AutoLoad()
-@StelleOptions({ cooldown: 10, category: StelleCategory.Guild })
+@StelleOptions({
+    cooldown: 10,
+    category: StelleCategory.Guild
+})
 @LocalesT("locales.default.name", "locales.default.description")
-export default class DefaultCommand extends Command {}
+@AutoLoad()
+export default class DefaultCommand extends Command { }

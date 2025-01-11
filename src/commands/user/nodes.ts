@@ -1,20 +1,20 @@
-import { Command, type CommandContext, Declare, Embed, LocalesT } from "seyfert";
-
-import { StelleOptions } from "#stelle/decorators";
-
-import { EmbedColors } from "seyfert/lib/common/index.js";
-
-import { StelleCategory } from "#stelle/types";
+import { type CommandContext, LocalesT, Command, Declare, Embed } from "seyfert";
 import { EmbedPaginator } from "#stelle/utils/Paginator.js";
+import { EmbedColors } from "seyfert/lib/common/index.js";
 import { TimeFormat } from "#stelle/utils/TimeFormat.js";
+import { StelleOptions } from "#stelle/decorators";
+import { StelleCategory } from "#stelle/types";
 
 @Declare({
     name: "nodes",
     description: "Get the status of all Stelle nodes.",
     integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    contexts: ["Guild"]
 })
-@StelleOptions({ cooldown: 5, category: StelleCategory.User })
+@StelleOptions({
+    cooldown: 5,
+    category: StelleCategory.User
+})
 @LocalesT("locales.nodes.name", "locales.nodes.description")
 export default class ExampleCommand extends Command {
     public override async run(ctx: CommandContext) {
@@ -26,21 +26,24 @@ export default class ExampleCommand extends Command {
             name: `\`🔰\` ${node.id}`,
             inline: true,
             value: messages.commands.nodes.value({
-                state: messages.commands.nodes.states[node.connected ? "connected" : "disconnected"],
+                state: messages.commands.nodes.states[node.connected
+                    ? "connected"
+                    : "disconnected"],
                 players: node.stats.players,
-                uptime: TimeFormat.toHumanize(node.stats.uptime),
-            }),
+                uptime: TimeFormat.toHumanize(node.stats.uptime)
+            })
         }));
 
-        if (!fields.length)
+        if (!fields.length) {
             return ctx.editOrReply({
                 embeds: [
                     {
                         description: messages.commands.nodes.noNodes,
-                        color: EmbedColors.Red,
-                    },
-                ],
+                        color: EmbedColors.Red
+                    }
+                ]
             });
+        }
 
         if (fields.length < maxFields) {
             await ctx.editOrReply({
@@ -49,8 +52,8 @@ export default class ExampleCommand extends Command {
                         .setDescription(messages.commands.nodes.description)
                         .setColor(client.config.color.success)
                         .addFields(fields.slice(0, maxFields))
-                        .setTimestamp(),
-                ],
+                        .setTimestamp()
+                ]
             });
         } else {
             const pages = new EmbedPaginator(ctx);
@@ -61,7 +64,7 @@ export default class ExampleCommand extends Command {
                         .setDescription(messages.commands.nodes.description)
                         .setColor(client.config.color.success)
                         .addFields(fields.slice(i, i + maxFields))
-                        .setTimestamp(),
+                        .setTimestamp()
                 );
             }
 
