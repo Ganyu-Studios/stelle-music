@@ -2,7 +2,7 @@ import { Embed, Guild, createEvent } from "seyfert";
 
 export default createEvent({
     data: { name: "guildDelete" },
-    run: async (guild, client) => {
+    async run(guild, client): Promise<void> {
         if (guild.unavailable) return;
         if (!(guild instanceof Guild)) return;
 

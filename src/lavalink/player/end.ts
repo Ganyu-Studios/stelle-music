@@ -3,7 +3,7 @@ import { Lavalink } from "#stelle/classes";
 export default new Lavalink({
     name: "trackEnd",
     type: "manager",
-    run: async (client, player) => {
+    async run(client, player): Promise<void> {
         if (!player.textChannelId) return;
 
         const messageId = player.get<string | undefined>("messageId");

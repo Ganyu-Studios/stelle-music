@@ -115,4 +115,10 @@ export interface StelleEnvironment {
     DatabaseUrl?: string;
     /** Stelle errors webhook. */
     ErrorsWebhook?: string;
+    /** The Stelle redis host */
+    RedisHost?: string;
+    /** The Stelle redis port */
+    RedisPort?: number;
+    /** The Stelle redis password */
+    RedisPassword?: string;
 }

@@ -4,5 +4,7 @@ import { DEBUG_MODE } from "#stelle/data/Constants.js";
 export default new Lavalink({
     name: "debug",
     type: "manager",
-    run: (client, key, data) => DEBUG_MODE && client.debugger?.info(`[Lavalink ${key}] Data:`, data),
+    run(client, key, data): void {
+        if (DEBUG_MODE) client.debugger?.info(`[Lavalink ${key}]:`, data);
+    },
 });

@@ -1,8 +1,8 @@
+import { StelleSessions } from "#stelle/classes";
 import type { StelleConfiguration, StelleEnvironment } from "#stelle/types";
 import { ms } from "#stelle/utils/TimeFormat.js";
-import { sessions } from "../classes/client/Sessions.js";
 
-const { TOKEN, DATABASE_URL, ERRORS_WEBHOOK } = process.env;
+const { TOKEN, DATABASE_URL, ERRORS_WEBHOOK, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = process.env;
 
 /**
  * Stelle environment.
@@ -11,6 +11,9 @@ export const Environment: StelleEnvironment = {
     Token: TOKEN,
     DatabaseUrl: DATABASE_URL,
     ErrorsWebhook: ERRORS_WEBHOOK,
+    RedisHost: REDIS_HOST,
+    RedisPort: Number(REDIS_PORT),
+    RedisPassword: REDIS_PASSWORD,
 };
 
 /**
@@ -32,7 +35,7 @@ export const Configuration: StelleConfiguration = {
         "1213361742571241492", // <-- Team Genesis
         "1003825077969764412", // <-- Seyfert
     ],
-    nodes: sessions.resolve([
+    nodes: StelleSessions.resolve([
         {
             id: "SN #1", // <--- AKA Stelle Node
             host: "localhost",

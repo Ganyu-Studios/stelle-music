@@ -3,7 +3,7 @@ import { Lavalink } from "#stelle/classes";
 export default new Lavalink({
     name: "connect",
     type: "node",
-    run: async (client, node) => {
+    async run(client, node): Promise<void> {
         const players = [...client.manager.players.values()].filter((player) => player.node.id === node.id);
         if (client.config.sessions.resumePlayers && players.length && !node.resuming.enabled) {
             for (const player of players) {
@@ -17,7 +17,7 @@ export default new Lavalink({
                         voice: player.voice,
                     });
                 } catch (error) {
-                    return client.logger.error(`Music - Error resuming the player: ${player.guildId}`, error);
+                    client.logger.error(`Music - Error resuming the player: ${player.guildId}`, error);
                 }
             }
         }

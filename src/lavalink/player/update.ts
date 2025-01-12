@@ -1,5 +1,5 @@
 import type { ClientUser } from "seyfert";
-import { Lavalink, sessions } from "#stelle/classes";
+import { Lavalink } from "#stelle/classes";
 import type { StellePlayerJson } from "#stelle/types";
 
 import { DEBUG_MODE } from "#stelle/data/Constants.js";
@@ -7,7 +7,7 @@ import { DEBUG_MODE } from "#stelle/data/Constants.js";
 export default new Lavalink({
     name: "playerUpdate",
     type: "manager",
-    run: (client, oldPlayer, newPlayer) => {
+    run(client, oldPlayer, newPlayer): void {
         if (!client.config.sessions.enabled) return;
 
         const newPlayerJson = newPlayer.toJSON();
@@ -36,10 +36,12 @@ export default new Lavalink({
                 lastPositionChange: _lpc,
                 paused: _pd,
                 playing: _pg,
+                queue: _q,
+                filters: _f,
                 ...newJson
             } = newPlayerJson;
 
-            sessions.set<StellePlayerJson>(newPlayer.guildId, {
+            client.sessions.set<StellePlayerJson>(newPlayer.guildId, {
                 ...newJson,
                 messageId: newPlayer.get("messageId"),
                 enabledAutoplay: newPlayer.get("enabledAutoplay"),
@@ -47,7 +49,7 @@ export default new Lavalink({
                 me: newPlayer.get<ClientUser | undefined>("me"),
             });
 
-            return DEBUG_MODE && client.logger.debug(`[Lavalink PlayerUpdate] Saved new player data for guild ${newPlayer.guildId}`);
+            if (DEBUG_MODE) client.logger.debug(`[Lavalink PlayerUpdate] Saved new player data for guild ${newPlayer.guildId}`);
         }
     },
 });

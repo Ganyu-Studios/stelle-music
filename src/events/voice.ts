@@ -3,7 +3,7 @@ import { playerListener } from "#stelle/listeners";
 
 export default createEvent({
     data: { name: "voiceStateUpdate" },
-    run: async ([newState, oldState], client) => {
+    async run([newState, oldState], client): Promise<void> {
         await playerListener(client, newState, oldState);
     },
 });

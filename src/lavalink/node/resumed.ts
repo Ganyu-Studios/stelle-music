@@ -1,19 +1,19 @@
-import { Lavalink, sessions } from "#stelle/classes";
+import { Lavalink } from "#stelle/classes";
 import type { StellePlayerJson } from "#stelle/types";
 
 export default new Lavalink({
     name: "resumed",
     type: "node",
-    run: async (client, node, _, players) => {
+    async run(client, node, _, players): Promise<void> {
         if (!client.config.sessions.enabled) return;
         if (!Array.isArray(players)) return;
 
         for (const data of players) {
-            const session = sessions.get<StellePlayerJson>(data.guildId);
+            const session = client.sessions.get<StellePlayerJson>(data.guildId);
             if (!session) continue;
 
             if (!data.state.connected) {
-                sessions.delete(data.guildId);
+                client.sessions.delete(data.guildId);
                 continue;
             }
 
@@ -41,10 +41,9 @@ export default new Lavalink({
 
             Object.assign(player.filterManager, { data: data.filters });
 
-            if (data.track) player.queue.current = client.manager.utils.buildTrack(data.track, session.me);
+            await player.queue.utils.sync(true, false);
 
-            if (!player.queue.previous.length) player.queue.previous.unshift(...session.queue!.previous);
-            if (!player.queue.tracks.length) player.queue.add(session.queue!.tracks);
+            if (data.track) player.queue.current = client.manager.utils.buildTrack(data.track, session.me);
 
             Object.assign(player, {
                 lastPosition: data.state.position,
@@ -55,8 +54,6 @@ export default new Lavalink({
             });
 
             player.ping.lavalink = data.state.ping;
-
-            await player.queue.utils.save();
         }
     },
 });

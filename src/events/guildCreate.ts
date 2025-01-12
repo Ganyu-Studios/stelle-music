@@ -2,7 +2,7 @@ import { Embed, createEvent } from "seyfert";
 
 export default createEvent({
     data: { name: "guildCreate" },
-    run: async (guild, client) => {
+    async run(guild, client): Promise<void> {
         if (guild.unavailable) return;
 
         const owner = await guild.fetchOwner();

@@ -13,7 +13,7 @@ export type NonGlobalCommands = Command | ContextMenuCommand | SubCommand;
 
 export type StellePlayerJson = Omit<
     PlayerJson,
-    "ping" | "createdTimeStamp" | "lavalinkVolume" | "equalizer" | "lastPositionChange" | "paused" | "playing"
+    "ping" | "createdTimeStamp" | "lavalinkVolume" | "equalizer" | "lastPositionChange" | "paused" | "playing" | "queue" | "filters"
 > & {
     messageId?: string;
     enabledAutoplay?: boolean;

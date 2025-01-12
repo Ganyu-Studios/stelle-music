@@ -3,7 +3,7 @@ import { mentionListener } from "#stelle/listeners";
 
 export default createEvent({
     data: { name: "messageCreate" },
-    run: async (message, client) => {
+    async run(message, client): Promise<void> {
         await mentionListener(client, message);
     },
 });

@@ -17,6 +17,7 @@ import { StelleManager } from "./modules/Manager.js";
 import { HandleCommand } from "seyfert/lib/commands/handle.js";
 import { Yuna } from "yunaforseyfert";
 
+import { StelleSessions } from "#stelle/classes";
 import { DEBUG_MODE, THINK_MESSAGES } from "#stelle/data/Constants.js";
 
 /**
@@ -36,7 +37,7 @@ export class Stelle extends Client<true> {
     /**
      * The timestamp when Stelle is ready.
      */
-    public readyTimestamp: number = 0;
+    public readyTimestamp: Date | null = null;
 
     /**
      * Stelle manager instance.
@@ -47,6 +48,11 @@ export class Stelle extends Client<true> {
      * Stelle database instance.
      */
     public readonly database: StelleDatabase;
+
+    /**
+     * Stelle sessions instance.
+     */
+    public readonly sessions: StelleSessions;
 
     /**
      * Create a new Stelle instance.
@@ -92,6 +98,8 @@ export class Stelle extends Client<true> {
 
         this.manager = new StelleManager(this);
         this.database = new StelleDatabase(this);
+
+        this.sessions = new StelleSessions();
 
         this.run();
     }

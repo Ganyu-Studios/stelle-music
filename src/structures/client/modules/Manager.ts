@@ -1,10 +1,10 @@
 import { LavalinkManager, type SearchPlatform, type SearchResult } from "lavalink-client";
-
-import { StelleHandler } from "#stelle/utils/classes/client/Handler.js";
-
 import type { UsingClient } from "seyfert";
-import { DEBUG_MODE } from "#stelle/data/Constants.js";
+
+import { LavalinkHandler, RedisClient, RedisQueueStore } from "#stelle/classes";
 import { autoPlayFunction } from "#stelle/utils/functions/autoplay.js";
+
+import { DEBUG_MODE } from "#stelle/data/Constants.js";
 
 /**
  * Main music manager class.
@@ -13,7 +13,7 @@ export class StelleManager extends LavalinkManager {
     /**
      * The lavalink manager handler.
      */
-    readonly handler: StelleHandler;
+    readonly handler: LavalinkHandler;
 
     /**
      *
@@ -26,6 +26,7 @@ export class StelleManager extends LavalinkManager {
             sendToShard: (guildId, payload) => client.gateway.send(client.gateway.calculateShardId(guildId), payload),
             queueOptions: {
                 maxPreviousTracks: 25,
+                queueStore: new RedisQueueStore(new RedisClient(client)),
             },
             advancedOptions: {
                 enableDebugEvents: DEBUG_MODE,
@@ -49,7 +50,7 @@ export class StelleManager extends LavalinkManager {
             },
         });
 
-        this.handler = new StelleHandler(client);
+        this.handler = new LavalinkHandler(client);
     }
 
     /**

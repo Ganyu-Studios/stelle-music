@@ -5,7 +5,7 @@ import { Embed } from "seyfert";
 export default new Lavalink({
     name: "queueEnd",
     type: "manager",
-    run: async (client, player) => {
+    async run(client, player): Promise<void> {
         if (!(player.textChannelId && player.voiceChannelId)) return;
 
         const messageId = player.get<string | undefined>("messageId");

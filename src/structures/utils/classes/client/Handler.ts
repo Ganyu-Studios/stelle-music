@@ -6,7 +6,7 @@ import type { UsingClient } from "seyfert";
 /**
  * Main Stelle music handler.
  */
-export class StelleHandler extends BaseHandler {
+export class LavalinkHandler extends BaseHandler {
     /**
      * The client instance.
      */

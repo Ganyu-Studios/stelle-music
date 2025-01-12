@@ -16,7 +16,7 @@ export class StelleSessions {
     /**
      * The storage instance.
      */
-    readonly storage = new MeowDB({
+    static readonly storage = new MeowDB({
         dir: process.cwd(),
         name: "sessions",
     });
@@ -24,8 +24,8 @@ export class StelleSessions {
     /**
      * The nodes map.
      */
-    readonly nodes: Map<string, string> = new Map(
-        Object.entries<StellePlayerJson>(this.storage.all()).map(([_, session]) => [session.nodeId!, session.nodeSessionId!]),
+    static readonly nodes: Map<string, string> = new Map(
+        Object.entries<StellePlayerJson>(StelleSessions.storage.all()).map(([_, session]) => [session.nodeId!, session.nodeSessionId!]),
     );
 
     /**
@@ -36,7 +36,7 @@ export class StelleSessions {
      * @returns The current instance.
      */
     public set<T>(guildId: string, object: T): this {
-        this.storage.set<T>(guildId, object);
+        StelleSessions.storage.set<T>(guildId, object);
         return this;
     }
 
@@ -47,7 +47,7 @@ export class StelleSessions {
      * @returns The session id.
      */
     public get<T>(guildId: string): T | undefined {
-        return this.storage.get<T>(guildId);
+        return StelleSessions.storage.get<T>(guildId);
     }
 
     /**
@@ -57,7 +57,7 @@ export class StelleSessions {
      * @returns If the session was deleted.
      */
     public delete(guildId: string): boolean {
-        return this.storage.exists(guildId) && this.storage.delete(guildId);
+        return StelleSessions.storage.exists(guildId) && StelleSessions.storage.delete(guildId);
     }
 
     /**
@@ -66,18 +66,13 @@ export class StelleSessions {
      * @param nodes The array of nodes to resolve.
      * @returns
      */
-    public resolve(nodes: NonResumableOptions[]): LavalinkNodeOptions[] {
+    public static resolve(nodes: NonResumableOptions[]): LavalinkNodeOptions[] {
         if (nodes.some((node) => "sessionId" in node && typeof node.sessionId === "string"))
             throw new InvalidSession("The 'sessionId' property is not allowed in the node options.");
 
         return nodes.map((node) => ({
             ...node,
-            sessionId: this.nodes.get(node.id ?? `${node.host}:${node.port}`),
+            sessionId: StelleSessions.nodes.get(node.id ?? `${node.host}:${node.port}`),
         }));
     }
 }
-
-/**
- * The Lavalink sessions instance.
- */
-export const sessions = new StelleSessions();

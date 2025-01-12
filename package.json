@@ -37,6 +37,7 @@
     "dependencies": {
         "@prisma/client": "^6.2.1",
         "dotenv": "^16.4.7",
+        "ioredis": "^5.4.2",
         "lavalink-client": "^2.4.4",
         "meowdb": "^2.2.3",
         "seyfert": "github:tiramisulabs/seyfert",

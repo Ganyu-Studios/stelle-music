@@ -1,5 +1,4 @@
 import { readFile } from "node:fs/promises";
-
 import { ActivityType, type GatewayActivityUpdateData } from "seyfert/lib/types/index.js";
 
 const packageJSON = JSON.parse(await readFile("./package.json", "utf-8"));

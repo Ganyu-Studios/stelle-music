@@ -9,7 +9,7 @@ import { getAutoplayState, getPauseState } from "#stelle/utils/functions/utils.j
 export default new Lavalink({
     name: "trackStart",
     type: "manager",
-    run: async (client, player, track) => {
+    async run(client, player, track): Promise<void> {
         if (!(player.textChannelId && player.voiceChannelId)) return;
         if (!track) return;
 
