@@ -2,7 +2,7 @@ import { type CommandContext, createStringOption, LocalesT, Command, Declare, Op
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
-const cmdOptions = {
+const options = {
     prefix: createStringOption({
         description: "Enter the new prefix.",
         required: true,
@@ -25,9 +25,9 @@ const cmdOptions = {
     category: StelleCategory.Guild
 })
 @LocalesT("locales.setprefix.name", "locales.setprefix.description")
-@Options(cmdOptions)
+@Options(options)
 export default class SetlangCommand extends Command {
-    public override async run(ctx: CommandContext<typeof cmdOptions>) {
+    public override async run(ctx: CommandContext<typeof options>) {
         const { client, options } = ctx;
         const { prefix } = options;
 

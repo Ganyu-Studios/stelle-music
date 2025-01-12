@@ -2,7 +2,7 @@ import { type CommandContext, createStringOption, type Guild, Command, Declare, 
 import { MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleOptions } from "#stelle/decorators";
 
-const cmdOptions = {
+const options = {
     event: createStringOption({
         description: "The event to emit.",
         required: true,
@@ -27,9 +27,9 @@ const cmdOptions = {
     contexts: ["Guild"]
 })
 @StelleOptions({ onlyDeveloper: true })
-@Options(cmdOptions)
+@Options(options)
 export default class ReloadCommand extends Command {
-    public override async run(ctx: CommandContext<typeof cmdOptions>): Promise<void> {
+    public override async run(ctx: CommandContext<typeof options>): Promise<void> {
         const { options, client } = ctx;
         const { event } = options;
 

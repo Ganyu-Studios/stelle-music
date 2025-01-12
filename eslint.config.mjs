@@ -14,7 +14,8 @@ export default config(
         rules: {
             "@stylistic/quotes": ["error", "double"],
             "@typescript-eslint/no-invalid-void-type": "off",
-            "@typescript-eslint/switch-exhaustiveness-check": "off"
+            "@typescript-eslint/switch-exhaustiveness-check": "off",
+            'no-shadow': 'off'
         }
     }
 )

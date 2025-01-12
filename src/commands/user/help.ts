@@ -20,7 +20,7 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
-const cmdOptions = {
+const options = {
     command: createStringOption({
         description: "The command to get help for.",
         locales: {
@@ -41,9 +41,9 @@ const cmdOptions = {
     cooldown: 5
 })
 @LocalesT("locales.help.name", "locales.help.description")
-@Options(cmdOptions)
+@Options(options)
 export default class HelpCommand extends Command {
-    public override async run(ctx: CommandContext<typeof cmdOptions>) {
+    public override async run(ctx: CommandContext<typeof options>) {
         const { client, options } = ctx;
         const { messages } = await ctx.getLocale();
 

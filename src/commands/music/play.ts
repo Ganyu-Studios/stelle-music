@@ -19,7 +19,7 @@ import { TimeFormat } from "#stelle/utils/TimeFormat.js";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
-const cmdOptions = {
+const options = {
     query: createStringOption({
         onAutocompleteError,
         description: "Enter the track name or url.",
@@ -100,9 +100,9 @@ const cmdOptions = {
     category: StelleCategory.Music
 })
 @LocalesT("locales.play.name", "locales.play.description")
-@Options(cmdOptions)
+@Options(options)
 export default class PlayCommand extends Command {
-    public override async run(ctx: CommandContext<typeof cmdOptions>): Promise<WebhookMessage | Message | void> {
+    public override async run(ctx: CommandContext<typeof options>): Promise<WebhookMessage | Message | void> {
         const { options, client, guildId, channelId, member } = ctx;
         const { query } = options;
 

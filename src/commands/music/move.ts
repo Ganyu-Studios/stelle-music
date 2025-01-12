@@ -3,7 +3,7 @@ import { ChannelType } from "seyfert/lib/types/index.js";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
-const cmdOptions = {
+const options = {
     voice: createChannelOption({
         description: "Select the channel.",
         channel_types: [ChannelType.GuildVoice],
@@ -36,9 +36,9 @@ const cmdOptions = {
 })
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkPlayer"])
 @LocalesT("locales.move.name", "locales.move.description")
-@Options(cmdOptions)
+@Options(options)
 export default class MoveCommand extends Command {
-    public override async run(ctx: CommandContext<typeof cmdOptions>) {
+    public override async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;
         const { voice, text } = options;
 

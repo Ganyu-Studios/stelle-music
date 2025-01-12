@@ -3,7 +3,7 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
-const cmdOptions = {
+const options = {
     locale: createStringOption({
         description: "Enter the new locale.",
         required: true,
@@ -39,9 +39,9 @@ const cmdOptions = {
     category: StelleCategory.Guild
 })
 @LocalesT("locales.setlocale.name", "locales.setlocale.description")
-@Options(cmdOptions)
+@Options(options)
 export default class SetlangCommand extends Command {
-    public override async run(ctx: CommandContext<typeof cmdOptions>) {
+    public override async run(ctx: CommandContext<typeof options>) {
         const { client, options } = ctx;
         const { locale } = options;
 

@@ -7,7 +7,7 @@ const engines: Record<string, string> = {
     scsearch: "Soundcloud"
 };
 
-const cmdOptions = {
+const options = {
     engine: createStringOption({
         description: "Select the engine.",
         required: true,
@@ -41,9 +41,9 @@ const cmdOptions = {
     name: "engine",
     description: "Change the player default search engine."
 })
-@Options(cmdOptions)
+@Options(options)
 export default class EngineSubcommand extends SubCommand {
-    async run(ctx: CommandContext<typeof cmdOptions>) {
+    async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;
         const { engine } = options;
 

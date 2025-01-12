@@ -5,7 +5,7 @@ import { getLoopState } from "#stelle/utils/functions/utils.js";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
-const cmdOptions = {
+const options = {
     mode: createStringOption({
         description: "Select the loop mode.",
         required: true,
@@ -43,9 +43,9 @@ const cmdOptions = {
     category: StelleCategory.Music
 })
 @LocalesT("locales.loop.name", "locales.loop.description")
-@Options(cmdOptions)
+@Options(options)
 export default class LoopCommand extends Command {
-    public override async run(ctx: CommandContext<typeof cmdOptions>) {
+    public override async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;
         const { mode } = options;
 

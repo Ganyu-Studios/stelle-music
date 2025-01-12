@@ -2,7 +2,7 @@ import { type CommandContext, createIntegerOption, Middlewares, LocalesT, Comman
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
-const cmdOptions = {
+const options = {
     to: createIntegerOption({
         description: "Skip a specific amount of songs.",
         locales: {
@@ -25,9 +25,9 @@ const cmdOptions = {
     category: StelleCategory.Music
 })
 @LocalesT("locales.skip.name", "locales.skip.description")
-@Options(cmdOptions)
+@Options(options)
 export default class SkipCommand extends Command {
-    public override async run(ctx: CommandContext<typeof cmdOptions>) {
+    public override async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;
         const { to } = options;
 

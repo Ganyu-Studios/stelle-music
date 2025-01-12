@@ -4,7 +4,7 @@ import { EmbedColors } from "seyfert/lib/common/index.js";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
-const cmdOptions = {
+const options = {
     time: createStringOption({
         description: "Enter the time. (Ex: 2min=",
         required: true,
@@ -39,9 +39,9 @@ const cmdOptions = {
     category: StelleCategory.Music
 })
 @LocalesT("locales.seek.name", "locales.seek.description")
-@Options(cmdOptions)
+@Options(options)
 export default class SeekCommand extends Command {
-    public override async run(ctx: CommandContext<typeof cmdOptions>) {
+    public override async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;
         const { time } = options;
 

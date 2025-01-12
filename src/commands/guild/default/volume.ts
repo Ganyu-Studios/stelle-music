@@ -1,6 +1,6 @@
 import { type CommandContext, createIntegerOption, SubCommand, LocalesT, Declare, Options } from "seyfert";
 
-const cmdOptions = {
+const options = {
     volume: createIntegerOption({
         description: "Enter the volume.",
         required: true,
@@ -18,9 +18,9 @@ const cmdOptions = {
     name: "volume",
     description: "Change the player default volume."
 })
-@Options(cmdOptions)
+@Options(options)
 export default class VolumeSubcommand extends SubCommand {
-    async run(ctx: CommandContext<typeof cmdOptions>): Promise<void> {
+    async run(ctx: CommandContext<typeof options>): Promise<void> {
         const { client, options, guildId } = ctx;
         const { volume } = options;
 

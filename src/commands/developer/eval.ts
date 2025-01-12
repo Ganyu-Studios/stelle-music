@@ -20,7 +20,7 @@ import { ms } from "#stelle/utils/TimeFormat.js";
 const secretsRegex = /\b(?:client\.(?:config)|config|env|process\.(?:env|exit)|eval|atob|btoa)\b/;
 const concatRegex = /".*?"\s*\+\s*".*?"(?:\s*\+\s*".*?")*/;
 
-const cmdOptions = {
+const options = {
     code: createStringOption({
         description: "Enter some code.",
         required: true
@@ -41,7 +41,7 @@ const cmdOptions = {
 })
 @DeclareParserConfig(ParserRecommendedConfig.Eval)
 @StelleOptions({ onlyDeveloper: true })
-@Options(cmdOptions)
+@Options(options)
 export default class EvalCommand extends Command {
     @Watch({
         idle: ms("1min"),
@@ -68,7 +68,7 @@ export default class EvalCommand extends Command {
             });
         }
     })
-    public override async run(ctx: CommandContext<typeof cmdOptions>): Promise<WebhookMessage | Message | void> {
+    public override async run(ctx: CommandContext<typeof options>): Promise<WebhookMessage | Message | void> {
         const { client, options, author, channelId } = ctx;
 
         const start = Date.now();

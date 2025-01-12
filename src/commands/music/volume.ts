@@ -2,7 +2,7 @@ import { type CommandContext, createIntegerOption, Middlewares, LocalesT, Comman
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
-const cmdOptions = {
+const options = {
     volume: createIntegerOption({
         description: "Enter the volume.",
         required: true,
@@ -28,9 +28,9 @@ const cmdOptions = {
     category: StelleCategory.Music
 })
 @LocalesT("locales.volume.name", "locales.volume.description")
-@Options(cmdOptions)
+@Options(options)
 export default class VolumeCommand extends Command {
-    public override async run(ctx: CommandContext<typeof cmdOptions>) {
+    public override async run(ctx: CommandContext<typeof options>) {
         const { client, options, guildId } = ctx;
         const { volume } = options;
 
