@@ -1,6 +1,5 @@
-import { Lavalink } from "#stelle/classes";
-
 import { Embed } from "seyfert";
+import { Lavalink } from "#stelle/classes";
 
 export default new Lavalink({
     name: "queueEnd",

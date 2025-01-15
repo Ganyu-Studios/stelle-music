@@ -1,14 +1,4 @@
-import {
-    Command,
-    type CommandContext,
-    Declare,
-    Embed,
-    type Message,
-    Options,
-    type WebhookMessage,
-    createIntegerOption,
-    createStringOption,
-} from "seyfert";
+import { Command, type CommandContext, Declare, Embed, type Message, Options, type WebhookMessage, createStringOption } from "seyfert";
 import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
 import { StelleOptions } from "#stelle/decorators";
 
@@ -17,19 +7,21 @@ import { getDepth, sliceText } from "#stelle/utils/functions/utils.js";
 import { DeclareParserConfig, ParserRecommendedConfig, Watch, Yuna } from "yunaforseyfert";
 import { Environment } from "#stelle/data/Configuration.js";
 import { SECRETS_MESSAGES } from "#stelle/data/Constants.js";
-import { ms } from "#stelle/utils/TimeFormat.js";
+import { ms } from "#stelle/utils/Time.js";
 
 const secretsRegex = /\b(?:client\.(?:config)|config|env|process\.(?:env|exit)|eval|atob|btoa)\b/;
 const concatRegex = /".*?"\s*\+\s*".*?"(?:\s*\+\s*".*?")*/;
+const envRegex = new RegExp(
+    Object.values(Environment)
+        .map((value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+        .join("|"),
+    "g",
+);
 
 const options = {
     code: createStringOption({
         description: "Enter some code.",
         required: true,
-    }),
-    depth: createIntegerOption({
-        description: "Enter the depth of the result.",
-        min_value: 0,
     }),
 };
 
@@ -69,7 +61,6 @@ export default class EvalCommand extends Command {
         const { client, options, author, channelId } = ctx;
 
         const start = Date.now();
-        const depth = options.depth;
 
         let code: string = options.code;
         let output: string | null = null;
@@ -95,10 +86,10 @@ export default class EvalCommand extends Command {
 
                 output = await eval(code);
                 typecode = typeof output;
-                output = getDepth(output, depth)
-                    .replaceAll(Environment.Token!, "🌟")
-                    .replace(Environment.DatabaseUrl!, "🌟")
-                    .replaceAll(Environment.ErrorsWebhook!, "🌟");
+                output = getDepth(output);
+
+                // 100% security
+                if (envRegex.test(output)) output = output.replaceAll(envRegex, "🌟");
             }
 
             await ctx.editOrReply({

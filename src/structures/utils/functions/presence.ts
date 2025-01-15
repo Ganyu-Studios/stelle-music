@@ -1,7 +1,7 @@
 import type { UsingClient } from "seyfert";
 
 import { PresenceUpdateStatus } from "seyfert/lib/types/index.js";
-import { ms } from "#stelle/utils/TimeFormat.js";
+import { ms } from "#stelle/utils/Time.js";
 
 import { BOT_ACTIVITIES } from "#stelle/data/Constants.js";
 

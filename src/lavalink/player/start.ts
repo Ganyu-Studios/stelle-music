@@ -3,7 +3,7 @@ import { Lavalink } from "#stelle/classes";
 
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 
-import { TimeFormat } from "#stelle/utils/TimeFormat.js";
+import { TimeFormat } from "#stelle/utils/Time.js";
 import { getAutoplayState, getPauseState } from "#stelle/utils/functions/utils.js";
 
 export default new Lavalink({

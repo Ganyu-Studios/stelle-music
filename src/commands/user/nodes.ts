@@ -6,7 +6,7 @@ import { EmbedColors } from "seyfert/lib/common/index.js";
 
 import { StelleCategory } from "#stelle/types";
 import { EmbedPaginator } from "#stelle/utils/Paginator.js";
-import { TimeFormat } from "#stelle/utils/TimeFormat.js";
+import { TimeFormat } from "#stelle/utils/Time.js";
 
 @Declare({
     name: "nodes",

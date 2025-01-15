@@ -6,6 +6,7 @@ import { parseWebhook, sliceText } from "./utils.js";
 
 import { DEV_MODE } from "#stelle/data/Constants.js";
 
+// yeah, I need the client to send things through a webhook.
 import client from "#stelle/index";
 
 type Options = {

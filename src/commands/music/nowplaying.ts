@@ -3,7 +3,7 @@ import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
-import { TimeFormat } from "#stelle/utils/TimeFormat.js";
+import { TimeFormat } from "#stelle/utils/Time.js";
 import { createBar } from "#stelle/utils/functions/utils.js";
 
 @Declare({

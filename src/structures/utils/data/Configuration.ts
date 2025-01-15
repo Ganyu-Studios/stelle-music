@@ -1,6 +1,6 @@
 import { StelleSessions } from "#stelle/classes";
 import type { StelleConfiguration, StelleEnvironment } from "#stelle/types";
-import { ms } from "#stelle/utils/TimeFormat.js";
+import { ms } from "#stelle/utils/Time.js";
 
 const { TOKEN, DATABASE_URL, ERRORS_WEBHOOK, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = process.env;
 

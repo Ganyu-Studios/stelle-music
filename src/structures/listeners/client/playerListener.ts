@@ -1,7 +1,7 @@
 import type { UsingClient, VoiceState } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 
-import { TimeFormat } from "#stelle/utils/TimeFormat.js";
+import { TimeFormat } from "#stelle/utils/Time.js";
 
 const timeouts: Map<string, NodeJS.Timeout> = new Map();
 
