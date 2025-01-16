@@ -40,7 +40,7 @@ export function formatOptions(
                 result.push({
                     option: `--${option.name} ${isRequired(types[option.type], option.required)}`,
                     description: option.description,
-                    range: `${getRange(option).trim()}`,
+                    range: `${getRange(option)}`,
                 });
             }
         }
@@ -75,5 +75,5 @@ function getRange(option: APIApplicationCommandOption): string {
             break;
     }
 
-    return text;
+    return text.trim();
 }

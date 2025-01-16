@@ -93,10 +93,6 @@ export class EmbedPaginator {
      */
     private message: Message | WebhookMessage | null = null;
     /**
-     * The context reference of the paginator.
-     */
-    private ctx: AnyContext;
-    /**
      * The rows of the paginator.
      */
     private rows: ActionRow<StelleComponents>[] = [];
@@ -104,6 +100,11 @@ export class EmbedPaginator {
      * The disabled type of the paginator.
      */
     private disabled: boolean = false;
+
+    /**
+     * The context reference of the paginator.
+     */
+    private ctx: AnyContext;
 
     /**
      *
@@ -147,11 +148,13 @@ export class EmbedPaginator {
 
     /**
      *
-     * Create the component collector.
-     * @param flags The message flags.
+     * Send the embed pagination.
+     * @param ephemeral If the message should be ephemeral.
      * @returns
      */
-    private async createCollector(flags?: MessageFlags): Promise<this> {
+    public async reply(ephemeral: boolean = false): Promise<this> {
+        if (!this.embeds.length) throw new InvalidEmbedsLength("I can't send the pagination without embeds.");
+
         const { messages } = await this.ctx.getLocale();
 
         this.message = await this.ctx.editOrReply(
@@ -159,7 +162,7 @@ export class EmbedPaginator {
                 content: "",
                 embeds: [this.embeds[this.pages]],
                 components: this.getRows(),
-                flags,
+                flags: ephemeral ? MessageFlags.Ephemeral : undefined,
             },
             true,
         );
@@ -268,6 +271,17 @@ export class EmbedPaginator {
 
     /**
      *
+     * Add a new row to display.
+     * @param row The row.
+     * @returns
+     */
+    public addRow(row: ActionRow<StelleButton | StelleStringMenu>): this {
+        this.rows.push(row);
+        return this;
+    }
+
+    /**
+     *
      * Set a new array of rows to display.
      * @param rows The rows.
      * @returns
@@ -309,17 +323,6 @@ export class EmbedPaginator {
         });
 
         return this;
-    }
-
-    /**
-     *
-     * Send the embed pagination.
-     * @param ephemeral If the message should be ephemeral.
-     * @returns
-     */
-    public reply(ephemeral: boolean = false): Promise<this> {
-        if (!this.embeds.length) throw new InvalidEmbedsLength("I can't send the pagination without embeds.");
-        return this.createCollector(ephemeral ? MessageFlags.Ephemeral : undefined);
     }
 
     /**

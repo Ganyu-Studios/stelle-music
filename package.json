@@ -38,14 +38,14 @@
         "@prisma/client": "^6.2.1",
         "dotenv": "^16.4.7",
         "ioredis": "^5.4.2",
-        "lavalink-client": "^2.4.5",
+        "lavalink-client": "^2.4.6",
         "meowdb": "^2.2.3",
         "seyfert": "github:tiramisulabs/seyfert",
         "yunaforseyfert": "^1.1.0"
     },
     "devDependencies": {
         "@biomejs/biome": "^1.9.4",
-        "@types/node": "^22.10.6",
+        "@types/node": "^22.10.7",
         "husky": "^9.1.7",
         "lint-staged": "^15.3.0",
         "prisma": "^6.2.1",

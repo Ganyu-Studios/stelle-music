@@ -17,7 +17,7 @@ export function changePresence(client: UsingClient): void {
         if (activity === BOT_ACTIVITIES.length) activity = 0;
 
         const guilds = client.cache.guilds!.count();
-        const users = client.cache.users!.count();
+        const users = client.cache.guilds!.values().reduce((a, b) => a + (b.memberCount ?? 0), 0);
         const players = client.manager.players.size;
 
         const randomActivity = BOT_ACTIVITIES[activity++ % BOT_ACTIVITIES.length];
