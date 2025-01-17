@@ -22,7 +22,7 @@ export default {
             info: {
                 bot: {
                     description: ({ clientName, defaultPrefix }: IBotInfo) =>
-                        `\`📋\` Here are some stats about **${clientName}** by default my prefix is: \`${defaultPrefix}\`.`,
+                        `\`📋\` Here are some stats about **${clientName}**, by default my prefix is: \`${defaultPrefix}\`.`,
                     invite: "Invite the Bot",
                     repository: "Github Repository",
                     fields: {
