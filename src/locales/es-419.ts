@@ -22,8 +22,8 @@ export default {
             info: {
                 bot: {
                     description: ({ clientName, defaultPrefix }) =>
-                        `\`📋\` Aqui hay unas estadísticas acerca de **${clientName}** por defecto my prefijo es: \`${defaultPrefix}\`.`,
-                    invite: "Invita a la Bot",
+                        `\`📋\` Aqui hay unas estadísticas acerca de **${clientName}** por defecto mi prefijo es: \`${defaultPrefix}\`.`,
+                    invite: "Invitar la Bot",
                     repository: "Repositorio de Github",
                     fields: {
                         info: {
