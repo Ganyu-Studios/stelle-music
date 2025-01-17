@@ -141,7 +141,7 @@ export default {
             invalidOptions: ({ options, list }: IOptions) =>
                 `\`❌\` Invalid command options or arguments.\n-# - **Required**: \`<>\`\n-# - **Optional**: \`[]\`\n\n\`📋\` **Usage**:\n ${options}\n\`📢\` **Options Available**:\n${list}`,
             playerQueue: ({ tracks }: ITracks) => `\`📋\` Here is the full server queue: \n\n${tracks}`,
-            channelEmpty: ({ type, clientName }: ITypeWithClientName) =>
+            channelEmpty: ({ type, clientName }: ITypeName) =>
                 `\`🎧\` ${clientName} is alone in the **voice channel**... Pausing and waiting **${type}**.`,
             mention: ({ clientName, defaultPrefix, commandName }: IMention) =>
                 `\`📢\` Hey! My name is: **${clientName}** and my prefix is: \`${defaultPrefix}\` and **/** too!\n\`📋\` If you want to see my commands, type: \`${defaultPrefix} ${commandName}\` or /${commandName}.`,
@@ -400,22 +400,22 @@ export default {
 
 type IBotInfoGeneralField = { guilds: number; users: number; players: number };
 type IBotInfoSystemField = { memory: string; uptime: number };
-type IBotInfo = Pick<IMention, "clientName" | "defaultPrefix">;
-type IHelpMenuEmbed = Pick<IMention, "clientName"> & IHelpMenu;
-type IVoiceStatus = Pick<ITrackStart, "title" | "author">;
-type IClientName = Pick<IMention, "clientName">;
+type IBotInfo = { clientName: string; defaultPrefix: string };
+type IHelpMenuEmbed = { clientName: string; category: string };
+type IVoiceStatus = { title: string; author: string };
+type IClientName = { clientName: string };
 type IHelp = { defaultPrefix: string; options: string };
 type IHelpMenu = { category: string };
 type IMention = { clientName: string; defaultPrefix: string; commandName: string };
 type INowplaying = { title: string; url: string; duration: string; requester: string; author: string; bar: string; position: string };
-type IEngine = { engine: string } & Pick<IMention, "clientName">;
+type IEngine = { engine: string; clientName: string };
 type IPrefix = { prefix: string };
 type ISeek = { time: string | number; type: string };
 type IAmount = { amount: number };
 type IMove = { textId: string; voiceId: string };
-type IVolume = { volume: number } & Pick<IMention, "clientName">;
+type IVolume = { volume: number; clientName: string };
 type IType = { type: string };
-type ITypeWithClientName = IType & Pick<IMention, "clientName">;
+type ITypeName = { type: string; clientName: string };
 type ILocale = { locale: string };
 type IPrevious = { title: string; uri: string };
 type ITracks = { tracks: string };
