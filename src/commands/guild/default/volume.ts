@@ -33,7 +33,10 @@ export default class VolumeSubcommand extends SubCommand {
             embeds: [
                 {
                     color: client.config.color.success,
-                    description: messages.commands.default.volume({ volume }),
+                    description: messages.commands.default.volume({
+                        volume,
+                        clientName: client.me.username,
+                    }),
                 },
             ],
         });

@@ -182,18 +182,20 @@ export class EmbedPaginator {
                 });
             },
             onStop: async (reason) => {
-                if (reason === "idle") {
-                    const components: ActionRow<Button | StringSelectMenu>[] = this.message!.components.map(
-                        (component) =>
-                            new ActionRow({
-                                components: component.components.map((row) => {
-                                    row.data.disabled = true;
-                                    return row.toJSON();
-                                }),
-                            }),
-                    );
-
-                    await this.ctx.client.messages.edit(this.message!.id, this.message!.channelId, { components }).catch(() => null);
+                if (this.message && reason === "idle") {
+                    await this.ctx.client.messages
+                        .edit(this.message.id, this.message.channelId, {
+                            components: this.message.components.map(
+                                (component) =>
+                                    new ActionRow({
+                                        components: component.components.map((row) => {
+                                            row.data.disabled = true;
+                                            return row.toJSON();
+                                        }),
+                                    }),
+                            ),
+                        })
+                        .catch(() => null);
                 }
             },
         });

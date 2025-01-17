@@ -37,7 +37,7 @@ export class Stelle extends Client<true> {
     /**
      * The timestamp when Stelle is ready.
      */
-    public readyTimestamp: Date | null = null;
+    public readyTimestamp: number = 0;
 
     /**
      * Stelle manager instance.

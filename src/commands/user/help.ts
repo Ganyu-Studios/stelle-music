@@ -183,7 +183,7 @@ function parseCommand(
  * @returns
  */
 function parseSubCommand(subCommand: SubCommand, optionsType: Record<ApplicationCommandOptionType, string>): string {
-    if (!subCommand.options?.length) return subCommand.name;
+    if (!subCommand.options?.length) return `↪ ${subCommand.name}`;
     return `↪ ${subCommand.group ?? ""} ${subCommand.name} ${formatOptions(subCommand.options as APIApplicationCommandOption[], optionsType)
         .map((x) => x.option)
         .join(" ")}`.trim();

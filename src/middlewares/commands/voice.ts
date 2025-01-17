@@ -6,6 +6,8 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
  * Check if the bot is in a voice channel and if is the same as the author.
  */
 export const checkBotVoiceChannel = createMiddleware<void>(async ({ context, pass, next }) => {
+    if (!context.inGuild()) return next();
+
     const { messages } = await context.getLocale();
 
     const me = await context.me();
@@ -14,7 +16,6 @@ export const checkBotVoiceChannel = createMiddleware<void>(async ({ context, pas
     if (!state) return pass();
 
     const bot = context.client.cache.voiceStates!.get(me.id, context.guildId!);
-
     if (bot && bot.channelId !== state.channelId) {
         await context.editOrReply({
             flags: MessageFlags.Ephemeral,
@@ -36,6 +37,8 @@ export const checkBotVoiceChannel = createMiddleware<void>(async ({ context, pas
  * Check if the author is in a voice channel.
  */
 export const checkVoiceChannel = createMiddleware<void>(async ({ context, pass, next }) => {
+    if (!context.inGuild()) return next();
+
     const { messages } = await context.getLocale();
 
     const state = context.client.cache.voiceStates!.get(context.author.id, context.guildId!);
@@ -62,6 +65,8 @@ export const checkVoiceChannel = createMiddleware<void>(async ({ context, pass, 
  * Check if the bot has permissions to join the voice channel.
  */
 export const checkVoicePermissions = createMiddleware<void>(async ({ context, pass, next }) => {
+    if (!context.inGuild()) return next();
+
     const state = context.client.cache.voiceStates!.get(context.author.id, context.guildId!);
     if (!state) return pass();
 

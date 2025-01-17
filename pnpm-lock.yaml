@@ -25,7 +25,7 @@ importers:
         version: 2.2.3
       seyfert:
         specifier: github:tiramisulabs/seyfert
-        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/316a533696b939f56b34e01c91adff503d42febd
+        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d0c74384651ca7a9a1b2f2f4a44f0ea17631bde6
       yunaforseyfert:
         specifier: ^1.1.0
         version: 1.1.0
@@ -40,8 +40,8 @@ importers:
         specifier: ^9.1.7
         version: 9.1.7
       lint-staged:
-        specifier: ^15.3.0
-        version: 15.3.0
+        specifier: ^15.4.1
+        version: 15.4.1
       prisma:
         specifier: ^6.2.1
         version: 6.2.1
@@ -420,8 +420,8 @@ packages:
     resolution: {integrity: sha512-/vlFKAoH5Cgt3Ie+JLhRbwOsCQePABiU3tJ1egGvyQ+33R/vcwM2Zl2QR/LzjsBeItPt3oSVXapn+m4nQDvpzw==}
     engines: {node: '>=14'}
 
-  lint-staged@15.3.0:
-    resolution: {integrity: sha512-vHFahytLoF2enJklgtOtCtIjZrKD/LoxlaUusd5nh7dWv/dkKQJY74ndFSzxCdv7g0ueGg1ORgTSt4Y9LPZn9A==}
+  lint-staged@15.4.1:
+    resolution: {integrity: sha512-P8yJuVRyLrm5KxCtFx+gjI5Bil+wO7wnTl7C3bXhvtTaAFGirzeB24++D0wGoUwxrUKecNiehemgCob9YL39NA==}
     engines: {node: '>=18.12.0'}
     hasBin: true
 
@@ -512,8 +512,8 @@ packages:
   rfdc@1.4.1:
     resolution: {integrity: sha512-q1b3N5QkRUWUl7iyylaaj3kOpIT0N2i9MqIEQXP73GVsN9cw3fdx8X63cEmWhJGi2PPCF23Ijp7ktmd39rawIA==}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/316a533696b939f56b34e01c91adff503d42febd:
-    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/316a533696b939f56b34e01c91adff503d42febd}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d0c74384651ca7a9a1b2f2f4a44f0ea17631bde6:
+    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d0c74384651ca7a9a1b2f2f4a44f0ea17631bde6}
     version: 2.2.0
 
   shebang-command@2.0.0:
@@ -887,7 +887,7 @@ snapshots:
 
   lilconfig@3.1.3: {}
 
-  lint-staged@15.3.0:
+  lint-staged@15.4.1:
     dependencies:
       chalk: 5.4.1
       commander: 12.1.0
@@ -979,7 +979,7 @@ snapshots:
 
   rfdc@1.4.1: {}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/316a533696b939f56b34e01c91adff503d42febd: {}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/d0c74384651ca7a9a1b2f2f4a44f0ea17631bde6: {}
 
   shebang-command@2.0.0:
     dependencies:

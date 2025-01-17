@@ -6,6 +6,8 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
  * Check if the bot is connected to any lavalink node.
  */
 export const checkNodes = createMiddleware<void>(async ({ context, pass, next }) => {
+    if (!context.inGuild()) return next();
+
     const { messages } = await context.getLocale();
     const { client } = context;
 
@@ -30,10 +32,10 @@ export const checkNodes = createMiddleware<void>(async ({ context, pass, next })
  * Check if the player exists.
  */
 export const checkPlayer = createMiddleware<void>(async ({ context, pass, next }) => {
+    if (!context.inGuild()) return next();
+
     const { client } = context;
     const { messages } = await context.getLocale();
-
-    if (!context.guildId) return pass();
 
     const player = client.manager.getPlayer(context.guildId);
     if (!player) {
@@ -57,10 +59,10 @@ export const checkPlayer = createMiddleware<void>(async ({ context, pass, next }
  * Check if the queue has tracks.
  */
 export const checkQueue = createMiddleware<void>(async ({ context, pass, next }) => {
+    if (!context.inGuild()) return next();
+
     const { client } = context;
     const { messages } = await context.getLocale();
-
-    if (!context.guildId) return pass();
 
     const player = client.manager.getPlayer(context.guildId);
     if (!player) return pass();
@@ -87,10 +89,10 @@ export const checkQueue = createMiddleware<void>(async ({ context, pass, next })
  * Check if the queue has more than one track.
  */
 export const checkTracks = createMiddleware<void>(async ({ context, pass, next }) => {
+    if (!context.inGuild()) return next();
+
     const { client } = context;
     const { messages } = await context.getLocale();
-
-    if (!context.guildId) return pass();
 
     const player = client.manager.getPlayer(context.guildId);
     if (!player) return pass();

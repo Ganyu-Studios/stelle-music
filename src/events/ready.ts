@@ -6,7 +6,7 @@ import { changePresence } from "#stelle/utils/functions/presence.js";
 export default createEvent({
     data: { name: "botReady", once: true },
     async run(user, client): Promise<void> {
-        client.readyTimestamp = new Date();
+        client.readyTimestamp = Date.now();
 
         const clientName = `${user.username} v${BOT_VERSION}`;
 

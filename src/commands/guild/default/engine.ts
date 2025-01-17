@@ -56,7 +56,10 @@ export default class EngineSubcommand extends SubCommand {
             embeds: [
                 {
                     color: client.config.color.success,
-                    description: messages.commands.default.engine({ engine: engines[engine] }),
+                    description: messages.commands.default.engine({
+                        engine: engines[engine],
+                        clientName: client.me.username,
+                    }),
                 },
             ],
         });

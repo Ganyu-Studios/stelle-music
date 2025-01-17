@@ -36,7 +36,7 @@ function addPadding(label: string): string {
  * @param data The memory usage data.
  * @returns
  */
-function formatMemoryUsage(bytes: number): string {
+export function formatMemoryUsage(bytes: number): string {
     const units = ["B", "KB", "MB", "GB", "TB"];
     let i = 0;
 
@@ -45,7 +45,7 @@ function formatMemoryUsage(bytes: number): string {
         i++;
     }
 
-    return `[RAM: ${bytes.toFixed(2)} ${units[i]}]`;
+    return `${bytes.toFixed(2)} ${units[i]}`;
 }
 
 /**
@@ -145,7 +145,7 @@ export function customLogger(_this: Logger, level: LogLevels, args: unknown[]): 
         [LogLevels.Fatal]: red,
     };
 
-    const text = `${gray(`${timeFormat}`)} ${gray(formatMemoryUsage(memory.rss))} ${emojis[level]} [${colors[level](
+    const text = `${gray(`${timeFormat}`)} ${gray(`[RAM: ${formatMemoryUsage(memory.rss)}]`)} ${emojis[level]} [${colors[level](
         label,
     )}] ${addPadding(label)}`;
 

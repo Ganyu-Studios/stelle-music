@@ -90,6 +90,10 @@ export interface StelleConfiguration {
      * @default ms("30s")
      */
     disconnectTime: number;
+    /** Stelle bot invite url. */
+    inviteLink: string;
+    /** Stelle bot github repository url. */
+    githubLink: string;
     /** Stelle developer id(s). */
     developerIds: string[];
     /** Stelle developer guild id(s). */

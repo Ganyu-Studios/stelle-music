@@ -19,6 +19,26 @@ export default {
             previous: ({ title, uri }) => `\`✅\` La canción anterior [**${title}**](${uri}) ha sido añadida a la cola.`,
             stop: "`👋` Deteniendo y abandonando el canal...",
             shuffle: "`✅` La cola ha sido mezclada.",
+            info: {
+                bot: {
+                    description: ({ clientName, defaultPrefix }) =>
+                        `\`📋\` Aqui hay unas estadísticas acerca de **${clientName}** por defecto my prefijo es: \`${defaultPrefix}\`.`,
+                    invite: "Invita a la Bot",
+                    repository: "Repositorio de Github",
+                    fields: {
+                        info: {
+                            name: "`📋` Info",
+                            value: ({ guilds, users, players }) =>
+                                `\`📦\` **Servidores**: \`${guilds}\`\n\`👤\` **Usuarios**: \`${users}\`\n\`🎤\` **Reproductores**: \`${players}\``,
+                        },
+                        system: {
+                            name: "`📋` Sistema",
+                            value: ({ memory, uptime }) =>
+                                `\`🧠\` **Memoria**: \`${memory}\`\n\`🕛\` **Tiempo de Encendido**: <t:${uptime}:R>`,
+                        },
+                    },
+                },
+            },
             help: {
                 noCommand: "`❌` **No se encontró** ningún comando para esta búsqueda...",
                 title: ({ clientName }) => `${clientName} - Menú de Ayuda`,
@@ -40,8 +60,8 @@ export default {
                 },
             },
             default: {
-                engine: ({ engine }) => `\`✅\` El tipo de búsqueda por defecto de Stelle ahora es: **${engine}**.`,
-                volume: ({ volume }) => `\`✅\` El volumen por defecto de Stelle ahora es: **${volume}%**.`,
+                engine: ({ engine, clientName }) => `\`✅\` El tipo de búsqueda por defecto de ${clientName} ahora es: **${engine}**.`,
+                volume: ({ volume, clientName }) => `\`✅\` El volumen por defecto de ${clientName} ahora es: **${volume}%**.`,
             },
             setlocale: {
                 invalidLocale: ({ locale, available }) =>
@@ -124,9 +144,9 @@ export default {
             channelEmpty: ({ type }) => `\`🎧\` Stelle está sola en el **canal de voz**... Pausando y esperando **${type}**.`,
             mention: ({ clientName, defaultPrefix, commandName }) =>
                 `\`📢\` Hey! Mi nombre es: **${clientName}** y mi prefijo es: \`${defaultPrefix}\` y **/** también!\n\`📋\` Si tu quieres ver mis comandos, escribe: \`${defaultPrefix} ${commandName}\` o /${commandName}.`,
+            noMembers: ({ clientName }) => `\`🎧\` ${clientName} está sola en el **canal de voz**... Abandonando el canal.`,
+            hasMembers: ({ clientName }) => `\`🎧\` ${clientName} dejó de estar sola... Resumiendo.`,
             noCommand: "`❌` No tengo el comando necesitado *todavía*, intenta de nuevo en un momento.",
-            noMembers: "`🎧` Stelle está sola en el **canal de voz**... Abandonando el canal.",
-            hasMembers: "`🎧` Stelle dejó de estar sola... Resumiendo.",
             onlyDeveloper: "`❌` Solo el **dueño del bot** puede usar esto.",
             onlyGuildOwner: "`❌` Solo el **dueño del servidor** puede usar esto.",
             noVoiceChannel: "`❌` No estás en un **canal de voz**... Únete a uno para reproducir música.",
@@ -363,6 +383,16 @@ export default {
             option: {
                 name: "comando",
                 description: "El comando a obtener ayuda.",
+            },
+        },
+        info: {
+            name: "info",
+            description: "Obtén la información de la bot o de un usuario.",
+            subcommands: {
+                bot: {
+                    name: "bot",
+                    description: "Obtén la información de la bot.",
+                },
             },
         },
     },

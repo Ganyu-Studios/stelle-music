@@ -19,6 +19,26 @@ export default {
             previous: ({ title, uri }: IPrevious) => `\`✅\` The previous track [**${title}**](${uri}) has been added to the queue.`,
             stop: "`👋` Stopping and leaving...",
             shuffle: "`✅` The queue has been shuffled.",
+            info: {
+                bot: {
+                    description: ({ clientName, defaultPrefix }: IBotInfo) =>
+                        `\`📋\` Here are some stats about **${clientName}** by default my prefix is: \`${defaultPrefix}\`.`,
+                    invite: "Invite the Bot",
+                    repository: "Github Repository",
+                    fields: {
+                        info: {
+                            name: "`📋` Info",
+                            value: ({ guilds, users, players }: IBotInfoGeneralField) =>
+                                `\`📦\` **Guilds**: \`${guilds}\`\n\`👤\` **Users**: \`${users}\`\n\`🎤\` **Players**: \`${players}\``,
+                        },
+                        system: {
+                            name: "`📋` System",
+                            value: ({ memory, uptime }: IBotInfoSystemField) =>
+                                `\`🧠\` **Memory**: \`${memory}\`\n\`🕛\` **Uptime**: <t:${uptime}:R>`,
+                        },
+                    },
+                },
+            },
             help: {
                 noCommand: "`❌` **No command** was found for this search...",
                 title: ({ clientName }: Pick<IMention, "clientName">) => `${clientName} - Help Menu`,
@@ -40,8 +60,8 @@ export default {
                 } satisfies Record<StelleCategory, string>,
             },
             default: {
-                engine: ({ engine }: IEngine) => `\`✅\` The default search engine of Stelle is now: **${engine}**.`,
-                volume: ({ volume }: IVolume) => `\`✅\` The default volume of Stelle is now: **${volume}%**.`,
+                engine: ({ engine, clientName }: IEngine) => `\`✅\` The default search engine of ${clientName} is now: **${engine}**.`,
+                volume: ({ volume, clientName }: IVolume) => `\`✅\` The default volume of ${clientName} is now: **${volume}%**.`,
             },
             setlocale: {
                 invalidLocale: ({ locale, available }: ILocale & { available: string }) =>
@@ -121,12 +141,13 @@ export default {
             invalidOptions: ({ options, list }: IOptions) =>
                 `\`❌\` Invalid command options or arguments.\n-# - **Required**: \`<>\`\n-# - **Optional**: \`[]\`\n\n\`📋\` **Usage**:\n ${options}\n\`📢\` **Options Available**:\n${list}`,
             playerQueue: ({ tracks }: ITracks) => `\`📋\` Here is the full server queue: \n\n${tracks}`,
-            channelEmpty: ({ type }: IType) => `\`🎧\` Stelle is alone in the **voice channel**... Pausing and waiting **${type}**.`,
+            channelEmpty: ({ type, clientName }: ITypeWithClientName) =>
+                `\`🎧\` ${clientName} is alone in the **voice channel**... Pausing and waiting **${type}**.`,
             mention: ({ clientName, defaultPrefix, commandName }: IMention) =>
                 `\`📢\` Hey! My name is: **${clientName}** and my prefix is: \`${defaultPrefix}\` and **/** too!\n\`📋\` If you want to see my commands, type: \`${defaultPrefix} ${commandName}\` or /${commandName}.`,
+            noMembers: ({ clientName }: IClientName) => `\`🎧\` ${clientName} is alone in the **voice channel**... Leaving the channel.`,
+            hasMembers: ({ clientName }: IClientName) => `\`🎧\` ${clientName} is not alone anymore... Resuming.`,
             noCommand: "`❌` I don't have the required command *yet*, try again in a moment.",
-            noMembers: "`🎧` Stelle is alone in the **voice channel**... Leaving the channel.",
-            hasMembers: "`🎧` Stelle is not alone anymore... Resuming.",
             onlyDeveloper: "`❌` Only the **bot developer** can use this.",
             onlyGuildOwner: "`❌` Only the **guild owner** can use this.",
             noVoiceChannel: "`❌` You are not in a **voice channel**... Join to play music.",
@@ -364,22 +385,37 @@ export default {
                 description: "The command to get help for.",
             },
         },
+        info: {
+            name: "info",
+            description: "Get the info about the bot or a user.",
+            subcommands: {
+                bot: {
+                    name: "bot",
+                    description: "Get the bot info.",
+                },
+            },
+        },
     },
 };
 
+type IBotInfoGeneralField = { guilds: number; users: number; players: number };
+type IBotInfoSystemField = { memory: string; uptime: number };
+type IBotInfo = Pick<IMention, "clientName" | "defaultPrefix">;
 type IHelpMenuEmbed = Pick<IMention, "clientName"> & IHelpMenu;
 type IVoiceStatus = Pick<ITrackStart, "title" | "author">;
+type IClientName = Pick<IMention, "clientName">;
 type IHelp = { defaultPrefix: string; options: string };
 type IHelpMenu = { category: string };
 type IMention = { clientName: string; defaultPrefix: string; commandName: string };
 type INowplaying = { title: string; url: string; duration: string; requester: string; author: string; bar: string; position: string };
-type IEngine = { engine: string };
+type IEngine = { engine: string } & Pick<IMention, "clientName">;
 type IPrefix = { prefix: string };
 type ISeek = { time: string | number; type: string };
 type IAmount = { amount: number };
 type IMove = { textId: string; voiceId: string };
-type IVolume = { volume: number };
+type IVolume = { volume: number } & Pick<IMention, "clientName">;
 type IType = { type: string };
+type ITypeWithClientName = IType & Pick<IMention, "clientName">;
 type ILocale = { locale: string };
 type IPrevious = { title: string; uri: string };
 type ITracks = { tracks: string };

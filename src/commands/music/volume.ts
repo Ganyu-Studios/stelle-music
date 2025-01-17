@@ -59,8 +59,11 @@ export default class VolumeCommand extends Command {
             return ctx.editOrReply({
                 embeds: [
                     {
-                        description: messages.commands.volume.changed({ volume }),
                         color: client.config.color.success,
+                        description: messages.commands.volume.changed({
+                            volume,
+                            clientName: client.me.username,
+                        }),
                     },
                 ],
             });
@@ -70,8 +73,11 @@ export default class VolumeCommand extends Command {
         await ctx.editOrReply({
             embeds: [
                 {
-                    description: messages.commands.volume.changed({ volume }),
                     color: client.config.color.success,
+                    description: messages.commands.volume.changed({
+                        volume,
+                        clientName: client.me.username,
+                    }),
                 },
             ],
         });

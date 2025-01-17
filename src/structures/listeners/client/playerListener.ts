@@ -45,8 +45,26 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
         await client.messages.write(player.textChannelId!, {
             embeds: [
                 {
-                    description: messages.events.noMembers,
                     color: EmbedColors.Yellow,
+                    description: messages.events.noMembers({
+                        clientName: client.me.username,
+                    }),
+                },
+            ],
+        });
+
+        return;
+    }
+
+    if (isEmpty && !player.playing && player.paused && player.queue.current && !player.queue.tracks.length) {
+        await player.destroy();
+        await client.messages.write(player.textChannelId!, {
+            embeds: [
+                {
+                    color: EmbedColors.Yellow,
+                    description: messages.events.noMembers({
+                        clientName: client.me.username,
+                    }),
                 },
             ],
         });
@@ -62,6 +80,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
                     color: EmbedColors.Yellow,
                     description: messages.events.channelEmpty({
                         type: TimeFormat.toHumanize(client.config.disconnectTime),
+                        clientName: client.me.username,
                     }),
                 },
             ],
@@ -72,8 +91,10 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
             await client.messages.write(player.textChannelId!, {
                 embeds: [
                     {
-                        description: messages.events.noMembers,
                         color: EmbedColors.Yellow,
+                        description: messages.events.noMembers({
+                            clientName: client.me.username,
+                        }),
                     },
                 ],
             });
@@ -85,8 +106,10 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
         await client.messages.write(player.textChannelId, {
             embeds: [
                 {
-                    description: messages.events.hasMembers,
                     color: EmbedColors.Yellow,
+                    description: messages.events.hasMembers({
+                        clientName: client.me.username,
+                    }),
                 },
             ],
         });
