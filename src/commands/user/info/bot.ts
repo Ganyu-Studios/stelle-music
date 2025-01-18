@@ -1,8 +1,9 @@
 import { ActionRow, Button, type CommandContext, Declare, Embed, LocalesT, SubCommand } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 import { Configuration } from "#stelle/data/Configuration.js";
-import { BOT_VERSION } from "#stelle/data/Constants.js";
 import { formatMemoryUsage } from "#stelle/utils/Logger.js";
+
+import { BOT_VERSION } from "#stelle/data/Constants.js";
 
 @Declare({
     name: "bot",
