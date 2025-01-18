@@ -34,7 +34,7 @@ export default {
                         system: {
                             name: "`📋` System",
                             value: ({ memory, uptime, version }: IBotInfoSystemField) =>
-                                `\`🧠\` **Memory**: \`${memory}\`\n\`🤖\` **Version**: \`v${version}\`\n\`🕛\` **Uptime**: <t:${uptime}:R>`,
+                                `\`🧠\` **Memory**: \`${memory}\`\n\`📜\` **Version**: \`v${version}\`\n\`🕛\` **Uptime**: <t:${uptime}:R>`,
                         },
                     },
                 },

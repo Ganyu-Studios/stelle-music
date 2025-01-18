@@ -34,7 +34,7 @@ export default {
                         system: {
                             name: "`📋` Sistema",
                             value: ({ memory, uptime, version }) =>
-                                `\`🧠\` **Memoria**: \`${memory}\`\n\`🤖\` **Version**: \`v${version}\`\n\`🕛\` **Tiempo de Encendido**: <t:${uptime}:R>`,
+                                `\`🧠\` **Memoria**: \`${memory}\`\n\`📜\` **Version**: \`v${version}\`\n\`🕛\` **Tiempo de Encendido**: <t:${uptime}:R>`,
                         },
                     },
                 },
