@@ -33,8 +33,8 @@ export default {
                         },
                         system: {
                             name: "`📋` System",
-                            value: ({ memory, uptime }: IBotInfoSystemField) =>
-                                `\`🧠\` **Memory**: \`${memory}\`\n\`🕛\` **Uptime**: <t:${uptime}:R>`,
+                            value: ({ memory, uptime, version }: IBotInfoSystemField) =>
+                                `\`🧠\` **Memory**: \`${memory}\`\n\`🤖\` **Version**: \`v${version}\`\n\`🕛\` **Uptime**: <t:${uptime}:R>`,
                         },
                     },
                 },
@@ -399,7 +399,7 @@ export default {
 };
 
 type IBotInfoGeneralField = { guilds: number; users: number; players: number };
-type IBotInfoSystemField = { memory: string; uptime: number };
+type IBotInfoSystemField = { memory: string; uptime: number; version: string };
 type IBotInfo = { clientName: string; defaultPrefix: string };
 type IHelpMenuEmbed = { clientName: string; category: string };
 type IVoiceStatus = { title: string; author: string };

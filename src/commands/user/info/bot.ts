@@ -1,6 +1,7 @@
 import { ActionRow, Button, type CommandContext, Declare, Embed, LocalesT, SubCommand } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 import { Configuration } from "#stelle/data/Configuration.js";
+import { BOT_VERSION } from "#stelle/data/Constants.js";
 import { formatMemoryUsage } from "#stelle/utils/Logger.js";
 
 @Declare({
@@ -37,6 +38,7 @@ export default class BotSubcommand extends SubCommand {
                     value: messages.commands.info.bot.fields.system.value({
                         memory: formatMemoryUsage(process.memoryUsage().rss),
                         uptime: Math.floor(client.readyTimestamp / 1000),
+                        version: BOT_VERSION,
                     }),
                 },
             );

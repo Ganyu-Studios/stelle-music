@@ -1,7 +1,5 @@
-import { ActionRow, Button, ComponentCommand, type ComponentContext, Middlewares } from "seyfert";
-
-import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType } from "seyfert/lib/types/index.js";
-import { getLoopState } from "#stelle/utils/functions/utils.js";
+import { type Button, ComponentCommand, type ComponentContext, Middlewares } from "seyfert";
+import { editRows, getLoopState } from "#stelle/utils/functions/utils.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class ToggleLoopComponent extends ComponentCommand {
@@ -23,27 +21,14 @@ export default class ToggleLoopComponent extends ComponentCommand {
 
         await player.setRepeatMode(getLoopState(player.repeatMode));
 
-        //sussy code, but works
-        const components = ctx.interaction.message.components[0].toJSON();
-        const newComponents = ctx.interaction.message.components[1].toJSON();
-
-        const row = new ActionRow<Button>().setComponents(
-            components.components.map((button) => new Button(button as APIButtonComponentWithCustomId)),
-        );
-        const newRow = new ActionRow<Button>().setComponents(
-            newComponents.components
-                .filter((row) => row.type === ComponentType.Button && row.style !== ButtonStyle.Link)
-                .map((button) => {
-                    if ((button as APIButtonComponentWithCustomId).custom_id === "player-toggleLoop")
-                        (button as APIButtonComponentWithCustomId).label = messages.events.trackStart.components.loop({
-                            type: messages.commands.loop.loopType[player.repeatMode],
-                        });
-
-                    return new Button(button as APIButtonComponentWithCustomId);
-                }),
-        );
-
-        await ctx.interaction.message.edit({ components: [row, newRow] });
         await ctx.interaction.deferUpdate();
+        await ctx.interaction.message.edit({
+            components: editRows<Button>(ctx.interaction.message.components, {
+                customId: "player-toggleLoop",
+                label: messages.events.trackStart.components.loop({
+                    type: messages.commands.loop.loopType[player.repeatMode],
+                }),
+            }),
+        });
     }
 }

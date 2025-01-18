@@ -1,8 +1,17 @@
 import { inspect } from "node:util";
 import type { Player, RepeatMode } from "lavalink-client";
 
-import { type AnyContext, type DefaultLocale, extendContext } from "seyfert";
-import type { AutoplayMode, PausedMode } from "#stelle/types";
+import {
+    ActionRow,
+    type ActionRowMessageComponents,
+    type AnyContext,
+    type BuilderComponents,
+    type DefaultLocale,
+    extendContext,
+} from "seyfert";
+import type { MessageActionRowComponent } from "seyfert/lib/components/ActionRow.js";
+import { ButtonStyle, ComponentType } from "seyfert/lib/types/index.js";
+import type { AutoplayMode, EditRowsOptions, PausedMode } from "#stelle/types";
 
 /**
  * Stelle custom context.
@@ -96,6 +105,38 @@ export const parseWebhook = (url: string) => {
 
     return match ? { id: match[1], token: match[2] } : null;
 };
+
+/**
+ *
+ * Edit a non-link or non-premium button rows with specific options.
+ * @param rows The rows to edit.
+ * @param options The options to edit the rows.
+ * @returns
+ */
+export const editRows = <
+    C extends BuilderComponents = BuilderComponents,
+    T extends ActionRowMessageComponents = ActionRowMessageComponents,
+>(
+    rows: MessageActionRowComponent<T>[],
+    options: EditRowsOptions,
+): ActionRow<C>[] =>
+    rows.map((builder) => {
+        const row = builder.toJSON();
+        return new ActionRow<C>({
+            components: row.components.map((component) => {
+                if (component.type !== ComponentType.Button) return component;
+                if (component.style === ButtonStyle.Link || component.style === ButtonStyle.Premium) return component;
+                if (component.custom_id === options.customId) {
+                    options.style ??= component.style;
+
+                    component.label = options.label;
+                    component.style = options.style;
+                }
+
+                return component;
+            }),
+        });
+    });
 
 /**
  *

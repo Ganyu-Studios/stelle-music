@@ -1,7 +1,5 @@
-import { ActionRow, Button, ComponentCommand, type ComponentContext, Middlewares } from "seyfert";
-import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType } from "seyfert/lib/types/index.js";
-
-import { getAutoplayState } from "#stelle/utils/functions/utils.js";
+import { type Button, ComponentCommand, type ComponentContext, Middlewares } from "seyfert";
+import { editRows, getAutoplayState } from "#stelle/utils/functions/utils.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
 export default class AutoplayComponent extends ComponentCommand {
@@ -25,26 +23,14 @@ export default class AutoplayComponent extends ComponentCommand {
 
         const isAutoplay = player.get<boolean>("enabledAutoplay");
 
-        const components = ctx.interaction.message.components[0].toJSON();
-        const newComponents = ctx.interaction.message.components[1].toJSON();
-
-        const row = new ActionRow<Button>().setComponents(
-            components.components.map((button) => new Button(button as APIButtonComponentWithCustomId)),
-        );
-        const newRow = new ActionRow<Button>().setComponents(
-            newComponents.components
-                .filter((row) => row.type === ComponentType.Button && row.style !== ButtonStyle.Link)
-                .map((button) => {
-                    if ((button as APIButtonComponentWithCustomId).custom_id === "player-toggleAutoplay")
-                        (button as APIButtonComponentWithCustomId).label = messages.events.trackStart.components.autoplay({
-                            type: messages.commands.autoplay.autoplayType[getAutoplayState(isAutoplay)],
-                        });
-
-                    return new Button(button as APIButtonComponentWithCustomId);
-                }),
-        );
-
-        await ctx.interaction.message.edit({ components: [row, newRow] });
         await ctx.interaction.deferUpdate();
+        await ctx.interaction.message.edit({
+            components: editRows<Button>(ctx.interaction.message.components, {
+                customId: "player-toggleAutoplay",
+                label: messages.events.trackStart.components.autoplay({
+                    type: messages.commands.autoplay.autoplayType[getAutoplayState(isAutoplay)],
+                }),
+            }),
+        });
     }
 }
