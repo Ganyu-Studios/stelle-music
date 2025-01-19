@@ -40,7 +40,7 @@ export default class LyricsComponent extends ComponentCommand {
         player.set("lyrics", lyrics);
 
         const lines = lyrics.lines
-            .slice(0, 11)
+            .slice(0, client.config.lyricsLines)
             .map((l, i) => (i === 0 ? `**${l.line}**` : `-# ${l.line}`))
             .join("\n");
         const embed = new Embed()

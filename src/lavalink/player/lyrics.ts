@@ -10,7 +10,8 @@ export default new Lavalink({
         const lyricsId = player.get<string | undefined>("lyricsId");
         if (!lyricsId) return;
 
-        const message = await client.messages.fetch(lyricsId, player.textChannelId);
+        const message = await client.messages.fetch(lyricsId, player.textChannelId).catch(() => null);
+        if (!message) return;
 
         const embed = message.embeds.at(0)?.toBuilder();
         if (!embed) return;
@@ -25,7 +26,7 @@ export default new Lavalink({
 
         const index = payload.lineIndex;
         const start = Math.max(0, index - 5);
-        const end = Math.min(lyrics.lines.length, start + 11);
+        const end = Math.min(lyrics.lines.length, start + client.config.lyricsLines);
 
         const lines = lyrics.lines
             .slice(start, end)

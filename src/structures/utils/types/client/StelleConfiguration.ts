@@ -90,6 +90,11 @@ export interface StelleConfiguration {
      * @default ms("30s")
      */
     disconnectTime: number;
+    /**
+     * The maximun of lines in the embed lyrics.
+     * @default 11
+     */
+    lyricsLines: number;
     /** Stelle bot invite url. */
     inviteLink: string;
     /** Stelle bot github repository url. */
