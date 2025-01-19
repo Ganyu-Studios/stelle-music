@@ -13,10 +13,10 @@ export default new Lavalink({
         if (!player.textChannelId) return;
 
         const messageId = player.get<string | undefined>("messageId");
-        if (messageId) await client.messages.edit(messageId, player.textChannelId, { components: [] });
+        if (messageId) await client.messages.edit(messageId, player.textChannelId, { components: [] }).catch(() => null);
 
         const lyricsId = player.get<string | undefined>("lyricsId");
-        if (lyricsId) await client.messages.delete(lyricsId, player.textChannelId);
+        if (lyricsId) await client.messages.delete(lyricsId, player.textChannelId).catch(() => null);
 
         if (DEBUG_MODE) client.logger.debug(`[Lavalink PlayerDestroy] Destroyed player for guild ${player.guildId}`);
     },
