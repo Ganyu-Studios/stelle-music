@@ -12,10 +12,10 @@ export const checkBotVoiceChannel = createMiddleware<void>(async ({ context, pas
 
     const me = await context.me();
 
-    const state = context.client.cache.voiceStates!.get(context.author.id, context.guildId!);
+    const state = await context.member.voice().catch(() => null);
     if (!state) return pass();
 
-    const bot = context.client.cache.voiceStates!.get(me.id, context.guildId!);
+    const bot = await me.voice().catch(() => null);
     if (bot && bot.channelId !== state.channelId) {
         await context.editOrReply({
             flags: MessageFlags.Ephemeral,
@@ -41,7 +41,7 @@ export const checkVoiceChannel = createMiddleware<void>(async ({ context, pass, 
 
     const { messages } = await context.getLocale();
 
-    const state = context.client.cache.voiceStates!.get(context.author.id, context.guildId!);
+    const state = await context.member.voice().catch(() => null);
     const channel = await state?.channel().catch(() => null);
 
     if (!channel?.is(["GuildVoice", "GuildStageVoice"])) {
@@ -67,7 +67,7 @@ export const checkVoiceChannel = createMiddleware<void>(async ({ context, pass, 
 export const checkVoicePermissions = createMiddleware<void>(async ({ context, pass, next }) => {
     if (!context.inGuild()) return next();
 
-    const state = context.client.cache.voiceStates!.get(context.author.id, context.guildId!);
+    const state = await context.member.voice().catch(() => null);
     if (!state) return pass();
 
     const channel = await state.channel().catch(() => null);

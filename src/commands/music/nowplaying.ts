@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, LocalesT, Middlewares, type User } from "seyfert";
+import { Command, type CommandContext, Declare, Embed, LocalesT, Middlewares, type User } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
@@ -8,7 +8,7 @@ import { createBar } from "#stelle/utils/functions/utils.js";
 
 @Declare({
     name: "nowplaying",
-    description: "Get the current playing song.",
+    description: "Get the current playing track.",
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
     aliases: ["np"],
@@ -38,22 +38,21 @@ export default class NowPlayingCommand extends Command {
                 ],
             });
 
-        await ctx.editOrReply({
-            embeds: [
-                {
-                    thumbnail: { url: track.info.artworkUrl ?? "" },
-                    color: client.config.color.success,
-                    description: messages.commands.nowplaying({
-                        title: track.info.title,
-                        url: track.info.uri,
-                        duration: TimeFormat.toDotted(track.info.duration),
-                        author: track.info.author,
-                        position: TimeFormat.toDotted(player.position),
-                        requester: (track.requester as User).id,
-                        bar: createBar(player),
-                    }),
-                },
-            ],
-        });
+        const embed = new Embed()
+            .setThumbnail(track.info.artworkUrl ?? undefined)
+            .setColor(client.config.color.success)
+            .setDescription(
+                messages.commands.nowplaying({
+                    title: track.info.title,
+                    url: track.info.uri,
+                    duration: TimeFormat.toDotted(track.info.duration),
+                    author: track.info.author,
+                    position: TimeFormat.toDotted(player.position),
+                    requester: (track.requester as User).id,
+                    bar: createBar(player),
+                }),
+            );
+
+        await ctx.editOrReply({ embeds: [embed] });
     }
 }

@@ -42,7 +42,7 @@ const options = {
             if (!client.manager.useable)
                 return interaction.respond([{ name: messages.commands.play.autocomplete.noNodes, value: "noNodes" }]);
 
-            const voice = client.cache.voiceStates?.get(member!.id, guildId);
+            const voice = await member?.voice().catch(() => null);
             if (!voice) return interaction.respond([{ name: messages.commands.play.autocomplete.noVoiceChannel, value: "noVoice" }]);
 
             const query = interaction.getInput();
@@ -88,10 +88,12 @@ export default class PlayCommand extends Command {
 
         if (!(guildId && member)) return;
 
-        const voice = await client.cache.voiceStates?.get(member!.id, guildId)?.channel();
+        const me = await ctx.me();
+
+        const voice = await (await member.voice().catch(() => null))?.channel();
         if (!voice?.is(["GuildVoice", "GuildStageVoice"])) return;
 
-        let bot = client.cache.voiceStates?.get(client.me.id, guildId);
+        let bot = await me.voice().catch(() => null);
         if (bot && bot.channelId !== voice.id) return;
 
         const { messages } = await ctx.getLocale();
@@ -126,7 +128,7 @@ export default class PlayCommand extends Command {
             tag: client.me.username,
         });
 
-        if (!bot) bot = client.cache.voiceStates?.get(client.me.id, guildId);
+        if (!bot) bot = await me.voice().catch(() => null);
         if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);
 
         switch (loadType) {
@@ -162,7 +164,7 @@ export default class PlayCommand extends Command {
                         : (TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined);
 
                     const embed = new Embed()
-                        .setThumbnail(track.info.artworkUrl ?? "")
+                        .setThumbnail(track.info.artworkUrl ?? undefined)
                         .setColor(client.config.color.success)
                         .setDescription(
                             messages.commands.play.embed[type]({
@@ -194,7 +196,7 @@ export default class PlayCommand extends Command {
 
                     const embed = new Embed()
                         .setColor(client.config.color.success)
-                        .setThumbnail(track.info.artworkUrl ?? "")
+                        .setThumbnail(track.info.artworkUrl ?? undefined)
                         .setDescription(
                             messages.commands.play.embed.playlist({
                                 query,

@@ -19,6 +19,15 @@ export default {
             previous: ({ title, uri }: IPrevious) => `\`✅\` The previous track [**${title}**](${uri}) has been added to the queue.`,
             stop: "`👋` Stopping and leaving...",
             shuffle: "`✅` The queue has been shuffled.",
+            lyrics: {
+                noLyrics: "`❌` **No lyrics** was found for this track...",
+                close: "Close",
+                embed: {
+                    title: ({ title }: ILyricsEmbedTitle) => `\`📜\` Lyrics for: ${title}`,
+                    description: ({ provider, lines }: ILyricsEmbedDescription) => `-# Provided by: ${provider}\n\n${lines}`,
+                    footer: ({ userName }: ILyricsEmbedFooter) => `Requested by: ${userName}`,
+                },
+            },
             info: {
                 bot: {
                     description: ({ clientName, defaultPrefix }: IBotInfo) =>
@@ -185,6 +194,7 @@ export default {
                     skip: "Skip",
                     previous: "Previous",
                     queue: "Queue",
+                    lyrics: "Lyrics",
                     paused: {
                         resume: "Resume",
                         pause: "Pause",
@@ -327,7 +337,7 @@ export default {
             option: {
                 to: {
                     name: "to",
-                    description: "Skip a specific amount of songs.",
+                    description: "Skip a specific amount of tracks.",
                 },
             },
         },
@@ -375,7 +385,7 @@ export default {
         },
         nowplaying: {
             name: "nowplaying",
-            description: "Get the current playing song.",
+            description: "Get the current playing track.",
         },
         help: {
             name: "help",
@@ -398,6 +408,9 @@ export default {
     },
 };
 
+type ILyricsEmbedFooter = { userName: string };
+type ILyricsEmbedDescription = { lines: string; provider: string };
+type ILyricsEmbedTitle = { title: string };
 type IBotInfoGeneralField = { guilds: number; users: number; players: number };
 type IBotInfoSystemField = { memory: string; uptime: number; version: string };
 type IBotInfo = { clientName: string; defaultPrefix: string };

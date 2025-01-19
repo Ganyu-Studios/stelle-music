@@ -8,9 +8,10 @@ export default new Lavalink({
         if (!(player.textChannelId && player.voiceChannelId)) return;
 
         const messageId = player.get<string | undefined>("messageId");
-        if (!messageId) return;
+        if (messageId) await client.messages.edit(messageId, player.textChannelId, { components: [] }).catch(() => null);
 
-        await client.messages.edit(messageId, player.textChannelId, { components: [] }).catch(() => null);
+        const lyricsId = player.get<string | undefined>("lyricsId");
+        if (lyricsId) await client.messages.delete(lyricsId, player.textChannelId).catch(() => null);
 
         const locale = player.get<string | undefined>("localeString");
         if (!locale) return;

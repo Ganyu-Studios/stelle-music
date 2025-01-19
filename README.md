@@ -45,7 +45,7 @@ If you would like to support the development of Stelle, you can make a donation 
 
 Stelle has several features, more can be added.
 
-- **AUTOPLAY**: Stelle will play songs based on the queue.
+- **AUTOPLAY**: Stelle will play tracks based on the queue.
 - **COOLDOWN**: To avoid command spamming.
 - **DATABASE**: Stelle uses `Prisma` as `ORM` and `MongoDB` as database.
 - **NO HANDLERS**: Stelle will do it all for you, you just have to implement it.

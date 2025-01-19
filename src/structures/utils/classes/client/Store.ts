@@ -31,7 +31,7 @@ export class RedisQueueStore implements QueueStoreManager {
      * @returns
      */
     public get(guildId: string): Promise<StoredQueue | string> {
-        return this.redis.get(buildKey(guildId)) as Promise<StoredQueue | string>;
+        return this.redis.get<StoredQueue | string>(buildKey(guildId)) as Promise<StoredQueue | string>;
     }
 
     /**

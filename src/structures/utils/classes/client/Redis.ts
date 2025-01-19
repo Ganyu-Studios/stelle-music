@@ -1,3 +1,4 @@
+import { deflateRawSync, inflateRawSync } from "node:zlib";
 import { Redis } from "ioredis";
 import type { UsingClient } from "seyfert";
 import { Environment } from "#stelle/data/Configuration.js";
@@ -38,8 +39,11 @@ export class RedisClient {
      * Get the value of a key.
      * @param key The key to get.
      */
-    public get(key: string): Promise<string | null> {
-        return this.redis.get(key);
+    public async get<T>(key: string): Promise<T | null> {
+        const value = await this.redis.get(key);
+        if (!value) return null;
+
+        return JSON.parse(inflateRawSync(Buffer.from(value, "base64")).toString());
     }
 
     /**
@@ -48,8 +52,12 @@ export class RedisClient {
      * @param key The key to set.
      * @param value The value to set.
      */
-    public async set(key: string, value: string): Promise<void> {
-        await this.redis.set(key, value);
+    public async set<T>(key: string, value: T): Promise<void> {
+        const json = JSON.stringify(value);
+        const buffer = deflateRawSync(Buffer.from(json)).toString("base64");
+
+        await this.redis.set(key, buffer);
+
         return;
     }
 

@@ -10,6 +10,14 @@ export default new Lavalink({
         const voice = await client.channels.fetch(player.voiceChannelId ?? player.options.voiceChannelId);
         if (voice.is(["GuildVoice"])) await voice.setVoiceStatus(null).catch(() => null);
 
+        if (!player.textChannelId) return;
+
+        const messageId = player.get<string | undefined>("messageId");
+        if (messageId) await client.messages.edit(messageId, player.textChannelId, { components: [] });
+
+        const lyricsId = player.get<string | undefined>("lyricsId");
+        if (lyricsId) await client.messages.delete(lyricsId, player.textChannelId);
+
         if (DEBUG_MODE) client.logger.debug(`[Lavalink PlayerDestroy] Destroyed player for guild ${player.guildId}`);
     },
 });

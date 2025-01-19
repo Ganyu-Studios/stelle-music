@@ -19,6 +19,15 @@ export default {
             previous: ({ title, uri }) => `\`✅\` La canción anterior [**${title}**](${uri}) ha sido añadida a la cola.`,
             stop: "`👋` Deteniendo y abandonando el canal...",
             shuffle: "`✅` La cola ha sido mezclada.",
+            lyrics: {
+                noLyrics: "`❌` **No se encontraron letras** para esta canción...",
+                close: "Cerrar",
+                embed: {
+                    title: ({ title }) => `\`📜\` Letrs para: ${title}`,
+                    description: ({ lines, provider }) => `-# Proveído por: ${provider}\n\n${lines}`,
+                    footer: ({ userName }) => `Pedido por: ${userName}`,
+                },
+            },
             info: {
                 bot: {
                     description: ({ clientName, defaultPrefix }) =>
@@ -185,6 +194,7 @@ export default {
                     skip: "Saltar",
                     previous: "Anterior",
                     queue: "Cola",
+                    lyrics: "Letra",
                     paused: {
                         resume: "Resumir",
                         pause: "Pausar",
