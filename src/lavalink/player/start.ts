@@ -97,44 +97,6 @@ export default new Lavalink({
                 .catch(() => null);
 
         const message = await client.messages.write(player.textChannelId, { embeds: [embed], components: [row, newRow] }).catch(() => null);
-        if (message) {
-            player.set("messageId", message.id);
-
-            if (player.get("lyricsId")) {
-                const lyrics = await player.node.lyrics.getCurrent(player.guildId).catch(() => null);
-                if (!lyrics) return;
-
-                const author = await client.users.fetch((track.requester as User).id).catch(() => null);
-                if (!author) return;
-
-                player.set("lyrics", lyrics);
-
-                const lines = lyrics.lines
-                    .slice(0, 11)
-                    .map((l, i) => (i === 0 ? `**${l.line}**` : `-# ${l.line}`))
-                    .join("\n");
-                const embed = new Embed()
-                    .setThumbnail(track.info.artworkUrl ?? undefined)
-                    .setColor(client.config.color.extra)
-                    .setTitle(messages.commands.lyrics.embed.title({ title: track.info.title }))
-                    .setFooter({
-                        iconUrl: author.avatarURL(),
-                        text: messages.commands.lyrics.embed.footer({ userName: author.tag }),
-                    })
-                    .setDescription(
-                        messages.commands.lyrics.embed.description({
-                            lines,
-                            provider: lyrics.provider,
-                        }),
-                    );
-
-                const row = new ActionRow<Button>().addComponents(
-                    new Button().setCustomId("player-lyricsClose").setLabel(messages.commands.lyrics.close).setStyle(ButtonStyle.Secondary),
-                );
-
-                const response = await message.reply({ embeds: [embed], components: [row] }).catch(() => null);
-                if (response) player.set("lyricsId", response.id);
-            }
-        }
+        if (message) player.set("messageId", message.id);
     },
 });

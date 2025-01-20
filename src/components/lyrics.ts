@@ -21,8 +21,6 @@ export default class LyricsComponent extends ComponentCommand {
         const track = player.queue.current;
         if (!track) return;
 
-        if (player.get("lyricsId")) return ctx.deferUpdate();
-
         const { messages } = await ctx.getLocale();
 
         const lyrics = await player.node.lyrics.getCurrent(ctx.guildId).catch(() => null);
