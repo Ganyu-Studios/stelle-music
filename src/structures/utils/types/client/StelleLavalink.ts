@@ -5,22 +5,25 @@ import type { Awaitable } from "seyfert/lib/common/index.js";
 /**
  * All lavalink events.
  */
-export type AllEvents = LavalinkManagerEvents & NodeManagerEvents;
+export type AllLavalinkEvents = LavalinkManagerEvents & NodeManagerEvents;
 
 /**
  * Lavalink event run function.
  */
-export type LavalinkEventRun<K extends keyof AllEvents> = (client: UsingClient, ...args: Parameters<AllEvents[K]>) => Awaitable<any>;
+export type LavalinkEventRun<K extends keyof AllLavalinkEvents> = (
+    client: UsingClient,
+    ...args: Parameters<AllLavalinkEvents[K]>
+) => Awaitable<any>;
 
 /**
  * Lavalink event type.
  */
-export type LavalinkEventType<K extends keyof AllEvents> = K extends keyof NodeManagerEvents ? "node" : "manager";
+export type LavalinkEventType<K extends keyof AllLavalinkEvents> = K extends keyof NodeManagerEvents ? "node" : "manager";
 
 /**
  * Lavalink event interface.
  */
-export interface LavalinkEvent<K extends keyof AllEvents> {
+export interface LavalinkEvent<K extends keyof AllLavalinkEvents> {
     /** The event name. */
     name: K;
     /** The event type. */

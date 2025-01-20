@@ -1,10 +1,10 @@
 import type { LavalinkManagerEvents, NodeManagerEvents } from "lavalink-client";
-import type { AllEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "#stelle/types";
+import type { AllLavalinkEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "#stelle/types";
 
 /**
  * Stelle Lavalink events main class.
  */
-export class Lavalink<K extends keyof AllEvents = keyof AllEvents> implements LavalinkEvent<K> {
+export class Lavalink<K extends keyof AllLavalinkEvents = keyof AllLavalinkEvents> implements LavalinkEvent<K> {
     /**
      * The event name.
      */

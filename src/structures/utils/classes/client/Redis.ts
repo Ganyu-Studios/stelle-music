@@ -19,19 +19,13 @@ export class RedisClient {
     });
 
     /**
-     * The client instance.
-     */
-    readonly client: UsingClient;
-
-    /**
      *
      * Create a new Redis client.
      * @param client The client instance.
      */
     constructor(client: UsingClient) {
-        this.client = client;
-        this.redis.once("connect", () => this.client.logger.info("Redis - Stelle is now connected to Redis."));
-        this.redis.on("error", (error) => this.client.logger.error(`Redis - An error occurred: ${error}`));
+        this.redis.once("connect", () => client.logger.info("Redis - Stelle is now connected to Redis."));
+        this.redis.on("error", (error) => client.logger.error(`Redis - An error occurred: ${error}`));
     }
 
     /**

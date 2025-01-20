@@ -3,7 +3,7 @@ import type { ClientUser, Command, ContextMenuCommand, SubCommand } from "seyfer
 import type { ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
 export type { StelleConfiguration, StelleEnvironment } from "./client/StelleConfiguration.js";
-export type { AllEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "./client/StelleLavalink.js";
+export type { AllLavalinkEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "./client/StelleLavalink.js";
 
 export type PermissionNames = keyof typeof PermissionFlagsBits;
 export type AutoplayMode = "enabled" | "disabled";

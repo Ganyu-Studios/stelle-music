@@ -2,6 +2,7 @@ import { BaseHandler } from "seyfert/lib/common/index.js";
 import type { Lavalink } from "./Lavalink.js";
 
 import type { UsingClient } from "seyfert";
+import type { AllLavalinkEvents } from "#stelle/types";
 
 /**
  * Main Stelle music handler.
@@ -49,7 +50,7 @@ export class LavalinkHandler extends BaseHandler {
                 continue;
             }
 
-            const run = (...args: any) => event.run(this.client, ...args);
+            const run = (...args: Parameters<AllLavalinkEvents[keyof AllLavalinkEvents]>) => event.run(this.client, ...args);
 
             if (event.isNode()) this.client.manager.nodeManager.on(event.name, run);
             else if (event.isManager()) this.client.manager.on(event.name, run);
