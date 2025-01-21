@@ -11,6 +11,7 @@ export const checkBotVoiceChannel = createMiddleware<void>(async ({ context, pas
     const { messages } = await context.getLocale();
 
     const me = await context.me();
+    if (!me) return;
 
     const state = await context.member.voice().catch(() => null);
     if (!state) return pass();
@@ -71,12 +72,14 @@ export const checkVoicePermissions = createMiddleware<void>(async ({ context, pa
     if (!state) return pass();
 
     const channel = await state.channel().catch(() => null);
-    if (!channel?.is(["GuildVoice", "GuildStageVoice"])) return pass();
+    if (!channel) return pass();
 
     const { stagePermissions, voicePermissions } = context.client.config.permissions;
     const { messages } = await context.getLocale();
 
     const me = await context.me();
+    if (!me) return;
+
     const permissions = await context.client.channels.memberPermissions(channel.id, me);
     const missings = permissions.keys(permissions.missings(channel.isStage() ? stagePermissions : voicePermissions));
 

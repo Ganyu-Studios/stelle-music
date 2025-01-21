@@ -89,6 +89,7 @@ export default class PlayCommand extends Command {
         if (!(guildId && member)) return;
 
         const me = await ctx.me();
+        if (!me) return;
 
         const voice = await (await member.voice().catch(() => null))?.channel();
         if (!voice?.is(["GuildVoice", "GuildStageVoice"])) return;
