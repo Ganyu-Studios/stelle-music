@@ -13,10 +13,13 @@ export default new Lavalink({
         const lyricsId = player.get<string | undefined>("lyricsId");
         if (lyricsId) {
             await client.messages.delete(lyricsId, player.textChannelId).catch(() => null);
-            await player.node.request(`/sessions/${player.node.sessionId}/players/${player.guildId}/unsubscribe`).catch(() => null);
+
+            if (player.get<boolean>("lyricsEnabled"))
+                await player.node.request(`/sessions/${player.node.sessionId}/players/${player.guildId}/unsubscribe`).catch(() => null);
 
             player.set("lyricsId", undefined);
             player.set("lyrics", undefined);
+            player.set("lyricsEnabled", false);
         }
 
         const locale = player.get<string | undefined>("localeString");

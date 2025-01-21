@@ -47,6 +47,8 @@ export default new Lavalink({
                 enabledAutoplay: newPlayer.get("enabledAutoplay"),
                 localeString: newPlayer.get<string | undefined>("localeString"),
                 me: newPlayer.get<ClientUser | undefined>("me"),
+                lyricsEnabled: newPlayer.get<boolean | undefined>("lyricsEnabled"),
+                lyricsId: newPlayer.get<string | undefined>("lyricsId"),
             });
 
             if (DEBUG_MODE) client.logger.debug(`[Lavalink PlayerUpdate] Saved new player data for guild ${newPlayer.guildId}`);

@@ -28,6 +28,8 @@ export type StellePlayerJson = Omit<
     enabledAutoplay?: boolean;
     me?: ClientUser;
     localeString?: string;
+    lyricsEnabled?: boolean;
+    lyricsId?: string;
 };
 export interface Options {
     /**

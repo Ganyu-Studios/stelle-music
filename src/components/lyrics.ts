@@ -65,9 +65,10 @@ export default class LyricsComponent extends ComponentCommand {
         const message = await ctx.editOrReply({ embeds: [embed], components: [row] }, true);
 
         // cuz this returns an exception, idk why
-        await player.node.lyrics.subscribe(ctx.guildId).catch(() => null);
+        if (!player.get<boolean>("lyricsEnabled")) await player.node.lyrics.subscribe(ctx.guildId).catch(() => null);
 
         player.set("lyrics", lyrics);
         player.set("lyricsId", message.id);
+        player.set("lyricsEnabled", true);
     }
 }

@@ -5,19 +5,20 @@ export default new Lavalink({
     name: "LyricsLine",
     type: "manager",
     async run(client, player, track, payload): Promise<void> {
+        if (!player.get<boolean | undefined>("lyricsEnabled")) return;
         if (!player.textChannelId) return;
 
         const lyricsId = player.get<string | undefined>("lyricsId");
         if (!lyricsId) return;
+
+        const lyrics = player.get<LyricsResult | undefined>("lyrics");
+        if (!lyrics) return;
 
         const message = await client.messages.fetch(lyricsId, player.textChannelId).catch(() => null);
         if (!message) return;
 
         const embed = message.embeds.at(0)?.toBuilder();
         if (!embed) return;
-
-        const lyrics = player.get<LyricsResult | undefined>("lyrics");
-        if (!lyrics) return;
 
         const locale = player.get<string | undefined>("localeString");
         if (!locale) return;

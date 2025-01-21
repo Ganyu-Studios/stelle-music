@@ -18,7 +18,7 @@ export default class ShuffleCommand extends Command {
     public override async run(ctx: GuildCommandContext) {
         const { client } = ctx;
 
-        const player = client.manager.getPlayer(ctx.guildId!);
+        const player = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
         const { messages } = await ctx.getLocale();
