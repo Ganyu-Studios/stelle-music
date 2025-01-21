@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare } from "seyfert";
+import { Command, Declare, type GuildCommandContext } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
@@ -12,7 +12,7 @@ import { EmbedColors } from "seyfert/lib/common/index.js";
 })
 @StelleOptions({ onlyDeveloper: true })
 export default class ReloadCommand extends Command {
-    public override async run(ctx: CommandContext): Promise<void> {
+    public override async run(ctx: GuildCommandContext): Promise<void> {
         await ctx.deferReply(true);
         await ctx.client
             .reload()

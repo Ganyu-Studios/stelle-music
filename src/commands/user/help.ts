@@ -1,10 +1,10 @@
 import {
     ActionRow,
     Command,
-    type CommandContext,
     ContextMenuCommand,
     Declare,
     Embed,
+    type GuildCommandContext,
     LocalesT,
     Options,
     StringSelectOption,
@@ -40,12 +40,12 @@ const options = {
 @StelleOptions({ category: StelleCategory.User, cooldown: 5 })
 @Options(options)
 export default class HelpCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: GuildCommandContext<typeof options>) {
         const { client, options } = ctx;
         const { messages } = await ctx.getLocale();
 
-        const categoryList = client
-            .commands!.values.filter((command) => !command.guildId)
+        const commands = client.commands!.values.filter((command) => !command.guildId);
+        const categoryList = commands
             .map((command) => Number(command.category))
             .filter((item, index, commands) => commands.indexOf(item) === index);
 
@@ -118,7 +118,7 @@ export default class HelpCommand extends Command {
             return;
         }
 
-        const command = client.commands!.values.filter((command) => !command.guildId).find((command) => command.name === options.command);
+        const command = commands.find((command) => command.name === options.command);
         if (!command)
             return ctx.editOrReply({
                 flags: MessageFlags.Ephemeral,

@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, LocalesT, Middlewares, Options, createIntegerOption } from "seyfert";
+import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares, Options, createIntegerOption } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
@@ -27,15 +27,13 @@ const options = {
 @LocalesT("locales.skip.name", "locales.skip.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
 export default class SkipCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>) {
-        const { client, options, guildId } = ctx;
+    public override async run(ctx: GuildCommandContext<typeof options>) {
+        const { client, options } = ctx;
         const { to } = options;
-
-        if (!guildId) return;
 
         const { messages } = await ctx.getLocale();
 
-        const player = client.manager.getPlayer(guildId);
+        const player = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
         if (to) await player.skip(to - 1, !player.get("enabledAutoplay"));

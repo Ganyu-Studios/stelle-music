@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, LocalesT, Middlewares, Options, createChannelOption } from "seyfert";
+import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares, Options, createChannelOption } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
@@ -36,15 +36,13 @@ const options = {
 @LocalesT("locales.move.name", "locales.move.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkPlayer"])
 export default class MoveCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>) {
-        const { client, options, guildId } = ctx;
+    public override async run(ctx: GuildCommandContext<typeof options>) {
+        const { client, options } = ctx;
         const { voice, text } = options;
-
-        if (!guildId) return;
 
         const { messages } = await ctx.getLocale();
 
-        const player = client.manager.getPlayer(guildId);
+        const player = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
         if (text) {

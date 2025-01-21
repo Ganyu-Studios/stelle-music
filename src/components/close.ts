@@ -1,17 +1,15 @@
-import { ComponentCommand, type ComponentContext, Middlewares } from "seyfert";
+import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
 export default class LyricsComponent extends ComponentCommand {
     componentType = "Button" as const;
 
-    filter(ctx: ComponentContext<typeof this.componentType>): boolean {
+    filter(ctx: GuildComponentContext<typeof this.componentType>): boolean {
         return ctx.customId === "player-lyricsClose";
     }
 
-    async run(ctx: ComponentContext<typeof this.componentType>): Promise<void> {
+    async run(ctx: GuildComponentContext<typeof this.componentType>): Promise<void> {
         const { client } = ctx;
-
-        if (!ctx.guildId) return;
 
         const player = client.manager.getPlayer(ctx.guildId);
         if (!player) return;

@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, LocalesT, Middlewares, type OKFunction, Options, createStringOption } from "seyfert";
+import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares, type OKFunction, Options, createStringOption } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
@@ -38,15 +38,13 @@ const options = {
 @LocalesT("locales.seek.name", "locales.seek.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class SeekCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>) {
-        const { client, options, guildId } = ctx;
+    public override async run(ctx: GuildCommandContext<typeof options>) {
+        const { client, options } = ctx;
         const { time } = options;
-
-        if (!guildId) return;
 
         const { messages } = await ctx.getLocale();
 
-        const player = client.manager.getPlayer(guildId);
+        const player = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
         const position = player.position;

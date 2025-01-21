@@ -1,8 +1,8 @@
 import {
     Command,
-    type CommandContext,
     Declare,
     Embed,
+    type GuildCommandContext,
     LocalesT,
     type Message,
     Middlewares,
@@ -32,12 +32,12 @@ const options = {
             description: "locales.play.option.description",
         },
         autocomplete: async (interaction) => {
-            const { client, member, guildId } = interaction;
+            const { client, member } = interaction;
 
-            if (!guildId) return;
+            if (!interaction.guildId) return;
 
-            const { searchEngine } = await client.database.getPlayer(guildId);
-            const { messages } = client.t(await client.database.getLocale(guildId)).get();
+            const { searchEngine } = await client.database.getPlayer(interaction.guildId);
+            const { messages } = client.t(await client.database.getLocale(interaction.guildId)).get();
 
             if (!client.manager.useable)
                 return interaction.respond([{ name: messages.commands.play.autocomplete.noNodes, value: "noNodes" }]);
@@ -82,28 +82,28 @@ const options = {
 @LocalesT("locales.play.name", "locales.play.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkVoicePermissions", "checkBotVoiceChannel"])
 export default class PlayCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
-        const { options, client, guildId, channelId, member } = ctx;
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
+        const { options, client, channelId, member } = ctx;
         const { query } = options;
 
-        if (!(guildId && member)) return;
+        if (!member) return;
 
         const me = await ctx.me();
         if (!me) return;
 
         const voice = await (await member.voice().catch(() => null))?.channel();
-        if (!voice?.is(["GuildVoice", "GuildStageVoice"])) return;
+        if (!voice) return;
 
         let bot = await me.voice().catch(() => null);
         if (bot && bot.channelId !== voice.id) return;
 
         const { messages } = await ctx.getLocale();
-        const { defaultVolume, searchEngine } = await client.database.getPlayer(guildId);
+        const { defaultVolume, searchEngine } = await client.database.getPlayer(ctx.guildId);
 
         await ctx.deferReply();
 
         const player = client.manager.createPlayer({
-            guildId: guildId,
+            guildId: ctx.guildId,
             textChannelId: channelId,
             voiceChannelId: voice.id,
             volume: defaultVolume,

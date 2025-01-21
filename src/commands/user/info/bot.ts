@@ -1,4 +1,4 @@
-import { ActionRow, Button, type CommandContext, Declare, Embed, LocalesT, SubCommand } from "seyfert";
+import { ActionRow, Button, Declare, Embed, type GuildCommandContext, LocalesT, SubCommand } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 import { Configuration } from "#stelle/data/Configuration.js";
 import { formatMemoryUsage } from "#stelle/utils/Logger.js";
@@ -11,7 +11,7 @@ import { BOT_VERSION } from "#stelle/data/Constants.js";
 })
 @LocalesT("locales.info.subcommands.bot.name", "locales.info.subcommands.bot.description")
 export default class BotSubcommand extends SubCommand {
-    public override async run(ctx: CommandContext) {
+    public override async run(ctx: GuildCommandContext) {
         const { messages } = await ctx.getLocale();
         const { client } = ctx;
 

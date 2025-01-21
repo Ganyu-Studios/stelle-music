@@ -1,5 +1,6 @@
 import type { PlayerJson } from "lavalink-client";
 import type { ClientUser, Command, ContextMenuCommand, SubCommand } from "seyfert";
+import type { ButtonComponent, LinkButtonComponent, SKUButtonComponent } from "seyfert/lib/components/ButtonComponent.js";
 import type { ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
 export type { StelleConfiguration, StelleEnvironment } from "./client/StelleConfiguration.js";
@@ -10,11 +11,12 @@ export type AutoplayMode = "enabled" | "disabled";
 export type PausedMode = "pause" | "resume";
 export type NonCommandOptions = Omit<Options, "category">;
 export type NonGlobalCommands = Command | ContextMenuCommand | SubCommand;
-export type StyleWithoutLink = Exclude<ButtonStyle, ButtonStyle.Link | ButtonStyle.Premium>;
+export type ButtonStyleWithoutLink = Exclude<ButtonStyle, ButtonStyle.Link | ButtonStyle.Premium>;
+export type ButtonComponents = ButtonComponent | LinkButtonComponent | SKUButtonComponent;
 
 export type EditRowsOptions = {
     customId: string;
-    style?: StyleWithoutLink;
+    style?: ButtonStyleWithoutLink;
     label?: string;
 };
 

@@ -1,14 +1,7 @@
 import { inspect } from "node:util";
 import type { Player, RepeatMode } from "lavalink-client";
 
-import {
-    ActionRow,
-    type ActionRowMessageComponents,
-    type AnyContext,
-    type BuilderComponents,
-    type DefaultLocale,
-    extendContext,
-} from "seyfert";
+import { ActionRow, type ActionRowMessageComponents, type AnyContext, type Button, type DefaultLocale, extendContext } from "seyfert";
 import type { MessageActionRowComponent } from "seyfert/lib/components/ActionRow.js";
 import { ButtonStyle, ComponentType } from "seyfert/lib/types/index.js";
 import type { AutoplayMode, EditRowsOptions, PausedMode } from "#stelle/types";
@@ -113,16 +106,10 @@ export const parseWebhook = (url: string) => {
  * @param options The options to edit the rows.
  * @returns
  */
-export const editRows = <
-    C extends BuilderComponents = BuilderComponents,
-    T extends ActionRowMessageComponents = ActionRowMessageComponents,
->(
-    rows: MessageActionRowComponent<T>[],
-    options: EditRowsOptions,
-): ActionRow<C>[] =>
+export const editButtons = (rows: MessageActionRowComponent<ActionRowMessageComponents>[], options: EditRowsOptions): ActionRow<Button>[] =>
     rows.map((builder) => {
         const row = builder.toJSON();
-        return new ActionRow<C>({
+        return new ActionRow<Button>({
             components: row.components.map((component) => {
                 if (component.type !== ComponentType.Button) return component;
                 if (component.style === ButtonStyle.Link || component.style === ButtonStyle.Premium) return component;

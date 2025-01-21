@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, LocalesT, Middlewares, Options, createStringOption } from "seyfert";
+import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares, Options, createStringOption } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
 import type { RepeatMode } from "lavalink-client";
@@ -43,15 +43,13 @@ const options = {
 @LocalesT("locales.loop.name", "locales.loop.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class LoopCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>) {
-        const { client, options, guildId } = ctx;
+    public override async run(ctx: GuildCommandContext<typeof options>) {
+        const { client, options } = ctx;
         const { mode } = options;
-
-        if (!guildId) return;
 
         const { messages } = await ctx.getLocale();
 
-        const player = client.manager.getPlayer(guildId);
+        const player = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
         await player.setRepeatMode(mode as RepeatMode);

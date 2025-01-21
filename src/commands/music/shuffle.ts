@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, Middlewares } from "seyfert";
+import { Command, Declare, type GuildCommandContext, Middlewares } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
 
@@ -15,7 +15,7 @@ import { StelleCategory } from "#stelle/types";
 })
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
 export default class ShuffleCommand extends Command {
-    public override async run(ctx: CommandContext) {
+    public override async run(ctx: GuildCommandContext) {
         const { client } = ctx;
 
         const player = client.manager.getPlayer(ctx.guildId!);

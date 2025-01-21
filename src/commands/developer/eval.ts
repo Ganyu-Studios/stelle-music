@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, Embed, type Message, Options, type WebhookMessage, createStringOption } from "seyfert";
+import { Command, Declare, Embed, type GuildCommandContext, type Message, Options, type WebhookMessage, createStringOption } from "seyfert";
 import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
 import { StelleOptions } from "#stelle/decorators";
 
@@ -57,7 +57,7 @@ export default class EvalCommand extends Command {
             });
         },
     })
-    public override async run(ctx: CommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
         const { client, options, author, channelId } = ctx;
 
         const start = Date.now();

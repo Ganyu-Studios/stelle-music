@@ -43,9 +43,9 @@ export const checkVoiceChannel = createMiddleware<void>(async ({ context, pass, 
     const { messages } = await context.getLocale();
 
     const state = await context.member.voice().catch(() => null);
-    const channel = await state?.channel().catch(() => null);
 
-    if (!channel?.is(["GuildVoice", "GuildStageVoice"])) {
+    const channel = await state?.channel().catch(() => null);
+    if (!channel) {
         await context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [

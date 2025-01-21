@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, Embed, LocalesT } from "seyfert";
+import { Command, Declare, Embed, type GuildCommandContext, LocalesT } from "seyfert";
 
 import { StelleOptions } from "#stelle/decorators";
 
@@ -17,7 +17,7 @@ import { TimeFormat } from "#stelle/utils/Time.js";
 @StelleOptions({ cooldown: 5, category: StelleCategory.User })
 @LocalesT("locales.nodes.name", "locales.nodes.description")
 export default class ExampleCommand extends Command {
-    public override async run(ctx: CommandContext) {
+    public override async run(ctx: GuildCommandContext) {
         const { client } = ctx;
         const { messages } = await ctx.getLocale();
 

@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, LocalesT, Middlewares } from "seyfert";
+import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares } from "seyfert";
 import { StelleOptions } from "#stelle/decorators";
 
 import { StelleCategory } from "#stelle/types";
@@ -18,14 +18,12 @@ import { getAutoplayState } from "#stelle/utils/functions/utils.js";
 @LocalesT("locales.autoplay.name", "locales.autoplay.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
 export default class AutoplayCommand extends Command {
-    public override async run(ctx: CommandContext) {
-        const { client, guildId } = ctx;
-
-        if (!guildId) return;
+    public override async run(ctx: GuildCommandContext) {
+        const { client } = ctx;
 
         const { messages } = await ctx.getLocale();
 
-        const player = client.manager.getPlayer(guildId);
+        const player = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
         player.set("enabledAutoplay", !player.get("enabledAutoplay"));

@@ -1,4 +1,4 @@
-import { type CommandContext, Declare, LocalesT, Options, SubCommand, createIntegerOption } from "seyfert";
+import { Declare, type GuildCommandContext, LocalesT, Options, SubCommand, createIntegerOption } from "seyfert";
 
 const options = {
     volume: createIntegerOption({
@@ -20,15 +20,13 @@ const options = {
 @Options(options)
 @LocalesT("locales.default.subcommands.volume.name", "locales.default.subcommands.volume.description")
 export default class VolumeSubcommand extends SubCommand {
-    async run(ctx: CommandContext<typeof options>): Promise<void> {
-        const { client, options, guildId } = ctx;
+    async run(ctx: GuildCommandContext<typeof options>): Promise<void> {
+        const { client, options } = ctx;
         const { volume } = options;
-
-        if (!guildId) return;
 
         const { messages } = await ctx.getLocale();
 
-        await client.database.setPlayer({ guildId, defaultVolume: volume });
+        await client.database.setPlayer({ guildId: ctx.guildId, defaultVolume: volume });
         await ctx.editOrReply({
             embeds: [
                 {
