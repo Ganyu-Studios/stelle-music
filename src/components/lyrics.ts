@@ -1,3 +1,4 @@
+import type { LyricsLine } from "lavalink-client";
 import { ActionRow, Button, ComponentCommand, type ComponentContext, Embed, Middlewares } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
@@ -35,7 +36,9 @@ export default class LyricsComponent extends ComponentCommand {
                 ],
             });
 
-        player.set("lyrics", lyrics);
+        if (!Array.isArray(lyrics.lines) && lyrics.text) {
+            lyrics.lines = lyrics.text.split(" ").map<LyricsLine>((line) => ({ line, timestamp: 0, duration: 0, plugin: {} }));
+        }
 
         const lines = lyrics.lines
             .slice(0, client.config.lyricsLines)
@@ -52,7 +55,8 @@ export default class LyricsComponent extends ComponentCommand {
             .setDescription(
                 messages.commands.lyrics.embed.description({
                     lines,
-                    provider: lyrics.provider,
+                    author: track.info.author,
+                    provider: lyrics.provider.replace("Source:", "").trim(),
                 }),
             );
 
@@ -65,6 +69,7 @@ export default class LyricsComponent extends ComponentCommand {
         // cuz this returns an exception, idk why
         await player.node.lyrics.subscribe(ctx.guildId).catch(() => null);
 
+        player.set("lyrics", lyrics);
         player.set("lyricsId", message.id);
     }
 }

@@ -4,7 +4,7 @@ import { Lavalink } from "#stelle/classes";
 export default new Lavalink({
     name: "LyricsLine",
     type: "manager",
-    async run(client, player, _, payload): Promise<void> {
+    async run(client, player, track, payload): Promise<void> {
         if (!player.textChannelId) return;
 
         const lyricsId = player.get<string | undefined>("lyricsId");
@@ -38,6 +38,7 @@ export default new Lavalink({
             messages.commands.lyrics.embed.description({
                 lines,
                 provider: lyrics.provider,
+                author: track?.info.author ?? "Unknown",
             }),
         );
 

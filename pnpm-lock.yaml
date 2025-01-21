@@ -25,7 +25,7 @@ importers:
         version: 2.2.3
       seyfert:
         specifier: github:tiramisulabs/seyfert
-        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/c3ba5988046d6d81b3372c8d26ab430f2b72a622
+        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/5935c86079de5c198a126ec5a2553d3f976848f3
       yunaforseyfert:
         specifier: ^1.1.0
         version: 1.1.0
@@ -377,8 +377,8 @@ packages:
     resolution: {integrity: sha512-VaUJspBffn/LMCJVoMvSAdmscJyS1auj5Zulnn5UoYcY531UWmdwhRWkcGKnGU93m5HSXP9LP2usOryrBtQowA==}
     engines: {node: '>=16'}
 
-  get-tsconfig@4.8.1:
-    resolution: {integrity: sha512-k9PN+cFBmaLWtVz29SkUoqU5O0slLuHJXt/2P+tMVFT+phsSGXGkp9t3rQIqdz0e+06EHNGs3oM6ZX1s2zHxRg==}
+  get-tsconfig@4.9.0:
+    resolution: {integrity: sha512-52n24W52sIueosRe0XZ8Ex5Yle+WbhfCKnV/gWXpbVR8FXNTfqdKEKUSypKso66VRHTvvcQxL44UTZbJRlCTnw==}
 
   human-signals@5.0.0:
     resolution: {integrity: sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ==}
@@ -512,8 +512,8 @@ packages:
   rfdc@1.4.1:
     resolution: {integrity: sha512-q1b3N5QkRUWUl7iyylaaj3kOpIT0N2i9MqIEQXP73GVsN9cw3fdx8X63cEmWhJGi2PPCF23Ijp7ktmd39rawIA==}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/c3ba5988046d6d81b3372c8d26ab430f2b72a622:
-    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/c3ba5988046d6d81b3372c8d26ab430f2b72a622}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/5935c86079de5c198a126ec5a2553d3f976848f3:
+    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/5935c86079de5c198a126ec5a2553d3f976848f3}
     version: 2.2.0
 
   shebang-command@2.0.0:
@@ -843,7 +843,7 @@ snapshots:
 
   get-stream@8.0.1: {}
 
-  get-tsconfig@4.8.1:
+  get-tsconfig@4.9.0:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
@@ -979,7 +979,7 @@ snapshots:
 
   rfdc@1.4.1: {}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/c3ba5988046d6d81b3372c8d26ab430f2b72a622: {}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/5935c86079de5c198a126ec5a2553d3f976848f3: {}
 
   shebang-command@2.0.0:
     dependencies:
@@ -1024,7 +1024,7 @@ snapshots:
   tsx@4.19.2:
     dependencies:
       esbuild: 0.23.1
-      get-tsconfig: 4.8.1
+      get-tsconfig: 4.9.0
     optionalDependencies:
       fsevents: 2.3.3
 

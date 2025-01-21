@@ -24,7 +24,8 @@ export default {
                 close: "Close",
                 embed: {
                     title: ({ title }: ILyricsEmbedTitle) => `\`📜\` Lyrics for: ${title}`,
-                    description: ({ provider, lines }: ILyricsEmbedDescription) => `-# Provided by: ${provider}\n\n${lines}`,
+                    description: ({ provider, lines, author }: ILyricsEmbedDescription) =>
+                        `-# Provided by: ${provider}\n-# By: ${author}\n\n${lines}`,
                     footer: ({ userName }: ILyricsEmbedFooter) => `Requested by: ${userName}`,
                 },
             },
@@ -409,7 +410,7 @@ export default {
 };
 
 type ILyricsEmbedFooter = { userName: string };
-type ILyricsEmbedDescription = { lines: string; provider: string };
+type ILyricsEmbedDescription = { lines: string; provider: string; author: string };
 type ILyricsEmbedTitle = { title: string };
 type IBotInfoGeneralField = { guilds: number; users: number; players: number };
 type IBotInfoSystemField = { memory: string; uptime: number; version: string };

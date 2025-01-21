@@ -24,7 +24,7 @@ export default {
                 close: "Cerrar",
                 embed: {
                     title: ({ title }) => `\`📜\` Letrs para: ${title}`,
-                    description: ({ lines, provider }) => `-# Proveído por: ${provider}\n\n${lines}`,
+                    description: ({ lines, provider, author }) => `-# Proveido por: ${provider}\nPor: ${author}\n\n${lines}`,
                     footer: ({ userName }) => `Pedido por: ${userName}`,
                 },
             },
