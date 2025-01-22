@@ -8,6 +8,8 @@ export default new Lavalink({
         if (!player.get<boolean | undefined>("lyricsEnabled")) return;
         if (!player.textChannelId) return;
 
+        if (payload.skipped) return;
+
         const lyricsId = player.get<string | undefined>("lyricsId");
         if (!lyricsId) return;
 
@@ -29,7 +31,6 @@ export default new Lavalink({
         const index = payload.lineIndex;
 
         let start = Math.max(0, index - Math.floor(totalLines / 2));
-
         if (start + totalLines > lyrics.lines.length) start = Math.max(0, lyrics.lines.length - totalLines);
 
         const end = Math.min(lyrics.lines.length, start + totalLines);
