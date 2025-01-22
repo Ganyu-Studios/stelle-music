@@ -1,7 +1,7 @@
-import type { LyricsLine } from "lavalink-client";
 import { ActionRow, Button, ComponentCommand, Embed, type GuildComponentContext, Middlewares } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
+import { EmbedPaginator } from "#stelle/utils/Paginator.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
 export default class LyricsComponent extends ComponentCommand {
@@ -34,8 +34,34 @@ export default class LyricsComponent extends ComponentCommand {
                 ],
             });
 
+        lyrics.provider = lyrics.provider.replace("Source:", "").trim();
+
         if (!Array.isArray(lyrics.lines) && lyrics.text) {
-            lyrics.lines = lyrics.text.split(" ").map<LyricsLine>((line) => ({ line, timestamp: 0, duration: 0, plugin: {} }));
+            const paginator = new EmbedPaginator(ctx);
+
+            for (const line of lyrics.text.split("\n")) {
+                paginator.addEmbed(
+                    new Embed()
+                        .setThumbnail(track.info.artworkUrl ?? undefined)
+                        .setColor(client.config.color.extra)
+                        .setTitle(messages.commands.lyrics.embed.title({ title: track.info.title }))
+                        .setFooter({
+                            iconUrl: ctx.author.avatarURL(),
+                            text: messages.commands.lyrics.embed.footer({ userName: ctx.author.tag }),
+                        })
+                        .setDescription(
+                            messages.commands.lyrics.embed.description({
+                                lines: line,
+                                author: track.info.author,
+                                provider: lyrics.provider,
+                            }),
+                        ),
+                );
+            }
+
+            await paginator.reply();
+
+            return;
         }
 
         const lines = lyrics.lines
@@ -54,7 +80,7 @@ export default class LyricsComponent extends ComponentCommand {
                 messages.commands.lyrics.embed.description({
                     lines,
                     author: track.info.author,
-                    provider: lyrics.provider.replace("Source:", "").trim(),
+                    provider: lyrics.provider,
                 }),
             );
 

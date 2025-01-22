@@ -13,7 +13,7 @@ export const checkBotVoiceChannel = createMiddleware<void>(async ({ context, pas
     const me = await context.me();
     if (!me) return;
 
-    const state = await context.member.voice().catch(() => null);
+    const state = await context.member.voice();
     if (!state) return pass();
 
     const bot = await me.voice().catch(() => null);

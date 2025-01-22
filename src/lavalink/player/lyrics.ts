@@ -25,14 +25,21 @@ export default new Lavalink({
 
         const { messages } = client.t(locale).get(locale);
 
+        const totalLines = client.config.lyricsLines;
         const index = payload.lineIndex;
-        const start = Math.max(0, index - 5);
-        const end = Math.min(lyrics.lines.length, start + client.config.lyricsLines);
+
+        let start = Math.max(0, index - Math.floor(totalLines / 2));
+
+        if (start + totalLines > lyrics.lines.length) start = Math.max(0, lyrics.lines.length - totalLines);
+
+        const end = Math.min(lyrics.lines.length, start + totalLines);
 
         const lines = lyrics.lines
             .slice(start, end)
-            .filter((l) => l.line.length > 0)
-            .map((l, i) => (i + start === index ? `**${l.line}**` : `-# ${l.line}`))
+            .map((l, i) => {
+                if (!l.line.length) return "-# ...";
+                return i + start === index ? `**${l.line}**` : `-# ${l.line}`;
+            })
             .join("\n");
 
         embed.setDescription(

@@ -58,9 +58,11 @@ export default new Lavalink({
 
             if (session.lyricsId && session.lyricsEnabled && player.textChannelId) {
                 await client.messages.delete(session.lyricsId, player.textChannelId).catch(() => null);
+                await player.node.request(`/sessions/${player.node.sessionId}/players/${player.guildId}/unsubscribe`).catch(() => null);
 
                 player.set("lyricsId", undefined);
                 player.set("lyrics", undefined);
+                player.set("lyricsEnabled", false);
             }
         }
     },
