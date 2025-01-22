@@ -16,7 +16,16 @@ export default new Lavalink({
         if (messageId) await client.messages.edit(messageId, player.textChannelId, { components: [] }).catch(() => null);
 
         const lyricsId = player.get<string | undefined>("lyricsId");
-        if (lyricsId) await client.messages.delete(lyricsId, player.textChannelId).catch(() => null);
+        if (lyricsId) {
+            await client.messages.delete(lyricsId, player.textChannelId).catch(() => null);
+
+            if (player.get<boolean>("lyricsEnabled"))
+                await player.node.request(`/sessions/${player.node.sessionId}/players/${player.guildId}/unsubscribe`).catch(() => null);
+
+            player.set("lyricsId", undefined);
+            player.set("lyrics", undefined);
+            player.set("lyricsEnabled", false);
+        }
 
         if (DEBUG_MODE) client.logger.debug(`[Lavalink PlayerDestroy] Destroyed player for guild ${player.guildId}`);
     },
