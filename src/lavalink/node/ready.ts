@@ -1,8 +1,9 @@
 import { Lavalink } from "#stelle/classes";
+import { LavalinkEventTypes } from "#stelle/types";
 
 export default new Lavalink({
     name: "connect",
-    type: "node",
+    type: LavalinkEventTypes.Node,
     async run(client, node): Promise<void> {
         const players = [...client.manager.players.values()].filter((player) => player.node.id === node.id);
         if (client.config.sessions.resumePlayers && players.length && !node.resuming.enabled) {

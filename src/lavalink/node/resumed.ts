@@ -1,9 +1,9 @@
 import { Lavalink } from "#stelle/classes";
-import type { StellePlayerJson } from "#stelle/types";
+import { LavalinkEventTypes, type StellePlayerJson } from "#stelle/types";
 
 export default new Lavalink({
     name: "resumed",
-    type: "node",
+    type: LavalinkEventTypes.Node,
     async run(client, node, _, players): Promise<void> {
         if (!client.config.sessions.enabled) return;
         if (!Array.isArray(players)) return;

@@ -1,9 +1,10 @@
 import { Lavalink } from "#stelle/classes";
 import { DEBUG_MODE } from "#stelle/data/Constants.js";
+import { LavalinkEventTypes } from "#stelle/types";
 
 export default new Lavalink({
     name: "playerDestroy",
-    type: "manager",
+    type: LavalinkEventTypes.Manager,
     async run(client, player): Promise<void> {
         client.sessions.delete(player.guildId);
 

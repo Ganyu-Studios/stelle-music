@@ -3,12 +3,13 @@ import { Lavalink } from "#stelle/classes";
 
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 
+import { LavalinkEventTypes } from "#stelle/types";
 import { TimeFormat } from "#stelle/utils/Time.js";
 import { getAutoplayState, getPauseState } from "#stelle/utils/functions/utils.js";
 
 export default new Lavalink({
     name: "trackStart",
-    type: "manager",
+    type: LavalinkEventTypes.Manager,
     async run(client, player, track): Promise<void> {
         if (!(player.textChannelId && player.voiceChannelId)) return;
         if (!track) return;

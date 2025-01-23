@@ -3,6 +3,8 @@ import type { ClientUser, Command, ContextMenuCommand, SubCommand } from "seyfer
 import type { ButtonComponent, LinkButtonComponent, SKUButtonComponent } from "seyfert/lib/components/ButtonComponent.js";
 import type { ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
+export { LavalinkEventTypes } from "./client/StelleLavalink.js";
+
 export type { StelleConfiguration, StelleEnvironment } from "./client/StelleConfiguration.js";
 export type { AllLavalinkEvents, LavalinkEvent, LavalinkEventRun, LavalinkEventType } from "./client/StelleLavalink.js";
 

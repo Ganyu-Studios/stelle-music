@@ -1,8 +1,9 @@
 import { Lavalink } from "#stelle/classes";
+import { LavalinkEventTypes } from "#stelle/types";
 
 export default new Lavalink({
     name: "trackEnd",
-    type: "manager",
+    type: LavalinkEventTypes.Manager,
     async run(client, player): Promise<void> {
         if (!player.textChannelId) return;
 

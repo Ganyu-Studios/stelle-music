@@ -1,12 +1,12 @@
 import type { ClientUser } from "seyfert";
 import { Lavalink } from "#stelle/classes";
-import type { StellePlayerJson } from "#stelle/types";
+import { LavalinkEventTypes, type StellePlayerJson } from "#stelle/types";
 
 import { DEBUG_MODE } from "#stelle/data/Constants.js";
 
 export default new Lavalink({
     name: "playerUpdate",
-    type: "manager",
+    type: LavalinkEventTypes.Manager,
     run(client, oldPlayer, newPlayer): void {
         if (!client.config.sessions.enabled) return;
 

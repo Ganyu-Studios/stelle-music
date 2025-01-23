@@ -1,9 +1,10 @@
 import type { LyricsResult } from "lavalink-client";
 import { Lavalink } from "#stelle/classes";
+import { LavalinkEventTypes } from "#stelle/types";
 
 export default new Lavalink({
     name: "LyricsLine",
-    type: "manager",
+    type: LavalinkEventTypes.Manager,
     async run(client, player, track, payload): Promise<void> {
         if (!player.get<boolean | undefined>("lyricsEnabled")) return;
         if (!player.textChannelId) return;

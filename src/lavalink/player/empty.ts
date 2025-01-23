@@ -1,9 +1,10 @@
 import { Embed } from "seyfert";
 import { Lavalink } from "#stelle/classes";
+import { LavalinkEventTypes } from "#stelle/types";
 
 export default new Lavalink({
     name: "queueEnd",
-    type: "manager",
+    type: LavalinkEventTypes.Manager,
     async run(client, player): Promise<void> {
         if (!(player.textChannelId && player.voiceChannelId)) return;
 
