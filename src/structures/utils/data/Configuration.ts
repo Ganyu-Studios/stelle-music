@@ -39,17 +39,15 @@ export const Configuration: StelleConfiguration = {
         "1213361742571241492", // <-- Team Genesis
         "1003825077969764412", // <-- Seyfert
     ],
-    nodes: StelleSessions.resolve([
-        {
-            id: "SN #1", // <--- AKA Stelle Node
-            host: "localhost",
-            port: 2333,
-            authorization: "ganyuontopuwu",
-            secure: false,
-            retryAmount: 10,
-            retryDelay: ms("10s"),
-        },
-    ]),
+    nodes: StelleSessions.resolve({
+        id: "SN #1", // <--- AKA Stelle Node
+        host: "localhost",
+        port: 2333,
+        authorization: "ganyuontopuwu",
+        secure: false,
+        retryAmount: 10,
+        retryDelay: ms("10s"),
+    }),
     color: {
         success: 0x8d86a8,
         extra: 0xece8f1,

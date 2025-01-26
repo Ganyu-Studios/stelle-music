@@ -1,4 +1,5 @@
 import type { LavalinkNodeOptions } from "lavalink-client";
+import type { RestOrArray } from "seyfert/lib/common/index.js";
 import { InvalidSession } from "#stelle/errors";
 import type { StellePlayerJson } from "#stelle/types";
 
@@ -66,11 +67,11 @@ export class StelleSessions {
      * @param nodes The array of nodes to resolve.
      * @returns
      */
-    public static resolve(nodes: NonResumableOptions[]): LavalinkNodeOptions[] {
+    public static resolve(...nodes: RestOrArray<NonResumableOptions>): LavalinkNodeOptions[] {
         if (nodes.some((node) => "sessionId" in node && typeof node.sessionId === "string"))
             throw new InvalidSession("The 'sessionId' property is not allowed in the node options.");
 
-        return nodes.map((node) => ({
+        return nodes.flat().map((node) => ({
             ...node,
             sessionId: StelleSessions.nodes.get(node.id ?? `${node.host}:${node.port}`),
         }));

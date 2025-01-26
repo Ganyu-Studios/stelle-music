@@ -147,7 +147,7 @@ export const getPauseState = (boolean: boolean): PausedMode => (boolean ? "resum
  * @param error The error.
  * @returns
  */
-export const getDepth = (error: any, depth: number = 0): string => inspect(error, { depth });
+export const getInspect = (error: any, depth: number = 0): string => inspect(error, { depth });
 
 /**
  *

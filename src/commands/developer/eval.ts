@@ -1,8 +1,18 @@
-import { Command, Declare, Embed, type GuildCommandContext, type Message, Options, type WebhookMessage, createStringOption } from "seyfert";
+import {
+    Command,
+    Declare,
+    Embed,
+    type GuildCommandContext,
+    type Message,
+    Options,
+    type WebhookMessage,
+    createNumberOption,
+    createStringOption,
+} from "seyfert";
 import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
 import { StelleOptions } from "#stelle/decorators";
 
-import { getDepth, sliceText } from "#stelle/utils/functions/utils.js";
+import { getInspect, sliceText } from "#stelle/utils/functions/utils.js";
 
 import { DeclareParserConfig, ParserRecommendedConfig, Watch, Yuna } from "yunaforseyfert";
 import { Environment } from "#stelle/data/Configuration.js";
@@ -22,6 +32,10 @@ const options = {
     code: createStringOption({
         description: "Enter some code.",
         required: true,
+    }),
+    depth: createNumberOption({
+        description: "Enter the depth of the result code.",
+        required: false,
     }),
 };
 
@@ -60,7 +74,7 @@ export default class EvalCommand extends Command {
     public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
         const { client, options, author, channelId } = ctx;
 
-        const start = Date.now();
+        const now = Date.now();
 
         let code: string = options.code;
         let output: string | null = null;
@@ -86,7 +100,7 @@ export default class EvalCommand extends Command {
 
                 output = await eval(code);
                 typecode = typeof output;
-                output = getDepth(output);
+                output = getInspect(output, options.depth ?? 0);
 
                 // 100% security
                 if (envRegex.test(output)) output = output.replaceAll(envRegex, "🌟");
@@ -108,7 +122,7 @@ export default class EvalCommand extends Command {
                             },
                             {
                                 name: "`⏳` Evaluated",
-                                value: `\`${Math.floor(Date.now() - start)}ms\``,
+                                value: `\`${Math.floor(Date.now() - now)}ms\``,
                                 inline: true,
                             },
                             { name: "`📥` Input", value: `${Formatter.codeBlock(sliceText(options.code, 1024), "js")}` },
@@ -131,7 +145,7 @@ export default class EvalCommand extends Command {
                             },
                             {
                                 name: "`⏳` Evaluated",
-                                value: `\`${Math.floor(Date.now() - start)}ms\``,
+                                value: `\`${Math.floor(Date.now() - now)}ms\``,
                                 inline: true,
                             },
                             {
