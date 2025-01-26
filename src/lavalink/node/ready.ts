@@ -9,14 +9,15 @@ export default new Lavalink({
         if (client.config.sessions.resumePlayers && players.length && !node.resuming.enabled) {
             for (const player of players) {
                 try {
-                    await player.queue.utils.sync(true, true);
                     await player.play({
-                        track: player.queue.current ?? undefined,
+                        track: { encoded: player.queue.current?.encoded },
                         paused: player.paused,
                         volume: player.volume,
                         position: player.position,
                         voice: player.voice,
                     });
+
+                    await player.queue.utils.sync(false, true);
                 } catch (error) {
                     client.logger.error(`Music - Error resuming the player: ${player.guildId}`, error);
                 }

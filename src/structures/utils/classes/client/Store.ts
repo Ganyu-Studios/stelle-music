@@ -1,4 +1,5 @@
 import type { QueueStoreManager, StoredQueue } from "lavalink-client";
+import { DEV_MODE } from "#stelle/data/Constants.js";
 import type { RedisClient } from "./Redis.js";
 
 /**
@@ -7,7 +8,7 @@ import type { RedisClient } from "./Redis.js";
  * @param guildId The guild id.
  * @returns
  */
-const buildKey = (guildId: string) => `stellequeue:${guildId}`;
+const buildKey = (guildId: string) => (DEV_MODE ? `queue:${guildId}` : `stelle:queue:${guildId}`);
 
 export class RedisQueueStore implements QueueStoreManager {
     /**

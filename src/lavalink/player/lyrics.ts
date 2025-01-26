@@ -14,11 +14,22 @@ export default new Lavalink({
         const lyricsId = player.get<string | undefined>("lyricsId");
         if (!lyricsId) return;
 
-        const lyrics = player.get<LyricsResult | undefined>("lyrics");
-        if (!lyrics) return;
-
         const message = await client.messages.fetch(lyricsId, player.textChannelId).catch(() => null);
         if (!message) return;
+
+        const lyrics = player.get<LyricsResult | undefined>("lyrics");
+        if (!lyrics) {
+            await message.delete().catch(() => null);
+
+            if (player.get<boolean | undefined>("lyricsEnabled"))
+                await player.node.request(`/sessions/${player.node.sessionId}/players/${player.guildId}/unsubscribe`).catch(() => null);
+
+            player.set("lyricsId", undefined);
+            player.set("lyrics", undefined);
+            player.set("lyricsEnabled", true);
+
+            return;
+        }
 
         const embed = message.embeds.at(0)?.toBuilder();
         if (!embed) return;

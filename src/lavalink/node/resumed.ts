@@ -35,6 +35,7 @@ export default new Lavalink({
             player.set("me", session.me);
             player.set("localeString", session.localeString);
             player.set("lyricsEnabled", session.lyricsEnabled);
+            player.set("lyricsId", session.lyricsId);
 
             player.voice = data.voice;
 
@@ -55,15 +56,6 @@ export default new Lavalink({
             });
 
             player.ping.lavalink = data.state.ping;
-
-            if (session.lyricsId && session.lyricsEnabled && player.textChannelId) {
-                await client.messages.delete(session.lyricsId, player.textChannelId).catch(() => null);
-                await player.node.request(`/sessions/${player.node.sessionId}/players/${player.guildId}/unsubscribe`).catch(() => null);
-
-                player.set("lyricsId", undefined);
-                player.set("lyrics", undefined);
-                player.set("lyricsEnabled", false);
-            }
         }
     },
 });

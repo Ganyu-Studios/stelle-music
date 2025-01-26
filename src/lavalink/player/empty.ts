@@ -15,12 +15,12 @@ export default new Lavalink({
         if (lyricsId) {
             await client.messages.delete(lyricsId, player.textChannelId).catch(() => null);
 
-            if (player.get<boolean>("lyricsEnabled"))
+            if (player.get<boolean | undefined>("lyricsEnabled"))
                 await player.node.request(`/sessions/${player.node.sessionId}/players/${player.guildId}/unsubscribe`).catch(() => null);
 
             player.set("lyricsId", undefined);
             player.set("lyrics", undefined);
-            player.set("lyricsEnabled", false);
+            player.set("lyricsEnabled", undefined);
         }
 
         const locale = player.get<string | undefined>("localeString");
@@ -36,5 +36,7 @@ export default new Lavalink({
         const embed = new Embed().setDescription(messages.events.playerEnd).setColor(client.config.color.success).setTimestamp();
 
         await client.messages.write(player.textChannelId, { embeds: [embed] }).catch(() => null);
+
+        player.set("messageId", undefined);
     },
 });

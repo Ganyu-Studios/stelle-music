@@ -1,4 +1,4 @@
-import { Client, LimitedCollection } from "seyfert";
+import { Client, LimitedCollection, LimitedMemoryAdapter } from "seyfert";
 import { ActivityType, ApplicationCommandType, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
 
 import type { NonGlobalCommands, StelleConfiguration } from "#stelle/types";
@@ -19,6 +19,7 @@ import { Yuna } from "yunaforseyfert";
 
 import { StelleSessions } from "#stelle/classes";
 import { DEBUG_MODE, THINK_MESSAGES } from "#stelle/data/Constants.js";
+import { ms } from "#stelle/utils/Time.js";
 
 /**
  * Main Stelle class.
@@ -130,13 +131,17 @@ export class Stelle extends Client<true> {
         this.setServices({
             middlewares: StelleMiddlewares,
             cache: {
+                adapter: new LimitedMemoryAdapter({
+                    message: {
+                        expire: ms("5mins"),
+                    },
+                }),
                 disabledCache: {
                     bans: true,
                     emojis: true,
                     stickers: true,
                     roles: true,
                     presences: true,
-                    messages: true,
                     stageInstances: true,
                 },
             },
