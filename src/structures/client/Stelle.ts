@@ -18,8 +18,9 @@ import { HandleCommand } from "seyfert/lib/commands/handle.js";
 import { Yuna } from "yunaforseyfert";
 
 import { StelleSessions } from "#stelle/classes";
-import { DEBUG_MODE, THINK_MESSAGES } from "#stelle/data/Constants.js";
 import { ms } from "#stelle/utils/Time.js";
+
+import { DEBUG_MODE, THINK_MESSAGES } from "#stelle/data/Constants.js";
 
 /**
  * Main Stelle class.
