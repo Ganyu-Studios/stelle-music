@@ -127,14 +127,13 @@ export class Stelle extends Client<true> {
             return command;
         };
 
-        this.events.onFail = (_, error) => sendErrorReport({ error });
-
         this.setServices({
             middlewares: StelleMiddlewares,
             cache: {
                 adapter: new LimitedMemoryAdapter({
                     message: {
                         expire: ms("5mins"),
+                        limit: 10,
                     },
                 }),
                 disabledCache: {
@@ -166,6 +165,10 @@ export class Stelle extends Client<true> {
                 },
             },
         });
+
+        if (this.cache.messages) this.cache.messages.filter = (message) => message.author.id === this.botId;
+
+        this.events.onFail = (_, error) => sendErrorReport({ error });
 
         await this.start();
         await this.manager.load();
