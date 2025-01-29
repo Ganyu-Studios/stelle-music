@@ -3,6 +3,7 @@ import type { UsingClient } from "seyfert";
 
 import { LavalinkHandler, RedisClient, RedisQueueStore } from "#stelle/classes";
 import { autoPlayFunction } from "#stelle/utils/functions/autoplay.js";
+import { requesterTransformer } from "#stelle/utils/functions/utils.js";
 
 import { DEBUG_MODE } from "#stelle/data/Constants.js";
 
@@ -40,6 +41,7 @@ export class StelleManager extends LavalinkManager {
                 },
             },
             playerOptions: {
+                requesterTransformer,
                 defaultSearchPlatform: "spsearch",
                 onDisconnect: {
                     destroyPlayer: true,

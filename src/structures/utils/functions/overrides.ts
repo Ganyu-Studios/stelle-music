@@ -4,7 +4,7 @@ import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
 import { sendErrorReport } from "./errors.js";
-import { formatOptions } from "./formatter.js";
+import { formatOptions } from "./options.js";
 
 /**
  *
@@ -127,7 +127,9 @@ export async function onOptionsError(ctx: AnyContext) {
         .setDescription(
             messages.events.invalidOptions({
                 options: Formatter.codeBlock(options.map(({ option }) => option).join(" "), "js"),
-                list: options.map(({ option, description, range }) => `* \`${option}\` \`[${range || "N/A"}]\`: ${description}`).join("\n"),
+                list: options
+                    .map(({ option, description, range }) => `* \`${option}\` ${range ? `\`[${range}]\`` : ""}: ${description}`.trim())
+                    .join("\n"),
             }),
         )
         .setTimestamp();

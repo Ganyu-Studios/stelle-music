@@ -10,6 +10,9 @@ import type { RedisClient } from "./Redis.js";
  */
 const buildKey = (guildId: string) => (DEV_MODE ? `queue:${guildId}` : `stelle:queue:${guildId}`);
 
+/**
+ * Main Stelle redis queue store class.
+ */
 export class RedisQueueStore implements QueueStoreManager {
     /**
      * The Redis instance.

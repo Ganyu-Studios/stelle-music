@@ -18,7 +18,7 @@ import type { APIApplicationCommandOption, ApplicationCommandOptionType, LocaleS
 import { MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { EmbedPaginator, StelleStringMenu } from "#stelle/utils/Paginator.js";
-import { formatOptions } from "#stelle/utils/functions/formatter.js";
+import { formatOptions } from "#stelle/utils/functions/options.js";
 
 const options = {
     command: createStringOption({

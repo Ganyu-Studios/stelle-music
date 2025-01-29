@@ -1,7 +1,7 @@
 import type { PlayerJson } from "lavalink-client";
 import type { ClientUser, Command, ContextMenuCommand, SubCommand } from "seyfert";
 import type { ButtonComponent, LinkButtonComponent, SKUButtonComponent } from "seyfert/lib/components/ButtonComponent.js";
-import type { ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
+import type { APIUser, ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
 export { LavalinkEventTypes } from "./client/StelleLavalink.js";
 
@@ -15,8 +15,9 @@ export type NonCommandOptions = Omit<Options, "category">;
 export type NonGlobalCommands = Command | ContextMenuCommand | SubCommand;
 export type ButtonStyleWithoutLink = Exclude<ButtonStyle, ButtonStyle.Link | ButtonStyle.Premium>;
 export type ButtonComponents = ButtonComponent | LinkButtonComponent | SKUButtonComponent;
+export type ClientUserWithoutClient = Omit<ClientUser, "client">;
 
-export type EditRowsOptions = {
+export type EditButtonsOptions = {
     customId: string;
     style?: ButtonStyleWithoutLink;
     label?: string;
@@ -28,11 +29,16 @@ export type StellePlayerJson = Omit<
 > & {
     messageId?: string;
     enabledAutoplay?: boolean;
-    me?: ClientUser;
+    me?: ClientUserWithoutClient;
     localeString?: string;
     lyricsId?: string;
     lyricsEnabled?: boolean;
 };
+
+export type StelleUser = APIUser & {
+    tag: string;
+};
+
 export interface Options {
     /**
      *

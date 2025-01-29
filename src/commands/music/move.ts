@@ -6,7 +6,7 @@ import { ChannelType } from "seyfert/lib/types/index.js";
 
 const options = {
     voice: createChannelOption({
-        description: "Select the channel.",
+        description: "Select the voice channel.",
         channel_types: [ChannelType.GuildVoice],
         required: true,
         locales: {
@@ -15,7 +15,7 @@ const options = {
         },
     }),
     text: createChannelOption({
-        description: "Select the channel.",
+        description: "Select the text channel.",
         channel_types: [ChannelType.GuildText],
         locales: {
             name: "locales.move.options.text.name",
@@ -34,9 +34,9 @@ const options = {
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })
 @Options(options)
 @LocalesT("locales.move.name", "locales.move.description")
-@Middlewares(["checkNodes", "checkVoiceChannel", "checkPlayer"])
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class MoveCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>) {
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<void> {
         const { client, options } = ctx;
         const { voice, text } = options;
 
@@ -53,8 +53,6 @@ export default class MoveCommand extends Command {
         player.options.voiceChannelId = voice.id;
         player.voiceChannelId = voice.id;
 
-        const channel = await ctx.channel();
-
         await player.connect();
         await ctx.editOrReply({
             embeds: [
@@ -62,7 +60,7 @@ export default class MoveCommand extends Command {
                     color: client.config.color.success,
                     description: messages.commands.move({
                         voiceId: voice.id,
-                        textId: text?.id ?? channel?.id ?? "1143606303850483280",
+                        textId: text?.id ?? ctx.channelId,
                     }),
                 },
             ],

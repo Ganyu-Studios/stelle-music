@@ -1,10 +1,19 @@
 import { inspect } from "node:util";
 import type { Player, RepeatMode } from "lavalink-client";
 
-import { ActionRow, type ActionRowMessageComponents, type AnyContext, type Button, type DefaultLocale, extendContext } from "seyfert";
+import {
+    ActionRow,
+    type ActionRowMessageComponents,
+    type AnyContext,
+    type Button,
+    type ClientUser,
+    type DefaultLocale,
+    type User,
+    extendContext,
+} from "seyfert";
 import type { MessageActionRowComponent } from "seyfert/lib/components/ActionRow.js";
 import { ButtonStyle, ComponentType } from "seyfert/lib/types/index.js";
-import type { AutoplayMode, EditRowsOptions, PausedMode } from "#stelle/types";
+import type { AutoplayMode, EditButtonsOptions, PausedMode, StelleUser } from "#stelle/types";
 
 /**
  * Stelle custom context.
@@ -106,7 +115,10 @@ export const parseWebhook = (url: string) => {
  * @param options The options to edit the rows.
  * @returns
  */
-export const editButtons = (rows: MessageActionRowComponent<ActionRowMessageComponents>[], options: EditRowsOptions): ActionRow<Button>[] =>
+export const editButtons = (
+    rows: MessageActionRowComponent<ActionRowMessageComponents>[],
+    options: EditButtonsOptions,
+): ActionRow<Button>[] =>
     rows.map((builder) => {
         const row = builder.toJSON();
         return new ActionRow<Button>({
@@ -124,6 +136,33 @@ export const editButtons = (rows: MessageActionRowComponent<ActionRowMessageComp
             }),
         });
     });
+
+/**
+ *
+ * Transform the requester user into a simple object.
+ * @param requester The requester user.
+ * @returns
+ */
+export const requesterTransformer = (requester: unknown): StelleUser => {
+    const requesterUser = requester as User | ClientUser;
+    const user = omitKeys(requesterUser, ["client"]);
+
+    return {
+        ...user,
+        global_name: requesterUser.username,
+        tag: requesterUser.bot ? requesterUser.username : requesterUser.tag,
+    };
+};
+
+/**
+ *
+ * Omit keys from an object.
+ * @param obj The object to omit keys.
+ * @param keys The keys to omit.
+ * @returns
+ */
+export const omitKeys = <T extends Record<string, any>, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> =>
+    Object.fromEntries(Object.entries(obj).filter(([key]) => !keys.includes(key as K))) as Omit<T, K>;
 
 /**
  *

@@ -1,12 +1,13 @@
-import { Lavalink } from "#stelle/classes";
-import { DEBUG_MODE } from "#stelle/data/Constants.js";
+import { Lavalink, Sessions } from "#stelle/classes";
 import { LavalinkEventTypes } from "#stelle/types";
+
+import { DEBUG_MODE } from "#stelle/data/Constants.js";
 
 export default new Lavalink({
     name: "playerDestroy",
     type: LavalinkEventTypes.Manager,
     async run(client, player): Promise<void> {
-        client.sessions.delete(player.guildId);
+        Sessions.delete(player.guildId);
 
         const voice = await client.channels.fetch(player.voiceChannelId ?? player.options.voiceChannelId);
         if (voice.is(["GuildVoice"])) await voice.setVoiceStatus(null).catch(() => null);

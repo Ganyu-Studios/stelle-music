@@ -39,12 +39,12 @@ export default {
                         info: {
                             name: "`📋` Info",
                             value: ({ guilds, users, players }: IBotInfoGeneralField) =>
-                                `\`📦\` **Guilds**: \`${guilds}\`\n\`👤\` **Users**: \`${users}\`\n\`🎤\` **Players**: \`${players}\``,
+                                `\`📦\` Guilds: \`${guilds}\`\n\`👤\` Users: \`${users}\`\n\`🎤\` Players: \`${players}\``,
                         },
                         system: {
                             name: "`📋` System",
                             value: ({ memory, uptime, version }: IBotInfoSystemField) =>
-                                `\`🧠\` **Memory**: \`${memory}\`\n\`📜\` **Version**: \`v${version}\`\n\`🕛\` **Uptime**: <t:${uptime}:R>`,
+                                `\`🧠\` Memory: \`${memory}\`\n\`📜\` Version: \`v${version}\`\n\`🕛\` Uptime: <t:${uptime}:R>`,
                         },
                     },
                 },
@@ -58,7 +58,7 @@ export default {
                     description: ({ category }: IHelpMenu) => `Select the ${category} category.`,
                     placeholder: "Select a command category.",
                     options: {
-                        description: ({ options }: Pick<IHelp, "options">) => `-# **Optional []**\n-# **Required <>**\n\n${options}`,
+                        description: ({ options }: Pick<IHelp, "options">) => `-# * **Optional []**\n-# * **Required <>**\n\n${options}`,
                         title: ({ clientName, category }: IHelpMenuEmbed) => `${clientName} - Help Menu | ${category}`,
                     },
                 },
@@ -320,11 +320,11 @@ export default {
             options: {
                 voice: {
                     name: "voice",
-                    description: "Select the channel.",
+                    description: "Select the voice channel.",
                 },
                 text: {
                     name: "text",
-                    description: "Select the channel.",
+                    description: "Select the text channel.",
                 },
             },
         },

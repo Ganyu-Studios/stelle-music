@@ -3,7 +3,7 @@ import { type APIApplicationCommandOption, ApplicationCommandOptionType } from "
 type FormattedOption = {
     option: string;
     description: string;
-    range: string;
+    range?: string;
 };
 
 /**
@@ -36,13 +36,15 @@ export function formatOptions(
                 return formatOptions(option.options, types);
             }
 
-            default: {
-                result.push({
-                    option: `--${option.name} ${isRequired(types[option.type], option.required)}`,
-                    description: option.description,
-                    range: `${getRange(option)}`,
-                });
-            }
+            default:
+                {
+                    result.push({
+                        option: `--${option.name} ${isRequired(types[option.type], option.required)}`,
+                        description: option.description,
+                        range: getRange(option),
+                    });
+                }
+                break;
         }
     }
 

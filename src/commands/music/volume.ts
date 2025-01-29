@@ -6,7 +6,7 @@ const options = {
     volume: createIntegerOption({
         description: "Enter the volume.",
         required: true,
-        min_value: 0,
+        min_value: 1,
         max_value: 100,
         locales: {
             name: "locales.volume.option.name",

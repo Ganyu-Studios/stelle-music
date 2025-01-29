@@ -1,5 +1,5 @@
 import type { Player, Track, UnresolvedTrack } from "lavalink-client";
-import type { ClientUser } from "seyfert";
+import type { ClientUserWithoutClient } from "#stelle/types";
 
 type ResolvableTrack = UnresolvedTrack | Track;
 
@@ -46,7 +46,7 @@ export async function autoPlayFunction(player: Player, lastTrack?: Track): Promi
         await player.queue.utils.save();
     }
 
-    const me = player.get<ClientUser | undefined>("me");
+    const me = player.get<ClientUserWithoutClient | undefined>("me");
     if (!me) return;
 
     switch (lastTrack.info.sourceName) {

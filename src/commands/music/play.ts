@@ -18,7 +18,7 @@ import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
 import { TimeFormat } from "#stelle/utils/Time.js";
-import { sliceText } from "#stelle/utils/functions/utils.js";
+import { omitKeys, sliceText } from "#stelle/utils/functions/utils.js";
 
 import { onAutocompleteError } from "#stelle/utils/functions/overrides.js";
 
@@ -91,11 +91,11 @@ export default class PlayCommand extends Command {
         const me = await ctx.me();
         if (!me) return;
 
-        const voice = await (await member.voice().catch(() => null))?.channel();
-        if (!voice) return;
+        const state = await member.voice().catch(() => null);
+        if (!state) return;
 
-        let bot = await me.voice().catch(() => null);
-        if (bot && bot.channelId !== voice.id) return;
+        const voice = await state.channel();
+        if (!voice) return;
 
         const { messages } = await ctx.getLocale();
         const { defaultVolume, searchEngine } = await client.database.getPlayer(ctx.guildId);
@@ -110,27 +110,17 @@ export default class PlayCommand extends Command {
             selfDeaf: true,
         });
 
-        const { client: _c1, ...clientUser } = client.me;
-        const { client: _c2, ...trackRequester } = ctx.author;
-
         if (!player.connected) await player.connect();
 
-        const { loadType, playlist, tracks } = await player.search(
-            { query, source: searchEngine },
-            {
-                ...trackRequester,
-                tag: ctx.author.tag,
-            },
-        );
+        const bot = await me.voice();
+        if (bot && bot.channelId !== voice.id) return;
+
+        const { loadType, playlist, tracks } = await player.search({ query, source: searchEngine }, ctx.author);
 
         player.set("localeString", await ctx.getLocaleString());
-        player.set("me", {
-            ...clientUser,
-            tag: client.me.username,
-        });
+        player.set("me", omitKeys(client.me, ["client"]));
 
-        if (!bot) bot = await me.voice().catch(() => null);
-        if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);
+        if (voice.isStage() && bot.suppress) await bot.setSuppress(false);
 
         switch (loadType) {
             case "empty":

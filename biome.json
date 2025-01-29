@@ -29,6 +29,7 @@
 			"complexity": {
 				"noBannedTypes": "off",
 				"noForEach": "off",
+				"noStaticOnlyClass": "off",
 				"noExcessiveCognitiveComplexity": {
 					"level": "warn",
 					"options": {

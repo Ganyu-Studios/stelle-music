@@ -3,6 +3,9 @@ import { Redis } from "ioredis";
 import type { UsingClient } from "seyfert";
 import { Environment } from "#stelle/data/Configuration.js";
 
+/**
+ * Main Stelle Redis client class.
+ */
 export class RedisClient {
     /**
      * The Redis instance.

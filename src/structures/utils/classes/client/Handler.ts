@@ -5,7 +5,7 @@ import type { UsingClient } from "seyfert";
 import type { AllLavalinkEvents } from "#stelle/types";
 
 /**
- * Main Stelle music handler.
+ * Main Stelle lavalink handler.
  */
 export class LavalinkHandler extends BaseHandler {
     /**

@@ -17,6 +17,7 @@ export default class BotSubcommand extends SubCommand {
 
         const embed = new Embed()
             .setColor(client.config.color.success)
+            .setImage(client.me.bannerURL({ size: 4096 }))
             .setDescription(
                 messages.commands.info.bot.description({
                     clientName: client.me.username,

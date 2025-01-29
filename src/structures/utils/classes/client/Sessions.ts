@@ -11,9 +11,9 @@ import MeowDB from "meowdb";
 type NonResumableOptions = Omit<LavalinkNodeOptions, "sessionId">;
 
 /**
- * Stelle Lavalink sessions main class.
+ * Main Stelle Lavalink sessions main class.
  */
-export class StelleSessions {
+export class Sessions {
     /**
      * The storage instance.
      */
@@ -26,7 +26,7 @@ export class StelleSessions {
      * The nodes map.
      */
     static readonly nodes: Map<string, string> = new Map(
-        Object.entries<StellePlayerJson>(StelleSessions.storage.all()).map(([_, session]) => [session.nodeId!, session.nodeSessionId!]),
+        Object.values<StellePlayerJson>(Sessions.storage.all()).map((session) => [session.nodeId!, session.nodeSessionId!]),
     );
 
     /**
@@ -36,9 +36,8 @@ export class StelleSessions {
      * @param object The session id.
      * @returns The current instance.
      */
-    public set<T>(guildId: string, object: T): this {
-        StelleSessions.storage.set<T>(guildId, object);
-        return this;
+    public static set<T>(guildId: string, object: T): T {
+        return Sessions.storage.set<T>(guildId, object);
     }
 
     /**
@@ -47,8 +46,8 @@ export class StelleSessions {
      * @param guildId The node id.
      * @returns The session id.
      */
-    public get<T>(guildId: string): T | undefined {
-        return StelleSessions.storage.get<T>(guildId);
+    public static get<T>(guildId: string): T | undefined {
+        return Sessions.storage.get<T>(guildId);
     }
 
     /**
@@ -57,8 +56,18 @@ export class StelleSessions {
      * @param guildId The node id.
      * @returns If the session was deleted.
      */
-    public delete(guildId: string): boolean {
-        return StelleSessions.storage.exists(guildId) && StelleSessions.storage.delete(guildId);
+    public static delete(guildId: string): boolean {
+        return Sessions.storage.exists(guildId) && Sessions.storage.delete(guildId);
+    }
+
+    /**
+     *
+     * Get a node session using the node id.
+     * @param id The id of the node.
+     * @returns
+     */
+    public static getNode(id: string): string | undefined {
+        return Sessions.nodes.get(id);
     }
 
     /**
@@ -73,7 +82,7 @@ export class StelleSessions {
 
         return nodes.flat().map((node) => ({
             ...node,
-            sessionId: StelleSessions.nodes.get(node.id ?? `${node.host}:${node.port}`),
+            sessionId: Sessions.getNode(node.id ?? `${node.host}:${node.port}`),
         }));
     }
 }

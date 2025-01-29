@@ -150,5 +150,10 @@ export const TimeFormat = {
      * @example "1h => 3600000"
      */
     toMs: formatToMs,
+    /**
+     * Convert milliseconds to a string and string to milliseconds.
+     * @example "3600000 => 1h"
+     * @example "1h => 3600000"
+     */
     ms,
 };

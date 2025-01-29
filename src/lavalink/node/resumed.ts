@@ -1,4 +1,4 @@
-import { Lavalink } from "#stelle/classes";
+import { Lavalink, Sessions } from "#stelle/classes";
 import { LavalinkEventTypes, type StellePlayerJson } from "#stelle/types";
 
 export default new Lavalink({
@@ -9,11 +9,11 @@ export default new Lavalink({
         if (!Array.isArray(players)) return;
 
         for (const data of players) {
-            const session = client.sessions.get<StellePlayerJson>(data.guildId);
+            const session = Sessions.get<StellePlayerJson>(data.guildId);
             if (!session) continue;
 
             if (!data.state.connected) {
-                client.sessions.delete(data.guildId);
+                Sessions.delete(data.guildId);
                 continue;
             }
 

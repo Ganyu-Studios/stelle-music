@@ -38,12 +38,12 @@ export default {
                         info: {
                             name: "`📋` Info",
                             value: ({ guilds, users, players }) =>
-                                `\`📦\` **Servidores**: \`${guilds}\`\n\`👤\` **Usuarios**: \`${users}\`\n\`🎤\` **Reproductores**: \`${players}\``,
+                                `\`📦\` Servidores: \`${guilds}\`\n\`👤\` Usuarios: \`${users}\`\n\`🎤\` Reproductores: \`${players}\``,
                         },
                         system: {
                             name: "`📋` Sistema",
                             value: ({ memory, uptime, version }) =>
-                                `\`🧠\` **Memoria**: \`${memory}\`\n\`📜\` **Version**: \`v${version}\`\n\`🕛\` **Tiempo de Encendido**: <t:${uptime}:R>`,
+                                `\`🧠\` Memoria: \`${memory}\`\n\`📜\` Version: \`v${version}\`\n\`🕛\` Tiempo de Encendido: <t:${uptime}:R>`,
                         },
                     },
                 },
@@ -57,7 +57,7 @@ export default {
                     description: ({ category }) => `Selecciona la categoría ${category}.`,
                     placeholder: "Selecciona una categoría de comando.",
                     options: {
-                        description: ({ options }) => `-# **Opcional []**\n-# **Requerido <>**\n\n${options}`,
+                        description: ({ options }) => `-# * **Opcional []**\n-# * **Requerido <>**\n\n${options}`,
                         title: ({ clientName, category }) => `${clientName} - Menú de Ayuda | ${category}`,
                     },
                 },
@@ -319,11 +319,11 @@ export default {
             options: {
                 voice: {
                     name: "voz",
-                    description: "Selecciona el canal.",
+                    description: "Selecciona el canal de voz.",
                 },
                 text: {
                     name: "texto",
-                    description: "Selecciona el canal",
+                    description: "Selecciona el canal de texto.",
                 },
             },
         },
