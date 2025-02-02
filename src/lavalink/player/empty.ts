@@ -15,8 +15,7 @@ export default new Lavalink({
         if (lyricsId) {
             await client.messages.delete(lyricsId, player.textChannelId).catch(() => null);
 
-            if (player.get<boolean | undefined>("lyricsEnabled"))
-                await player.node.request(`/sessions/${player.node.sessionId}/players/${player.guildId}/unsubscribe`).catch(() => null);
+            if (player.get<boolean | undefined>("lyricsEnabled")) await player.node.lyrics.unsubscribe(player.guildId).catch(() => null);
 
             player.set("lyricsId", undefined);
             player.set("lyrics", undefined);

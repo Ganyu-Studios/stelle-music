@@ -112,7 +112,7 @@ export default class PlayCommand extends Command {
 
         if (!player.connected) await player.connect();
 
-        const bot = await me.voice();
+        let bot = await me.voice().catch(() => null);
         if (bot && bot.channelId !== voice.id) return;
 
         const { loadType, playlist, tracks } = await player.search({ query, source: searchEngine }, ctx.author);
@@ -120,7 +120,8 @@ export default class PlayCommand extends Command {
         player.set("localeString", await ctx.getLocaleString());
         player.set("me", omitKeys(client.me, ["client"]));
 
-        if (voice.isStage() && bot.suppress) await bot.setSuppress(false);
+        if (!bot) bot = await me.voice().catch(() => null);
+        if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);
 
         switch (loadType) {
             case "empty":

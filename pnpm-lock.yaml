@@ -18,8 +18,8 @@ importers:
         specifier: ^5.4.2
         version: 5.4.2
       lavalink-client:
-        specifier: ^2.4.6
-        version: 2.4.6
+        specifier: ^2.4.7
+        version: 2.4.7
       meowdb:
         specifier: ^2.2.3
         version: 2.2.3
@@ -34,8 +34,8 @@ importers:
         specifier: ^1.9.4
         version: 1.9.4
       '@types/node':
-        specifier: ^22.12.0
-        version: 22.12.0
+        specifier: ^22.13.0
+        version: 22.13.0
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -281,8 +281,8 @@ packages:
   '@prisma/get-platform@6.3.0':
     resolution: {integrity: sha512-V8zZ1d0xfyi6FjpNP4AcYuwSpGcdmu35OXWnTPm8IW594PYALzKXHwIa9+o0f+Lo9AecFWrwrwaoYe56UNfTtQ==}
 
-  '@types/node@22.12.0':
-    resolution: {integrity: sha512-Fll2FZ1riMjNmlmJOdAyY5pUbkftXslB5DgEzlIuNaiWhXd00FhWxVC/r4yV/4wBb9JfImTu+jiSvXTkJ7F/gA==}
+  '@types/node@22.13.0':
+    resolution: {integrity: sha512-ClIbNe36lawluuvq3+YYhnIN2CELi+6q8NpnM7PYp4hBn/TatfboPgVSm2rwKRfnV2M+Ty9GWDFI64KEe+kysA==}
 
   ansi-escapes@7.0.0:
     resolution: {integrity: sha512-GdYO7a61mR0fOlAsvC9/rIHf7L96sBc6dEWzeOu+KAea5bZyQRPIpojrVoI4AXGJS/ycu/fBTdLrUkA4ODrvjw==}
@@ -415,8 +415,8 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
-  lavalink-client@2.4.6:
-    resolution: {integrity: sha512-ruqXizXMgfrFd9prKLCoNppCXXmykz8g0VHkbV663GZ6tMwY3/z2DoGAKEq1wPNkY/2pmHjp3iUIxkDLcrLyMA==}
+  lavalink-client@2.4.7:
+    resolution: {integrity: sha512-pczTEBhkOtWxxUTo607eDPl6bsINxWcExUCaTJNourvVjhcBd8X1atyJrqVu5RnA7+g8zglgYwm0b7e8IAXVZA==}
     engines: {bun: '>=1.1.27', node: '>=18.0.0'}
 
   lilconfig@3.1.3:
@@ -749,7 +749,7 @@ snapshots:
     dependencies:
       '@prisma/debug': 6.3.0
 
-  '@types/node@22.12.0':
+  '@types/node@22.13.0':
     dependencies:
       undici-types: 6.20.0
 
@@ -886,7 +886,7 @@ snapshots:
 
   isexe@2.0.0: {}
 
-  lavalink-client@2.4.6:
+  lavalink-client@2.4.7:
     dependencies:
       tslib: 2.8.1
       ws: 8.18.0
