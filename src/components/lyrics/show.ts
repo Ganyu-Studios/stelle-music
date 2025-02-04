@@ -38,10 +38,22 @@ export default class LyricsComponent extends ComponentCommand {
 
         lyrics.provider = lyrics.provider.replace("Source:", "").trim();
 
-        if (!Array.isArray(lyrics.lines) && lyrics.text) {
-            const paginator = new EmbedPaginator(ctx);
+        if (!Array.isArray(lyrics.lines)) {
+            if (!lyrics.text)
+                return ctx.editOrReply({
+                    flags: MessageFlags.Ephemeral,
+                    embeds: [
+                        {
+                            color: EmbedColors.Red,
+                            description: messages.commands.lyrics.noLyrics,
+                        },
+                    ],
+                });
 
-            for (const line of lyrics.text.split("\n")) {
+            const paginator = new EmbedPaginator(ctx);
+            const lines = lyrics.text.split("\n");
+
+            for (let i = 0; i < lines.length; i += client.config.lyricsLines) {
                 paginator.addEmbed(
                     new Embed()
                         .setThumbnail(track.info.artworkUrl ?? undefined)
@@ -53,7 +65,7 @@ export default class LyricsComponent extends ComponentCommand {
                         })
                         .setDescription(
                             messages.commands.lyrics.embed.description({
-                                lines: line,
+                                lines: lines.slice(i, i + client.config.lyricsLines).join("\n"),
                                 author: track.info.author,
                                 provider: lyrics.provider,
                             }),
