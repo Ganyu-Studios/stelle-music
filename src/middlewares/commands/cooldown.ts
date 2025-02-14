@@ -6,7 +6,7 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
 
 export const checkCooldown = createMiddleware<void>(async ({ context, next, pass }) => {
     // This will make someone happy.
-    if (context.isComponent() || !context.inGuild()) return next();
+    if (context.isComponent()) return next();
 
     const { client, command } = context;
     const { cooldowns } = client;

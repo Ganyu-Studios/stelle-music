@@ -24,14 +24,20 @@ export const customContext = extendContext((interaction) => ({
      * Get the locale from the database.
      * @returns The locales object.
      */
-    getLocale: async (): Promise<DefaultLocale> =>
-        interaction.client.t(await interaction.client.database.getLocale(interaction.guildId!)).get(),
+    getLocale: async (): Promise<DefaultLocale> => {
+        if (!interaction.guildId) return interaction.client.t(interaction.user.locale ?? interaction.client.config.defaultLocale).get();
+        return interaction.client.t(await interaction.client.database.getLocale(interaction.guildId)).get();
+    },
     /**
      *
      * Get the locale string from the database.
      * @returns The locale string.
      */
-    getLocaleString: () => interaction.client.database.getLocale(interaction.guildId!),
+    getLocaleString: async (): Promise<string> => {
+        if (!interaction.guildId) return interaction.user.locale ?? interaction.client.config.defaultLocale;
+        const locale = await interaction.client.database.getLocale(interaction.guildId);
+        return locale;
+    },
 }));
 
 /**
