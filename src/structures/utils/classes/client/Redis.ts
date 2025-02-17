@@ -63,17 +63,9 @@ export class RedisClient {
      * Delete a key.
      * @param key The key to delete.
      */
-    public del(key: string): Promise<number> {
-        return this.redis.del(key);
-    }
-
-    /**
-     *
-     * Check if a key exists.
-     * @param key The key to check.
-     */
-    public exists(key: string): Promise<number> {
-        return this.redis.exists(key);
+    public async del(key: string): Promise<void> {
+        await this.redis.del(key);
+        return;
     }
 
     /**

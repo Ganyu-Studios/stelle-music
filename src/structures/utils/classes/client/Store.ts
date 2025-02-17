@@ -55,7 +55,7 @@ export class RedisQueueStore implements QueueStoreManager {
      * @param guildId The guild id to delete the queue.
      * @returns
      */
-    public delete(guildId: string): Promise<void | boolean> {
+    public delete(guildId: string): Promise<boolean> {
         return this.redis
             .del(buildKey(guildId))
             .then(() => true)
