@@ -60,7 +60,7 @@ export class LavalinkHandler extends BaseHandler {
     /**
      *
      * Reload all `lavalink-client` events.
-     * @returns
+     * @returns {Promise<void>} A promise.
      */
     //well,.. this is weird, but works.
     reloadAll(): Promise<void> {

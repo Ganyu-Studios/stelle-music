@@ -3,13 +3,10 @@ import { editButtons, getAutoplayState } from "#stelle/utils/functions/utils.js"
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
 export default class AutoplayComponent extends ComponentCommand {
-    componentType = "Button" as const;
+    override componentType = "Button" as const;
+    override customId = "player-toggleAutoplay";
 
-    filter(ctx: GuildComponentContext<typeof this.componentType>): boolean {
-        return ctx.customId === "player-toggleAutoplay";
-    }
-
-    async run(ctx: GuildComponentContext<typeof this.componentType>) {
+    async run(ctx: GuildComponentContext<typeof this.componentType>): Promise<void> {
         const { client } = ctx;
 
         const { messages } = await ctx.getLocale();

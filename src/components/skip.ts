@@ -2,11 +2,8 @@ import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfe
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
 export default class SkipTrackComponent extends ComponentCommand {
-    componentType = "Button" as const;
-
-    filter(ctx: GuildComponentContext<typeof this.componentType>): boolean {
-        return ctx.customId === "player-skipTrack";
-    }
+    override componentType = "Button" as const;
+    override customId = "player-skipTrack";
 
     async run(ctx: GuildComponentContext<typeof this.componentType>): Promise<void> {
         const { client } = ctx;

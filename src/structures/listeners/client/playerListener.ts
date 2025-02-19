@@ -11,7 +11,7 @@ const timeouts: Map<string, NodeJS.Timeout> = new Map();
  * @param client The client instance.
  * @param newState The new voice state.
  * @param oldState The old voice state.
- * @returns
+ * @returns {Promise<void>}
  */
 export async function playerListener(client: UsingClient, newState: VoiceState, oldState?: VoiceState): Promise<void> {
     if (oldState?.channelId === newState.channelId) return;

@@ -1,15 +1,13 @@
 import { ActionRow, Button, ComponentCommand, Embed, type GuildComponentContext, Middlewares } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
+
 import { EmbedPaginator } from "#stelle/utils/Paginator.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
 export default class LyricsComponent extends ComponentCommand {
-    componentType = "Button" as const;
-
-    filter(ctx: GuildComponentContext<typeof this.componentType>): boolean {
-        return ctx.customId === "player-lyricsShow";
-    }
+    override componentType = "Button" as const;
+    override customId = "player-lyricsShow";
 
     async run(ctx: GuildComponentContext<typeof this.componentType>): Promise<void> {
         const { client } = ctx;

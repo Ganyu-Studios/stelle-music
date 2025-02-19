@@ -18,7 +18,7 @@ const maxTracks = 10;
  * @param player The player.
  * @param lastTrack The last track.
  * @param tracks The tracks.
- * @returns
+ * @returns {ResolvableTrack[]} The filtered tracks.
  */
 const filterTracks = (player: Player, lastTrack: Track, tracks: ResolvableTrack[]) =>
     tracks.filter(
@@ -34,7 +34,7 @@ const filterTracks = (player: Player, lastTrack: Track, tracks: ResolvableTrack[
  * An autoplay function, that's all.
  * @param player The player.
  * @param lastTrack The last track.
- * @returns
+ * @returns {Promise<void>} A promise... that does nothing.
  */
 export async function autoPlayFunction(player: Player, lastTrack?: Track): Promise<void> {
     if (!lastTrack) return;

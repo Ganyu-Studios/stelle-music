@@ -11,7 +11,7 @@ type FormattedOption = {
  * Check if the option is required.
  * @param option The command option.
  * @param req If the option is required.
- * @returns
+ * @returns {string} The formatted option.
  */
 const isRequired = (option: string, req?: boolean) => (req ? `<${option}>` : `[${option}]`);
 
@@ -19,7 +19,7 @@ const isRequired = (option: string, req?: boolean) => (req ? `<${option}>` : `[$
  *
  * Format the options and descriptions.
  * @param options The options.
- * @returns
+ * @returns {FormattedOption[]} The formatted options.
  */
 export function formatOptions(
     options?: APIApplicationCommandOption[],
@@ -55,7 +55,7 @@ export function formatOptions(
  *
  * Get the option min/max value.
  * @param option The option.
- * @returns
+ * @returns {string} The range.
  */
 function getRange(option: APIApplicationCommandOption): string {
     let text: string = "";

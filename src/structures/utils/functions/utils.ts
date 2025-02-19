@@ -22,7 +22,7 @@ export const customContext = extendContext((interaction) => ({
     /**
      *
      * Get the locale from the database.
-     * @returns The locales object.
+     * @returns {Promise<DefaultLocale>} The locale.
      */
     getLocale: async (): Promise<DefaultLocale> => {
         if (!interaction.guildId) return interaction.client.t(interaction.user.locale ?? interaction.client.config.defaultLocale).get();
@@ -31,7 +31,7 @@ export const customContext = extendContext((interaction) => ({
     /**
      *
      * Get the locale string from the database.
-     * @returns The locale string.
+     * @returns {Promise<string>} The locale string.
      */
     getLocaleString: async (): Promise<string> => {
         if (!interaction.guildId) return interaction.user.locale ?? interaction.client.config.defaultLocale;
@@ -44,7 +44,7 @@ export const customContext = extendContext((interaction) => ({
  *
  * Create and Get the cooldown collection key.
  * @param ctx The context.
- * @returns
+ * @returns {string} The collection key.
  */
 export const getCollectionKey = (ctx: AnyContext): string => {
     const authorId = ctx.author.id;
@@ -59,7 +59,7 @@ export const getCollectionKey = (ctx: AnyContext): string => {
  *
  * Create a new progress bar.
  * @param player The player.
- * @returns
+ * @returns {string} The progress bar.
  */
 export const createBar = (player: Player): string => {
     const size = 15;
@@ -83,7 +83,7 @@ export const createBar = (player: Player): string => {
  * Stelle loop state.
  * @param mode The mode.
  * @param alt Return the alternative state.
- * @returns
+ * @returns {RepeatMode} The loop state.
  */
 export const getLoopState = (mode: RepeatMode, alt?: boolean) => {
     const states: Record<RepeatMode, RepeatMode> = {
@@ -105,7 +105,7 @@ export const getLoopState = (mode: RepeatMode, alt?: boolean) => {
  *
  * Parses a webhook url.
  * @param url The webhook url.
- * @returns
+ * @returns {null | { id: string, token: string }} The parsed webhook.
  */
 export const parseWebhook = (url: string) => {
     const webhookRegex = /https?:\/\/(?:ptb\.|canary\.)?discord\.com\/api(?:\/v\d{1,2})?\/webhooks\/(\d{17,19})\/([\w-]{68})/i;
@@ -119,7 +119,7 @@ export const parseWebhook = (url: string) => {
  * Edit a non-link or non-premium button rows with specific options.
  * @param rows The rows to edit.
  * @param options The options to edit the rows.
- * @returns
+ * @returns {ActionRow<Button>[]} The edited rows.
  */
 export const editButtons = (
     rows: MessageActionRowComponent<ActionRowMessageComponents>[],
@@ -147,7 +147,7 @@ export const editButtons = (
  *
  * Transform the requester user into a simple object.
  * @param requester The requester user.
- * @returns
+ * @returns {StelleUser} The transformed user.
  */
 export const requesterTransformer = (requester: unknown): StelleUser => {
     const requesterUser = requester as User | ClientUser;
@@ -165,7 +165,7 @@ export const requesterTransformer = (requester: unknown): StelleUser => {
  * Omit keys from an object.
  * @param obj The object to omit keys.
  * @param keys The keys to omit.
- * @returns
+ * @returns {Omit<T, K>} The object without the keys.
  */
 export const omitKeys = <T extends Record<string, any>, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> =>
     Object.fromEntries(Object.entries(obj).filter(([key]) => !keys.includes(key as K))) as Omit<T, K>;
@@ -174,7 +174,7 @@ export const omitKeys = <T extends Record<string, any>, K extends keyof T>(obj: 
  *
  * Stelle autoplay state.
  * @param boolean The boolean.
- * @returns
+ * @returns {AutoplayMode} The autoplay state.
  */
 export const getAutoplayState = (boolean: boolean): AutoplayMode => (boolean ? "enabled" : "disabled");
 
@@ -182,7 +182,7 @@ export const getAutoplayState = (boolean: boolean): AutoplayMode => (boolean ? "
  *
  * Stelle pause state.
  * @param boolean The boolean.
- * @returns
+ * @returns {PausedMode} The pause state.
  */
 export const getPauseState = (boolean: boolean): PausedMode => (boolean ? "resume" : "pause");
 
@@ -190,7 +190,7 @@ export const getPauseState = (boolean: boolean): PausedMode => (boolean ? "resum
  *
  * Representation of a object.
  * @param error The error.
- * @returns
+ * @returns {string} The representation of the object.
  */
 export const getInspect = (error: any, depth: number = 0): string => inspect(error, { depth });
 
@@ -198,6 +198,6 @@ export const getInspect = (error: any, depth: number = 0): string => inspect(err
  *
  * Slice text.
  * @param text The text.
- * @returns
+ * @returns {string} The sliced text.
  */
 export const sliceText = (text: string, max: number = 100) => (text.length > max ? `${text.slice(0, max)}...` : text);

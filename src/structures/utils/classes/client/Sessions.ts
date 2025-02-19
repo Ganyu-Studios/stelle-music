@@ -34,7 +34,7 @@ export class Sessions {
      * Set a player session.
      * @param guildId The node id.
      * @param object The session id.
-     * @returns The current instance.
+     * @returns {T} The current instance.
      */
     public static set<T>(guildId: string, object: T): T {
         return Sessions.storage.set<T>(guildId, object);
@@ -44,7 +44,7 @@ export class Sessions {
      *
      * Get a player session.
      * @param guildId The node id.
-     * @returns The session id.
+     * @returns {T | undefined} The session id.
      */
     public static get<T>(guildId: string): T | undefined {
         return Sessions.storage.get<T>(guildId);
@@ -54,7 +54,7 @@ export class Sessions {
      *
      * Delete a player session.
      * @param guildId The node id.
-     * @returns If the session was deleted.
+     * @returns {boolean} If the session was deleted.
      */
     public static delete(guildId: string): boolean {
         return Sessions.storage.exists(guildId) && Sessions.storage.delete(guildId);
@@ -64,7 +64,7 @@ export class Sessions {
      *
      * Get a node session using the node id.
      * @param id The id of the node.
-     * @returns
+     * @returns {string | undefined} The session id.
      */
     public static getNode(id: string): string | undefined {
         return Sessions.nodes.get(id);
@@ -74,7 +74,7 @@ export class Sessions {
      *
      * Resolve the nodes options.
      * @param nodes The array of nodes to resolve.
-     * @returns
+     * @returns {LavalinkNodeOptions[]} The resolved nodes.
      */
     public static resolve(...nodes: RestOrArray<NonResumableOptions>): LavalinkNodeOptions[] {
         if (nodes.some((node) => "sessionId" in node && typeof node.sessionId === "string"))

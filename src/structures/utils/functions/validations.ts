@@ -6,9 +6,9 @@ import { logger } from "../Logger.js";
 /**
  *
  * Validate Stelle environment variables.
- * @returns
+ * @returns {void} A function that returns nothing.
  */
-export function validateEnv() {
+export function validateEnv(): void {
     logger.info("Validating '.env' file variables...");
 
     if (DEBUG_MODE) logger.info("Stelle is running in debug mode.");

@@ -4,11 +4,8 @@ import { EmbedPaginator } from "#stelle/utils/Paginator.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
 export default class QueueComponent extends ComponentCommand {
-    componentType = "Button" as const;
-
-    filter(ctx: GuildComponentContext<typeof this.componentType>): boolean {
-        return ctx.customId === "player-guildQueue";
-    }
+    override componentType = "Button" as const;
+    override customId = "player-guildQueue";
 
     async run(ctx: GuildComponentContext<typeof this.componentType>): Promise<void> {
         const { client, author } = ctx;

@@ -1,4 +1,4 @@
-import { type AnyContext, type AutocompleteInteraction, Embed, type PermissionStrings } from "seyfert";
+import { type AnyContext, type AutocompleteInteraction, Embed, type Message, type PermissionStrings, type WebhookMessage } from "seyfert";
 
 import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
@@ -11,7 +11,7 @@ import { formatOptions } from "./options.js";
  * The Stelle's default error handler.
  * @param ctx The context of the command.
  * @param error The error that was thrown.
- * @returns
+ * @returns {Promise<void>} A promise... duh.
  */
 export async function onRunError(ctx: AnyContext, error: unknown) {
     const { messages } = await ctx.getLocale();
@@ -35,8 +35,9 @@ export async function onRunError(ctx: AnyContext, error: unknown) {
  * The Stelle's default error handler for autocomplete.
  * @param interaction The interaction.
  * @param error The error that was thrown.
+ * @returns {Promise<void>} A promise... and a half.
  */
-export async function onAutocompleteError(interaction: AutocompleteInteraction, error: unknown) {
+export async function onAutocompleteError(interaction: AutocompleteInteraction, error: unknown): Promise<void> {
     if (!interaction.guildId) return;
 
     const { messages } = interaction.client.t(await interaction.client.database.getLocale(interaction.guildId)).get();
@@ -56,9 +57,9 @@ export async function onAutocompleteError(interaction: AutocompleteInteraction, 
  * The Stelle's default error handler for missing permissions.
  * @param ctx The context of the command.
  * @param permissions The permissions that the user is missing.
- * @returns
+ * @returns {Promise<void>} A promise... and a half.
  */
-export async function onPermissionsFail(ctx: AnyContext, permissions: PermissionStrings) {
+export async function onPermissionsFail(ctx: AnyContext, permissions: PermissionStrings): Promise<Message | WebhookMessage | void> {
     const { messages } = await ctx.getLocale();
 
     return ctx.editOrReply({
@@ -84,9 +85,9 @@ export async function onPermissionsFail(ctx: AnyContext, permissions: Permission
  * The Stelle's default error handler for missing bot permissions.
  * @param ctx The context of the command.
  * @param permissions The permissions that the bot is missing.
- * @returns
+ * @returns {Promise<void>} A promise... and a half too.
  */
-export async function onBotPermissionsFail(ctx: AnyContext, permissions: PermissionStrings) {
+export async function onBotPermissionsFail(ctx: AnyContext, permissions: PermissionStrings): Promise<Message | WebhookMessage | void> {
     const { messages } = await ctx.getLocale();
 
     return ctx.editOrReply({
@@ -111,9 +112,9 @@ export async function onBotPermissionsFail(ctx: AnyContext, permissions: Permiss
  *
  * The Stelle's default error handler for invalid options.
  * @param ctx The context of the command.
- * @returns
+ * @returns {Promise<void>} A promise... and a half maybe.
  */
-export async function onOptionsError(ctx: AnyContext) {
+export async function onOptionsError(ctx: AnyContext): Promise<Message | WebhookMessage | void> {
     if (!ctx.isChat()) return;
 
     const { messages } = await ctx.getLocale();

@@ -20,6 +20,8 @@ import {
 } from "seyfert/lib/common/index.js";
 import { InvalidComponentRun, InvalidEmbedsLength, InvalidMessage, InvalidPageNumber } from "./Errors.js";
 
+type ComponentCallback<Interaction> = (interaction: Interaction, setPage: (n: number) => void) => Awaitable<unknown>;
+
 /**
  * Stelle button class.
  */
@@ -27,7 +29,7 @@ export class StelleButton extends Button {
     /**
      * The function to run when the button is clicked.
      */
-    public run!: (interaction: ButtonInteraction, setPage: (n: number) => void) => Awaitable<unknown>;
+    public run!: ComponentCallback<ButtonInteraction>;
 
     /**
      * The data of the button.
@@ -38,7 +40,7 @@ export class StelleButton extends Button {
      *
      * The function to run when the button is clicked.
      * @param run The function to run when the button is clicked.
-     * @returns
+     * @returns {this} The button instance.
      */
     public setRun(run: StelleButton["run"]): this {
         this.run = run;
@@ -53,7 +55,7 @@ export class StelleStringMenu extends StringSelectMenu {
     /**
      * The function to run when the string menu is clicked.
      */
-    public run!: (interaction: StringSelectMenuInteraction, setPage: (n: number) => void) => Awaitable<unknown>;
+    public run!: ComponentCallback<StringSelectMenuInteraction>;
 
     /**
      * The data of the string menu.
@@ -64,7 +66,7 @@ export class StelleStringMenu extends StringSelectMenu {
      *
      * The function to run when the string menu is clicked.
      * @param run The function to run when the string menu is clicked.
-     * @returns
+     * @returns {this} The string menu instance.
      */
     public setRun(run: StelleStringMenu["run"]): this {
         this.run = run;
@@ -118,7 +120,7 @@ export class EmbedPaginator {
     /**
      *
      * Get the current row of the paginator.
-     * @returns
+     * @returns {ActionRow<MessageBuilderComponents>[]} The current row.
      */
     private getRows(): ActionRow<MessageBuilderComponents>[] {
         const rows: ActionRow<MessageBuilderComponents>[] = [
@@ -150,7 +152,7 @@ export class EmbedPaginator {
      *
      * Send the embed pagination.
      * @param ephemeral If the message should be ephemeral.
-     * @returns
+     * @returns {this} The paginator instance.
      */
     public async reply(ephemeral: boolean = false): Promise<this> {
         if (!this.embeds.length) throw new InvalidEmbedsLength("I can't send the pagination without embeds.");
@@ -275,7 +277,7 @@ export class EmbedPaginator {
      *
      * Add a new row to display.
      * @param row The row.
-     * @returns
+     * @returns {this} The paginator instance.
      */
     public addRow(row: ActionRow<StelleButton | StelleStringMenu>): this {
         this.rows.push(row);
@@ -286,7 +288,7 @@ export class EmbedPaginator {
      *
      * Set a new array of rows to display.
      * @param rows The rows.
-     * @returns
+     * @returns {this} The paginator instance.
      */
     public setRows(rows: ActionRow<StelleButton | StelleStringMenu>[]): this {
         this.rows = rows;
@@ -298,7 +300,7 @@ export class EmbedPaginator {
      * Set if the pagination buttons are disabled. (Exept the custom rows)
      * @param disabled The disabled.
      * @default false
-     * @returns
+     * @returns {this} The paginator instance.
      */
     public setDisabled(disabled: boolean): this {
         this.disabled = disabled;
@@ -331,7 +333,7 @@ export class EmbedPaginator {
      *
      * Edit a current embed paginator.
      * @param body The body.
-     * @returns
+     * @returns {this} The paginator instance.
      */
     public async edit(body: InteractionCreateBodyRequest | InteractionMessageUpdateBodyRequest): Promise<this> {
         if (!this.message) throw new InvalidMessage("I can't set the page to an unresponded pagination.");
@@ -344,7 +346,7 @@ export class EmbedPaginator {
     /**
      *
      * Update the current embed paginator.
-     * @returns
+     * @returns {this} The paginator instance.
      */
     public async update(): Promise<this> {
         if (!this.message) throw new InvalidMessage("I can't set the page to an unresponded pagination.");

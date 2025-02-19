@@ -9,7 +9,7 @@ type ColorFunction = (text: string) => string;
  *
  * Custom color function.
  * @param text The text.
- * @returns
+ * @returns {string} The text with the color.
  */
 const customColor: ColorFunction = (text: string) => rgb24(text, Configuration.color.success);
 
@@ -17,7 +17,7 @@ const customColor: ColorFunction = (text: string) => rgb24(text, Configuration.c
  *
  * Add padding to the label.
  * @param label The label.
- * @returns
+ * @returns {string} The label with padding.
  */
 function addPadding(label: string): string {
     const maxLength = 6;
@@ -34,7 +34,7 @@ function addPadding(label: string): string {
 /**
  * Formats memory usage data into a string.
  * @param data The memory usage data.
- * @returns
+ * @returns {string} The formatted memory usage data.
  */
 export function formatMemoryUsage(bytes: number): string {
     const units = ["B", "KB", "MB", "GB", "TB"];
@@ -51,7 +51,7 @@ export function formatMemoryUsage(bytes: number): string {
 /**
  *
  * Send ascii text.
- * @returns
+ * @returns {void} Nothing... just logs the ascii text.
  */
 export function getWatermark(): void {
     return console.info(
@@ -74,7 +74,7 @@ export function getWatermark(): void {
 /**
  *
  * Get a random text to make it more lively...?
- * @returns
+ * @returns {string} A random text.
  */
 function getRandomText(): string {
     const texts = [
@@ -120,7 +120,7 @@ function getRandomText(): string {
  * @param _this The logger itself.
  * @param level The log level.
  * @param args The log arguments.
- * @returns
+ * @returns {unknown[]} The log arguments.
  */
 export function customLogger(_this: Logger, level: LogLevels, args: unknown[]): unknown[] {
     const date: Date = new Date();

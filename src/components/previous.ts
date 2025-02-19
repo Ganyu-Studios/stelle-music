@@ -5,11 +5,8 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class PreviousTrackComponent extends ComponentCommand {
-    componentType = "Button" as const;
-
-    filter(ctx: GuildComponentContext<typeof this.componentType>): boolean {
-        return ctx.customId === "player-previousTrack";
-    }
+    override componentType = "Button" as const;
+    override customId = "player-previousTrack";
 
     async run(ctx: GuildComponentContext<typeof this.componentType>) {
         const { client } = ctx;

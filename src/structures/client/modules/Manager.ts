@@ -59,7 +59,7 @@ export class StelleManager extends LavalinkManager {
      *
      * Search tracks.
      * @param query The query.
-     * @returns
+     * @returns {Promise<SearchResult>} The search result.
      */
     public search(query: string, source?: SearchPlatform): Promise<SearchResult> {
         const nodes = this.nodeManager.leastUsedNodes();

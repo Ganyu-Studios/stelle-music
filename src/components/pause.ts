@@ -5,11 +5,8 @@ import { editButtons, getPauseState } from "#stelle/utils/functions/utils.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class PauseTrackComponent extends ComponentCommand {
-    componentType = "Button" as const;
-
-    filter(ctx: GuildComponentContext<typeof this.componentType>): boolean {
-        return ctx.customId === "player-pauseTrack";
-    }
+    override componentType = "Button" as const;
+    override customId = "player-pauseTrack";
 
     async run(ctx: GuildComponentContext<typeof this.componentType>) {
         const { client } = ctx;

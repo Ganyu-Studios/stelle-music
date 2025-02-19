@@ -155,7 +155,7 @@ export default class HelpCommand extends Command {
  * @param command The command to parse.
  * @param optionsType The options type.
  * @param locale The locale to use.
- * @returns
+ * @returns {string} The parsed command.
  */
 function parseCommand(
     command: Command | ContextMenuCommand,
@@ -180,7 +180,7 @@ function parseCommand(
  * Parses a subcommand to a string.
  * @param subCommand The subcommand to parse.
  * @param optionsType The options type.
- * @returns
+ * @returns {string} The parsed subcommand.
  */
 function parseSubCommand(subCommand: SubCommand, optionsType: Record<ApplicationCommandOptionType, string>): string {
     if (!subCommand.options?.length) return `↪ ${subCommand.name}`;

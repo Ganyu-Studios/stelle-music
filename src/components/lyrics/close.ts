@@ -2,11 +2,8 @@ import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfe
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
 export default class LyricsComponent extends ComponentCommand {
-    componentType = "Button" as const;
-
-    filter(ctx: GuildComponentContext<typeof this.componentType>): boolean {
-        return ctx.customId === "player-lyricsClose";
-    }
+    override componentType = "Button" as const;
+    override customId = "player-lyricsClose";
 
     async run(ctx: GuildComponentContext<typeof this.componentType>): Promise<void> {
         const { client } = ctx;

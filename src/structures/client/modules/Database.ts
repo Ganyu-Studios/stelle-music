@@ -54,7 +54,7 @@ export class StelleDatabase {
      *
      * Get the guild locale from the database.
      * @param guildId The guild id.
-     * @returns
+     * @returns {Promise<string>} The locale.
      */
     public async getLocale(guildId: string): Promise<string> {
         const cached = this.cache.get(guildId, StelleKeys.Locale);
@@ -68,7 +68,7 @@ export class StelleDatabase {
      *
      * Get the guild prefix from the database.
      * @param guildId The guild id.
-     * @returns
+     * @returns {Promise<string>} The prefix.
      */
     public async getPrefix(guildId: string): Promise<string> {
         const cached = this.cache.get(guildId, StelleKeys.Prefix);
@@ -82,7 +82,7 @@ export class StelleDatabase {
      *
      * Get the guild player from the database.
      * @param guildId The guild id.
-     * @returns
+     * @returns {Promise<PlayerData>} The player data.
      */
     public async getPlayer(guildId: string): Promise<Pick<NonNullable<PlayerData>, "defaultVolume" | "searchEngine">> {
         const cached = this.cache.get(guildId, StelleKeys.Player);
@@ -104,6 +104,7 @@ export class StelleDatabase {
      * Set the guild locale to the database.
      * @param guildId The guild id.
      * @param locale The locale.
+     * @returns {Promise<void>} The promise.
      */
     public async setLocale(guildId: string, locale: string): Promise<void> {
         await this.prisma.guildLocale.upsert({
@@ -126,6 +127,7 @@ export class StelleDatabase {
      * Set the guild prefix to the database.
      * @param guildId The guild id.
      * @param prefix The prefix.
+     * @returns {Promise<void>} The promise.
      */
     public async setPrefix(guildId: string, prefix: string): Promise<void> {
         await this.prisma.guildPrefix.upsert({
@@ -147,7 +149,7 @@ export class StelleDatabase {
      *
      * Set the guild player to the database.
      * @param options The player options.
-     * @returns
+     * @returns {Promise<void>} The promise.
      */
     public async setPlayer({ guildId, defaultVolume, searchEngine }: PlayerData): Promise<void> {
         const data = await this.getPlayer(guildId);

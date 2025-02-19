@@ -38,7 +38,7 @@ export class Lavalink<K extends keyof AllLavalinkEvents = keyof AllLavalinkEvent
     /**
      *
      * Check if the event is a `node` event.
-     * @returns
+     * @returns {this is LavalinkNode} If the event is a node event.
      */
     public isNode(): this is LavalinkNode {
         return this.type === LavalinkEventTypes.Node;
@@ -47,7 +47,7 @@ export class Lavalink<K extends keyof AllLavalinkEvents = keyof AllLavalinkEvent
     /**
      *
      * Check if the event is a `manager` event.
-     * @returns
+     * @returns {this is LavalinkManager} If the event is a manager event.
      */
     public isManager(): this is LavalinkManager {
         return this.type === LavalinkEventTypes.Manager;

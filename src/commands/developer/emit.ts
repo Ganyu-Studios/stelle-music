@@ -42,7 +42,7 @@ export default class ReloadCommand extends Command {
             case "GUILD_CREATE":
             case "GUILD_DELETE":
                 {
-                    await client.events!.values[event]?.run(guild as unknown as Guild<"create">, client, ctx.shardId);
+                    await client.events!.values[event]?.run(guild as never as Guild<"create">, client, ctx.shardId);
                     await ctx.editOrReply({
                         flags: MessageFlags.Ephemeral,
                         content: "",

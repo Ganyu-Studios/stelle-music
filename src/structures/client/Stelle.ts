@@ -105,7 +105,7 @@ export class Stelle extends Client<true> {
     /**
      *
      * Start the main Stelle process.
-     * @returns
+     * @returns {"🌟"} A emoji, that's all.
      */
     private async run(): Promise<"🌟"> {
         getWatermark();
@@ -170,8 +170,8 @@ export class Stelle extends Client<true> {
 
     /**
      *
-     * Reload Stelle..
-     * @returns
+     * Reload Stelle.
+     * @returns {Promise<void>} A promise, yeah... that's all.
      */
     public async reload(): Promise<void> {
         this.logger.warn("Attemping to reload...");
