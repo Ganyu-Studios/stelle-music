@@ -2,13 +2,15 @@ import type { QueueStoreManager, StoredQueue } from "lavalink-client";
 import { DEV_MODE } from "#stelle/data/Constants.js";
 import type { RedisClient } from "./Redis.js";
 
+type PartialStoredQueue = Partial<StoredQueue>;
+
 /**
  *
  * Build a key for the queue.
  * @param guildId The guild id.
  * @returns {string} The built key.
  */
-const buildKey = (guildId: string) => (DEV_MODE ? `queue:${guildId}` : `stelle:queue:${guildId}`);
+const buildKey = (guildId: string): string => (DEV_MODE ? `queue:${guildId}` : `stelle:queue:${guildId}`);
 
 /**
  * Main Stelle redis queue store class.
@@ -43,9 +45,9 @@ export class RedisQueueStore implements QueueStoreManager {
      * Set the queue of the guild.
      * @param guildId The guild id to set the queue.
      * @param value The value to set.
-     * @returns {Promise<void | boolean>} A promise.
+     * @returns {Promise<void>} A promise.
      */
-    public set(guildId: string, value: StoredQueue | string): Promise<void | boolean> {
+    public set(guildId: string, value: StoredQueue | string): Promise<void> {
         return this.redis.set(buildKey(guildId), value as string);
     }
 
@@ -53,13 +55,10 @@ export class RedisQueueStore implements QueueStoreManager {
      *
      * Delete the queue of the guild.
      * @param guildId The guild id to delete the queue.
-     * @returns {Promise<boolean>} If the queue was deleted.
+     * @returns {Promise<void>} If the queue was deleted.
      */
-    public delete(guildId: string): Promise<boolean> {
-        return this.redis
-            .del(buildKey(guildId))
-            .then(() => true)
-            .catch(() => false);
+    public delete(guildId: string): Promise<void> {
+        return this.redis.del(buildKey(guildId));
     }
 
     /**
@@ -76,9 +75,9 @@ export class RedisQueueStore implements QueueStoreManager {
      *
      * Parse the value.
      * @param value The value to parse.
-     * @returns {Promise<Partial<StoredQueue>>} The parsed value.
+     * @returns {Promise<PartialStoredQueue>} The parsed value.
      */
-    public parse(value: StoredQueue | string): Promise<Partial<StoredQueue>> {
-        return typeof value === "string" ? JSON.parse(value) : value;
+    public parse(value: StoredQueue | string): Promise<PartialStoredQueue> {
+        return typeof value === "string" ? JSON.parse(value) : (value as never as Promise<PartialStoredQueue>);
     }
 }
