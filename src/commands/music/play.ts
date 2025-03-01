@@ -51,18 +51,19 @@ const options = {
                     { name: messages.commands.play.autocomplete.noQuery, value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT" },
                 ]);
 
-            const { tracks } = await client.manager.search(query, searchEngine);
-            if (!tracks.length) return interaction.respond([{ name: messages.commands.play.autocomplete.noTracks, value: "noTracks" }]);
+            const res = await client.manager.search(query, searchEngine);
+            if (!res?.tracks.length)
+                return interaction.respond([{ name: messages.commands.play.autocomplete.noTracks, value: "noTracks" }]);
 
             await interaction.respond(
-                tracks.slice(0, 25).map((track) => {
+                res.tracks.slice(0, 25).map((track) => {
                     const duration = track.info.isStream
                         ? messages.commands.play.live
                         : (TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined);
 
                     return {
                         name: `${sliceText(track.info.title, 20)} (${duration}) - ${sliceText(track.info.author, 30)}`,
-                        value: track.info.uri!,
+                        value: track.info.uri,
                     };
                 }),
             );

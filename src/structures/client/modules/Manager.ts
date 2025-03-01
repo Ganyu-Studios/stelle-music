@@ -61,11 +61,14 @@ export class StelleManager extends LavalinkManager {
      * @param query The query.
      * @returns {Promise<SearchResult>} The search result.
      */
-    public search(query: string, source?: SearchPlatform): Promise<SearchResult> {
+    public async search(query: string, source?: SearchPlatform): Promise<SearchResult | null> {
+        if (!query.length) return null;
+
         const nodes = this.nodeManager.leastUsedNodes();
         const node = nodes[Math.floor(Math.random() * nodes.length)];
+        const res = await node.search({ query, source }, null, false).catch(() => null);
 
-        return node.search({ query, source }, null, false);
+        return res;
     }
 
     /**
