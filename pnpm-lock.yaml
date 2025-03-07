@@ -15,8 +15,8 @@ importers:
         specifier: ^16.4.7
         version: 16.4.7
       ioredis:
-        specifier: ^5.5.0
-        version: 5.5.0
+        specifier: ^5.6.0
+        version: 5.6.0
       lavalink-client:
         specifier: ^2.4.7
         version: 2.4.7
@@ -25,7 +25,7 @@ importers:
         version: 2.2.3
       seyfert:
         specifier: github:tiramisulabs/seyfert
-        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/84a0ce675440edc3be1185871a743c22817df59a
+        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/61dc04893dcc8b6fa36d04a8da5b025c229cc44d
       yunaforseyfert:
         specifier: ^1.1.0
         version: 1.1.0
@@ -34,8 +34,8 @@ importers:
         specifier: ^1.9.4
         version: 1.9.4
       '@types/node':
-        specifier: ^22.13.8
-        version: 22.13.8
+        specifier: ^22.13.9
+        version: 22.13.9
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -287,8 +287,8 @@ packages:
   '@prisma/get-platform@6.4.1':
     resolution: {integrity: sha512-gXqZaDI5scDkBF8oza7fOD3Q3QMD0e0rBynlzDDZdTWbWmzjuW58PRZtj+jkvKje2+ZigCWkH8SsWZAsH6q1Yw==}
 
-  '@types/node@22.13.8':
-    resolution: {integrity: sha512-G3EfaZS+iOGYWLLRCEAXdWK9my08oHNZ+FHluRiggIYJPOXzhOiDgpVCUHaUvyIC5/fj7C/p637jdzC666AOKQ==}
+  '@types/node@22.13.9':
+    resolution: {integrity: sha512-acBjXdRJ3A6Pb3tqnw9HZmyR3Fiol3aGxRCK1x3d+6CDAMjl7I649wpSd+yNURCjbOUGu9tqtLKnTGxmK6CyGw==}
 
   ansi-escapes@7.0.0:
     resolution: {integrity: sha512-GdYO7a61mR0fOlAsvC9/rIHf7L96sBc6dEWzeOu+KAea5bZyQRPIpojrVoI4AXGJS/ycu/fBTdLrUkA4ODrvjw==}
@@ -403,8 +403,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  ioredis@5.5.0:
-    resolution: {integrity: sha512-7CutT89g23FfSa8MDoIFs2GYYa0PaNiW/OrT+nRyjRXHDZd17HmIgy+reOQ/yhh72NznNjGuS8kbCAcA4Ro4mw==}
+  ioredis@5.6.0:
+    resolution: {integrity: sha512-tBZlIIWbndeWBWCXWZiqtOF/yxf6yZX3tAlTJ7nfo5jhd6dctNxF7QnYlZLZ1a0o0pDoen7CgZqO+zjNaFbJAg==}
     engines: {node: '>=12.22.0'}
 
   is-fullwidth-code-point@4.0.0:
@@ -531,8 +531,8 @@ packages:
   rfdc@1.4.1:
     resolution: {integrity: sha512-q1b3N5QkRUWUl7iyylaaj3kOpIT0N2i9MqIEQXP73GVsN9cw3fdx8X63cEmWhJGi2PPCF23Ijp7ktmd39rawIA==}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/84a0ce675440edc3be1185871a743c22817df59a:
-    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/84a0ce675440edc3be1185871a743c22817df59a}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/61dc04893dcc8b6fa36d04a8da5b025c229cc44d:
+    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/61dc04893dcc8b6fa36d04a8da5b025c229cc44d}
     version: 2.2.0
 
   shebang-command@2.0.0:
@@ -763,7 +763,7 @@ snapshots:
     dependencies:
       '@prisma/debug': 6.4.1
 
-  '@types/node@22.13.8':
+  '@types/node@22.13.9':
     dependencies:
       undici-types: 6.20.0
 
@@ -882,7 +882,7 @@ snapshots:
 
   husky@9.1.7: {}
 
-  ioredis@5.5.0:
+  ioredis@5.6.0:
     dependencies:
       '@ioredis/commands': 1.2.0
       cluster-key-slot: 1.1.2
@@ -1015,7 +1015,7 @@ snapshots:
 
   rfdc@1.4.1: {}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/84a0ce675440edc3be1185871a743c22817df59a: {}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/61dc04893dcc8b6fa36d04a8da5b025c229cc44d: {}
 
   shebang-command@2.0.0:
     dependencies:
