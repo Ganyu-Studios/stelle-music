@@ -1,31 +1,21 @@
 //@ts-check
 
 /**
- * @type {Ecosystem}
- * PM2 ecosystem configuration.
+ * @type {Apps[]}
+ * PM2 Ecosystem app configuration.
  */
-const ecosystem = {
-    apps: [
-        {
-            name: "Stelle",
-            script: "./dist/index.js",
-            watch: false,
-        },
-    ],
-};
-
-module.exports = ecosystem;
+export const apps = [
+    {
+        name: "Stelle",
+        script: "dist/index.js",
+        watch: false,
+    },
+];
 
 /**
  * These are hardcoded types, so they can be wrong, any PR is welcome to fix them.
  * You can remove them if you don't want to use them.
  * @link https://pm2.keymetrics.io/docs/usage/application-declaration/
- */
-
-/**
- * @typedef Ecosystem
- * @property {Apps[]} apps The applications to run.
- * @property {Deployment} [deploy] - Deployment configuration.
  */
 
 /**
@@ -39,7 +29,7 @@ module.exports = ecosystem;
  * @property {string} [node_args] - Alias to interpreter_args.
  * @property {number} [instances] - Number of app instances to be launched.
  * @property {string} [exec_mode] - Mode to start your app, can be "cluster" or "fork" (defaults to fork).
- * @property {boolean|string[]} [watch] - Enable watch & restart feature.
+ * @property {boolean | string[]} [watch] - Enable watch & restart feature.
  * @property {string[]} [ignore_watch] - List of regex to ignore some file or folder names by the watch feature.
  * @property {string} [max_memory_restart] - Restart app if it exceeds the specified memory amount.
  * @property {Record<string, string>} [env] - Environment variables for development.
@@ -68,20 +58,4 @@ module.exports = ecosystem;
  * @property {boolean} [vizion] - If false, PM2 will start without vizion features (versioning control metadata).
  * @property {string[]} [post_update] - Commands to execute after a Pull/Upgrade operation from Keymetrics dashboard.
  * @property {boolean} [force] - If true, you can start the same script several times.
- */
-
-
-/**
- * @typedef Deployment
- * @property {string} [key] - SSH key path.
- * @property {string} [user] - SSH user.
- * @property {string[]} [host] - SSH host.
- * @property {string|string[]} [ssh_options] - SSH options with no command-line flag.
- * @property {string} [ref] - GIT remote/branch.
- * @property {string} [repo] - GIT remote.
- * @property {string} [path] - Path in the server.
- * @property {string} [pre-setup] - Pre-setup command or path to a script on your local machine.
- * @property {string} [post-setup] - Post-setup commands or path to a script on the host machine.
- * @property {string} [pre-deploy-local] - Pre-deploy action.
- * @property {string} [post-deploy] - Post-deploy action.
  */
