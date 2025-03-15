@@ -1,21 +1,30 @@
 //@ts-check
 
 /**
- * @type {Apps[]}
+ * @type {Ecosystem}
  * PM2 Ecosystem app configuration.
  */
-export const apps = [
-    {
-        name: "Stelle",
-        script: "dist/index.js",
-        watch: false,
-    },
-];
+const ecosystem = {
+    apps: [
+        {
+            name: "Stelle",
+            script: "dist/index.js",
+            watch: false,
+        },
+    ]
+}
+
+module.exports = ecosystem;
 
 /**
  * These are hardcoded types, so they can be wrong, any PR is welcome to fix them.
  * You can remove them if you don't want to use them.
  * @link https://pm2.keymetrics.io/docs/usage/application-declaration/
+ */
+
+/**
+ * @typedef Ecosystem
+ * @property {Apps[]} apps - List of applications to be managed by PM2.
  */
 
 /**
