@@ -8,7 +8,7 @@ const ecosystem = {
     apps: [
         {
             name: "Stelle",
-            script: "dist/index.js",
+            script: "./dist/index.js",
             watch: false,
         },
     ]
