@@ -11,8 +11,8 @@ const ecosystem = {
             script: "./dist/index.js",
             watch: false,
         },
-    ]
-}
+    ],
+};
 
 module.exports = ecosystem;
 

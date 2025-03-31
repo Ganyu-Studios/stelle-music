@@ -6,8 +6,18 @@
     "type": "module",
     "packageManager": "pnpm@10.7.0+sha512.6b865ad4b62a1d9842b61d674a393903b871d9244954f652b8842c2b553c72176b278f64c463e52d40fff8aba385c235c8c9ecf5cc7de4fd78b8bb6d49633ab6",
     "homepage": "https://github.com/Ganyu-Studios/stelle-music#readme",
+    "keywords": [],
+    "author": "Ganyu Studios",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "JustEvil",
+            "url": "https://github.com/EvilG-MC"
+        }
+    ],
     "engines": {
-        "node": ">= 22.11.0"
+        "node": ">= 22.11.0",
+        "pnpm": ">= 10.7.0"
     },
     "scripts": {
         "build": "tsc",
@@ -15,18 +25,13 @@
         "clean": "node ./scripts/clean.js && pnpm build",
         "start": "node ./dist/index.js",
         "dev": "tsx ./src/index.ts --debug --dev",
-        "lint": "biome lint --write ./src",
-        "format": "biome check --write ./src",
+        "lint": "biome lint --write .",
+        "format": "biome check --write .",
         "prepare": "husky"
     },
     "lint-staged": {
-        "*.ts": [
-            "pnpm format"
-        ]
+        "*.ts": ["pnpm format"]
     },
-    "keywords": [],
-    "author": "JustEvil",
-    "license": "MIT",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/Ganyu-Studios/stelle-music.git"
