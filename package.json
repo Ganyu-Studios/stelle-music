@@ -6,7 +6,17 @@
     "type": "module",
     "packageManager": "pnpm@10.7.0+sha512.6b865ad4b62a1d9842b61d674a393903b871d9244954f652b8842c2b553c72176b278f64c463e52d40fff8aba385c235c8c9ecf5cc7de4fd78b8bb6d49633ab6",
     "homepage": "https://github.com/Ganyu-Studios/stelle-music#readme",
-    "keywords": [],
+    "keywords": [
+        "discord",
+        "discord.js",
+        "seyfert",
+        "music",
+        "bot",
+        "discord bot",
+        "stelle",
+        "lavalink",
+        "lavalink-client"
+    ],
     "author": "Ganyu Studios",
     "license": "MIT",
     "contributors": [
@@ -58,16 +68,9 @@
         "typescript": "^5.8.2"
     },
     "imports": {
-        "#stelle/client": "./dist/structures/client/Stelle.js",
-        "#stelle/types": "./dist/structures/utils/types/index.js",
-        "#stelle/classes": "./dist/structures/utils/classes/index.js",
-        "#stelle/middlwares": "./dist/middlewares/index.js",
-        "#stelle/errors": "./dist/structures/utils/Errors.js",
-        "#stelle/decorators": "./dist/structures/utils/Decorators.js",
-        "#stelle/listeners": "./dist/structures/listeners/index.js",
-        "#stelle/index": "./dist/index.js",
-        "#stelle/data/*": "./dist/structures/utils/data/*",
-        "#stelle/utils/*": "./dist/structures/utils/*"
+        "#stelle/classes/*": "./dist/structures/classes/*",
+        "#stelle/utils/*": "./dist/structures/utils/*",
+        "#stelle/types": "./dist/structures/types/index.js"
     },
     "pnpm": {
         "onlyBuiltDependencies": [
