@@ -6,7 +6,6 @@ import { HandleCommand } from "seyfert/lib/commands/handle.js";
 import { Yuna } from "yunaforseyfert";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 import { Constants } from "#stelle/utils/data/constants.js";
-import { getWatermark } from "#stelle/utils/functions/logger.js";
 
 /**
  * Class representing the main client of the bot.
@@ -59,11 +58,9 @@ export class Stelle extends Client<true> {
 
     /**
      * Start the main process of the client.
-     * @returns {Promise<void>} A epic promise, yay!
+     * @returns {Promise<void>} A promise, yay!
      */
     public async run(): Promise<void> {
-        getWatermark();
-
         this.setServices({
             cache: {
                 disabledCache: {

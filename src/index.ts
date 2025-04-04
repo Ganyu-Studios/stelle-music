@@ -1,5 +1,9 @@
 import "dotenv/config";
 
+import { getWatermark } from "#stelle/utils/functions/logger.js";
+
+getWatermark();
+
 import { Logger } from "seyfert";
 import { Stelle } from "#stelle/classes/Stelle.js";
 import { validateEnv } from "#stelle/utils/functions/validate.js";

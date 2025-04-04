@@ -54,7 +54,7 @@ export function formatMemoryUsage(bytes: number): string {
 /**
  *
  * Send ascii text.
- * @returns {void} Nothing... just logs the ascii text.
+ * @returns {void} Nah, for real?
  */
 export function getWatermark(): void {
     return console.info(

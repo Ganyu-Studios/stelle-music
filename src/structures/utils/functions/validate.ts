@@ -6,7 +6,8 @@ import { logger } from "#stelle/utils/functions/logger.js";
 /**
  *
  * Validate Stelle environment variables.
- * @returns {void} A function that returns nothing.
+ * @throws {InvalidEnvironment} If any of the required environment variables are missing or invalid.
+ * @returns {void} Something generic, isn't it?
  */
 export function validateEnv(): void {
     logger.info("Looking for '.env' variables...");
