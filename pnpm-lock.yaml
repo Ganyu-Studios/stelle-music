@@ -25,7 +25,7 @@ importers:
         version: 2.2.3
       seyfert:
         specifier: github:tiramisulabs/seyfert
-        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/1731d2de6b632e233a26f2bf745467f1b3bd8a52
+        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/85c04fa4a0c7a91b12b6e291634abc122a7fb97e
       yunaforseyfert:
         specifier: ^1.1.0
         version: 1.1.0
@@ -34,8 +34,8 @@ importers:
         specifier: ^1.9.4
         version: 1.9.4
       '@types/node':
-        specifier: ^22.13.14
-        version: 22.13.14
+        specifier: ^22.14.0
+        version: 22.14.0
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -290,8 +290,8 @@ packages:
   '@prisma/get-platform@6.5.0':
     resolution: {integrity: sha512-xYcvyJwNMg2eDptBYFqFLUCfgi+wZLcj6HDMsj0Qw0irvauG4IKmkbywnqwok0B+k+W+p+jThM2DKTSmoPCkzw==}
 
-  '@types/node@22.13.14':
-    resolution: {integrity: sha512-Zs/Ollc1SJ8nKUAgc7ivOEdIBM8JAKgrqqUYi2J997JuKO7/tpQC+WCetQ1sypiKCQWHdvdg9wBNpUPEWZae7w==}
+  '@types/node@22.14.0':
+    resolution: {integrity: sha512-Kmpl+z84ILoG+3T/zQFyAJsU6EPTmOCj8/2+83fSN6djd6I4o7uOuGIH6vq3PrjY5BGitSbFuMN18j3iknubbA==}
 
   ansi-escapes@7.0.0:
     resolution: {integrity: sha512-GdYO7a61mR0fOlAsvC9/rIHf7L96sBc6dEWzeOu+KAea5bZyQRPIpojrVoI4AXGJS/ycu/fBTdLrUkA4ODrvjw==}
@@ -534,8 +534,8 @@ packages:
   rfdc@1.4.1:
     resolution: {integrity: sha512-q1b3N5QkRUWUl7iyylaaj3kOpIT0N2i9MqIEQXP73GVsN9cw3fdx8X63cEmWhJGi2PPCF23Ijp7ktmd39rawIA==}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/1731d2de6b632e233a26f2bf745467f1b3bd8a52:
-    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/1731d2de6b632e233a26f2bf745467f1b3bd8a52}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/85c04fa4a0c7a91b12b6e291634abc122a7fb97e:
+    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/85c04fa4a0c7a91b12b6e291634abc122a7fb97e}
     version: 2.2.0
 
   shebang-command@2.0.0:
@@ -594,8 +594,8 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  undici-types@6.20.0:
-    resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
+  undici-types@6.21.0:
+    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
 
   which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
@@ -773,9 +773,9 @@ snapshots:
     dependencies:
       '@prisma/debug': 6.5.0
 
-  '@types/node@22.13.14':
+  '@types/node@22.14.0':
     dependencies:
-      undici-types: 6.20.0
+      undici-types: 6.21.0
 
   ansi-escapes@7.0.0:
     dependencies:
@@ -1024,7 +1024,7 @@ snapshots:
 
   rfdc@1.4.1: {}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/1731d2de6b632e233a26f2bf745467f1b3bd8a52: {}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/85c04fa4a0c7a91b12b6e291634abc122a7fb97e: {}
 
   shebang-command@2.0.0:
     dependencies:
@@ -1075,7 +1075,7 @@ snapshots:
 
   typescript@5.8.2: {}
 
-  undici-types@6.20.0: {}
+  undici-types@6.21.0: {}
 
   which@2.0.2:
     dependencies:

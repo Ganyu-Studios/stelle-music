@@ -1,8 +1,11 @@
 import { Logger } from "seyfert";
 import { LogLevels, gray, italic, red, rgb24, yellow } from "seyfert/lib/common/index.js";
 
-import { Configuration } from "../data/configuration.js";
+import { Configuration } from "#stelle/utils/data/configuration.js";
 
+/**
+ * The type of the color function.
+ */
 type ColorFunction = (text: string) => string;
 
 /**
@@ -23,10 +26,10 @@ function addPadding(label: string): string {
     const maxLength = 6;
     const bar = "|";
 
-    const spacesToAdd = maxLength - label.length;
+    const spacesToAdd: number = maxLength - label.length;
     if (spacesToAdd <= 0) return bar;
 
-    const spaces = " ".repeat(spacesToAdd);
+    const spaces: string = " ".repeat(spacesToAdd);
 
     return spaces + bar;
 }
@@ -77,7 +80,7 @@ export function getWatermark(): void {
  * @returns {string} A random text.
  */
 function getRandomText(): string {
-    const texts = [
+    const texts: string[] = [
         "Traveling~",
         "Trailblazing with Stelle!",
         "Warp-speed help, Stelle-style!",

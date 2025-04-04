@@ -4,9 +4,11 @@ import { config } from "seyfert";
 import { GatewayIntentBits } from "seyfert/lib/types";
 
 import { Environment } from "#stelle/utils/data/configuration.js";
+import { Constants } from "#stelle/utils/data/constants.js";
 
 export default config.bot({
     token: Environment.Token,
+    debug: Constants.Debug,
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.MessageContent,
@@ -15,7 +17,7 @@ export default config.bot({
         GatewayIntentBits.GuildVoiceStates,
     ],
     locations: {
-        base: "src",
+        base: Constants.WorkingDirectory(),
         events: "events",
     },
 });
