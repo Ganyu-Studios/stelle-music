@@ -6,6 +6,7 @@ import { HandleCommand } from "seyfert/lib/commands/handle.js";
 import { Yuna } from "yunaforseyfert";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 import { Constants } from "#stelle/utils/data/constants.js";
+import { StelleContext } from "#stelle/utils/functions/utils.js";
 
 /**
  * Class representing the main client of the bot.
@@ -26,6 +27,7 @@ export class Stelle extends Client<true> {
      */
     constructor() {
         super({
+            context: StelleContext,
             allowedMentions: {
                 replied_user: false,
                 parse: ["roles", "users"],
