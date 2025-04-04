@@ -1,12 +1,12 @@
 import type { GatewayActivityUpdateData } from "seyfert/lib/types/gateway.js";
 import type { StelleConstants, StelleDirectory } from "#stelle/types";
 
+import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { pathToFileURL } from "node:url";
 import { ActivityType } from "seyfert/lib/types/index.js";
 
-// funny thing
-const packageJson = await import(pathToFileURL(resolve(process.cwd(), "package.json")).toString(), { assert: { type: "json" } });
+// funny thing, this sucks, but it works.
+const packageJson = JSON.parse(await readFile(resolve("package.json"), "utf-8"));
 
 /**
  * The constants for Stelle.
