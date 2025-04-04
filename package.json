@@ -40,9 +40,7 @@
         "prepare": "husky"
     },
     "lint-staged": {
-        "*.ts": [
-            "pnpm format"
-        ]
+        "{*.ts,*.json}": ["pnpm format"]
     },
     "repository": {
         "type": "git",
