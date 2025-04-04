@@ -41,7 +41,6 @@
                 "noGlobalEval": "off"
             },
             "correctness": {
-                "noVoidTypeReturn": "off",
                 "noNodejsModules": "off",
                 "noUndeclaredDependencies": "off"
             },

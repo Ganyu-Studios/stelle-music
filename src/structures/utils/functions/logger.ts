@@ -57,7 +57,7 @@ export function formatMemoryUsage(bytes: number): string {
  * @returns {void} Nah, for real?
  */
 export function getWatermark(): void {
-    return console.info(
+    console.info(
         customColor(`
 
 
