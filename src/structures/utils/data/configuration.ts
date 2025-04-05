@@ -8,6 +8,15 @@ const { TOKEN, DATABASE_URL, ERRORS_WEBHOOK, REDIS_HOST, REDIS_PORT, REDIS_PASSW
  */
 export const Configuration: StelleConfiguration = {
     defaultLocale: "en-US",
+    developerIds: [
+        "391283181665517568", // <-- JustEvil
+    ],
+    guildIds: [
+        "1075885077529120798", // <-- PenwinSquad
+        "970508955363188736", // <-- Ganyu Studios
+        "1213361742571241492", // <-- Team Genesis
+        "1003825077969764412", // <-- Seyfert
+    ],
     color: {
         success: 0x8d86a8,
         extra: 0xece8f1,

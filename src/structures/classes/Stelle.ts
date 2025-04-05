@@ -1,6 +1,6 @@
-import { Client } from "seyfert";
-import { ActivityType, type GatewayPresenceUpdateData, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
-import type { StelleConfiguration } from "#stelle/types";
+import { Client, LimitedCollection } from "seyfert";
+import { ActivityType, ApplicationCommandType, type GatewayPresenceUpdateData, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
+import type { NonGlobalCommands, StelleConfiguration } from "#stelle/types";
 
 import { HandleCommand } from "seyfert/lib/commands/handle.js";
 import { Yuna } from "yunaforseyfert";
@@ -16,11 +16,25 @@ import { StelleContext } from "#stelle/utils/functions/utils.js";
 export class Stelle extends Client<true> {
     /**
      * The client configuration.
-     * @type {StelleConfiguration}
      * @default Configuration
      * @readonly
      */
     readonly config: StelleConfiguration = Configuration;
+
+    /**
+     * The client cooldowns collection.
+     * @type {LimitedCollection<string, number>}
+     * @readonly
+     */
+    readonly cooldowns: LimitedCollection<string, number> = new LimitedCollection<string, number>();
+
+    /**
+     * The timestamp when the client is ready.
+     * @type {number}
+     * @default 0
+     * @readonly
+     */
+    public readyTimestamp: number = 0;
 
     /**
      * Creates an instance of the Stelle client.
@@ -28,6 +42,7 @@ export class Stelle extends Client<true> {
     constructor() {
         super({
             context: StelleContext,
+            globalMiddlewares: ["cooldownMiddleware"],
             allowedMentions: {
                 replied_user: false,
                 parse: ["roles", "users"],
@@ -50,19 +65,21 @@ export class Stelle extends Client<true> {
             },
         });
     }
-    /**
-     * The timestamp when the client is ready.
-     * @type {number}
-     * @default 0
-     * @readonly
-     */
-    public readyTimestamp: number = 0;
 
     /**
      * Start the main process of the client.
      * @returns {Promise<void>} A promise, yay!
      */
     public async run(): Promise<void> {
+        this.commands.onCommand = (file) => {
+            const command = new file();
+
+            if (command.type === ApplicationCommandType.PrimaryEntryPoint) return command;
+            if (command.onlyDeveloper) (command as NonGlobalCommands).guildId = this.config.guildIds;
+
+            return command;
+        };
+
         this.setServices({
             cache: {
                 disabledCache: {

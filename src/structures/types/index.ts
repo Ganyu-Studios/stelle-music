@@ -1,8 +1,58 @@
+import type { Command, ContextMenuCommand, SubCommand } from "seyfert";
+
 export { StelleConfiguration, StelleEnvironment } from "./client/configuration.js";
 export { StelleConstants, StelleDirectory } from "./client/constants.js";
+
+/**
+ * The type of the command category.
+ */
+export enum StelleCategory {
+    Unknown = 0,
+    User = 1,
+    Guild = 2,
+    Music = 3,
+}
+
+export interface Options {
+    /**
+     *
+     * The cooldown.
+     * @default 3
+     */
+    cooldown?: number;
+    /**
+     *
+     * Only the bot developer can use the command.
+     * And sent the command to developer(s) guild(s).
+     * @default false
+     */
+    onlyDeveloper?: boolean;
+    /**
+     *
+     * Only the guild owner cam use the command.
+     * @default false
+     */
+    onlyGuildOwner?: boolean;
+    /**
+     *
+     * The command category.
+     * @default StelleCategory.Unknown
+     */
+    category?: StelleCategory;
+}
 
 /**
  * Construct a type with the properties of T except for those in type K.
  */
 // Since the original one doesn't return the types that you want to exclude. So I added it
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+
+/**
+ * The options for non-command commands.
+ */
+export type NonCommandOptions = Omit<Options, "category">;
+
+/**
+ * The types for non-global commands.
+ */
+export type NonGlobalCommands = Command | ContextMenuCommand | SubCommand;

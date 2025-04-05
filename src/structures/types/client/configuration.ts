@@ -67,6 +67,16 @@ export interface StelleConfiguration {
      * @type {Commands}
      */
     commands: Commands;
+    /**
+     * The guild ids to push commands to.
+     * @type {string[]}
+     */
+    guildIds: string[];
+    /**
+     * The developer ids.
+     * @type {string[]}
+     */
+    developerIds: string[];
 }
 
 /**
