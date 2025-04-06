@@ -19,5 +19,7 @@ export default config.bot({
     locations: {
         base: Constants.WorkingDirectory(),
         events: "events",
+        commands: "commands",
+        langs: "locales",
     },
 });

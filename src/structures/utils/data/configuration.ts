@@ -1,5 +1,6 @@
 import type { StelleConfiguration, StelleEnvironment } from "#stelle/types";
 
+// extract the environment variables from the .env file
 const { TOKEN, DATABASE_URL, ERRORS_WEBHOOK, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = process.env;
 
 /**

@@ -1,12 +1,16 @@
 import { Client, LimitedCollection } from "seyfert";
+import { HandleCommand } from "seyfert/lib/commands/handle.js";
 import { ActivityType, ApplicationCommandType, type GatewayPresenceUpdateData, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
+import { Yuna } from "yunaforseyfert";
+
 import type { NonGlobalCommands, StelleConfiguration } from "#stelle/types";
 
-import { HandleCommand } from "seyfert/lib/commands/handle.js";
-import { Yuna } from "yunaforseyfert";
+import { StelleMiddlewares } from "#stelle/middlewares";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 import { Constants } from "#stelle/utils/data/constants.js";
 import { StelleContext } from "#stelle/utils/functions/utils.js";
+
+import { Database } from "./Database.js";
 
 /**
  * Class representing the main client of the bot.
@@ -16,7 +20,7 @@ import { StelleContext } from "#stelle/utils/functions/utils.js";
 export class Stelle extends Client<true> {
     /**
      * The client configuration.
-     * @default Configuration
+     * @type {StelleConfiguration}
      * @readonly
      */
     readonly config: StelleConfiguration = Configuration;
@@ -27,6 +31,12 @@ export class Stelle extends Client<true> {
      * @readonly
      */
     readonly cooldowns: LimitedCollection<string, number> = new LimitedCollection<string, number>();
+
+    /**
+     * The client database instance.
+     * @type {Database}
+     */
+    readonly database: Database;
 
     /**
      * The timestamp when the client is ready.
@@ -55,8 +65,11 @@ export class Stelle extends Client<true> {
             }),
             commands: {
                 reply: (): boolean => this.config.commands.reply,
-                prefix: (): string[] => {
-                    const prefixes: string[] = [...this.config.commands.prefixes, this.config.commands.defaultPrefix];
+                prefix: async ({ client, guildId }): Promise<string[]> => {
+                    const prefixes: string[] = [...client.config.commands.prefixes, client.config.commands.defaultPrefix];
+
+                    if (guildId) prefixes.push(await client.database.getPrefix(guildId));
+
                     return prefixes.map((prefix): string => prefix.toLowerCase());
                 },
                 deferReplyResponse: ({ client }) => ({
@@ -64,6 +77,8 @@ export class Stelle extends Client<true> {
                 }),
             },
         });
+
+        this.database = new Database(this);
     }
 
     /**
@@ -81,6 +96,7 @@ export class Stelle extends Client<true> {
         };
 
         this.setServices({
+            middlewares: StelleMiddlewares,
             cache: {
                 disabledCache: {
                     bans: true,
@@ -113,5 +129,27 @@ export class Stelle extends Client<true> {
         });
 
         await this.start();
+    }
+
+    /**
+     *
+     * Reload Stelle.
+     * @returns {Promise<void>} A promise, yeah... that's all.
+     */
+    public async reload(): Promise<void> {
+        this.logger.warn("Attemping to reload...");
+
+        try {
+            await this.events.reloadAll();
+            await this.commands.reloadAll();
+            await this.langs.reloadAll();
+
+            await this.uploadCommands({ cachePath: this.config.commands.filename });
+
+            this.logger.info("Stelle has been reloaded.");
+        } catch (error) {
+            this.logger.error("Error -", error);
+            throw error;
+        }
     }
 }

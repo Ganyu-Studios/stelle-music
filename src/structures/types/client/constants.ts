@@ -52,25 +52,21 @@ export interface StelleConstants {
      * @param {ActivityOptions} options - The options for the activity.
      * @type {GatewayActivityUpdateData[]}
      * @returns {GatewayActivityUpdateData[]} An array of activities.
-     * @description This is used to get the activities for the presence.
      */
     Activities(options?: ActivityOptions): GatewayActivityUpdateData[];
     /**
      * Get a random message from the list of messages.
      * @returns {string} A random message.
-     * @description This is used to get a random message from the list of messages.
      */
     ThinkMessage(): string;
     /**
      * Get a random message from the list of messages.
      * @returns {string} A random message.
-     * @description This is used to get a random message from the list of messages.
      */
     SecretMessage(): string;
     /**
      * Get the current working directory of the bot.
      * @returns {StelleDirectory} The current working directory of the bot.
-     * @description This is used to get the current working directory of the bot.
      */
     WorkingDirectory(): StelleDirectory;
 }

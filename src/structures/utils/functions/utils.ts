@@ -37,12 +37,20 @@ export const omitKeys = <T extends Record<string, any>, K extends keyof T>(obj: 
  * @returns {CustomContext} The custom context.
  */
 export const StelleContext = extendContext((i) => ({
+    /**
+     * Get the locale from the context.
+     * @returns {Promise<DefaultLocale>} The locale object.
+     */
     async getLocale(): Promise<DefaultLocale> {
         return i.client.t(await this.getLocaleString()).get();
     },
+    /**
+     * Get the locale string from the context.
+     * @returns {Promise<LocaleString>} The locale string.
+     */
     getLocaleString(): Promise<LocaleString> {
         if (!i.guildId) return Promise.resolve((i.user.locale as LocaleString | undefined) ?? i.client.config.defaultLocale);
-        return Promise.resolve("en-US");
+        return i.client.database.getLocale(i.guildId);
     },
 }));
 

@@ -22,5 +22,5 @@ export function validateEnv(): void {
     if (!Environment.RedisPort) throw new InvalidEnvValue("The variable'REDIS_PORT' cannot be empty or undefined.");
     if (!Environment.RedisPassword) throw new InvalidEnvValue("The variable'REDIS_PASSWORD' cannot be empty or undefined.");
 
-    logger.info("I'm not able to found missing variables.");
+    logger.info("Not able to found missing variables.");
 }
