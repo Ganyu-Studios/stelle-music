@@ -1,4 +1,5 @@
 import type { Command, ContextMenuCommand, SubCommand } from "seyfert";
+import type { PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
 export { StelleConfiguration, StelleEnvironment } from "./client/configuration.js";
 export { StelleConstants, StelleDirectory } from "./client/constants.js";
@@ -40,6 +41,16 @@ export interface Options {
      */
     category?: StelleCategory;
 }
+
+/**
+ * The type of the paused states.
+ */
+export type PausedMode = "pause" | "resume";
+
+/**
+ * The type of the permission flags.
+ */
+export type PermissionNames = keyof typeof PermissionFlagsBits;
 
 /**
  * Construct a type with the properties of T except for those in type K.
