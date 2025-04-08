@@ -20,7 +20,7 @@ export function changePresence(client: UsingClient): void {
 
         const guilds: Guild<"cached">[] = client.cache.guilds?.values() ?? [];
         const users: number = guilds.reduce((a, b) => a + (b.memberCount ?? 0), 0);
-        const players = 0;
+        const players: number = client.manager.players.size;
 
         const activities: GatewayActivityUpdateData[] = Constants.Activities({ guilds: guilds.length, users, players });
         const activity: GatewayActivityUpdateData = activities[index++ % array.length];

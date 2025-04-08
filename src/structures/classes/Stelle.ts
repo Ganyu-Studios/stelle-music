@@ -10,7 +10,8 @@ import { Configuration } from "#stelle/utils/data/configuration.js";
 import { Constants } from "#stelle/utils/data/constants.js";
 import { StelleContext } from "#stelle/utils/functions/utils.js";
 
-import { Database } from "./Database.js";
+import { StelleDatabase } from "./Database.js";
+import { StelleManager } from "./Manager.js";
 
 /**
  * Class representing the main client of the bot.
@@ -34,9 +35,15 @@ export class Stelle extends Client<true> {
 
     /**
      * The client database instance.
-     * @type {Database}
+     * @type {StelleDatabase}
      */
-    readonly database: Database;
+    readonly database: StelleDatabase;
+
+    /**
+     * The client lavalink manager instance.
+     * @type {StelleManager}
+     */
+    readonly manager: StelleManager;
 
     /**
      * The timestamp when the client is ready.
@@ -78,7 +85,8 @@ export class Stelle extends Client<true> {
             },
         });
 
-        this.database = new Database(this);
+        this.database = new StelleDatabase(this);
+        this.manager = new StelleManager(this);
     }
 
     /**

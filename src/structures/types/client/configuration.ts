@@ -58,16 +58,6 @@ export interface StelleConfiguration {
      */
     defaultLocale: LocaleString;
     /**
-     * The colors configuration.
-     * @type {Colors}
-     */
-    color: Colors;
-    /**
-     * The commands configuration.
-     * @type {Commands}
-     */
-    commands: Commands;
-    /**
      * The guild ids to push commands to.
      * @type {string[]}
      */
@@ -77,6 +67,26 @@ export interface StelleConfiguration {
      * @type {string[]}
      */
     developerIds: string[];
+    /**
+     * The bot invite link.
+     * @type {string}
+     */
+    inviteLink: string;
+    /**
+     * The bot repository link.
+     * @type {string}
+     */
+    githubLink: string;
+    /**
+     * The colors configuration.
+     * @type {Colors}
+     */
+    color: Colors;
+    /**
+     * The commands configuration.
+     * @type {Commands}
+     */
+    commands: Commands;
 }
 
 /**

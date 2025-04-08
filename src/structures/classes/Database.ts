@@ -10,7 +10,7 @@ const prismaClient = new PrismaClient();
  * Class representing the database.
  * @class Database
  */
-export class Database {
+export class StelleDatabase {
     /**
      * The database client instance.
      * @type {PrismaClient}

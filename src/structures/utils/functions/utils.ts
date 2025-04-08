@@ -29,7 +29,7 @@ export const getInspect = (object: any, depth: number = 0): string => inspect(ob
  * @param keys The keys to omit.
  * @returns {Omit<T, K>} The object without the keys.
  */
-export const omitKeys = <T extends Record<string, any>, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> =>
+export const omitKeys = <T extends Record<string, unknown>, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> =>
     Object.fromEntries(Object.entries(obj).filter(([key]) => !keys.includes(key as K))) as Omit<T, K>;
 
 /**

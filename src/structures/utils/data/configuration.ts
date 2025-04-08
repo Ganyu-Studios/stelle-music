@@ -9,6 +9,9 @@ const { TOKEN, DATABASE_URL, ERRORS_WEBHOOK, REDIS_HOST, REDIS_PORT, REDIS_PASSW
  */
 export const Configuration: StelleConfiguration = {
     defaultLocale: "en-US",
+    inviteLink:
+        "https://discord.com/oauth2/authorize?client_id=1241085977544359968&permissions=36793344&integration_type=0&scope=bot+applications.commands",
+    githubLink: "https://github.com/Ganyu-Studios/stelle-music",
     developerIds: [
         "391283181665517568", // <-- JustEvil
     ],
