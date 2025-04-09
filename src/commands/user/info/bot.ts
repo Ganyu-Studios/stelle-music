@@ -23,7 +23,7 @@ export default class BotSubcommand extends SubCommand {
             .setDescription(
                 messages.commands.info.bot.description({
                     clientName: client.me.username,
-                    defaultPrefix: client.config.commands.defaultPrefix,
+                    defaultPrefix: client.config.defaultPrefix,
                 }),
             )
             .addFields(

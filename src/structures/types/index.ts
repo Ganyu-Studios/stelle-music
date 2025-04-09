@@ -1,19 +1,47 @@
+import type { PlayerJson } from "lavalink-client";
 import type { Command, ContextMenuCommand, SubCommand } from "seyfert";
 import type { PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
-export { StelleConfiguration, StelleEnvironment } from "./client/configuration.js";
-export { StelleConstants, StelleDirectory } from "./client/constants.js";
+export type { StelleConfiguration, StelleEnvironment } from "./client/configuration.js";
+export type { StelleConstants, StelleDirectory } from "./client/constants.js";
+
+export {
+    type LavalinkEvents,
+    type LavalinkEvent,
+    type LavalinkEventRun,
+    type LavalinkEventType,
+    LavalinkEventTypes,
+} from "./client/lavalink.js";
 
 /**
- * The type of the command category.
+ * The enum of the command category.
  */
 export enum StelleCategory {
+    /**
+     * The unknown category.
+     * @type {number}
+     */
     Unknown = 0,
+    /**
+     * The user category.
+     * @type {number}
+     */
     User = 1,
+    /**
+     * The guild category.
+     * @type {number}
+     */
     Guild = 2,
+    /**
+     * The music category.
+     * @type {number}
+     */
     Music = 3,
 }
 
+/**
+ * The type of the command options.
+ */
 export interface Options {
     /**
      *
@@ -41,6 +69,14 @@ export interface Options {
      */
     category?: StelleCategory;
 }
+
+/**
+ * The type of the player session.
+ */
+export type StellePlayerJson = Omit<
+    PlayerJson,
+    "ping" | "createdTimeStamp" | "lavalinkVolume" | "equalizer" | "lastPositionChange" | "paused" | "playing" | "queue" | "filters"
+>;
 
 /**
  * The type of the paused states.

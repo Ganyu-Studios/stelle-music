@@ -14,7 +14,9 @@ export default createEvent({
 
         changePresence(client);
 
-        await client.uploadCommands({ cachePath: client.config.commands.filename });
         await client.database.connect();
+
+        await client.uploadCommands({ cachePath: client.config.commands.filename });
+        await client.manager.init({ id: user.id, username: clientName });
     },
 });

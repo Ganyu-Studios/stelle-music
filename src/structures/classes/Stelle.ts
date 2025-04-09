@@ -73,7 +73,7 @@ export class Stelle extends Client<true> {
             commands: {
                 reply: (): boolean => this.config.commands.reply,
                 prefix: async ({ client, guildId }): Promise<string[]> => {
-                    const prefixes: string[] = [...client.config.commands.prefixes, client.config.commands.defaultPrefix];
+                    const prefixes: string[] = [...client.config.prefixes, client.config.defaultPrefix];
 
                     if (guildId) prefixes.push(await client.database.getPrefix(guildId));
 
@@ -136,6 +136,7 @@ export class Stelle extends Client<true> {
             },
         });
 
+        await this.manager.load();
         await this.start();
     }
 
@@ -151,6 +152,7 @@ export class Stelle extends Client<true> {
             await this.events.reloadAll();
             await this.commands.reloadAll();
             await this.langs.reloadAll();
+            await this.manager.reloadAll();
 
             await this.uploadCommands({ cachePath: this.config.commands.filename });
 

@@ -1,3 +1,4 @@
+import type { LavalinkNodeOptions } from "lavalink-client";
 import type { LocaleString } from "seyfert/lib/types/index.js";
 
 /**
@@ -28,18 +29,6 @@ interface Commands {
      */
     reply: boolean;
     /**
-     * The default prefix used to use text commands.
-     * @type {string}
-     * @default "stelle"
-     */
-    defaultPrefix: string;
-    /**
-     * The prefixes used to use text commands.
-     * @type {string[]}
-     * @default ["st!"]
-     */
-    prefixes: string[];
-    /**
      * The commands cache file name.
      * @type {string}
      * @default "commands.json"
@@ -58,6 +47,18 @@ export interface StelleConfiguration {
      */
     defaultLocale: LocaleString;
     /**
+     * The default prefix used to use text commands.
+     * @type {string}
+     * @default "stelle"
+     */
+    defaultPrefix: string;
+    /**
+     * The prefixes used to use text commands.
+     * @type {string[]}
+     * @default ["st!"]
+     */
+    prefixes: string[];
+    /**
      * The guild ids to push commands to.
      * @type {string[]}
      */
@@ -67,6 +68,11 @@ export interface StelleConfiguration {
      * @type {string[]}
      */
     developerIds: string[];
+    /**
+     * The lavalink nodes list.
+     * @type {LavalinkNodeOptions[]}
+     */
+    nodes: LavalinkNodeOptions[];
     /**
      * The bot invite link.
      * @type {string}
@@ -115,9 +121,9 @@ export interface StelleEnvironment {
     RedisHost?: string;
     /**
      * The Redis port.
-     * @type {string}
+     * @type {number}
      */
-    RedisPort?: string;
+    RedisPort?: number;
     /**
      * The Redis password.
      * @type {string}

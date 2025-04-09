@@ -57,3 +57,15 @@ export class InvalidPageNumber extends Error {
         this.name = "Stelle [InvalidPageNumber]";
     }
 }
+
+/**
+ * Error thrown when the nodes has a session id, but the session id is resolved.
+ * @class InvalidNodeSession
+ * @extends {Error}
+ */
+export class InvalidNodeSession extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "Stelle [InvalidSession]";
+    }
+}

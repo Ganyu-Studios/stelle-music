@@ -15,15 +15,17 @@ export class StelleDatabase {
      * The database client instance.
      * @type {PrismaClient}
      * @readonly
+     * @protected
      */
-    protected prisma: PrismaClient = prismaClient;
+    protected readonly prisma: PrismaClient = prismaClient;
 
     /**
      * The client instance.
      * @type {UsingClient}
      * @readonly
+     * @protected
      */
-    protected client: UsingClient;
+    protected readonly client: UsingClient;
 
     /**
      * Indicates whether the database is connected.
@@ -34,7 +36,7 @@ export class StelleDatabase {
 
     /**
      * Creates an instance of the Database class.
-     * @param {UsingClient} client - The client instance.
+     * @param {UsingClient} client The client instance.
      */
     constructor(client: UsingClient) {
         this.client = client;
@@ -81,7 +83,7 @@ export class StelleDatabase {
      */
     public async getPrefix(id: string): Promise<string> {
         const data = await this.prisma.guildPrefix.findUnique({ where: { id } });
-        return data?.prefix ?? this.client.config.commands.defaultPrefix;
+        return data?.prefix ?? this.client.config.defaultPrefix;
     }
 
     /**

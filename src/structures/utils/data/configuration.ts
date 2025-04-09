@@ -1,4 +1,7 @@
 import type { StelleConfiguration, StelleEnvironment } from "#stelle/types";
+import { Sessions } from "#stelle/utils/manager/sessions.js";
+
+import { ms } from "#stelle/utils/functions/time.js";
 
 // extract the environment variables from the .env file
 const { TOKEN, DATABASE_URL, ERRORS_WEBHOOK, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = process.env;
@@ -9,6 +12,17 @@ const { TOKEN, DATABASE_URL, ERRORS_WEBHOOK, REDIS_HOST, REDIS_PORT, REDIS_PASSW
  */
 export const Configuration: StelleConfiguration = {
     defaultLocale: "en-US",
+    defaultPrefix: "stelle",
+    prefixes: ["st!"],
+    nodes: Sessions.resolve({
+        id: "SN #1", // <--- AKA Stelle Node
+        host: "localhost",
+        port: 2333,
+        authorization: "ganyuontopuwu",
+        secure: false,
+        retryAmount: 10,
+        retryDelay: ms("10s"),
+    }),
     inviteLink:
         "https://discord.com/oauth2/authorize?client_id=1241085977544359968&permissions=36793344&integration_type=0&scope=bot+applications.commands",
     githubLink: "https://github.com/Ganyu-Studios/stelle-music",
@@ -26,8 +40,6 @@ export const Configuration: StelleConfiguration = {
         extra: 0xece8f1,
     },
     commands: {
-        defaultPrefix: "stelle",
-        prefixes: ["st!"],
         reply: true,
         filename: "commands.json",
     },
@@ -42,6 +54,6 @@ export const Environment: StelleEnvironment = {
     DatabaseUrl: DATABASE_URL,
     ErrorsWebhook: ERRORS_WEBHOOK,
     RedisHost: REDIS_HOST,
-    RedisPort: REDIS_PORT,
+    RedisPort: Number(REDIS_PORT),
     RedisPassword: REDIS_PASSWORD,
 };

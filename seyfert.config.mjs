@@ -16,10 +16,14 @@ export default config.bot({
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildVoiceStates,
     ],
+    /**
+     * @type {import("seyfert").RuntimeConfig["locations"] & { lavalink: string }}
+     */
     locations: {
         base: Constants.WorkingDirectory(),
         events: "events",
         commands: "commands",
         langs: "locales",
+        lavalink: "lavalink",
     },
 });
