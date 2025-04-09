@@ -42,8 +42,7 @@ export class LavalinkHandler extends BaseHandler {
         const files = await this.loadFilesK<{ default: Lavalink }>(
             await this.getFiles(await this.client.getRC().then((x) => x.locations.lavalink)),
         );
-        if (!files.length) return;
-
+        
         for (const file of files) {
             const event: Lavalink = file.file.default;
             if (!event) {
