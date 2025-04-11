@@ -64,6 +64,7 @@ export const Constants: StelleConstants = {
             { name: `in ${guilds} guilds. ❤️`, type: ActivityType.Streaming },
             { name: `with ${users} users. 👤`, type: ActivityType.Playing },
             { name: `${players} players. 🌐`, type: ActivityType.Watching },
+            { name: "with /help 📜", type: ActivityType.Playing },
         ];
     },
     WorkingDirectory(): StelleDirectory {

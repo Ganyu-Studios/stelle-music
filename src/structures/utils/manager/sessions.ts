@@ -23,6 +23,7 @@ const ids: Map<string, string> = new Map<string, string>(
 /**
  * Lavalink node options without the `sessionId`.
  */
+//i don't know how to name this type, so i just called like this
 type NonResumableNodeOptions = Omit<LavalinkNodeOptions, "sessionId">;
 
 /**
@@ -54,6 +55,7 @@ export const Sessions = {
      * @return {boolean} Whether the session was deleted or not.
      */
     delete(id: string): boolean {
+        // this throws an error if there's no session with the id.
         return storage.exists(id) && storage.delete(id);
     },
     /**
@@ -66,7 +68,7 @@ export const Sessions = {
             throw new InvalidNodeSession("The 'sessionId' property is not allowed in the node options.");
 
         return nodes.flat().map((node) => {
-            // If there's no id, assign it.
+            // self explanatory, don't you think?
             node.id ??= `${node.host}:${node.port}`;
 
             return {
