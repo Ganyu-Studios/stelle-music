@@ -24,7 +24,7 @@ interface ActivityOptions {
 /**
  * The working directory of the bot.
  */
-export type StelleDirectory = "src" | "dist";
+export type WorkingDirectory = "src" | "dist";
 
 /**
  * The constants interface.
@@ -66,7 +66,7 @@ export interface StelleConstants {
     SecretMessage(): string;
     /**
      * Get the current working directory of the bot.
-     * @returns {StelleDirectory} The current working directory of the bot.
+     * @returns {WorkingDirectory} The current working directory of the bot.
      */
-    WorkingDirectory(): StelleDirectory;
+    WorkingDirectory(): WorkingDirectory;
 }

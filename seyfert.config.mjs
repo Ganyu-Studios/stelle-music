@@ -20,6 +20,7 @@ export default config.bot({
      * @type {import("seyfert").RuntimeConfig["locations"] & { lavalink: string }}
      */
     locations: {
+        // more funny.
         base: Constants.WorkingDirectory(),
         events: "events",
         commands: "commands",

@@ -14,6 +14,10 @@ export const Configuration: StelleConfiguration = {
     defaultLocale: "en-US",
     defaultPrefix: "stelle",
     prefixes: ["st!"],
+    fileName: "commands.json",
+    cacheSize: 5,
+    defaultSearchPlatform: "spotify",
+    defaultVolume: 100,
     nodes: Sessions.resolve({
         id: "SN #1", // <--- AKA Stelle Node
         host: "localhost",
@@ -38,10 +42,6 @@ export const Configuration: StelleConfiguration = {
     color: {
         success: 0x8d86a8,
         extra: 0xece8f1,
-    },
-    commands: {
-        reply: true,
-        filename: "commands.json",
     },
 };
 

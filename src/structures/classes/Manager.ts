@@ -83,6 +83,7 @@ export class StelleManager extends LavalinkManager {
     }
 
     /**
+     *
      * Reload the lavalink manager. Shortcut to `LavalinkHandler#reloadAlll()`.
      * @returns {Promise<void>} A promise... and nothing else.
      */

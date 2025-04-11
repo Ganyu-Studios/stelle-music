@@ -16,7 +16,7 @@ export default createEvent({
 
         await client.database.connect();
 
-        await client.uploadCommands({ cachePath: client.config.commands.filename });
+        await client.uploadCommands({ cachePath: client.config.commands.fileName });
         await client.manager.init({ id: user.id, username: clientName });
     },
 });

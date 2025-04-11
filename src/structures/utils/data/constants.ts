@@ -1,5 +1,5 @@
 import type { GatewayActivityUpdateData } from "seyfert/lib/types/gateway.js";
-import type { StelleConstants, StelleDirectory } from "#stelle/types";
+import type { StelleConstants, WorkingDirectory } from "#stelle/types";
 
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
@@ -67,7 +67,8 @@ export const Constants: StelleConstants = {
             { name: "with /help 📜", type: ActivityType.Playing },
         ];
     },
-    WorkingDirectory(): StelleDirectory {
+    WorkingDirectory(): WorkingDirectory {
+        // fun.
         return this.Dev ? "src" : "dist";
     },
 };

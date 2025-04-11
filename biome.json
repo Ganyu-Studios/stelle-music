@@ -52,7 +52,7 @@
     },
     "files": {
         "ignoreUnknown": true,
-        "ignore": [".vscode", "node_modules", "dist", "environment.ts"]
+        "ignore": [".vscode", "node_modules", "dist", "generated"]
     },
     "json": {
         "formatter": {

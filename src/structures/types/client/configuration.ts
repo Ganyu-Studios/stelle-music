@@ -1,4 +1,4 @@
-import type { LavalinkNodeOptions } from "lavalink-client";
+import type { LavalinkNodeOptions, SearchPlatform } from "lavalink-client";
 import type { LocaleString } from "seyfert/lib/types/index.js";
 
 /**
@@ -17,23 +17,6 @@ interface Colors {
      * @type {number}
      */
     extra: number;
-}
-
-/**
- * The commands configuration interface.
- */
-interface Commands {
-    /**
-     * Make the bot reply to the user.
-     * @default true
-     */
-    reply: boolean;
-    /**
-     * The commands cache file name.
-     * @type {string}
-     * @default "commands.json"
-     */
-    filename: `${string}.json`;
 }
 
 /**
@@ -84,15 +67,32 @@ export interface StelleConfiguration {
      */
     githubLink: string;
     /**
+     * The commands cache file name.
+     * @type {string}
+     * @default "commands.json"
+     */
+    fileName: `${string}.json`;
+    /**
+     * The max cache size.
+     * @type {number}
+     * @default 5
+     */
+    cacheSize: number;
+    /**
+     * Stelle default player volume.
+     * @default 60
+     */
+    defaultVolume: number;
+    /**
+     * Stelle default player search engine.
+     * @default "spotify"
+     */
+    defaultSearchPlatform: SearchPlatform;
+    /**
      * The colors configuration.
      * @type {Colors}
      */
     color: Colors;
-    /**
-     * The commands configuration.
-     * @type {Commands}
-     */
-    commands: Commands;
 }
 
 /**

@@ -3,7 +3,7 @@ import type { Command, ContextMenuCommand, SubCommand } from "seyfert";
 import type { PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
 export type { StelleConfiguration, StelleEnvironment } from "./client/configuration.js";
-export type { StelleConstants, StelleDirectory } from "./client/constants.js";
+export type { StelleConstants, WorkingDirectory } from "./client/constants.js";
 
 export {
     type LavalinkEvents,
@@ -37,6 +37,24 @@ export enum StelleCategory {
      * @type {number}
      */
     Music = 3,
+}
+
+/**
+ * The enum of the database cache keys.
+ */
+export enum StelleKeys {
+    /**
+     * The guild player key.
+     */
+    Player = "guild:player",
+    /**
+     * The guild locale key.
+     */
+    Locale = "guild:locale",
+    /**
+     * The guild prefix key.
+     */
+    Prefix = "guild:prefix",
 }
 
 /**
@@ -77,6 +95,13 @@ export type StellePlayerJson = Omit<
     PlayerJson,
     "ping" | "createdTimeStamp" | "lavalinkVolume" | "equalizer" | "lastPositionChange" | "paused" | "playing" | "queue" | "filters"
 >;
+
+/**
+ * The type to prettify the object.
+ */
+export type Prettify<T> = {
+    [K in keyof T]: T[K];
+} & {};
 
 /**
  * The type of the paused states.

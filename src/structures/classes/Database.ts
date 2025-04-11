@@ -1,10 +1,17 @@
 import type { UsingClient } from "seyfert";
 import type { LocaleString } from "seyfert/lib/types/index.js";
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, type guildPlayer } from "@prisma/client";
+import { type Omit, StelleKeys } from "#stelle/types";
+import { Cache } from "./Cache.js";
 
 // cuz prisma do weird stuff
 const prismaClient = new PrismaClient();
+
+/**
+ * The type of the guild player.
+ */
+type StoredPlayer = Omit<guildPlayer, "id">;
 
 /**
  * Class representing the database.
@@ -18,6 +25,13 @@ export class StelleDatabase {
      * @protected
      */
     protected readonly prisma: PrismaClient = prismaClient;
+
+    /**
+     * The database cache instance.
+     * @type {Cache}
+     * @readonly
+     */
+    readonly cache: Cache = new Cache();
 
     /**
      * The client instance.
@@ -71,6 +85,9 @@ export class StelleDatabase {
      * @returns {Promise<LocaleString>} The locale of the guild.
      */
     public async getLocale(id: string): Promise<LocaleString> {
+        const cache = this.cache.get(id, StelleKeys.Locale);
+        if (cache?.locale) return cache.locale as LocaleString;
+
         const data = await this.prisma.guildLocale.findUnique({ where: { id } });
         return (data?.locale as LocaleString | undefined) ?? this.client.config.defaultLocale;
     }
@@ -82,8 +99,32 @@ export class StelleDatabase {
      * @returns {Promise<string>} The prefix of the guild.
      */
     public async getPrefix(id: string): Promise<string> {
+        const cache = this.cache.get(id, StelleKeys.Prefix);
+        if (cache?.prefix) return cache.prefix;
+
         const data = await this.prisma.guildPrefix.findUnique({ where: { id } });
         return data?.prefix ?? this.client.config.defaultPrefix;
+    }
+
+    /**
+     *
+     * Get the guild player from the database.
+     * @param {string} id The guild id.
+     * @returns {Promise<StoredPlayer>} The player data of the guild.
+     */
+    public async getPlayer(id: string): Promise<StoredPlayer> {
+        const cache = this.cache.get(id, StelleKeys.Player);
+        if (cache)
+            return {
+                defaultVolume: cache.defaultVolume,
+                searchPlatform: cache.searchPlatform,
+            };
+
+        const data = await this.prisma.guildPlayer.findUnique({ where: { id } });
+        return {
+            defaultVolume: data?.defaultVolume ?? this.client.config.defaultVolume,
+            searchPlatform: data?.searchPlatform ?? this.client.config.defaultSearchPlatform,
+        };
     }
 
     /**
@@ -94,6 +135,8 @@ export class StelleDatabase {
      * @returns {Promise<void>} A magic promise, you see it?
      */
     public async setLocale(id: string, locale: string): Promise<void> {
+        this.cache.set(id, StelleKeys.Locale, { locale });
+
         await this.prisma.guildLocale.upsert({
             where: { id },
             update: { locale },
@@ -112,12 +155,42 @@ export class StelleDatabase {
      * @returns {Promise<void>} A promise since we love promises.
      */
     public async setPrefix(id: string, prefix: string): Promise<void> {
+        this.cache.set(id, StelleKeys.Prefix, { prefix });
+
         await this.prisma.guildPrefix.upsert({
             where: { id },
             update: { prefix },
             create: {
                 id,
                 prefix,
+            },
+        });
+    }
+
+    /**
+     *
+     * Set the guild player to the database.
+     * @param {string} id The guild id.
+     * @param {StoredPlayer} player The player data to set.
+     * @returns {Promise<void>} A promise since we love promises.
+     */
+    public async setPlayer(id: string, player: Partial<StoredPlayer>): Promise<void> {
+        const oldPlayer = await this.getPlayer(id);
+
+        player.defaultVolume ??= oldPlayer.defaultVolume;
+        player.searchPlatform ??= oldPlayer.searchPlatform;
+
+        this.cache.set(id, StelleKeys.Player, {
+            defaultVolume: player.defaultVolume,
+            searchPlatform: player.searchPlatform,
+        });
+
+        await this.prisma.guildPlayer.upsert({
+            where: { id },
+            update: player,
+            create: {
+                id,
+                ...player,
             },
         });
     }

@@ -71,7 +71,7 @@ export class Stelle extends Client<true> {
                 activities: [{ name: "Traveling... 🌠", type: ActivityType.Playing }],
             }),
             commands: {
-                reply: (): boolean => this.config.commands.reply,
+                reply: (): boolean => true,
                 prefix: async ({ client, guildId }): Promise<string[]> => {
                     const prefixes: string[] = [...client.config.prefixes, client.config.defaultPrefix];
 
@@ -154,7 +154,7 @@ export class Stelle extends Client<true> {
             await this.langs.reloadAll();
             await this.manager.reloadAll();
 
-            await this.uploadCommands({ cachePath: this.config.commands.filename });
+            await this.uploadCommands({ cachePath: this.config.fileName });
 
             this.logger.info("Stelle has been reloaded.");
         } catch (error) {

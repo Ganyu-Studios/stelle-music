@@ -1,6 +1,7 @@
 node_modules
 dist
 logs
+prisma/generated
 
 .env
 
