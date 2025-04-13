@@ -19,6 +19,19 @@ interface Colors {
     extra: number;
 }
 
+interface Channels {
+    /**
+     * The channel id where the bot will send the guilds log.
+     * @type {string}
+     */
+    guildsId: string;
+    /**
+     * The channel id where the bot will send the errors log.
+     * @type {string}
+     */
+    errorsId: string;
+}
+
 /**
  * The configuration interface.
  */
@@ -93,6 +106,11 @@ export interface StelleConfiguration {
      * @type {Colors}
      */
     color: Colors;
+    /**
+     * The channels configuration.
+     * @type {Channels}
+     */
+    channels: Channels;
 }
 
 /**

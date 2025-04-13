@@ -1,8 +1,9 @@
+import type { SearchPlatform } from "lavalink-client";
 import type { UsingClient } from "seyfert";
 import type { LocaleString } from "seyfert/lib/types/index.js";
 
-import { PrismaClient, type guildPlayer } from "@prisma/client";
-import { type Omit, StelleKeys } from "#stelle/types";
+import { PrismaClient } from "@prisma/client";
+import { StelleKeys } from "#stelle/types";
 import { Cache } from "./Cache.js";
 
 // cuz prisma do weird stuff
@@ -11,7 +12,10 @@ const prismaClient = new PrismaClient();
 /**
  * The type of the guild player.
  */
-type StoredPlayer = Omit<guildPlayer, "id">;
+interface StoredPlayer {
+    defaultVolume: number;
+    searchPlatform: SearchPlatform;
+}
 
 /**
  * Class representing the database.
@@ -85,11 +89,11 @@ export class StelleDatabase {
      * @returns {Promise<LocaleString>} The locale of the guild.
      */
     public async getLocale(id: string): Promise<LocaleString> {
-        const cache = this.cache.get(id, StelleKeys.Locale);
+        const cache = this.cache.get(StelleKeys.Locale, id);
         if (cache?.locale) return cache.locale as LocaleString;
 
         const data = await this.prisma.guildLocale.findUnique({ where: { id } });
-        return (data?.locale as LocaleString | undefined) ?? this.client.config.defaultLocale;
+        return (data?.locale as LocaleString | null | undefined) ?? this.client.config.defaultLocale;
     }
 
     /**
@@ -99,7 +103,7 @@ export class StelleDatabase {
      * @returns {Promise<string>} The prefix of the guild.
      */
     public async getPrefix(id: string): Promise<string> {
-        const cache = this.cache.get(id, StelleKeys.Prefix);
+        const cache = this.cache.get(StelleKeys.Prefix, id);
         if (cache?.prefix) return cache.prefix;
 
         const data = await this.prisma.guildPrefix.findUnique({ where: { id } });
@@ -113,17 +117,17 @@ export class StelleDatabase {
      * @returns {Promise<StoredPlayer>} The player data of the guild.
      */
     public async getPlayer(id: string): Promise<StoredPlayer> {
-        const cache = this.cache.get(id, StelleKeys.Player);
-        if (cache)
+        const cache = this.cache.get(StelleKeys.Player, id);
+        if (cache?.defaultVolume && cache?.searchPlatform)
             return {
                 defaultVolume: cache.defaultVolume,
-                searchPlatform: cache.searchPlatform,
+                searchPlatform: cache.searchPlatform as SearchPlatform,
             };
 
         const data = await this.prisma.guildPlayer.findUnique({ where: { id } });
         return {
             defaultVolume: data?.defaultVolume ?? this.client.config.defaultVolume,
-            searchPlatform: data?.searchPlatform ?? this.client.config.defaultSearchPlatform,
+            searchPlatform: (data?.searchPlatform as SearchPlatform | null | undefined) ?? this.client.config.defaultSearchPlatform,
         };
     }
 
@@ -135,7 +139,7 @@ export class StelleDatabase {
      * @returns {Promise<void>} A magic promise, you see it?
      */
     public async setLocale(id: string, locale: string): Promise<void> {
-        this.cache.set(id, StelleKeys.Locale, { locale });
+        this.cache.set(StelleKeys.Locale, id, { locale });
 
         await this.prisma.guildLocale.upsert({
             where: { id },
@@ -155,7 +159,7 @@ export class StelleDatabase {
      * @returns {Promise<void>} A promise since we love promises.
      */
     public async setPrefix(id: string, prefix: string): Promise<void> {
-        this.cache.set(id, StelleKeys.Prefix, { prefix });
+        this.cache.set(StelleKeys.Prefix, id, { prefix });
 
         await this.prisma.guildPrefix.upsert({
             where: { id },
@@ -180,7 +184,7 @@ export class StelleDatabase {
         player.defaultVolume ??= oldPlayer.defaultVolume;
         player.searchPlatform ??= oldPlayer.searchPlatform;
 
-        this.cache.set(id, StelleKeys.Player, {
+        this.cache.set(StelleKeys.Player, id, {
             defaultVolume: player.defaultVolume,
             searchPlatform: player.searchPlatform,
         });

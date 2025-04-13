@@ -30,11 +30,11 @@ export class Cache {
     /**
      *
      * Get the data from the cache.
-     * @param {string} id The guild id.
      * @param {T} key The key.
+     * @param {string} id The guild id.
      * @returns {CacheKeys[T] | undefined} The cached data.
      */
-    public get<T extends StelleKeys = StelleKeys>(id: string, key: T): CacheKeys[T] | undefined {
+    public get<T extends StelleKeys = StelleKeys>(key: T, id: string): CacheKeys[T] | undefined {
         return this.internal.get(id)?.get(key) as CacheKeys[T] | undefined;
     }
 
@@ -55,7 +55,7 @@ export class Cache {
      * @param {T} key The key.
      * @returns {boolean} If the data key was deleted.
      */
-    public deleteKey<T extends StelleKeys = StelleKeys>(id: string, key: T): boolean {
+    public deleteKey<T extends StelleKeys = StelleKeys>(key: T, id: string): boolean {
         return this.internal.get(id)?.delete(key) ?? false;
     }
 
@@ -67,7 +67,7 @@ export class Cache {
      * @param {CacheKeys[T]} data The data.
      * @returns {void} Nothing... just sets the data to the cache.
      */
-    public set<T extends StelleKeys = StelleKeys>(id: string, key: T, data: CacheKeys[T]): void {
+    public set<T extends StelleKeys = StelleKeys>(key: T, id: string, data: CacheKeys[T]): void {
         if (this.internal.has(id) && !this.internal.get(id)?.has(key)) {
             this.internal.get(id)?.set(key, data);
             return;

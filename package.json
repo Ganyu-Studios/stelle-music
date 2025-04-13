@@ -73,7 +73,8 @@
         "#stelle/classes/*": "./dist/structures/classes/*",
         "#stelle/utils/*": "./dist/structures/utils/*",
         "#stelle/types": "./dist/structures/types/index.js",
-        "#stelle/middlewares": "./dist/middlewares/index.js"
+        "#stelle/middlewares": "./dist/middlewares/index.js",
+        "#stelle/client": "./dist/index.js"
     },
     "pnpm": {
         "onlyBuiltDependencies": [

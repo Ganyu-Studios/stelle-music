@@ -5,6 +5,22 @@ import type { Omit } from "#stelle/types";
 import { inspect } from "node:util";
 
 /**
+ * The webhook object is used to parse the webhook url.
+ */
+interface WebhookObject {
+    /**
+     * The id of the webhook.
+     * @type {string}
+     */
+    id: string;
+    /**
+     * The token of the webhook.
+     * @type {string}
+     */
+    token: string;
+}
+
+/**
  *
  * Slice the text.
  * @param {string} text The text to slice.
@@ -29,7 +45,7 @@ export const getInspect = (object: any, depth: number = 0): string => inspect(ob
  * @param keys The keys to omit.
  * @returns {Omit<T, K>} The object without the keys.
  */
-export const omitKeys = <T extends Record<string, unknown>, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> =>
+export const omitKeys = <T extends Record<string, any>, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> =>
     Object.fromEntries(Object.entries(obj).filter(([key]) => !keys.includes(key as K))) as Omit<T, K>;
 
 /**
@@ -70,4 +86,17 @@ export const getCollectionKey = (ctx: AnyContext): string => {
     if (ctx.isComponent() || ctx.isModal()) return `${authorId}-${ctx.customId}-component`;
 
     return `${authorId}-all`;
+};
+
+/**
+ *
+ * Parses a webhook url.
+ * @param {string} url The webhook url.
+ * @returns {WebhookObject | null} The parsed webhook.
+ */
+export const parseWebhook = (url: string): WebhookObject | null => {
+    const webhookRegex = /https?:\/\/(?:ptb\.|canary\.)?discord\.com\/api(?:\/v\d{1,2})?\/webhooks\/(\d{17,19})\/([\w-]{68})/i;
+    const match = webhookRegex.exec(url);
+
+    return match ? { id: match[1], token: match[2] } : null;
 };

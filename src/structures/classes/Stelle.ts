@@ -10,6 +10,8 @@ import { Configuration } from "#stelle/utils/data/configuration.js";
 import { Constants } from "#stelle/utils/data/constants.js";
 import { StelleContext } from "#stelle/utils/functions/utils.js";
 
+import { onBotPermissionsFail, onOptionsError, onPermissionsFail, onRunError } from "#stelle/utils/functions/overrides.js";
+
 import { StelleDatabase } from "./Database.js";
 import { StelleManager } from "./Manager.js";
 
@@ -60,16 +62,21 @@ export class Stelle extends Client<true> {
         super({
             context: StelleContext,
             globalMiddlewares: ["cooldownMiddleware"],
-            allowedMentions: {
-                replied_user: false,
-                parse: ["roles", "users"],
-            },
             presence: (): GatewayPresenceUpdateData => ({
                 afk: false,
                 since: Date.now(),
                 status: PresenceUpdateStatus.Idle,
                 activities: [{ name: "Traveling... 🌠", type: ActivityType.Playing }],
             }),
+            allowedMentions: {
+                replied_user: false,
+                parse: ["roles", "users"],
+            },
+            components: {
+                defaults: {
+                    onRunError,
+                },
+            },
             commands: {
                 reply: (): boolean => true,
                 prefix: async ({ client, guildId }): Promise<string[]> => {
@@ -82,6 +89,12 @@ export class Stelle extends Client<true> {
                 deferReplyResponse: ({ client }) => ({
                     content: `<a:typing:1214253750093488149> **${client.me.username}** ${Constants.ThinkMessage()}`,
                 }),
+                defaults: {
+                    onBotPermissionsFail,
+                    onOptionsError,
+                    onPermissionsFail,
+                    onRunError,
+                },
             },
         });
 
