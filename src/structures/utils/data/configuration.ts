@@ -47,6 +47,10 @@ export const Configuration: StelleConfiguration = {
         guildsId: "1061102025548509255", // <-- Guild logs channel,
         errorsId: "1104515104315289640", // <-- Errors logs channel.
     },
+    permissions: {
+        stagePermissions: ["MuteMembers"],
+        voicePermissions: ["ViewChannel", "Connect", "Speak"],
+    },
 };
 
 /**

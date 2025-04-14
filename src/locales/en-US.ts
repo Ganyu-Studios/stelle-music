@@ -102,9 +102,7 @@ export default {
                 embed: {
                     playlist: ({ playlist, tracks, volume, query, requester }: IPlayList): string =>
                         `\`🎵\` The playlist [\`${playlist}\`](${query}) has been added to the queue.\n\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>\n\`🔰\` **With**: \`${tracks} tracks\``,
-                    result: ({ title, url, duration, volume, requester }: IPlayTrack): string =>
-                        `\`🎵\` Added [\`${title}\`](${url}) to the queue.\n\n\`🕛\` **Duration**: \`${duration}\`\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>`,
-                    results: ({ title, url, duration, volume, requester, position }: IPlayTrack): string =>
+                    result: ({ title, url, duration, volume, requester, position }: IPlayTrack): string =>
                         `\`🎵\` Added [\`${title}\`](${url}) to the queue.\n\n\`🕛\` **Duration**: \`${duration}\`\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>\n\n\`📋\` **Position in queue**: \`#${position}\``,
                 },
             },

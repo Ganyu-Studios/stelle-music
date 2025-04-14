@@ -41,7 +41,11 @@ export class StelleManager extends LavalinkManager {
     constructor(client: UsingClient) {
         super({
             nodes: client.config.nodes,
-            sendToShard: (guildId, payload) => client.gateway.send(client.gateway.calculateShardId(guildId), payload),
+            sendToShard: (guildId, payload) => {
+                // just in case, but this should never happen
+                if (typeof guildId !== "string") return client.logger.warn("StelleManager#sendToShard: guildId is not a string.");
+                return client.gateway.send(client.gateway.calculateShardId(guildId), payload);
+            },
             queueOptions: {
                 maxPreviousTracks: 25,
             },

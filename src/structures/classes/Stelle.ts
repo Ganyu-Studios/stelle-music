@@ -61,7 +61,7 @@ export class Stelle extends Client<true> {
     constructor() {
         super({
             context: StelleContext,
-            globalMiddlewares: ["cooldownMiddleware"],
+            globalMiddlewares: ["checkCooldown", "checkVerifications"],
             presence: (): GatewayPresenceUpdateData => ({
                 afk: false,
                 since: Date.now(),

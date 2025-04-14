@@ -7,7 +7,7 @@ import { getCollectionKey } from "#stelle/utils/functions/utils.js";
  * The middleware to handle cooldowns.
  * @type {MiddlewareContext<void, AnyContext>}
  */
-export const cooldownMiddleware: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, next, pass }) => {
+export const checkCooldown: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, next, pass }) => {
     // avoid components for now
     if (context.isComponent()) return next();
 

@@ -3,8 +3,11 @@ import { Environment } from "#stelle/utils/data/configuration.js";
 import { Constants } from "#stelle/utils/data/constants.js";
 import { parseWebhook, sliceText } from "#stelle/utils/functions/utils.js";
 
-import { client } from "#stelle/client";
 import { logger } from "#stelle/utils/functions/logger.js";
+
+// this causes the error "unsettled top-level await"
+// idk why, but it does
+import { client } from "#stelle/client";
 
 /**
  * The report options interface.

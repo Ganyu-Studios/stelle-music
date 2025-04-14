@@ -1,4 +1,5 @@
 import type { LavalinkNodeOptions, SearchPlatform } from "lavalink-client";
+import type { PermissionStrings } from "seyfert";
 import type { LocaleString } from "seyfert/lib/types/index.js";
 
 /**
@@ -19,6 +20,9 @@ interface Colors {
     extra: number;
 }
 
+/**
+ * The channels configuration interface.
+ */
 interface Channels {
     /**
      * The channel id where the bot will send the guilds log.
@@ -30,6 +34,22 @@ interface Channels {
      * @type {string}
      */
     errorsId: string;
+}
+
+/**
+ * The permissions configuration interface.
+ */
+interface Permissions {
+    /**
+     * Stelle voice channel permissions.
+     * @default ["ViewChannel", "Connect", "Speak"]
+     */
+    voicePermissions: PermissionStrings;
+    /**
+     * Stelle stage channel permissions.
+     * @default ["MuteMembers"]
+     */
+    stagePermissions: PermissionStrings;
 }
 
 /**
@@ -111,6 +131,11 @@ export interface StelleConfiguration {
      * @type {Channels}
      */
     channels: Channels;
+    /**
+     * The permissions configuration.
+     * @type {Permissions}
+     */
+    permissions: Permissions;
 }
 
 /**

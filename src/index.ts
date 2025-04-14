@@ -15,6 +15,9 @@ Logger.dirname = "logs";
 
 validateEnv();
 
-export const client = new Stelle();
+const client = new Stelle();
 
-await client.run();
+export { client };
+
+// "Warning: Detected unsettled top-level await" my ass
+(async (): Promise<void> => await client.run())();
