@@ -41,7 +41,7 @@ const options = {
 @LocalesT("locales.loop.name", "locales.loop.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class LoopCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>) {
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<void> {
         const { client, options } = ctx;
         const { mode } = options;
 

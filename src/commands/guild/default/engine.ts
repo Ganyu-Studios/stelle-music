@@ -43,7 +43,7 @@ const options = {
 @Options(options)
 @LocalesT("locales.default.subcommands.engine.name", "locales.default.subcommands.engine.description")
 export default class EngineSubcommand extends SubCommand {
-    async run(ctx: GuildCommandContext<typeof options>) {
+    async run(ctx: GuildCommandContext<typeof options>): Promise<void> {
         const { client, options } = ctx;
         const { engine } = options;
 

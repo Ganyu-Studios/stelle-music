@@ -18,7 +18,7 @@ import { Constants } from "#stelle/utils/data/constants.js";
 @LocalesT("locales.autoplay.name", "locales.autoplay.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
 export default class AutoplayCommand extends Command {
-    public override async run(ctx: GuildCommandContext) {
+    public override async run(ctx: GuildCommandContext): Promise<void> {
         const { client } = ctx;
 
         const { messages } = await ctx.getLocale();

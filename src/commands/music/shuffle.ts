@@ -15,7 +15,7 @@ import { StelleOptions } from "#stelle/utils/decorator.js";
 })
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
 export default class ShuffleCommand extends Command {
-    public override async run(ctx: GuildCommandContext) {
+    public override async run(ctx: GuildCommandContext): Promise<void> {
         const { client } = ctx;
 
         const player = client.manager.getPlayer(ctx.guildId);

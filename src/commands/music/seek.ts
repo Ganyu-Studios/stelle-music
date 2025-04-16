@@ -1,4 +1,15 @@
-import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares, type OKFunction, Options, createStringOption } from "seyfert";
+import {
+    Command,
+    Declare,
+    type GuildCommandContext,
+    LocalesT,
+    type Message,
+    Middlewares,
+    type OKFunction,
+    Options,
+    type WebhookMessage,
+    createStringOption,
+} from "seyfert";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
@@ -38,7 +49,7 @@ const options = {
 @LocalesT("locales.seek.name", "locales.seek.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class SeekCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>) {
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
         const { client, options } = ctx;
         const { time } = options;
 

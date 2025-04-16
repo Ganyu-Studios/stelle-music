@@ -24,7 +24,7 @@ const options = {
 @LocalesT("locales.setprefix.name", "locales.setprefix.description")
 @Options(options)
 export default class SetlangCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>) {
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<void> {
         const { client, options } = ctx;
         const { prefix } = options;
 

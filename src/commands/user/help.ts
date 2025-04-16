@@ -6,9 +6,11 @@ import {
     Embed,
     type GuildCommandContext,
     LocalesT,
+    type Message,
     Options,
     StringSelectOption,
     SubCommand,
+    type WebhookMessage,
     createStringOption,
 } from "seyfert";
 import { StelleOptions } from "#stelle/utils/decorator.js";
@@ -24,19 +26,25 @@ import { EmbedPaginator, StelleStringMenu } from "#stelle/utils/paginator.js";
 
 const options = {
     command: createStringOption({
-        autocomplete(interaction) {
+        autocomplete(interaction): Promise<void> {
             const { client } = interaction;
             const { messages } = client.t(interaction.locale).get();
 
             const commands = client.commands.values.filter((command) => !command.guildId);
             const input = interaction.getInput();
             if (!input) {
-                return commands
-                    .map((command) => ({
-                        name: command.name,
-                        value: command.name,
-                    }))
-                    .slice(0, 25);
+                return interaction.respond(
+                    commands
+                        .map((command) => {
+                            const description = command.description_localizations?.[interaction.locale] ?? command.description;
+
+                            return {
+                                name: `${command.name} - ${sliceText(description, 124)} (${TimeFormat.toHumanize((command.cooldown ?? 3) * 1000)})`,
+                                value: command.name,
+                            };
+                        })
+                        .slice(0, 25),
+                );
             }
 
             const command = commands.find((command) => command.name === input);
@@ -75,7 +83,7 @@ const options = {
 @StelleOptions({ category: StelleCategory.User, cooldown: 5 })
 @Options(options)
 export default class HelpCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>) {
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
         const { client, options } = ctx;
         const { messages } = await ctx.getLocale();
 

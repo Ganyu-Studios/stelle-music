@@ -17,7 +17,7 @@ import { EmbedPaginator } from "#stelle/utils/paginator.js";
 @LocalesT("locales.queue.name", "locales.queue.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
 export default class QueueCommand extends Command {
-    public override async run(ctx: GuildCommandContext) {
+    public override async run(ctx: GuildCommandContext): Promise<void> {
         const { client, author } = ctx;
 
         const { messages } = await ctx.getLocale();

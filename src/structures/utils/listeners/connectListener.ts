@@ -14,6 +14,11 @@ export async function connectListener(client: UsingClient, node: LavalinkNode): 
         if (players.length && !node.resuming.enabled) {
             for (const player of players) {
                 try {
+                    const messageId = player.get<string | undefined>("messageId");
+                    const channelId = player.textChannelId ?? player.options.textChannelId;
+
+                    if (messageId && channelId) await client.messages.delete(channelId, messageId);
+
                     await player.play({
                         track: { encoded: player.queue.current?.encoded },
                         paused: player.paused,

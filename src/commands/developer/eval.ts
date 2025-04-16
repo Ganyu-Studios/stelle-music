@@ -54,13 +54,13 @@ const options = {
 export default class EvalCommand extends Command {
     @Watch({
         idle: ms("1min"),
-        beforeCreate(ctx) {
+        beforeCreate(ctx): void {
             const watcher = Yuna.watchers.find(ctx.client, { userId: ctx.author.id, command: this, channelId: ctx.channelId });
             if (!watcher) return;
 
             watcher.stop("Another execution");
         },
-        onStop(reason) {
+        onStop(reason): void {
             this.ctx?.editOrReply({
                 content: "",
                 embeds: [

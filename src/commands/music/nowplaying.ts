@@ -1,4 +1,14 @@
-import { Command, Declare, Embed, type GuildCommandContext, LocalesT, Middlewares, type User } from "seyfert";
+import {
+    Command,
+    Declare,
+    Embed,
+    type GuildCommandContext,
+    LocalesT,
+    type Message,
+    Middlewares,
+    type User,
+    type WebhookMessage,
+} from "seyfert";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
@@ -17,7 +27,7 @@ import { createBar } from "#stelle/utils/functions/utils.js";
 @LocalesT("locales.nowplaying.name", "locales.nowplaying.description")
 @Middlewares(["checkNodes", "checkPlayer"])
 export default class NowPlayingCommand extends Command {
-    public override async run(ctx: GuildCommandContext) {
+    public override async run(ctx: GuildCommandContext): Promise<Message | WebhookMessage | void> {
         const { client } = ctx;
 
         const { messages } = await ctx.getLocale();

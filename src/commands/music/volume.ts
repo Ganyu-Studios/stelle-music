@@ -1,4 +1,14 @@
-import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares, Options, createIntegerOption } from "seyfert";
+import {
+    Command,
+    Declare,
+    type GuildCommandContext,
+    LocalesT,
+    type Message,
+    Middlewares,
+    Options,
+    type WebhookMessage,
+    createIntegerOption,
+} from "seyfert";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
@@ -27,7 +37,7 @@ const options = {
 @LocalesT("locales.volume.name", "locales.volume.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class VolumeCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>) {
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
         const { client, options } = ctx;
         const { volume } = options;
 

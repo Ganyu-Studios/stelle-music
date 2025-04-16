@@ -1,4 +1,14 @@
-import { Command, Declare, type DefaultLocale, type GuildCommandContext, LocalesT, Options, createStringOption } from "seyfert";
+import {
+    Command,
+    Declare,
+    type DefaultLocale,
+    type GuildCommandContext,
+    LocalesT,
+    type Message,
+    Options,
+    type WebhookMessage,
+    createStringOption,
+} from "seyfert";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { MessageFlags } from "seyfert/lib/types/index.js";
@@ -39,7 +49,7 @@ const options = {
 @LocalesT("locales.setlocale.name", "locales.setlocale.description")
 @Options(options)
 export default class SetlangCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>) {
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
         const { client, options } = ctx;
         const { locale } = options;
 

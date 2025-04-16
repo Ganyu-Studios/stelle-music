@@ -10,7 +10,7 @@ export default class PauseTrackComponent extends ComponentCommand {
     override componentType = "Button" as const;
     override customId = "player-pauseTrack";
 
-    async run(ctx: GuildComponentContext<typeof this.componentType>) {
+    async run(ctx: GuildComponentContext<typeof this.componentType>): Promise<void> {
         const { client } = ctx;
 
         const { messages } = await ctx.getLocale();

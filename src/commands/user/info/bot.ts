@@ -10,7 +10,7 @@ import { formatMemoryUsage } from "#stelle/utils/functions/logger.js";
 })
 @LocalesT("locales.info.subcommands.bot.name", "locales.info.subcommands.bot.description")
 export default class BotSubcommand extends SubCommand {
-    public override async run(ctx: GuildCommandContext) {
+    public override async run(ctx: GuildCommandContext): Promise<void> {
         const { messages } = await ctx.getLocale();
         const { client } = ctx;
 

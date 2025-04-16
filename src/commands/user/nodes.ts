@@ -1,10 +1,11 @@
-import { Command, Declare, Embed, type GuildCommandContext, LocalesT } from "seyfert";
+import { Command, Declare, Embed, type GuildCommandContext, LocalesT, type Message, type WebhookMessage } from "seyfert";
 
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
 
 import { StelleCategory } from "#stelle/types";
+import { formatMemoryUsage } from "#stelle/utils/functions/logger.js";
 import { TimeFormat } from "#stelle/utils/functions/time.js";
 import { EmbedPaginator } from "#stelle/utils/paginator.js";
 
@@ -17,7 +18,7 @@ import { EmbedPaginator } from "#stelle/utils/paginator.js";
 @StelleOptions({ cooldown: 5, category: StelleCategory.User })
 @LocalesT("locales.nodes.name", "locales.nodes.description")
 export default class ExampleCommand extends Command {
-    public override async run(ctx: GuildCommandContext) {
+    public override async run(ctx: GuildCommandContext): Promise<Message | WebhookMessage | void> {
         const { client } = ctx;
         const { messages } = await ctx.getLocale();
 
@@ -29,8 +30,8 @@ export default class ExampleCommand extends Command {
                 state: messages.commands.nodes.states[node.connected ? "connected" : "disconnected"],
                 players: node.stats.players,
                 uptime: TimeFormat.toHumanize(node.stats.uptime),
-                memory: `${node.stats.memory.used} MB / ${node.stats.memory.allocated} MB`,
-                cpu: `${node.stats.cpu.lavalinkLoad.toFixed(2)}% (Cores: ${node.stats.cpu.cores})`,
+                memory: `${formatMemoryUsage(node.stats.memory.used)} / ${formatMemoryUsage(node.stats.memory.allocated)}`,
+                cpu: `${node.stats.cpu.lavalinkLoad.toFixed(2)}% / ${node.stats.cpu.systemLoad.toFixed(2)}% (Cores: ${node.stats.cpu.cores})`,
             }),
         }));
 
