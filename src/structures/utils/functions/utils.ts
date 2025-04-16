@@ -1,8 +1,27 @@
-import { type AnyContext, type DefaultLocale, type User, extendContext } from "seyfert";
-import type { LocaleString } from "seyfert/lib/types/index.js";
-import type { Omit, StelleUser } from "#stelle/types";
+import {
+    ActionRow,
+    type ActionRowMessageComponents,
+    type AnyContext,
+    type Button,
+    type DefaultLocale,
+    type User,
+    extendContext,
+} from "seyfert";
+import type { MessageActionRowComponent } from "seyfert/lib/components/ActionRow.js";
+
+import type { Player } from "lavalink-client";
+import {
+    type APIActionRowComponent,
+    type APIActionRowComponentTypes,
+    type APIMessageComponentEmoji,
+    ButtonStyle,
+    ComponentType,
+    type LocaleString,
+} from "seyfert/lib/types/index.js";
+import type { EditButtonOptions, Omit, StelleUser } from "#stelle/types";
 
 import { inspect } from "node:util";
+import { resolvePartialEmoji } from "seyfert/lib/common/index.js";
 
 /**
  * The webhook object is used to parse the webhook url.
@@ -116,4 +135,59 @@ export const requesterTransformer = (requester: unknown): StelleUser => {
         global_name: requesterUser.username,
         tag: requesterUser.bot ? requesterUser.username : requesterUser.tag,
     };
+};
+
+/**
+ *
+ * Edit a non-link or non-premium button rows with specific options.
+ * @param {MessageActionRowComponent<ActionRowMessageComponents>} rows The rows to edit.
+ * @param {EditButtonOptions} options The options to edit the rows.
+ * @returns {ActionRow<Button>[]} The edited rows.
+ */
+export const editButtonComponents = (
+    rows: MessageActionRowComponent<ActionRowMessageComponents>[],
+    options: EditButtonOptions,
+): ActionRow<Button>[] =>
+    rows.map((builder): ActionRow<Button> => {
+        const row: APIActionRowComponent<APIActionRowComponentTypes> = builder.toJSON();
+
+        return new ActionRow<Button>({
+            components: row.components.map((component) => {
+                if (component.type !== ComponentType.Button) return component;
+                if (component.style === ButtonStyle.Link || component.style === ButtonStyle.Premium) return component;
+                if (component.custom_id === options.customId) {
+                    options.style ??= component.style;
+
+                    if (options.emoji) component.emoji = resolvePartialEmoji(options.emoji) as APIMessageComponentEmoji;
+
+                    component.label = options.label;
+                    component.style = options.style;
+                }
+
+                return component;
+            }),
+        });
+    });
+
+/**
+ *
+ * Create a new progress bar.
+ * @param {Player} player The player.
+ * @returns {string} The progress bar.
+ */
+export const createBar = (player: Player): string => {
+    const size = 15;
+    const line = "▬";
+    const slider = "🔘";
+
+    if (!player.queue.current) return `${slider}${line.repeat(size - 1)}`;
+
+    const current = player.position;
+    const total = player.queue.current.info.duration;
+
+    const progress = Math.min(current / total, 1);
+    const filledLength = Math.round(size * progress);
+    const emptyLength = size - filledLength;
+
+    return `${line.repeat(filledLength).slice(0, -1)}${slider}${line.repeat(emptyLength)}`;
 };

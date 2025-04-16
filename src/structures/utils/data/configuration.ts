@@ -18,6 +18,8 @@ export const Configuration: StelleConfiguration = {
     cacheSize: 5,
     defaultSearchPlatform: "spotify",
     defaultVolume: 100,
+    lyricsLines: 10,
+    disconnectTime: ms("30s"),
     nodes: Sessions.resolve({
         id: "SN #1", // <--- AKA Stelle Node
         host: "localhost",

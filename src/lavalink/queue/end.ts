@@ -1,11 +1,13 @@
 import { LavalinkEventTypes } from "#stelle/types";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
+import { Embed } from "seyfert";
+
 export default createLavalinkEvent({
-    name: "trackEnd",
+    name: "queueEnd",
     type: LavalinkEventTypes.Manager,
     async run(client, player): Promise<void> {
-        if (!player.textChannelId) return;
+        if (!(player.textChannelId && player.voiceChannelId)) return;
 
         const messageId = player.get<string | undefined>("messageId");
         if (messageId) await client.messages.edit(messageId, player.textChannelId, { components: [] }).catch(() => null);
@@ -20,6 +22,20 @@ export default createLavalinkEvent({
             player.set("lyrics", undefined);
             player.set("lyricsEnabled", undefined);
         }
+
+        const locale = player.get<string | undefined>("localeString");
+        if (!locale) return;
+
+        const voice = await client.channels.fetch(player.voiceChannelId);
+        if (!voice.is(["GuildStageVoice", "GuildVoice"])) return;
+
+        const { messages } = client.t(locale).get();
+
+        if (voice.isVoice()) await voice.setVoiceStatus(messages.events.voiceStatus.queueEnd).catch(() => null);
+
+        const embed = new Embed().setDescription(messages.events.playerEnd).setColor(client.config.color.success).setTimestamp();
+
+        await client.messages.write(player.textChannelId, { embeds: [embed] }).catch(() => null);
 
         player.set("messageId", undefined);
     },

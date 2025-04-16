@@ -2,6 +2,7 @@ import type { InvalidLavalinkRestRequest, LavalinkNode, LavalinkPlayer } from "l
 import type { UsingClient } from "seyfert";
 import type { SessionJson } from "#stelle/types";
 
+import { Constants } from "../data/constants.js";
 import { Sessions } from "../manager/sessions.js";
 
 /**
@@ -68,5 +69,7 @@ export async function resumeListener(
         });
 
         player.ping.lavalink = data.state.ping;
+
+        if (Constants.Debug) client.debugger?.info(`Node: ${node.id} | Player: ${player.guildId} | Resumed`);
     }
 }

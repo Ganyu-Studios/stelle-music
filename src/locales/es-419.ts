@@ -86,15 +86,6 @@ export default {
                 undetermined: "Indeterminado",
                 live: "🔴 EN DIRECTO",
                 noResults: "`❌` **Sin resultados** para esta búsqueda...\n`🪶` Intenta buscando otra cosa.",
-                autocomplete: {
-                    noAnything: "Stelle - Algo ocurrió intentando usar este autocompletado.",
-                    noNodes: "Stelle - No estoy conectada a ninguno de mis nodos.",
-                    noVoiceChannel: "Stelle - No estás en un canal de voz... Únete a uno para reproducir música.",
-                    noSameVoice: "Stelle - No estás en el mismo canal de voz que yo.",
-                    noQuery: "Stelle - Introduce el nombre o el URL para reproducir.",
-                    noTracks: "Stelle - No encontre la canción. Introduce otro nombre o el URL.",
-                    noGuild: "Stelle - Este autocomplete solo puede ser usado en servidores.",
-                },
                 embed: {
                     playlist: ({ playlist, tracks, volume, query, requester }) =>
                         `\`🎵\` La lista de canciones [\`${playlist}\`](${query}) ha sido añadida a la cola.\n\n\`🔊\` **Volumen**: \`${volume}%\`\n\`👤\` **Solicitada por**: <@${requester}>\n\`🔰\` **Con**: \`${tracks} canciones\``,
@@ -118,8 +109,8 @@ export default {
                 },
             },
             nodes: {
-                value: ({ state, uptime, players }) =>
-                    `\`📘\` Estado: \`${state}\`\n\`🕛\` Tiempo de actividad: \`${uptime}\`\n\`🎤\` Reproductores: \`${players}\``,
+                value: ({ state, uptime, players, memory, cpu }) =>
+                    `\`📘\` Estado: \`${state}\`\n\`🕛\` Tiempo de actividad: \`${uptime}\`\n\`🎤\` Reproductores: \`${players}\`\n\`🪭\` Uso: \`${memory}\`\n\`📦\` CPU: \`${cpu}\``,
                 description: "`📋` Lista de los nodos de Stelle.",
                 noNodes: "`❌` No hay nodos disponibles por el momento.",
                 states: {
@@ -166,6 +157,16 @@ export default {
             moreTracks: "`❌` Para habilitar **esto** `una o más canciones` son requeridas.",
             commandError:
                 "`❌` Algo inesperado ocurrió durante la ejecución del comando.\n`📢` Si el problema persiste, reporta el problema.",
+            autocomplete: {
+                noAnything: "Stelle - Algo ocurrió intentando usar este autocompletado.",
+                noNodes: "Stelle - No estoy conectada a ninguno de mis nodos.",
+                noVoiceChannel: "Stelle - No estás en un canal de voz... Únete a uno para reproducir música.",
+                noSameVoice: "Stelle - No estás en el mismo canal de voz que yo.",
+                noQuery: "Stelle - Introduce el nombre o el URL para reproducir.",
+                noTracks: "Stelle - No encontre la canción. Introduce otro nombre o el URL.",
+                noGuild: "Stelle - Este autocomplete solo puede ser usado en servidores.",
+                noCommand: "Stelle - Nombre de comando inválido.",
+            },
             optionTypes: {
                 [ApplicationCommandOptionType.Subcommand]: "subcomando",
                 [ApplicationCommandOptionType.SubcommandGroup]: "grupo de subcomando",

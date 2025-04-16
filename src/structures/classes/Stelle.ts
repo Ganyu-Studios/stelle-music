@@ -1,4 +1,4 @@
-import { Client, LimitedCollection } from "seyfert";
+import { Client, LimitedCollection, LimitedMemoryAdapter } from "seyfert";
 import { HandleCommand } from "seyfert/lib/commands/handle.js";
 import { ActivityType, ApplicationCommandType, type GatewayPresenceUpdateData, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
 import { Yuna } from "yunaforseyfert";
@@ -11,6 +11,8 @@ import { Constants } from "#stelle/utils/data/constants.js";
 import { StelleContext } from "#stelle/utils/functions/utils.js";
 
 import { onBotPermissionsFail, onOptionsError, onPermissionsFail, onRunError } from "#stelle/utils/functions/overrides.js";
+import { sendErrorReport } from "#stelle/utils/functions/report.js";
+import { ms } from "#stelle/utils/functions/time.js";
 
 import { StelleDatabase } from "./Database.js";
 import { StelleManager } from "./Manager.js";
@@ -119,6 +121,12 @@ export class Stelle extends Client<true> {
         this.setServices({
             middlewares: StelleMiddlewares,
             cache: {
+                adapter: new LimitedMemoryAdapter({
+                    message: {
+                        expire: ms("5mins"),
+                        limit: 10,
+                    },
+                }),
                 disabledCache: {
                     bans: true,
                     emojis: true,
@@ -148,6 +156,10 @@ export class Stelle extends Client<true> {
                 },
             },
         });
+
+        if (this.cache.messages) this.cache.messages.filter = (message) => message.author.id === this.botId;
+
+        this.events.onFail = (_, error) => sendErrorReport({ error });
 
         await this.manager.load();
         await this.start();

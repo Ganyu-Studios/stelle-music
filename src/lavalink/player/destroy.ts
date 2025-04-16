@@ -1,10 +1,17 @@
 import { LavalinkEventTypes } from "#stelle/types";
+import { Constants } from "#stelle/utils/data/constants.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
+import { Sessions } from "#stelle/utils/manager/sessions.js";
 
 export default createLavalinkEvent({
-    name: "trackEnd",
+    name: "playerDestroy",
     type: LavalinkEventTypes.Manager,
     async run(client, player): Promise<void> {
+        Sessions.delete(player.guildId);
+
+        const voice = await client.channels.fetch(player.voiceChannelId ?? player.options.voiceChannelId);
+        if (voice.isVoice()) await voice.setVoiceStatus(null).catch(() => null);
+
         if (!player.textChannelId) return;
 
         const messageId = player.get<string | undefined>("messageId");
@@ -21,6 +28,6 @@ export default createLavalinkEvent({
             player.set("lyricsEnabled", undefined);
         }
 
-        player.set("messageId", undefined);
+        if (Constants.Debug) client.logger.debug(`[Lavalink PlayerDestroy] Destroyed player for guild ${player.guildId}`);
     },
 });

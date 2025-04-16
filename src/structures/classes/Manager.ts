@@ -2,8 +2,12 @@ import { LavalinkManager, type LavalinkNode, type SearchPlatform, type SearchRes
 import type { UsingClient } from "seyfert";
 
 import { Constants } from "#stelle/utils/data/constants.js";
+import { autoPlayFunction } from "#stelle/utils/functions/autoplay.js";
 import { requesterTransformer } from "#stelle/utils/functions/utils.js";
 import { LavalinkHandler } from "#stelle/utils/manager/handler.js";
+
+import { RedisQueueStore } from "./Store.js";
+import { RedisClient } from "./modules/Redis.js";
 
 /**
  *
@@ -48,6 +52,7 @@ export class StelleManager extends LavalinkManager {
                 return client.gateway.send(client.gateway.calculateShardId(guildId), payload);
             },
             queueOptions: {
+                queueStore: new RedisQueueStore(new RedisClient(client)),
                 maxPreviousTracks: 25,
             },
             advancedOptions: {
@@ -67,9 +72,11 @@ export class StelleManager extends LavalinkManager {
                 onDisconnect: {
                     destroyPlayer: true,
                 },
+                onEmptyQueue: {
+                    autoPlayFunction,
+                },
             },
         });
-
         this.handler = new LavalinkHandler(client);
     }
 

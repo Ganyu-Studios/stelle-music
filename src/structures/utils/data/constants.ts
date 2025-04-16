@@ -1,3 +1,4 @@
+import type { RepeatMode } from "lavalink-client";
 import type { GatewayActivityUpdateData } from "seyfert/lib/types/gateway.js";
 import type { AutoplayState, PausedState, StelleConstants, WorkingDirectory } from "#stelle/types";
 
@@ -16,9 +17,9 @@ export const Constants: StelleConstants = {
     Version: packageJson.version,
     Dev: process.argv.includes("--dev"),
     Debug: process.argv.includes("--debug"),
-    WorkingDirectory: (dev: boolean): WorkingDirectory => (dev ? "src" : "dist"),
-    AutoplayState: (state: boolean): AutoplayState => (state ? "enabled" : "disabled"),
-    PauseState: (state: boolean): PausedState => (state ? "pause" : "resume"),
+    WorkingDirectory: (dev): WorkingDirectory => (dev ? "src" : "dist"),
+    AutoplayState: (state): AutoplayState => (state ? "enabled" : "disabled"),
+    PauseState: (state): PausedState => (state ? "pause" : "resume"),
     ThinkMessage(): string {
         const messages: string[] = [
             "is thinking...",
@@ -69,5 +70,20 @@ export const Constants: StelleConstants = {
             { name: `${players} players. 🌐`, type: ActivityType.Watching },
             { name: "with /help 📜", type: ActivityType.Playing },
         ];
+    },
+    LoopMode(mode, alt): RepeatMode {
+        const states: Record<RepeatMode, RepeatMode> = {
+            off: "track",
+            track: "queue",
+            queue: "off",
+        };
+
+        if (alt) {
+            states.off = "off";
+            states.track = "track";
+            states.queue = "queue";
+        }
+
+        return states[mode];
     },
 };

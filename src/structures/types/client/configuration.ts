@@ -81,7 +81,7 @@ interface Sessions {
  */
 export interface StelleConfiguration {
     /**
-     * Stelle default locale.
+     * The default locale.
      * @default "en-US"
      * @type {LocaleString}
      */
@@ -136,15 +136,29 @@ export interface StelleConfiguration {
      */
     cacheSize: number;
     /**
-     * Stelle default player volume.
+     * The default player lyrics enabled.
+     * @type {number}
+     * @default 10
+     */
+    lyricsLines: number;
+    /**
+     * The default player volume.
+     * @type {number}
      * @default 60
      */
     defaultVolume: number;
     /**
-     * Stelle default player search engine.
+     * The default player search engine.
+     * @type {SearchPlatform}
      * @default "spotify"
      */
     defaultSearchPlatform: SearchPlatform;
+    /**
+     * The disconnect time in milliseconds. (Use the time formatter)
+     * @type {number}
+     * @default ms("30s")
+     */
+    disconnectTime: number;
     /**
      * The colors configuration.
      * @type {Colors}

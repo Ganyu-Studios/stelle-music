@@ -1,3 +1,4 @@
+import type { RepeatMode } from "lavalink-client";
 import type { GatewayActivityUpdateData } from "seyfert/lib/types/gateway.js";
 
 /**
@@ -91,4 +92,10 @@ export interface StelleConstants {
      * @param {boolean} state Whether the autoplay is enabled or not.
      */
     PauseState(state: boolean): PausedState;
+    /**
+     * Get the loop state of the player.
+     * @param {RepeatMode} mode The repeat mode of the player.
+     * @param {boolean} alt Whether to use the alternative mode or not.
+     */
+    LoopMode(mode: RepeatMode, alt?: boolean): RepeatMode;
 }

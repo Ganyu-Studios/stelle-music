@@ -24,7 +24,7 @@ export async function connectListener(client: UsingClient, node: LavalinkNode): 
 
                     await player.queue.utils.sync(false, true);
                 } catch (error) {
-                    client.logger.error(`Music - Error resuming the player: ${player.guildId} ${error}`);
+                    client.logger.error(`Lavalink - Error resuming the player: ${player.guildId} ${error}`);
                 }
             }
         }

@@ -36,28 +36,25 @@ const options = {
 
             if (!(guildId && member)) {
                 const { messages } = client.t(interaction.user.locale ?? client.config.defaultLocale).get();
-
-                return interaction.respond([{ name: messages.commands.play.autocomplete.noGuild, value: "noGuild" }]);
+                return interaction.respond([{ name: messages.events.autocomplete.noGuild, value: "noGuild" }]);
             }
 
             const { searchPlatform } = await client.database.getPlayer(guildId);
             const { messages } = client.t(await client.database.getLocale(guildId)).get();
 
-            if (!client.manager.useable)
-                return interaction.respond([{ name: messages.commands.play.autocomplete.noNodes, value: "noNodes" }]);
+            if (!client.manager.useable) return interaction.respond([{ name: messages.events.autocomplete.noNodes, value: "noNodes" }]);
 
             const voice = await member.voice().catch(() => null);
-            if (!voice) return interaction.respond([{ name: messages.commands.play.autocomplete.noVoiceChannel, value: "noVoice" }]);
+            if (!voice) return interaction.respond([{ name: messages.events.autocomplete.noVoiceChannel, value: "noVoice" }]);
 
             const query = interaction.getInput();
             if (!query)
                 return interaction.respond([
-                    { name: messages.commands.play.autocomplete.noQuery, value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT" },
+                    { name: messages.events.autocomplete.noQuery, value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT" },
                 ]);
 
             const res = await client.manager.search(query, searchPlatform);
-            if (!res?.tracks.length)
-                return interaction.respond([{ name: messages.commands.play.autocomplete.noTracks, value: "noTracks" }]);
+            if (!res?.tracks.length) return interaction.respond([{ name: messages.events.autocomplete.noTracks, value: "noTracks" }]);
 
             await interaction.respond(
                 res.tracks.slice(0, 25).map((track) => {

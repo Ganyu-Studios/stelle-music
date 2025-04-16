@@ -45,7 +45,7 @@ export async function onAutocompleteError(interaction: AutocompleteInteraction, 
 
     return interaction.respond([
         {
-            name: messages.commands.play.autocomplete.noAnything,
+            name: messages.events.autocomplete.noAnything,
             value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT",
         },
     ]);

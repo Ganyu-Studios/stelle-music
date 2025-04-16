@@ -71,7 +71,7 @@ export const checkQueue: MiddlewareContext<void, AnyContext> = createMiddleware<
     if (!player) return pass();
 
     const isAutoplay = !!player.get<boolean | undefined>("enabledAutoplay");
-    if (!(isAutoplay || player!.queue.tracks.length)) {
+    if (!(isAutoplay || player.queue.tracks.length)) {
         await context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [

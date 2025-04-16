@@ -91,15 +91,6 @@ export default {
                 undetermined: "Undetermined",
                 live: "🔴 LIVE",
                 noResults: "`❌` **No results** was found for this search...\n`🪶` Try searching something different.",
-                autocomplete: {
-                    noAnything: "Stelle - Something unexpected happened using this autocomplete.",
-                    noNodes: "Stelle - I'm not connected to any of my nodes.",
-                    noVoiceChannel: "Stelle - You are not in a voice channel... Join to play music.",
-                    noSameVoice: "Stelle - You are not in the same voice channel as me.",
-                    noQuery: "Stelle - Enter a track name or URL to play it.",
-                    noTracks: "Stelle - No tracks was found. Enter another track name or URL.",
-                    noGuild: "Stelle - This autocomplete only can be used in a guild.",
-                },
                 embed: {
                     playlist: ({ playlist, tracks, volume, query, requester }: IPlayList): string =>
                         `\`🎵\` The playlist [\`${playlist}\`](${query}) has been added to the queue.\n\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>\n\`🔰\` **With**: \`${tracks} tracks\``,
@@ -123,8 +114,8 @@ export default {
                 },
             },
             nodes: {
-                value: ({ state, uptime, players }: INodes): string =>
-                    `\`📘\` State: \`${state}\`\n\`🕛\` Uptime: \`${uptime}\`\n\`🎤\` Players: \`${players}\``,
+                value: ({ state, uptime, players, memory, cpu }: INodes): string =>
+                    `\`📘\` State: \`${state}\`\n\`🕛\` Uptime: \`${uptime}\`\n\`🎤\` Players: \`${players}\`\n\`🪭\` Usage: \`${memory}\`\n\`📦\` CPU: \`${cpu}\``,
                 description: "`📋` List of all Stelle nodes.",
                 noNodes: "`❌` No nodes available at the moment.",
                 states: {
@@ -172,6 +163,16 @@ export default {
             playerEnd: "`🔰` The queue has finished... Waiting for more tracks.",
             moreTracks: "`❌` In order to enable **this** `one or more tracks` are required.",
             commandError: "`❌` Something unexpected ocurred during the execution.\n`📢` If the problem persists, report the issue.",
+            autocomplete: {
+                noAnything: "Stelle - Something unexpected happened using this autocomplete.",
+                noNodes: "Stelle - I'm not connected to any of my nodes.",
+                noVoiceChannel: "Stelle - You are not in a voice channel... Join to play music.",
+                noSameVoice: "Stelle - You are not in the same voice channel as me.",
+                noQuery: "Stelle - Enter a track name or URL to play it.",
+                noTracks: "Stelle - No tracks was found. Enter another track name or URL.",
+                noGuild: "Stelle - This autocomplete only can be used in a guild.",
+                noCommand: "Stelle - Invalid command name.",
+            },
             optionTypes: {
                 [ApplicationCommandOptionType.Subcommand]: "subcommand",
                 [ApplicationCommandOptionType.SubcommandGroup]: "subcommand group",
@@ -439,7 +440,7 @@ type ILocale = { locale: string };
 type IPrevious = { title: string; uri: string };
 type ITracks = { tracks: string };
 type IOptions = { options: string; list: string };
-type INodes = { state: string; uptime: string; players: number };
+type INodes = { state: string; uptime: string; players: number; memory: string; cpu: string };
 type ITrackStart = { title: string; url: string; duration: string; volume: number; requester: string; author: string; size: number };
 type IPlayTrack = { title: string; url: string; duration: string; volume: number; requester: string; position: number };
 type IPlayList = { query: string; playlist: string; volume: number; requester: string; tracks: number };
