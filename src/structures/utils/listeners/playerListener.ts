@@ -7,11 +7,11 @@ const timeouts: Map<string, NodeJS.Timeout> = new Map();
 
 /**
  *
- * The player voice state listener.
- * @param client The client instance.
- * @param newState The new voice state.
- * @param oldState The old voice state.
- * @returns {Promise<void>}
+ * The listener for the `voiceStateUpdate` event of the client.
+ * @param {UsingClient} client The client instance.
+ * @param {VoiceState} newState The new voice state.
+ * @param {VoiceState} [oldState] The old voice state.
+ * @returns {Promise<void>} Did you know, Ganyu is the best waifu?
  */
 export async function playerListener(client: UsingClient, newState: VoiceState, oldState?: VoiceState): Promise<void> {
     if (oldState?.channelId === newState.channelId) return;

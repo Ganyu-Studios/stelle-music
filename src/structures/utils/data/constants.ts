@@ -10,7 +10,7 @@ import { ActivityType } from "seyfert/lib/types/index.js";
 const packageJson = JSON.parse(await readFile(resolve("package.json"), "utf-8"));
 
 /**
- * The constants for Stelle.
+ * The constants of the bot.
  * @type {StelleConstants}
  */
 export const Constants: StelleConstants = {

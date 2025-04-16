@@ -3,10 +3,10 @@ import { EmbedColors } from "seyfert/lib/common/index.js";
 
 /**
  *
- * The message mention listener.
- * @param client The client instance.
- * @param message The message instance.
- * @returns {Promise<void>} The promise.
+ * The listener for the `messageCreate` event of the client.
+ * @param {UsingClient} client The client instance.
+ * @param {Message} message The message instance.
+ * @returns {Promise<void>} The promise, with fun!
  */
 export async function mentionListener(client: UsingClient, message: Message): Promise<void> {
     const { guildId, content } = message;
