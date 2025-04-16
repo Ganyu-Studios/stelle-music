@@ -1,10 +1,13 @@
 import "dotenv/config";
 
+import { getWatermark } from "#stelle/utils/functions/logger.js";
+
+getWatermark();
+
 import { Logger } from "seyfert";
-import { Stelle } from "#stelle/client";
-import { customLogger } from "#stelle/utils/Logger.js";
-import { sendErrorReport } from "#stelle/utils/functions/errors.js";
-import { validateEnv } from "#stelle/utils/functions/validations.js";
+import { Stelle } from "#stelle/classes/Stelle.js";
+import { validateEnv } from "#stelle/utils/functions/validate.js";
+import { customLogger } from "./structures/utils/functions/logger.js";
 
 Logger.customize(customLogger);
 Logger.saveOnFile = "all";
@@ -14,7 +17,7 @@ validateEnv();
 
 const client = new Stelle();
 
-export default client;
+export { client };
 
-process.on("unhandledRejection", (error) => sendErrorReport({ error }));
-process.on("uncaughtException", (error) => sendErrorReport({ error }));
+// "Warning: Detected unsettled top-level await" my ass
+(async (): Promise<void> => await client.run())();

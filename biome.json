@@ -1,86 +1,80 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.0/schema.json",
-	"organizeImports": {
-		"enabled": true
-	},
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"all": true,
-			"suspicious": {
-				"noExplicitAny": "off",
-				"noConfusingVoidType": "off",
-				"noEmptyBlockStatements": "off",
-				"noConsole": "off"
-			},
-			"style": {
-				"noNonNullAssertion": "off",
-				"noParameterAssign": "off",
-				"noInferrableTypes": "off",
-				"useNumberNamespace": "off",
-				"noDefaultExport": "off",
-				"useBlockStatements": "off",
-				"useFilenamingConvention": "off",
-				"useNamingConvention": "off",
-				"useSingleCaseStatement": "off",
-				"useExplicitLengthCheck": "off",
-				"useDefaultSwitchClause": "off"
-			},
-			"complexity": {
-				"noBannedTypes": "off",
-				"noForEach": "off",
-				"noStaticOnlyClass": "off",
-				"noExcessiveCognitiveComplexity": {
-					"level": "warn",
-					"options": {
-						"maxAllowedComplexity": 32
-					}
-				}
-			},
-			"security": {
-				"noGlobalEval": "off"
-			},
-			"correctness": {
-				"noVoidTypeReturn": "off",
-				"noNodejsModules": "off",
-				"noUndeclaredDependencies": "off"
-			},
-			"performance": {
-				"noBarrelFile": "off",
-				"useTopLevelRegex": "off"
-			}
-		}
-	},
-	"files": {
-		"ignoreUnknown": true,
-		"ignore": [
-			".vscode",
-			"node_modules",
-			"dist",
-			"environment.ts"
-		]
-	},
-	"json": {
-		"formatter": {
-			"enabled": true,
-			"indentWidth": 4,
-			"lineWidth": 80
-		}
-	},
-	"formatter": {
-		"enabled": true,
-		"indentWidth": 4,
-		"indentStyle": "space",
-		"lineWidth": 140,
-		"lineEnding": "crlf",
-		"formatWithErrors": true
-	},
-	"javascript": {
-		"formatter": {
-			"quoteStyle": "double",
-			"arrowParentheses": "always",
-			"bracketSameLine": true,
-			"semicolons": "always"
-		}
-	}
+    "$schema": "https://biomejs.dev/schemas/1.9.0/schema.json",
+    "organizeImports": {
+        "enabled": true
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "all": true,
+            "suspicious": {
+                "noExplicitAny": "off",
+                "noConfusingVoidType": "off",
+                "noEmptyBlockStatements": "off",
+                "noConsole": "off"
+            },
+            "style": {
+                "noNonNullAssertion": "off",
+                "noParameterAssign": "off",
+                "noInferrableTypes": "off",
+                "useNumberNamespace": "off",
+                "noDefaultExport": "off",
+                "useBlockStatements": "off",
+                "useFilenamingConvention": "off",
+                "useNamingConvention": "off",
+                "useSingleCaseStatement": "off",
+                "useExplicitLengthCheck": "off",
+                "useDefaultSwitchClause": "off"
+            },
+            "complexity": {
+                "noBannedTypes": "off",
+                "noForEach": "off",
+                "noStaticOnlyClass": "off",
+                "noExcessiveCognitiveComplexity": {
+                    "level": "warn",
+                    "options": {
+                        "maxAllowedComplexity": 32
+                    }
+                }
+            },
+            "security": {
+                "noGlobalEval": "off"
+            },
+            "correctness": {
+                "noNodejsModules": "off",
+                "noUndeclaredDependencies": "off"
+            },
+            "performance": {
+                "noBarrelFile": "off",
+                "useTopLevelRegex": "off"
+            }
+        }
+    },
+    "files": {
+        "ignoreUnknown": true,
+        "ignore": [".vscode", "node_modules", "dist", "generated"]
+    },
+    "json": {
+        "formatter": {
+            "enabled": true,
+            "indentWidth": 4,
+            "lineWidth": 80
+        }
+    },
+    "formatter": {
+        "enabled": true,
+        "indentWidth": 4,
+        "indentStyle": "space",
+        "lineWidth": 140,
+        "lineEnding": "crlf",
+        "formatWithErrors": true
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "double",
+            "arrowParentheses": "always",
+            "bracketSameLine": true,
+            "semicolons": "always"
+        }
+    }
 }

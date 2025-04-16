@@ -1,5 +1,5 @@
 import { Command, Declare, type DefaultLocale, type GuildCommandContext, LocalesT, Options, createStringOption } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
@@ -16,7 +16,7 @@ const options = {
             const { client } = interaction;
 
             await interaction.respond(
-                Object.entries<DefaultLocale>(client.langs!.values)
+                Object.entries<DefaultLocale>(client.langs.values)
                     .map(([value, l]) => ({
                         name: `${l.metadata.name} [${l.metadata.emoji}] - ${l.metadata.translators.join(", ")}`,
                         value,
@@ -45,7 +45,7 @@ export default class SetlangCommand extends Command {
 
         const { messages } = await ctx.getLocale();
 
-        const locales = Object.keys(client.langs!.values);
+        const locales = Object.keys(client.langs.values);
         if (!locales.includes(locale))
             return ctx.editOrReply({
                 flags: MessageFlags.Ephemeral,

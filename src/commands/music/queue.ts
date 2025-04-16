@@ -1,8 +1,8 @@
 import { Command, Declare, Embed, type GuildCommandContext, LocalesT, Middlewares, type User } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { StelleCategory } from "#stelle/types";
-import { EmbedPaginator } from "#stelle/utils/Paginator.js";
+import { EmbedPaginator } from "#stelle/utils/paginator.js";
 
 @Declare({
     name: "queue",
@@ -44,7 +44,7 @@ export default class QueueCommand extends Command {
                 ],
             });
         } else {
-            const paginator = new EmbedPaginator(ctx);
+            const paginator = new EmbedPaginator({ ctx });
 
             for (let i = 0; i < tracks.length; i += tracksPerPage) {
                 paginator.addEmbed(

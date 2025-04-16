@@ -1,14 +1,14 @@
 import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares, type OKFunction, Options, createStringOption } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
 
 import { StelleCategory } from "#stelle/types";
-import { TimeFormat, ms } from "#stelle/utils/Time.js";
+import { TimeFormat, ms } from "#stelle/utils/functions/time.js";
 
 const options = {
     time: createStringOption({
-        description: "Enter the time. (Ex: 2min=",
+        description: "Enter the time. (Ex: 2min)",
         required: true,
         locales: {
             name: "locales.seek.option.name",

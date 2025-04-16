@@ -1,17 +1,17 @@
-import { Command, Declare, Embed, type GuildCommandContext, LocalesT } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
+import { Command, type CommandContext, Declare, Embed, LocalesT } from "seyfert";
 import { StelleCategory } from "#stelle/types";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 @Declare({
     name: "ping",
     description: "Get the Stelle ping.",
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    integrationTypes: ["GuildInstall", "UserInstall"],
+    contexts: ["Guild", "BotDM", "PrivateChannel"],
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.User })
 @LocalesT("locales.ping.name", "locales.ping.description")
 export default class PingCommand extends Command {
-    public override async run(ctx: GuildCommandContext): Promise<void> {
+    public override async run(ctx: CommandContext): Promise<void> {
         const { client } = ctx;
         const { messages } = await ctx.getLocale();
 

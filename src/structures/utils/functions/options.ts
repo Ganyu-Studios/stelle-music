@@ -1,27 +1,42 @@
 import { type APIApplicationCommandOption, ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 
-type FormattedOption = {
+/**
+ * The formatted option type.
+ */
+export interface FormattedOption {
+    /**
+     * The option name.
+     * @type {string}
+     */
     option: string;
+    /**
+     * The option description.
+     * @type {string}
+     */
     description: string;
+    /**
+     * The option number range.
+     * @type {string}
+     */
     range?: string;
-};
+}
 
 /**
  *
  * Check if the option is required.
- * @param option The command option.
- * @param req If the option is required.
+ * @param {string} option The command option.
+ * @param {boolean} required If the option is required.
  * @returns {string} The formatted option.
  */
-const isRequired = (option: string, req?: boolean) => (req ? `<${option}>` : `[${option}]`);
+const isRequired = (option: string, required?: boolean): string => (required ? `<${option}>` : `[${option}]`);
 
 /**
  *
  * Format the options and descriptions.
- * @param options The options.
+ * @param {APIApplicationCommandOption[]} options The options.
  * @returns {FormattedOption[]} The formatted options.
  */
-export function formatOptions(
+export function getFormattedOptions(
     options?: APIApplicationCommandOption[],
     types?: Record<ApplicationCommandOptionType, string>,
 ): FormattedOption[] {
@@ -33,7 +48,7 @@ export function formatOptions(
         switch (option.type) {
             case ApplicationCommandOptionType.Subcommand:
             case ApplicationCommandOptionType.SubcommandGroup: {
-                return formatOptions(option.options, types);
+                return getFormattedOptions(option.options, types);
             }
 
             default:
@@ -54,7 +69,7 @@ export function formatOptions(
 /**
  *
  * Get the option min/max value.
- * @param option The option.
+ * @param {APIApplicationCommandOption} option The option.
  * @returns {string} The range.
  */
 function getRange(option: APIApplicationCommandOption): string {
@@ -74,6 +89,9 @@ function getRange(option: APIApplicationCommandOption): string {
                 text += option.max_value ? ` Max: ${option.max_value}` : "";
                 text += option.min_value ? ` Min: ${option.min_value}` : "";
             }
+            break;
+
+        default:
             break;
     }
 

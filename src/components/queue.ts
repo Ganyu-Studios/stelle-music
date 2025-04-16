@@ -1,6 +1,7 @@
 import { ComponentCommand, Embed, type GuildComponentContext, Middlewares, type User } from "seyfert";
 import { MessageFlags } from "seyfert/lib/types/index.js";
-import { EmbedPaginator } from "#stelle/utils/Paginator.js";
+
+import { EmbedPaginator } from "#stelle/utils/paginator.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
 export default class QueueComponent extends ComponentCommand {
@@ -35,7 +36,7 @@ export default class QueueComponent extends ComponentCommand {
                 ],
             });
         } else {
-            const paginator = new EmbedPaginator(ctx);
+            const paginator = new EmbedPaginator({ ctx });
 
             for (let i = 0; i < tracks.length; i += tracksPerPage) {
                 paginator.addEmbed(

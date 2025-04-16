@@ -7,14 +7,25 @@
 * There is not much science on this.... Right?
 ```bash
 git clone https://github.com/Ganyu-Studios/stelle-music.git
+
+# Or if you want to get the latest (and experimental) features, use:
+
+git clone https://github.com/Ganyu-Studios/stelle-music.git --branch dev
 ```
 
 ###  📋 Install Dependencies
-* There is not much science on this.
+* A magic command.
 ```bash
 cd stelle-music
 pnpm i
 ```
+
+###  📋 Environment Variables
+* Stelle needs some environment variables to work.
+
+1. Copy the `.env.example` file. (localed in the root of the project)
+2. Rename the file to: `.env`.
+3. Fill the required variables. ([available variables](/.env.example))
 
 ###  📋 Database
 * Stelle uses Prisma ORM to manage the database.
@@ -28,14 +39,6 @@ This also applies when you make changes in the [schema](/prisma/schema.prisma), 
 > [!NOTE]
 > You can execute also `pnpm prisma db push` to synchronize the database.<br/>
 > This needs to be executed when you make changes in the [schema](/prisma/schema.prisma) (It's not mandatory, but I recommend it.)
-
-
-###  📋 Environment Variables
-* Stelle needs some environment variables to work.
-
-1. Copy the `.env.example` file. (localed in the root of the project)
-2. Rename the file to: `.env`.
-3. Fill the required variables. ([available variables](/.env.example))
 
 > [!IMPORTANT]
 > You need to follow the `DATABASE_URL` example url format.<br/>

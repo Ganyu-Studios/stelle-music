@@ -11,13 +11,13 @@ import {
     type WebhookMessage,
     createStringOption,
 } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
-import { TimeFormat } from "#stelle/utils/Time.js";
+import { TimeFormat } from "#stelle/utils/functions/time.js";
 import { omitKeys, sliceText } from "#stelle/utils/functions/utils.js";
 
 import { onAutocompleteError } from "#stelle/utils/functions/overrides.js";
@@ -32,28 +32,29 @@ const options = {
             description: "locales.play.option.description",
         },
         autocomplete: async (interaction) => {
-            const { client, member } = interaction;
+            const { client, member, guildId } = interaction;
 
-            if (!interaction.guildId) return;
+            if (!(guildId && member)) {
+                const { messages } = client.t(interaction.user.locale ?? client.config.defaultLocale).get();
+                return interaction.respond([{ name: messages.events.autocomplete.noGuild, value: "noGuild" }]);
+            }
 
-            const { searchEngine } = await client.database.getPlayer(interaction.guildId);
-            const { messages } = client.t(await client.database.getLocale(interaction.guildId)).get();
+            const { searchPlatform } = await client.database.getPlayer(guildId);
+            const { messages } = client.t(await client.database.getLocale(guildId)).get();
 
-            if (!client.manager.useable)
-                return interaction.respond([{ name: messages.commands.play.autocomplete.noNodes, value: "noNodes" }]);
+            if (!client.manager.useable) return interaction.respond([{ name: messages.events.autocomplete.noNodes, value: "noNodes" }]);
 
-            const voice = await member?.voice().catch(() => null);
-            if (!voice) return interaction.respond([{ name: messages.commands.play.autocomplete.noVoiceChannel, value: "noVoice" }]);
+            const voice = await member.voice().catch(() => null);
+            if (!voice) return interaction.respond([{ name: messages.events.autocomplete.noVoiceChannel, value: "noVoice" }]);
 
             const query = interaction.getInput();
             if (!query)
                 return interaction.respond([
-                    { name: messages.commands.play.autocomplete.noQuery, value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT" },
+                    { name: messages.events.autocomplete.noQuery, value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT" },
                 ]);
 
-            const res = await client.manager.search(query, searchEngine);
-            if (!res?.tracks.length)
-                return interaction.respond([{ name: messages.commands.play.autocomplete.noTracks, value: "noTracks" }]);
+            const res = await client.manager.search(query, searchPlatform);
+            if (!res?.tracks.length) return interaction.respond([{ name: messages.events.autocomplete.noTracks, value: "noTracks" }]);
 
             await interaction.respond(
                 res.tracks.slice(0, 25).map((track) => {
@@ -98,10 +99,10 @@ export default class PlayCommand extends Command {
         const voice = await state.channel();
         if (!voice) return;
 
-        const { messages } = await ctx.getLocale();
-        const { defaultVolume, searchEngine } = await client.database.getPlayer(ctx.guildId);
-
         await ctx.deferReply();
+
+        const { messages } = await ctx.getLocale();
+        const { defaultVolume, searchPlatform } = await client.database.getPlayer(ctx.guildId);
 
         const player = client.manager.createPlayer({
             guildId: ctx.guildId,
@@ -116,10 +117,12 @@ export default class PlayCommand extends Command {
         let bot = await me.voice().catch(() => null);
         if (bot && bot.channelId !== voice.id) return;
 
-        const { loadType, playlist, tracks } = await player.search({ query, source: searchEngine }, ctx.author);
+        const { loadType, playlist, tracks } = await player.search({ query, source: searchPlatform }, ctx.author);
 
-        player.set("localeString", await ctx.getLocaleString());
-        player.set("me", omitKeys(client.me, ["client"]));
+        if (!player.get("localeString")) player.set("localeString", await ctx.getLocaleString());
+        if (!player.get("me")) player.set("me", omitKeys(client.me, ["client"]));
+
+        const autoplayIndex = player.get("enabledAutoplay") ? 0 : undefined;
 
         if (!bot) bot = await me.voice().catch(() => null);
         if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);
@@ -148,10 +151,8 @@ export default class PlayCommand extends Command {
                 {
                     const track = tracks[0];
 
-                    if (player.get("enabledAutoplay")) await player.queue.add(track, 0);
-                    else await player.queue.add(track);
+                    await player.queue.add(track, autoplayIndex);
 
-                    const type = player.queue.tracks.length > 1 ? "results" : "result";
                     const status = track.info.isStream
                         ? messages.commands.play.live
                         : (TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined);
@@ -160,10 +161,10 @@ export default class PlayCommand extends Command {
                         .setThumbnail(track.info.artworkUrl ?? undefined)
                         .setColor(client.config.color.success)
                         .setDescription(
-                            messages.commands.play.embed[type]({
+                            messages.commands.play.embed.result({
                                 duration: status,
-                                position: player.queue.tracks.findIndex((t) => t.info.identifier === track.info.identifier) + 1,
                                 requester: (track.requester as User).id,
+                                position: player.queue.tracks.findIndex((t) => t.info.identifier === track.info.identifier) + 1,
                                 title: track.info.title,
                                 url: track.info.uri!,
                                 volume: player.volume,
@@ -184,8 +185,7 @@ export default class PlayCommand extends Command {
                 {
                     const track = tracks[0];
 
-                    if (player.get("enabledAutoplay")) await player.queue.add(tracks, 0);
-                    else await player.queue.add(tracks);
+                    await player.queue.add(tracks, autoplayIndex);
 
                     const embed = new Embed()
                         .setColor(client.config.color.success)
@@ -207,6 +207,23 @@ export default class PlayCommand extends Command {
                     });
 
                     if (!player.playing) await player.play();
+                }
+                break;
+
+            default:
+                {
+                    if (!player.queue.current) await player.destroy();
+
+                    await ctx.editOrReply({
+                        flags: MessageFlags.Ephemeral,
+                        content: "",
+                        embeds: [
+                            {
+                                color: EmbedColors.Red,
+                                description: messages.commands.play.noResults,
+                            },
+                        ],
+                    });
                 }
                 break;
         }

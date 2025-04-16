@@ -1,5 +1,5 @@
 import { createEvent } from "seyfert";
-import { mentionListener } from "#stelle/listeners";
+import { mentionListener } from "#stelle/utils/listeners/mentionListener.js";
 
 export default createEvent({
     data: { name: "messageCreate" },

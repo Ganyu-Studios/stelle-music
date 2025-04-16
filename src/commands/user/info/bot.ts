@@ -1,9 +1,8 @@
-import { ActionRow, Button, Declare, Embed, type GuildCommandContext, LocalesT, SubCommand } from "seyfert";
+import { ActionRow, Button, type ClientUser, Declare, Embed, type Guild, type GuildCommandContext, LocalesT, SubCommand } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
-import { Configuration } from "#stelle/data/Configuration.js";
-import { formatMemoryUsage } from "#stelle/utils/Logger.js";
 
-import { BOT_VERSION } from "#stelle/data/Constants.js";
+import { Constants } from "#stelle/utils/data/constants.js";
+import { formatMemoryUsage } from "#stelle/utils/functions/logger.js";
 
 @Declare({
     name: "bot",
@@ -15,13 +14,16 @@ export default class BotSubcommand extends SubCommand {
         const { messages } = await ctx.getLocale();
         const { client } = ctx;
 
+        const me: ClientUser = await client.me.fetch();
+        const guilds: Guild<"cached">[] = client.cache.guilds?.values() ?? [];
+
         const embed = new Embed()
             .setColor(client.config.color.success)
-            .setImage(client.me.bannerURL({ size: 4096 }))
+            .setImage(me.bannerURL({ size: 4096 }))
             .setDescription(
                 messages.commands.info.bot.description({
                     clientName: client.me.username,
-                    defaultPrefix: Configuration.defaultPrefix,
+                    defaultPrefix: client.config.defaultPrefix,
                 }),
             )
             .addFields(
@@ -29,9 +31,9 @@ export default class BotSubcommand extends SubCommand {
                     inline: true,
                     name: messages.commands.info.bot.fields.info.name,
                     value: messages.commands.info.bot.fields.info.value({
-                        guilds: client.cache.guilds!.count(),
+                        guilds: guilds.length,
+                        users: guilds.reduce((a, b) => a + (b.memberCount ?? 0), 0),
                         players: client.manager.players.size,
-                        users: client.cache.guilds!.values().reduce((a, b) => a + (b.memberCount ?? 0), 0),
                     }),
                 },
                 {
@@ -40,14 +42,14 @@ export default class BotSubcommand extends SubCommand {
                     value: messages.commands.info.bot.fields.system.value({
                         memory: formatMemoryUsage(process.memoryUsage().rss),
                         uptime: Math.floor(client.readyTimestamp / 1000),
-                        version: BOT_VERSION,
+                        version: Constants.Version,
                     }),
                 },
             );
 
-        const row = new ActionRow<Button>().addComponents(
-            new Button().setStyle(ButtonStyle.Link).setLabel(messages.commands.info.bot.invite).setURL(Configuration.inviteLink),
-            new Button().setStyle(ButtonStyle.Link).setLabel(messages.commands.info.bot.repository).setURL(Configuration.githubLink),
+        const row: ActionRow<Button> = new ActionRow<Button>().addComponents(
+            new Button().setStyle(ButtonStyle.Link).setLabel(messages.commands.info.bot.invite).setURL(client.config.inviteLink),
+            new Button().setStyle(ButtonStyle.Link).setLabel(messages.commands.info.bot.repository).setURL(client.config.githubLink),
         );
 
         await ctx.editOrReply({ embeds: [embed], components: [row] });

@@ -1,9 +1,13 @@
-import { createMiddleware } from "seyfert";
+import { type AnyContext, type MiddlewareContext, createMiddleware } from "seyfert";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
-export const checkVerifications = createMiddleware<void>(async ({ context, next, pass }) => {
+/**
+ * Check if the command is only for developers or guild owner.
+ * @type {MiddlewareContext<void, AnyContext>}
+ */
+export const checkVerifications: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, next, pass }) => {
     const { client, author, command } = context;
     const { developerIds } = client.config;
 

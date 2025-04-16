@@ -1,9 +1,9 @@
 import { Command, Declare, Embed, type GuildCommandContext, LocalesT, Middlewares, type User } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
-import { TimeFormat } from "#stelle/utils/Time.js";
+import { TimeFormat } from "#stelle/utils/functions/time.js";
 import { createBar } from "#stelle/utils/functions/utils.js";
 
 @Declare({

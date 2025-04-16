@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  output   = "generated"
 }
 
 datasource db {
@@ -25,6 +26,6 @@ model guildPrefix {
 
 model guildPlayer {
   id            String  @id @map("_id")
-  searchEngine  String?
+  searchPlatform  String?
   defaultVolume Int?
 }

@@ -1,9 +1,11 @@
-import { checkCooldown } from "./commands/cooldown.js";
+import { checkCooldown } from "./commands/cooldowns.js";
 import { checkVerifications } from "./commands/verifications.js";
+import { checkNodes, checkPlayer, checkQueue, checkTracks } from "./manager/internal.js";
+import { checkBotVoiceChannel, checkVoiceChannel, checkVoicePermissions } from "./manager/voice.js";
 
-import { checkNodes, checkPlayer, checkQueue, checkTracks } from "./commands/manager.js";
-import { checkBotVoiceChannel, checkVoiceChannel, checkVoicePermissions } from "./commands/voice.js";
-
+/**
+ * The middlewares of the client.
+ */
 export const StelleMiddlewares = {
     // Main middlewares
     checkCooldown,

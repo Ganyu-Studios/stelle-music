@@ -1,6 +1,6 @@
 import { AutoLoad, Command, Declare, LocalesT } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 @Declare({
     name: "default",

@@ -2,7 +2,7 @@ import { ActionRow, Button, ComponentCommand, Embed, type GuildComponentContext,
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
 
-import { EmbedPaginator } from "#stelle/utils/Paginator.js";
+import { EmbedPaginator } from "#stelle/utils/paginator.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
 export default class LyricsComponent extends ComponentCommand {
@@ -48,7 +48,7 @@ export default class LyricsComponent extends ComponentCommand {
                     ],
                 });
 
-            const paginator = new EmbedPaginator(ctx);
+            const paginator = new EmbedPaginator({ ctx });
             const lines = lyrics.text.split("\n");
 
             for (let i = 0; i < lines.length; i += client.config.lyricsLines) {
@@ -97,7 +97,7 @@ export default class LyricsComponent extends ComponentCommand {
             );
 
         const row = new ActionRow<Button>().addComponents(
-            new Button().setCustomId("player-lyricsClose").setLabel(messages.commands.lyrics.close).setStyle(ButtonStyle.Secondary),
+            new Button().setCustomId("player-lyricsDelete").setLabel(messages.commands.lyrics.close).setStyle(ButtonStyle.Secondary),
         );
 
         const message = await ctx.editOrReply({ embeds: [embed], components: [row] }, true);

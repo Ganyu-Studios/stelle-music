@@ -1,8 +1,8 @@
 import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { StelleCategory } from "#stelle/types";
-import { getAutoplayState } from "#stelle/utils/functions/utils.js";
+import { Constants } from "#stelle/utils/data/constants.js";
 
 @Declare({
     name: "autoplay",
@@ -35,7 +35,7 @@ export default class AutoplayCommand extends Command {
                 {
                     color: client.config.color.success,
                     description: messages.commands.autoplay.toggled({
-                        type: messages.commands.autoplay.autoplayType[getAutoplayState(isAutoplay)],
+                        type: messages.commands.autoplay.autoplayType[Constants.AutoplayState(isAutoplay)],
                     }),
                 },
             ],

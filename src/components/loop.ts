@@ -1,5 +1,6 @@
 import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
-import { editButtons, getLoopState } from "#stelle/utils/functions/utils.js";
+import { Constants } from "#stelle/utils/data/constants.js";
+import { editButtonComponents } from "#stelle/utils/functions/utils.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class ToggleLoopComponent extends ComponentCommand {
@@ -14,11 +15,11 @@ export default class ToggleLoopComponent extends ComponentCommand {
 
         const { messages } = await ctx.getLocale();
 
-        await player.setRepeatMode(getLoopState(player.repeatMode));
+        await player.setRepeatMode(Constants.LoopMode(player.repeatMode));
 
         await ctx.interaction.deferUpdate();
         await ctx.interaction.message.edit({
-            components: editButtons(ctx.interaction.message.components, {
+            components: editButtonComponents(ctx.interaction.message.components, {
                 customId: "player-toggleLoop",
                 label: messages.events.trackStart.components.loop({
                     type: messages.commands.loop.loopType[player.repeatMode],

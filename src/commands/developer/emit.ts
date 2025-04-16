@@ -1,5 +1,5 @@
 import { Command, Declare, type Guild, type GuildCommandContext, Options, createStringOption } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
@@ -42,7 +42,7 @@ export default class ReloadCommand extends Command {
             case "GUILD_CREATE":
             case "GUILD_DELETE":
                 {
-                    await client.events!.values[event]?.run(guild as never as Guild<"create">, client, ctx.shardId);
+                    await client.events.values[event]?.run(guild as never as Guild<"create">, client, ctx.shardId);
                     await ctx.editOrReply({
                         flags: MessageFlags.Ephemeral,
                         content: "",

@@ -1,47 +1,42 @@
-import type { UsingClient } from "seyfert";
+import type { Guild, UsingClient } from "seyfert";
+import { type GatewayActivityUpdateData, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
 
-import { PresenceUpdateStatus } from "seyfert/lib/types/index.js";
-import { ms } from "#stelle/utils/Time.js";
-
-import { BOT_ACTIVITIES } from "#stelle/data/Constants.js";
+import { Constants } from "#stelle/utils/data/constants.js";
+import { ms } from "#stelle/utils/functions/time.js";
 
 /**
  *
- * Change Stelle presence.
- * @param client The client.
+ * Change the presence of the client.
+ * @param {UsingClient} client - The client instance.
+ * @returns {void} - Nothing? Yes, nothing.
  */
 export function changePresence(client: UsingClient): void {
-    let activity = 0;
+    let index: number = 0;
 
-    setInterval(() => {
-        if (activity === BOT_ACTIVITIES.length) activity = 0;
+    const array: GatewayActivityUpdateData[] = Constants.Activities();
 
-        const guilds = client.cache.guilds!.count();
-        const users = client.cache.guilds!.values().reduce((a, b) => a + (b.memberCount ?? 0), 0);
-        const players = client.manager.players.size;
+    setInterval((): void => {
+        if (index >= array.length) index = 0;
 
-        const randomActivity = BOT_ACTIVITIES[activity++ % BOT_ACTIVITIES.length];
+        const guilds: Guild<"cached">[] = client.cache.guilds?.values() ?? [];
+        const users: number = guilds.reduce((a, b) => a + (b.memberCount ?? 0), 0);
+        const players: number = client.manager.players.size;
+
+        const activities: GatewayActivityUpdateData[] = Constants.Activities({ users, players, guilds: guilds.length });
+        const activity: GatewayActivityUpdateData = activities[index++ % array.length];
 
         client.gateway.setPresence({
+            status: PresenceUpdateStatus.Online,
+            activities: [activity],
             afk: false,
             since: Date.now(),
-            status: PresenceUpdateStatus.Online,
-            activities: [
-                {
-                    ...randomActivity,
-                    name: randomActivity.name
-                        .replaceAll("{guilds}", `${guilds}`)
-                        .replaceAll("{users}", `${users}`)
-                        .replaceAll("{players}", `${players}`),
-                },
-            ],
         });
-    }, ms("35s"));
+    }, ms("25s"));
 
     client.gateway.setPresence({
-        activities: [BOT_ACTIVITIES[0]],
+        status: PresenceUpdateStatus.Online,
+        activities: [array[index]],
         afk: false,
         since: Date.now(),
-        status: PresenceUpdateStatus.Online,
     });
 }

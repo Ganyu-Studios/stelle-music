@@ -1,6 +1,6 @@
 import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares, Options, createChannelOption } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { ChannelType } from "seyfert/lib/types/index.js";
 

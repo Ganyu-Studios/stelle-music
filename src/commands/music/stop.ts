@@ -1,6 +1,6 @@
 import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
 import { StelleCategory } from "#stelle/types";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 @Declare({
     name: "stop",

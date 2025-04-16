@@ -1,26 +1,35 @@
 import type { Player, Track, UnresolvedTrack } from "lavalink-client";
-import type { ClientUserWithoutClient } from "#stelle/types";
+import type { ClientUser } from "seyfert";
+import type { CustomUser } from "#stelle/types";
 
+/**
+ * The type of the resolvable tracks.
+ */
 type ResolvableTrack = UnresolvedTrack | Track;
 
-const maxTracks = 10;
+/**
+ * The maximum number of tracks to return.
+ * @type {number}
+ * @default 10
+ */
+const maxTracks: number = 10;
 
 /**
  * Based on:
  * https://github.com/Tomato6966/lavalink-client/blob/main/testBot/Utils/OptionalFunctions.ts#L20
  *
- * Modified by: https://github.com/NoBody-UU/
+ * A modified by: https://github.com/NoBody-UU/
  */
 
 /**
  *
  * Filter tracks.
- * @param player The player.
- * @param lastTrack The last track.
- * @param tracks The tracks.
+ * @param {Player} player The player instance.
+ * @param {Track} lastTrack The last track played.
+ * @param {ResolvableTrack[]}  tracks The tracks to filter.
  * @returns {ResolvableTrack[]} The filtered tracks.
  */
-const filterTracks = (player: Player, lastTrack: Track, tracks: ResolvableTrack[]) =>
+const filterTracks = (player: Player, lastTrack: Track, tracks: ResolvableTrack[]): ResolvableTrack[] =>
     tracks.filter(
         (track) =>
             !(
@@ -32,8 +41,8 @@ const filterTracks = (player: Player, lastTrack: Track, tracks: ResolvableTrack[
 /**
  *
  * An autoplay function, that's all.
- * @param player The player.
- * @param lastTrack The last track.
+ * @param player The player instance.
+ * @param lastTrack The last track played.
  * @returns {Promise<void>} A promise... that does nothing.
  */
 export async function autoPlayFunction(player: Player, lastTrack?: Track): Promise<void> {
@@ -46,7 +55,7 @@ export async function autoPlayFunction(player: Player, lastTrack?: Track): Promi
         await player.queue.utils.save();
     }
 
-    const me = player.get<ClientUserWithoutClient | undefined>("me");
+    const me = player.get<CustomUser<ClientUser> | undefined>("me");
     if (!me) return;
 
     switch (lastTrack.info.sourceName) {

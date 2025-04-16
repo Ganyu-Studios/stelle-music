@@ -1,12 +1,12 @@
 import { Command, Declare, Embed, type GuildCommandContext, LocalesT } from "seyfert";
 
-import { StelleOptions } from "#stelle/decorators";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
 
 import { StelleCategory } from "#stelle/types";
-import { EmbedPaginator } from "#stelle/utils/Paginator.js";
-import { TimeFormat } from "#stelle/utils/Time.js";
+import { TimeFormat } from "#stelle/utils/functions/time.js";
+import { EmbedPaginator } from "#stelle/utils/paginator.js";
 
 @Declare({
     name: "nodes",
@@ -29,6 +29,8 @@ export default class ExampleCommand extends Command {
                 state: messages.commands.nodes.states[node.connected ? "connected" : "disconnected"],
                 players: node.stats.players,
                 uptime: TimeFormat.toHumanize(node.stats.uptime),
+                memory: `${node.stats.memory.used} MB / ${node.stats.memory.allocated} MB`,
+                cpu: `${node.stats.cpu.lavalinkLoad.toFixed(2)}% (Cores: ${node.stats.cpu.cores})`,
             }),
         }));
 
@@ -53,7 +55,7 @@ export default class ExampleCommand extends Command {
                 ],
             });
         } else {
-            const pages = new EmbedPaginator(ctx);
+            const pages = new EmbedPaginator({ ctx });
 
             for (let i = 0; fields.length < maxFields; i += maxFields) {
                 pages.addEmbed(

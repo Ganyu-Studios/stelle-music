@@ -1,7 +1,7 @@
 //@ts-check
 
-import { rm } from "node:fs/promises";
 import { existsSync } from "node:fs";
+import { rm } from "node:fs/promises";
 import { resolve } from "node:path";
 
 (async () => {
@@ -14,5 +14,5 @@ import { resolve } from "node:path";
     } catch (error) {
         console.info(error);
         process.exit(1);
-    };
+    }
 })();

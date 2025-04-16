@@ -1,8 +1,8 @@
 import {
     Command,
+    type CommandContext,
     Declare,
     Embed,
-    type GuildCommandContext,
     type Message,
     Options,
     type WebhookMessage,
@@ -10,17 +10,18 @@ import {
     createStringOption,
 } from "seyfert";
 import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
-import { StelleOptions } from "#stelle/decorators";
 
+import { Environment } from "#stelle/utils/data/configuration.js";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 import { getInspect, sliceText } from "#stelle/utils/functions/utils.js";
 
 import { DeclareParserConfig, ParserRecommendedConfig, Watch, Yuna } from "yunaforseyfert";
-import { Environment } from "#stelle/data/Configuration.js";
-import { SECRETS_MESSAGES } from "#stelle/data/Constants.js";
-import { ms } from "#stelle/utils/Time.js";
+import { Constants } from "#stelle/utils/data/constants.js";
+import { ms } from "#stelle/utils/functions/time.js";
 
 const secretsRegex = /\b(?:client\.(?:config)|config|env|process\.(?:env|exit)|eval|atob|btoa)\b/;
 const concatRegex = /".*?"\s*\+\s*".*?"(?:\s*\+\s*".*?")*/;
+const awaitableRegex = /^(?:\(?)\s*await\b/;
 const envRegex = new RegExp(
     Object.values(Environment)
         .map((value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
@@ -54,7 +55,7 @@ export default class EvalCommand extends Command {
     @Watch({
         idle: ms("1min"),
         beforeCreate(ctx) {
-            const watcher = Yuna.watchers.find(ctx.client, { userId: ctx.author.id, command: this });
+            const watcher = Yuna.watchers.find(ctx.client, { userId: ctx.author.id, command: this, channelId: ctx.channelId });
             if (!watcher) return;
 
             watcher.stop("Another execution");
@@ -71,7 +72,7 @@ export default class EvalCommand extends Command {
             });
         },
     })
-    public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
+    public override async run(ctx: CommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
         const { client, options, author, channelId } = ctx;
 
         const now = Date.now();
@@ -93,10 +94,9 @@ export default class EvalCommand extends Command {
             });
 
         try {
-            if (secretsRegex.test(code.toLowerCase()) || concatRegex.test(code.toLowerCase()))
-                output = SECRETS_MESSAGES[Math.floor(Math.random() * SECRETS_MESSAGES.length)];
+            if (secretsRegex.test(code.toLowerCase()) || concatRegex.test(code.toLowerCase())) output = Constants.SecretMessage();
             else if (typeof output !== "string") {
-                if (/^(?:\(?)\s*await\b/.test(code.toLowerCase())) code = `(async () => ${code})()`;
+                if (awaitableRegex.test(code.toLowerCase())) code = `(async () => ${code})()`;
 
                 output = await eval(code);
                 typecode = typeof output;
