@@ -93,6 +93,7 @@ export default {
                     noSameVoice: "Stelle - No estás en el mismo canal de voz que yo.",
                     noQuery: "Stelle - Introduce el nombre o el URL para reproducir.",
                     noTracks: "Stelle - No encontre la canción. Introduce otro nombre o el URL.",
+                    noGuild: "Stelle - Este autocomplete solo puede ser usado en servidores.",
                 },
                 embed: {
                     playlist: ({ playlist, tracks, volume, query, requester }) =>

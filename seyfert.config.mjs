@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-check
 
 import { config } from "seyfert";
 import { GatewayIntentBits } from "seyfert/lib/types";
@@ -21,7 +21,7 @@ export default config.bot({
      */
     locations: {
         // more funny.
-        base: Constants.WorkingDirectory(),
+        base: Constants.WorkingDirectory(Constants.Dev),
         events: "events",
         commands: "commands",
         langs: "locales",

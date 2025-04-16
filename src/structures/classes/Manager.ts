@@ -2,6 +2,7 @@ import { LavalinkManager, type LavalinkNode, type SearchPlatform, type SearchRes
 import type { UsingClient } from "seyfert";
 
 import { Constants } from "#stelle/utils/data/constants.js";
+import { requesterTransformer } from "#stelle/utils/functions/utils.js";
 import { LavalinkHandler } from "#stelle/utils/manager/handler.js";
 
 /**
@@ -61,6 +62,7 @@ export class StelleManager extends LavalinkManager {
                 },
             },
             playerOptions: {
+                requesterTransformer,
                 defaultSearchPlatform: "spsearch",
                 onDisconnect: {
                     destroyPlayer: true,

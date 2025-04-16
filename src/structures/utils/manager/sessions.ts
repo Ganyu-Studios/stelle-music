@@ -5,6 +5,7 @@ import type { StellePlayerJson } from "#stelle/types";
 import { InvalidNodeSession } from "#stelle/utils/errors.js";
 
 import MeowDB from "meowdb";
+import { ms } from "../functions/time.js";
 
 /**
  * The storage for player sessions.
@@ -68,8 +69,10 @@ export const Sessions = {
             throw new InvalidNodeSession("The 'sessionId' property is not allowed in the node options.");
 
         return nodes.flat().map((node) => {
-            // self explanatory, don't you think?
+            // default settings, if not set by the user.
             node.id ??= `${node.host}:${node.port}`;
+            node.retryAmount ??= 25;
+            node.retryDelay ??= ms("25s");
 
             return {
                 ...node,

@@ -24,8 +24,8 @@ export const Configuration: StelleConfiguration = {
         port: 2333,
         authorization: "ganyuontopuwu",
         secure: false,
-        retryAmount: 10,
-        retryDelay: ms("10s"),
+        retryAmount: 25,
+        retryDelay: ms("20s"),
     }),
     inviteLink:
         "https://discord.com/oauth2/authorize?client_id=1241085977544359968&permissions=36793344&integration_type=0&scope=bot+applications.commands",
@@ -50,6 +50,11 @@ export const Configuration: StelleConfiguration = {
     permissions: {
         stagePermissions: ["MuteMembers"],
         voicePermissions: ["ViewChannel", "Connect", "Speak"],
+    },
+    sessions: {
+        enabled: true,
+        resumeTime: ms("1min"),
+        resumePlayers: true,
     },
 };
 

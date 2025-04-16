@@ -1,9 +1,9 @@
 import type { PlayerJson } from "lavalink-client";
-import type { Command, ContextMenuCommand, SubCommand } from "seyfert";
-import type { PermissionFlagsBits } from "seyfert/lib/types/index.js";
+import type { ClientUser, Command, ContextMenuCommand, SubCommand, User } from "seyfert";
+import type { APIUser, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
 export type { StelleConfiguration, StelleEnvironment } from "./client/configuration.js";
-export type { StelleConstants, WorkingDirectory } from "./client/constants.js";
+export type { StelleConstants, WorkingDirectory, AutoplayState, PausedState } from "./client/constants.js";
 
 export {
     type LavalinkEvents,
@@ -89,6 +89,18 @@ export interface Options {
 }
 
 /**
+ * The type of the user without the client.
+ */
+export type CustomUser<T extends User = User> = Omit<T, "client">;
+
+/**
+ * The type of the api user.
+ */
+export type StelleUser = APIUser & {
+    tag: string;
+};
+
+/**
  * The type of the player session.
  */
 export type StellePlayerJson = Omit<
@@ -97,16 +109,41 @@ export type StellePlayerJson = Omit<
 >;
 
 /**
+ * The type of the session.
+ */
+export type SessionJson = StellePlayerJson & {
+    /**
+     * The message id of the track start message.
+     */
+    messageId?: string;
+    /**
+     * Whatever the autoplay is enabled or not.
+     */
+    enabledAutoplay?: boolean;
+    /**
+     * The client user object.
+     */
+    me?: CustomUser<ClientUser>;
+    /**
+     * The locale string of the guild.
+     */
+    localeString?: string;
+    /**
+     * The lyrics message id.
+     */
+    lyricsId?: string;
+    /**
+     * Whatever the lyrics is enabled or not.
+     */
+    lyricsEnabled?: boolean;
+};
+
+/**
  * The type to prettify the object.
  */
 export type Prettify<T> = {
     [K in keyof T]: T[K];
 } & {};
-
-/**
- * The type of the paused states.
- */
-export type PausedMode = "pause" | "resume";
 
 /**
  * The type of the permission flags.

@@ -32,17 +32,21 @@ const options = {
             description: "locales.play.option.description",
         },
         autocomplete: async (interaction) => {
-            const { client, member } = interaction;
+            const { client, member, guildId } = interaction;
 
-            if (!interaction.guildId) return;
+            if (!(guildId && member)) {
+                const { messages } = client.t(interaction.user.locale ?? client.config.defaultLocale).get();
 
-            const { searchPlatform } = await client.database.getPlayer(interaction.guildId);
-            const { messages } = client.t(await client.database.getLocale(interaction.guildId)).get();
+                return interaction.respond([{ name: messages.commands.play.autocomplete.noGuild, value: "noGuild" }]);
+            }
+
+            const { searchPlatform } = await client.database.getPlayer(guildId);
+            const { messages } = client.t(await client.database.getLocale(guildId)).get();
 
             if (!client.manager.useable)
                 return interaction.respond([{ name: messages.commands.play.autocomplete.noNodes, value: "noNodes" }]);
 
-            const voice = await member?.voice().catch(() => null);
+            const voice = await member.voice().catch(() => null);
             if (!voice) return interaction.respond([{ name: messages.commands.play.autocomplete.noVoiceChannel, value: "noVoice" }]);
 
             const query = interaction.getInput();

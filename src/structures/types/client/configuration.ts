@@ -41,15 +41,39 @@ interface Channels {
  */
 interface Permissions {
     /**
-     * Stelle voice channel permissions.
+     * The voice channel permissions.
      * @default ["ViewChannel", "Connect", "Speak"]
      */
     voicePermissions: PermissionStrings;
     /**
-     * Stelle stage channel permissions.
+     * The stage channel permissions.
      * @default ["MuteMembers"]
      */
     stagePermissions: PermissionStrings;
+}
+
+/**
+ * The sessions configuration interface.
+ */
+interface Sessions {
+    /**
+     * Enable the node resume session.
+     * @type {boolean}
+     * @default true
+     */
+    enabled: boolean;
+    /**
+     * The node session resume time.
+     * @type {number}
+     * @default ms("1min")
+     */
+    resumeTime: number;
+    /**
+     * Force the players to resume.
+     * @type {boolean}
+     * @default true
+     */
+    resumePlayers: boolean;
 }
 
 /**
@@ -136,6 +160,11 @@ export interface StelleConfiguration {
      * @type {Permissions}
      */
     permissions: Permissions;
+    /**
+     * The sessions configuration.
+     * @type {Sessions}
+     */
+    sessions: Sessions;
 }
 
 /**

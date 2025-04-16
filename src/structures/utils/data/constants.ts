@@ -1,5 +1,5 @@
 import type { GatewayActivityUpdateData } from "seyfert/lib/types/gateway.js";
-import type { StelleConstants, WorkingDirectory } from "#stelle/types";
+import type { AutoplayState, PausedState, StelleConstants, WorkingDirectory } from "#stelle/types";
 
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
@@ -16,6 +16,9 @@ export const Constants: StelleConstants = {
     Version: packageJson.version,
     Dev: process.argv.includes("--dev"),
     Debug: process.argv.includes("--debug"),
+    WorkingDirectory: (dev: boolean): WorkingDirectory => (dev ? "src" : "dist"),
+    AutoplayState: (state: boolean): AutoplayState => (state ? "enabled" : "disabled"),
+    PauseState: (state: boolean): PausedState => (state ? "pause" : "resume"),
     ThinkMessage(): string {
         const messages: string[] = [
             "is thinking...",
@@ -66,9 +69,5 @@ export const Constants: StelleConstants = {
             { name: `${players} players. 🌐`, type: ActivityType.Watching },
             { name: "with /help 📜", type: ActivityType.Playing },
         ];
-    },
-    WorkingDirectory(): WorkingDirectory {
-        // fun.
-        return this.Dev ? "src" : "dist";
     },
 };

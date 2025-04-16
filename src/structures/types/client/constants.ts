@@ -22,9 +22,19 @@ interface ActivityOptions {
 }
 
 /**
- * The working directory of the bot.
+ * The type of the working directory of the bot.
  */
 export type WorkingDirectory = "src" | "dist";
+
+/**
+ * The type of the paused state of the player.
+ */
+export type PausedState = "pause" | "resume";
+
+/**
+ * The type of the autoplay state of the player.
+ */
+export type AutoplayState = "enabled" | "disabled";
 
 /**
  * The constants interface.
@@ -34,22 +44,22 @@ export interface StelleConstants {
      * The current version of Stelle.
      * @type {string}
      */
-    Version: string;
+    readonly Version: string;
     /**
      * Check if Stelle is running in development mode. (Only if the flag is provided.)
      * @type {boolean}
      * @default false
      */
-    Dev: boolean;
+    readonly Dev: boolean;
     /**
      * Check if Stelle is running in production mode. (Only if the flag is provided.)
      * @type {boolean}
      * @default false
      */
-    Debug: boolean;
+    readonly Debug: boolean;
     /**
      * An array of activities to be used in the presence.
-     * @param {ActivityOptions} options - The options for the activity.
+     * @param {ActivityOptions} options The options for the activity.
      * @type {GatewayActivityUpdateData[]}
      * @returns {GatewayActivityUpdateData[]} An array of activities.
      */
@@ -66,7 +76,19 @@ export interface StelleConstants {
     SecretMessage(): string;
     /**
      * Get the current working directory of the bot.
+     * @param {boolean} dev Whether the bot is running in development mode or not.
      * @returns {WorkingDirectory} The current working directory of the bot.
      */
-    WorkingDirectory(): WorkingDirectory;
+    WorkingDirectory(dev: boolean): WorkingDirectory;
+    /**
+     *
+     * Get the autoplay state of the player.
+     * @param {boolean} state Whether the autoplay is enabled or not.
+     */
+    AutoplayState(state: boolean): AutoplayState;
+    /**
+     * Get the paused state of the player.
+     * @param {boolean} state Whether the autoplay is enabled or not.
+     */
+    PauseState(state: boolean): PausedState;
 }

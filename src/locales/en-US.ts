@@ -1,5 +1,5 @@
 import type { RepeatMode } from "lavalink-client";
-import { type PausedMode, type PermissionNames, StelleCategory } from "#stelle/types";
+import { type PausedState, type PermissionNames, StelleCategory } from "#stelle/types";
 
 import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 
@@ -98,6 +98,7 @@ export default {
                     noSameVoice: "Stelle - You are not in the same voice channel as me.",
                     noQuery: "Stelle - Enter a track name or URL to play it.",
                     noTracks: "Stelle - No tracks was found. Enter another track name or URL.",
+                    noGuild: "Stelle - This autocomplete only can be used in a guild.",
                 },
                 embed: {
                     playlist: ({ playlist, tracks, volume, query, requester }: IPlayList): string =>
@@ -202,7 +203,7 @@ export default {
                     paused: {
                         resume: "Resume",
                         pause: "Pause",
-                    } satisfies Record<PausedMode, string>,
+                    } satisfies Record<PausedState, string>,
                 },
             },
             permissions: {

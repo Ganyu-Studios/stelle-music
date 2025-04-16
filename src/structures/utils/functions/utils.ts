@@ -1,6 +1,6 @@
-import { type AnyContext, type DefaultLocale, extendContext } from "seyfert";
+import { type AnyContext, type DefaultLocale, type User, extendContext } from "seyfert";
 import type { LocaleString } from "seyfert/lib/types/index.js";
-import type { Omit } from "#stelle/types";
+import type { Omit, StelleUser } from "#stelle/types";
 
 import { inspect } from "node:util";
 
@@ -99,4 +99,21 @@ export const parseWebhook = (url: string): WebhookObject | null => {
     const match = webhookRegex.exec(url);
 
     return match ? { id: match[1], token: match[2] } : null;
+};
+
+/**
+ *
+ * Transform the requester user into a simple object.
+ * @param {unknown} requester The requester user.
+ * @returns {StelleUser} The transformed user.
+ */
+export const requesterTransformer = (requester: unknown): StelleUser => {
+    const requesterUser = requester as User;
+    const user = omitKeys(requesterUser, ["client"]);
+
+    return {
+        ...user,
+        global_name: requesterUser.username,
+        tag: requesterUser.bot ? requesterUser.username : requesterUser.tag,
+    };
 };
