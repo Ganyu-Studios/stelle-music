@@ -1,5 +1,5 @@
 import { createEvent } from "seyfert";
-import { playerListener } from "#stelle/utils/listeners/playerListener.js";
+import { playerListener } from "#stelle/utils/listeners/player/playerListener.js";
 
 export default createEvent({
     data: { name: "voiceStateUpdate" },

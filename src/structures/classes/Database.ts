@@ -2,8 +2,9 @@ import type { SearchPlatform } from "lavalink-client";
 import type { UsingClient } from "seyfert";
 import type { LocaleString } from "seyfert/lib/types/index.js";
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "#stelle/prisma";
 import { StelleKeys } from "#stelle/types";
+
 import { Cache } from "./Cache.js";
 
 // cuz prisma do weird stuff
@@ -13,7 +14,15 @@ const prismaClient = new PrismaClient();
  * The type of the guild player.
  */
 interface StoredPlayer {
+    /**
+     * The default volume of the player.
+     * @type {number}
+     */
     defaultVolume: number;
+    /**
+     * The search platform of the player.
+     * @type {SearchPlatform}
+     */
     searchPlatform: SearchPlatform;
 }
 
@@ -133,6 +142,20 @@ export class StelleDatabase {
 
     /**
      *
+     * Get the guild request text channel id from the database.
+     * @param {string} id The guild id.
+     * @returns {Promise<string | null>} The channel id of the request text channel.
+     */
+    public async getRequest(id: string): Promise<string | null> {
+        const cache = this.cache.get(StelleKeys.Request, id);
+        if (cache?.channelId) return cache.channelId;
+
+        const data = await this.prisma.guildRequest.findUnique({ where: { id } });
+        return data?.channelId ?? null;
+    }
+
+    /**
+     *
      * Set the guild locale to the database.
      * @param {string} id The guild id.
      * @param {string} locale The locale to set.
@@ -195,6 +218,26 @@ export class StelleDatabase {
             create: {
                 id,
                 ...player,
+            },
+        });
+    }
+
+    /**
+     *
+     * Set the guild request text channel id to the database.
+     * @param {string} id The guild id.
+     * @param {string} channelId The channel id to set.
+     * @returns {Promise<void>} A promise since we love promises.
+     */
+    public async setRequest(id: string, channelId: string): Promise<void> {
+        this.cache.set(StelleKeys.Request, id, { channelId });
+
+        await this.prisma.guildRequest.upsert({
+            where: { id },
+            update: { channelId },
+            create: {
+                id,
+                channelId,
             },
         });
     }

@@ -61,6 +61,10 @@ export enum StelleKeys {
      * The guild prefix key.
      */
     Prefix = "guild:prefix",
+    /**
+     * The text channel request key.
+     */
+    Request = "guild:request",
 }
 
 /**

@@ -1,5 +1,5 @@
 import { LavalinkEventTypes } from "#stelle/types";
-import { resumeListener } from "#stelle/utils/listeners/resumeListener.js";
+import { resumeListener } from "#stelle/utils/listeners/node/resumeListener.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 export default createLavalinkEvent({

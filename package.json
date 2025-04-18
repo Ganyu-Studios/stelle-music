@@ -74,7 +74,8 @@
         "#stelle/utils/*": "./dist/structures/utils/*",
         "#stelle/types": "./dist/structures/types/index.js",
         "#stelle/middlewares": "./dist/middlewares/index.js",
-        "#stelle/client": "./dist/index.js"
+        "#stelle/client": "./dist/index.js",
+        "#stelle/prisma": "./generated/prisma/index.js"
     },
     "pnpm": {
         "onlyBuiltDependencies": [
