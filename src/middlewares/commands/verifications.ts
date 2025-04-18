@@ -31,7 +31,23 @@ export const checkVerifications: MiddlewareContext<void, AnyContext> = createMid
         const guild = await context.guild();
         const member = context.member;
 
-        if (command.onlyGuildOwner && member.id !== guild.ownerId) {
+        // Ignore the request text channel
+        const requestId = await client.database.getRequest(context.guildId);
+        if (requestId && requestId === context.channelId) {
+            await context.editOrReply({
+                flags: MessageFlags.Ephemeral,
+                embeds: [
+                    {
+                        description: messages.events.onlyRequest,
+                        color: EmbedColors.Red,
+                    },
+                ],
+            });
+
+            return pass();
+        }
+
+        if (command.onlyGuildOwner && guild.ownerId !== member.id) {
             await context.editOrReply({
                 flags: MessageFlags.Ephemeral,
                 embeds: [
