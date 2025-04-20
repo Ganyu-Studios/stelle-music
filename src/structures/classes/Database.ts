@@ -11,7 +11,7 @@ import { Cache } from "./Cache.js";
 const prismaClient = new PrismaClient();
 
 /**
- * The type of the guild player.
+ * The interface of the guild player.
  */
 interface StoredPlayer {
     /**
@@ -142,36 +142,22 @@ export class StelleDatabase {
 
     /**
      *
-     * Get the guild request text channel id from the database.
-     * @param {string} id The guild id.
-     * @returns {Promise<string | null>} The channel id of the request text channel.
-     */
-    public async getRequest(id: string): Promise<string | null> {
-        const cache = this.cache.get(StelleKeys.Request, id);
-        if (cache?.channelId) return cache.channelId;
-
-        const data = await this.prisma.guildRequest.findUnique({ where: { id } });
-        return data?.channelId ?? null;
-    }
-
-    /**
-     *
      * Set the guild locale to the database.
      * @param {string} id The guild id.
      * @param {string} locale The locale to set.
      * @returns {Promise<void>} A magic promise, you see it?
      */
     public async setLocale(id: string, locale: string): Promise<void> {
-        this.cache.set(StelleKeys.Locale, id, { locale });
-
-        await this.prisma.guildLocale.upsert({
-            where: { id },
-            update: { locale },
-            create: {
-                id,
-                locale,
-            },
-        });
+        await this.prisma.guildLocale
+            .upsert({
+                where: { id },
+                update: { locale },
+                create: {
+                    id,
+                    locale,
+                },
+            })
+            .then(({ locale }): void => this.cache.set(StelleKeys.Locale, id, { locale }));
     }
 
     /**
@@ -182,63 +168,35 @@ export class StelleDatabase {
      * @returns {Promise<void>} A promise since we love promises.
      */
     public async setPrefix(id: string, prefix: string): Promise<void> {
-        this.cache.set(StelleKeys.Prefix, id, { prefix });
-
-        await this.prisma.guildPrefix.upsert({
-            where: { id },
-            update: { prefix },
-            create: {
-                id,
-                prefix,
-            },
-        });
+        await this.prisma.guildPrefix
+            .upsert({
+                where: { id },
+                update: { prefix },
+                create: {
+                    id,
+                    prefix,
+                },
+            })
+            .then(({ prefix }): void => this.cache.set(StelleKeys.Prefix, id, { prefix }));
     }
 
     /**
      *
      * Set the guild player to the database.
      * @param {string} id The guild id.
-     * @param {StoredPlayer} player The player data to set.
+     * @param {Partial<StoredPlayer>} player The player data to set.
      * @returns {Promise<void>} A promise since we love promises.
      */
     public async setPlayer(id: string, player: Partial<StoredPlayer>): Promise<void> {
-        const oldPlayer = await this.getPlayer(id);
-
-        player.defaultVolume ??= oldPlayer.defaultVolume;
-        player.searchPlatform ??= oldPlayer.searchPlatform;
-
-        this.cache.set(StelleKeys.Player, id, {
-            defaultVolume: player.defaultVolume,
-            searchPlatform: player.searchPlatform,
-        });
-
-        await this.prisma.guildPlayer.upsert({
-            where: { id },
-            update: player,
-            create: {
-                id,
-                ...player,
-            },
-        });
-    }
-
-    /**
-     *
-     * Set the guild request text channel id to the database.
-     * @param {string} id The guild id.
-     * @param {string} channelId The channel id to set.
-     * @returns {Promise<void>} A promise since we love promises.
-     */
-    public async setRequest(id: string, channelId: string): Promise<void> {
-        this.cache.set(StelleKeys.Request, id, { channelId });
-
-        await this.prisma.guildRequest.upsert({
-            where: { id },
-            update: { channelId },
-            create: {
-                id,
-                channelId,
-            },
-        });
+        await this.prisma.guildPlayer
+            .upsert({
+                where: { id },
+                update: player,
+                create: {
+                    id,
+                    ...player,
+                },
+            })
+            .then(({ defaultVolume, searchPlatform }): void => this.cache.set(StelleKeys.Player, id, { defaultVolume, searchPlatform }));
     }
 }

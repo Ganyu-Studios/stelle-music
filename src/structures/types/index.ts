@@ -64,7 +64,7 @@ export enum StelleKeys {
     /**
      * The text channel request key.
      */
-    Request = "guild:request",
+    //Request = "guild:request",
 }
 
 /**

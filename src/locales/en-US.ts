@@ -414,6 +414,14 @@ export default {
                 },
             },
         },
+        setrequest: {
+            name: "setrequest",
+            description: "Set the request channel.",
+            option: {
+                name: "channel",
+                description: "Select the text channel.",
+            },
+        },
     },
 };
 

@@ -23,7 +23,7 @@ const options = {
 @StelleOptions({ cooldown: 10, category: StelleCategory.Guild })
 @LocalesT("locales.setprefix.name", "locales.setprefix.description")
 @Options(options)
-export default class SetlangCommand extends Command {
+export default class SetPrefixCommand extends Command {
     public override async run(ctx: GuildCommandContext<typeof options>): Promise<void> {
         const { client, options } = ctx;
         const { prefix } = options;

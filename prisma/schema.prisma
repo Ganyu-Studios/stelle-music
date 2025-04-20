@@ -15,8 +15,8 @@ datasource db {
 }
 
 model guildLocale {
-  id     String  @id @map("_id")
-  locale String?
+  id     String @id @map("_id")
+  locale String @default("en-US")
 }
 
 model guildPrefix {
@@ -25,12 +25,11 @@ model guildPrefix {
 }
 
 model guildPlayer {
-  id             String  @id @map("_id")
-  searchPlatform String?
-  defaultVolume  Int?
+  id             String @id @map("_id")
+  searchPlatform String @default("spsearch")
+  defaultVolume  Int    @default(100)
 }
 
 model guildRequest {
-  id        String  @id @map("_id")
-  channelId String?
+  id String @id @map("_id")
 }

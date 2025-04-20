@@ -53,14 +53,16 @@ export default class MoveCommand extends Command {
         player.options.voiceChannelId = voice.id;
         player.voiceChannelId = voice.id;
 
+        const textId = text?.id ?? player.textChannelId ?? player.options.textChannelId ?? ctx.channelId;
+
         await player.connect();
         await ctx.editOrReply({
             embeds: [
                 {
                     color: client.config.color.success,
                     description: messages.commands.move({
+                        textId,
                         voiceId: voice.id,
-                        textId: text?.id ?? ctx.channelId,
                     }),
                 },
             ],

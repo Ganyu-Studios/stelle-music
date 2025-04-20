@@ -48,7 +48,7 @@ const options = {
 @StelleOptions({ cooldown: 10, category: StelleCategory.Guild })
 @LocalesT("locales.setlocale.name", "locales.setlocale.description")
 @Options(options)
-export default class SetlangCommand extends Command {
+export default class SetLocaleCommand extends Command {
     public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
         const { client, options } = ctx;
         const { locale } = options;
