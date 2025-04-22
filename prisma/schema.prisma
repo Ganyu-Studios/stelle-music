@@ -31,5 +31,7 @@ model guildPlayer {
 }
 
 model guildRequest {
-  id String @id @map("_id")
+  id        String @id @map("_id")
+  channelId String
+  messageId String?
 }

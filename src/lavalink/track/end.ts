@@ -7,8 +7,13 @@ export default createLavalinkEvent({
     async run(client, player): Promise<void> {
         if (!player.textChannelId) return;
 
+        const isRequest = player.get<boolean | undefined>("enabledRequest") ?? false;
+
         const messageId = player.get<string | undefined>("messageId");
-        if (messageId) await client.messages.edit(messageId, player.textChannelId, { components: [] }).catch(() => null);
+        if (messageId) {
+            if (isRequest) await client.manager.setDefaultEmbed(player.guildId);
+            else await client.messages.edit(messageId, player.textChannelId, { components: [] }).catch(() => null);
+        }
 
         const lyricsId = player.get<string | undefined>("lyricsId");
         if (lyricsId) {

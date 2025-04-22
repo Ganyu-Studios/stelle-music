@@ -16,6 +16,7 @@ export default createLavalinkEvent({
         if (!track) return;
 
         const isAutoplay = player.get<boolean | undefined>("enabledAutoplay") ?? false;
+        const isRequest = player.get<boolean | undefined>("enabledRequest") ?? false;
 
         const locale = player.get<string | undefined>("localeString");
         if (!locale) return;
@@ -102,7 +103,20 @@ export default createLavalinkEvent({
                 )
                 .catch(() => null);
 
-        const message = await client.messages.write(player.textChannelId, { embeds: [embed], components }).catch(() => null);
-        if (message) player.set("messageId", message.id);
+        if (isRequest) {
+            const data = await client.database.getRequest(player.guildId);
+            if (!data) return;
+
+            if (data.messageId) {
+                const message = await client.messages.fetch(data.messageId, player.textChannelId).catch(() => null);
+                if (message) {
+                    player.set("messageId", message.id);
+                    await message.edit({ embeds: [embed], components }).catch(() => null);
+                }
+            }
+        } else {
+            const message = await client.messages.write(player.textChannelId, { embeds: [embed], components }).catch(() => null);
+            if (message) player.set("messageId", message.id);
+        }
     },
 });
