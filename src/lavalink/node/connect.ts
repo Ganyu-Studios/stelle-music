@@ -1,5 +1,5 @@
 import { LavalinkEventTypes } from "#stelle/types";
-import { connectListener } from "#stelle/utils/listeners/connectListener.js";
+import { connectListener } from "#stelle/utils/listeners/node/connectListener.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 export default createLavalinkEvent({

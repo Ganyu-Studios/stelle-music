@@ -1,7 +1,7 @@
-import { Command, Declare, Embed, type GuildCommandContext, LocalesT, Middlewares, type User } from "seyfert";
+import { Command, Declare, Embed, type GuildCommandContext, LocalesT, Middlewares } from "seyfert";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
-import { StelleCategory } from "#stelle/types";
+import { StelleCategory, type StelleUser } from "#stelle/types";
 import { EmbedPaginator } from "#stelle/utils/paginator.js";
 
 @Declare({
@@ -29,7 +29,7 @@ export default class QueueCommand extends Command {
 
         const tracksPerPage = 20;
         const tracks = player.queue.tracks.map(
-            (track, i) => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${(track.requester as User).tag}`,
+            (track, i) => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${(track.requester as StelleUser).tag}`,
         );
 
         if (tracks.length < tracksPerPage) {

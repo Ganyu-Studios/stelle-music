@@ -4,6 +4,7 @@ import type { UsingClient } from "seyfert";
 /**
  *
  * The listener for the `connected` event of the Lavalink node.
+ * This event is emitted when the Lavalink node is connected.
  * @param {UsingClient} client The client instance.
  * @param {LavalinkNode} node The Lavalink node instance.
  * @returns {Promise<void>} Anything, this is a void function.

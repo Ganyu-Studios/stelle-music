@@ -2,12 +2,13 @@ import type { InvalidLavalinkRestRequest, LavalinkNode, LavalinkPlayer } from "l
 import type { UsingClient } from "seyfert";
 import type { SessionJson } from "#stelle/types";
 
-import { Constants } from "../data/constants.js";
-import { Sessions } from "../manager/sessions.js";
+import { Constants } from "../../data/constants.js";
+import { Sessions } from "../../manager/sessions.js";
 
 /**
  *
  * The listener for the `resumed` event of the Lavalink node.
+ * This event is emitted when the Lavalink node is resumed.
  * @param {UsingClient} client The client instance.
  * @param {LavalinkNode} node The Lavalink node instance.
  * @param {LavalinkPlayer[] | InvalidLavalinkRestRequest} players The players that are resumed.

@@ -48,7 +48,7 @@ export enum StelleCategory {
 /**
  * The enum of the database cache keys.
  */
-export enum StelleKeys {
+export enum CacheKeys {
     /**
      * The guild player key.
      */

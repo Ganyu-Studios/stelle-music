@@ -4,12 +4,20 @@ import { checkNodes, checkPlayer, checkQueue, checkTracks } from "./manager/inte
 import { checkBotVoiceChannel, checkVoiceChannel, checkVoicePermissions } from "./manager/voice.js";
 
 /**
+ * The global middlewares of the client.
+ */
+export const GlobalMiddlewares = {
+    // Main middlewares
+    checkCooldown,
+    checkVerifications,
+} as const;
+
+/**
  * The middlewares of the client.
  */
 export const StelleMiddlewares = {
     // Main middlewares
-    checkCooldown,
-    checkVerifications,
+    ...GlobalMiddlewares,
 
     // Voice middlewares
     checkBotVoiceChannel,

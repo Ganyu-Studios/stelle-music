@@ -4,6 +4,7 @@ import { EmbedColors } from "seyfert/lib/common/index.js";
 /**
  *
  * The listener for the `messageCreate` event of the client.
+ * This listener is triggered when the bot is mentioned in a message.
  * @param {UsingClient} client The client instance.
  * @param {Message} message The message instance.
  * @returns {Promise<void>} The promise, with fun!

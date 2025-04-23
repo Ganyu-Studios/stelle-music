@@ -31,7 +31,7 @@ export const checkVerifications: MiddlewareContext<void, AnyContext> = createMid
         const guild = await context.guild();
         const member = context.member;
 
-        if (command.onlyGuildOwner && member.id !== guild.ownerId) {
+        if (command.onlyGuildOwner && guild.ownerId !== member.id) {
             await context.editOrReply({
                 flags: MessageFlags.Ephemeral,
                 embeds: [

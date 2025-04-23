@@ -7,11 +7,10 @@ import {
     type Message,
     Middlewares,
     Options,
-    type User,
     type WebhookMessage,
     createStringOption,
 } from "seyfert";
-import { StelleCategory } from "#stelle/types";
+import { StelleCategory, type StelleUser } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
@@ -163,7 +162,7 @@ export default class PlayCommand extends Command {
                         .setDescription(
                             messages.commands.play.embed.result({
                                 duration: status,
-                                requester: (track.requester as User).id,
+                                requester: (track.requester as StelleUser).id,
                                 position: player.queue.tracks.findIndex((t) => t.info.identifier === track.info.identifier) + 1,
                                 title: track.info.title,
                                 url: track.info.uri!,
@@ -194,7 +193,7 @@ export default class PlayCommand extends Command {
                             messages.commands.play.embed.playlist({
                                 query,
                                 playlist: playlist?.name ?? playlist?.title ?? track.info.title,
-                                requester: (track.requester as User).id,
+                                requester: (track.requester as StelleUser).id,
                                 tracks: tracks.length,
                                 volume: player.volume,
                             }),

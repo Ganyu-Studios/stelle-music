@@ -25,7 +25,7 @@ importers:
         version: 2.2.3
       seyfert:
         specifier: github:tiramisulabs/seyfert
-        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/88bdfd189eccd7ad8d148f33e8826c0ae2f60868
+        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/a45069ea5fe98211f215ad9a3cd0549651cb212e
       yunaforseyfert:
         specifier: ^1.1.0
         version: 1.1.0
@@ -534,9 +534,9 @@ packages:
   rfdc@1.4.1:
     resolution: {integrity: sha512-q1b3N5QkRUWUl7iyylaaj3kOpIT0N2i9MqIEQXP73GVsN9cw3fdx8X63cEmWhJGi2PPCF23Ijp7ktmd39rawIA==}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/88bdfd189eccd7ad8d148f33e8826c0ae2f60868:
-    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/88bdfd189eccd7ad8d148f33e8826c0ae2f60868}
-    version: 2.2.0
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/a45069ea5fe98211f215ad9a3cd0549651cb212e:
+    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/a45069ea5fe98211f215ad9a3cd0549651cb212e}
+    version: 3.0.0
 
   shebang-command@2.0.0:
     resolution: {integrity: sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==}
@@ -1024,7 +1024,7 @@ snapshots:
 
   rfdc@1.4.1: {}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/88bdfd189eccd7ad8d148f33e8826c0ae2f60868: {}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/a45069ea5fe98211f215ad9a3cd0549651cb212e: {}
 
   shebang-command@2.0.0:
     dependencies:

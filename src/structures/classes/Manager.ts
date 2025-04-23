@@ -40,6 +40,14 @@ export class StelleManager extends LavalinkManager {
     protected readonly handler: LavalinkHandler;
 
     /**
+     * The client instance that is using this manager.
+     * @type {UsingClient}
+     * @protected
+     * @readonly
+     */
+    protected readonly client: UsingClient;
+
+    /**
      * Creates an instance of StelleManager.
      * @param {UsingClient} client The client that is using this manager.
      */
@@ -77,7 +85,9 @@ export class StelleManager extends LavalinkManager {
                 },
             },
         });
+
         this.handler = new LavalinkHandler(client);
+        this.client = client;
     }
 
     /**
@@ -110,7 +120,7 @@ export class StelleManager extends LavalinkManager {
      * @returns {Promise<void>} A promise.
      */
     public load(): Promise<void> {
-        this.handler.client.logger.info("LavalinkHandler loaded");
+        this.client.logger.info("LavalinkHandler loaded");
         return this.handler.load();
     }
 }

@@ -9,9 +9,6 @@ export default createLavalinkEvent({
     async run(client, player): Promise<void> {
         if (!(player.textChannelId && player.voiceChannelId)) return;
 
-        const messageId = player.get<string | undefined>("messageId");
-        if (messageId) await client.messages.edit(messageId, player.textChannelId, { components: [] }).catch(() => null);
-
         const lyricsId = player.get<string | undefined>("lyricsId");
         if (lyricsId) {
             await client.messages.delete(lyricsId, player.textChannelId).catch(() => null);

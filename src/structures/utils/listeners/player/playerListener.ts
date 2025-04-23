@@ -8,6 +8,7 @@ const timeouts: Map<string, NodeJS.Timeout> = new Map();
 /**
  *
  * The listener for the `voiceStateUpdate` event of the client.
+ * This event is emitted when a voice state is updated.
  * @param {UsingClient} client The client instance.
  * @param {VoiceState} newState The new voice state.
  * @param {VoiceState} [oldState] The old voice state.

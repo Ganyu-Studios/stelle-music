@@ -1,7 +1,7 @@
 // @ts-check
 
 import { config } from "seyfert";
-import { GatewayIntentBits } from "seyfert/lib/types";
+import { GatewayIntentBits } from "seyfert/lib/types/index.js";
 
 import { Environment } from "#stelle/utils/data/configuration.js";
 import { Constants } from "#stelle/utils/data/constants.js";
@@ -11,7 +11,7 @@ import { Constants } from "#stelle/utils/data/constants.js";
 const base = Constants.WorkingDirectory(Constants.Dev);
 
 export default config.bot({
-    token: Environment.Token,
+    token: Environment.Token ?? "Ganyu on top!",
     debug: Constants.Debug,
     intents: [
         GatewayIntentBits.Guilds,

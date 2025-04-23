@@ -1,9 +1,9 @@
 import { ActionRow, Button, Embed } from "seyfert";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
-import { type APIUser, ButtonStyle } from "seyfert/lib/types/index.js";
+import { ButtonStyle } from "seyfert/lib/types/index.js";
 
-import { LavalinkEventTypes } from "#stelle/types";
+import { LavalinkEventTypes, type StelleUser } from "#stelle/types";
 import { TimeFormat } from "#stelle/utils/functions/time.js";
 
 import { Constants } from "#stelle/utils/data/constants.js";
@@ -33,7 +33,7 @@ export default createLavalinkEvent({
             .setDescription(
                 messages.events.trackStart.embed({
                     duration,
-                    requester: (track.requester as APIUser).id,
+                    requester: (track.requester as StelleUser).id,
                     title: track.info.title,
                     url: track.info.uri,
                     volume: player.volume,

@@ -1,15 +1,5 @@
-import {
-    Command,
-    Declare,
-    Embed,
-    type GuildCommandContext,
-    LocalesT,
-    type Message,
-    Middlewares,
-    type User,
-    type WebhookMessage,
-} from "seyfert";
-import { StelleCategory } from "#stelle/types";
+import { Command, Declare, Embed, type GuildCommandContext, LocalesT, type Message, Middlewares, type WebhookMessage } from "seyfert";
+import { StelleCategory, type StelleUser } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
@@ -56,7 +46,7 @@ export default class NowPlayingCommand extends Command {
                     duration: TimeFormat.toDotted(track.info.duration),
                     author: track.info.author,
                     position: TimeFormat.toDotted(player.position),
-                    requester: (track.requester as User).id,
+                    requester: (track.requester as StelleUser).id,
                     bar: createBar(player),
                 }),
             );
