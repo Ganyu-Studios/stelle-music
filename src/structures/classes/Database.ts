@@ -27,22 +27,6 @@ interface StoredPlayer {
 }
 
 /**
- * The interface of the guild request channel.
- */
-interface StoredRequest {
-    /**
-     * The request channel id.
-     * @type {string}
-     */
-    channelId: string;
-    /**
-     * The request message id.
-     * @type {string | null | undefined}
-     */
-    messageId?: string | null;
-}
-
-/**
  * Class representing the database.
  * @class StelleDatabase
  */
@@ -158,20 +142,6 @@ export class StelleDatabase {
 
     /**
      *
-     * Get the guild request channel from the database.
-     * @param {string} id The guild id.
-     * @returns {Promise<StoredRequest | null>} The request channel of the guild.
-     */
-    public async getRequest(id: string): Promise<StoredRequest | null> {
-        const cache = this.cache.get(CacheKeys.Request, id);
-        if (cache) return cache;
-
-        const data = await this.prisma.guildRequest.findUnique({ where: { id } });
-        return data ?? null;
-    }
-
-    /**
-     *
      * Set the guild locale to the database.
      * @param {string} id The guild id.
      * @param {string} locale The locale to set.
@@ -228,25 +198,5 @@ export class StelleDatabase {
                 },
             })
             .then(({ defaultVolume, searchPlatform }): void => this.cache.set(CacheKeys.Player, id, { defaultVolume, searchPlatform }));
-    }
-
-    /**
-     *
-     * Set the guild request channel to the database.
-     * @param {string} id The guild id.
-     * @param {StoredRequest} request The request channel to set.
-     * @returns {Promise<void>} A promise since we love promises.
-     */
-    public async setRequest(id: string, request: StoredRequest): Promise<void> {
-        await this.prisma.guildRequest
-            .upsert({
-                where: { id },
-                update: request,
-                create: {
-                    id,
-                    ...request,
-                },
-            })
-            .then(({ channelId, messageId }): void => this.cache.set(CacheKeys.Request, id, { channelId, messageId }));
     }
 }

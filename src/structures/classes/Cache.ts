@@ -1,5 +1,5 @@
 import { LimitedCollection } from "seyfert";
-import type { guildLocale, guildPlayer, guildPrefix, guildRequest } from "#stelle/prisma";
+import type { guildLocale, guildPlayer, guildPrefix } from "#stelle/prisma";
 import { CacheKeys, type Omit, type Prettify } from "#stelle/types";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 
@@ -10,7 +10,6 @@ interface CacheMap {
     [CacheKeys.Locale]: Prettify<Omit<guildLocale, "id">>;
     [CacheKeys.Player]: Prettify<Omit<guildPlayer, "id">>;
     [CacheKeys.Prefix]: Prettify<Omit<guildPrefix, "id">>;
-    [CacheKeys.Request]: Prettify<Omit<guildRequest, "id">>;
 }
 
 /**

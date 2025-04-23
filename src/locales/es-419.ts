@@ -146,7 +146,6 @@ export default {
                 `\`📢\` Hey! Mi nombre es: **${clientName}** y mi prefijo es: \`${defaultPrefix}\` y **/** también!\n\`📋\` Si tu quieres ver mis comandos, escribe: \`${defaultPrefix} ${commandName}\` o /${commandName}.`,
             noMembers: ({ clientName }): string => `\`🎧\` ${clientName} está sola en el **canal de voz**... Abandonando el canal.`,
             hasMembers: ({ clientName }): string => `\`🎧\` ${clientName} dejó de estar sola... Resumiendo.`,
-            onlyRequest: "`❌` Este es el canal de **peticiones**... No puedes usar esto aquí.",
             onlyDeveloper: "`❌` Solo el **dueño del bot** puede usar esto.",
             onlyGuildOwner: "`❌` Solo el **dueño del servidor** puede usar esto.",
             noCommand: "`❌` No tengo el comando necesitado *todavía*, intenta de nuevo en un momento.",
@@ -406,14 +405,6 @@ export default {
                     name: "bot",
                     description: "Obtén la información de la bot.",
                 },
-            },
-        },
-        setrequest: {
-            name: "peticiones",
-            description: "Establece el canal de peticiones.",
-            option: {
-                name: "canal",
-                description: "Selecciona el canal de texto.",
             },
         },
     },

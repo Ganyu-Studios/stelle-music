@@ -1,5 +1,5 @@
 import { LavalinkManager, type LavalinkNode, type SearchPlatform, type SearchResult } from "lavalink-client";
-import { Embed, type UsingClient } from "seyfert";
+import type { UsingClient } from "seyfert";
 
 import { Constants } from "#stelle/utils/data/constants.js";
 import { autoPlayFunction } from "#stelle/utils/functions/autoplay.js";
@@ -9,20 +9,6 @@ import { LavalinkHandler } from "#stelle/utils/manager/handler.js";
 import { RedisQueueStore } from "./Store.js";
 import { RedisClient } from "./modules/Redis.js";
 
-/**
- *
- * The embed for the request channel.
- * @param {StelleManager} this The StelleManager instance.
- * @returns {Embed} The embed for the request channel.
- */
-function newEmbed(this: StelleManager): Embed {
-    return new Embed()
-        .setTitle("Request Channel")
-        .setDescription("This is the request channel.")
-        .setColor(this.client.config.color.success)
-        .setImage("https://i.imgur.com/Y9nxeqi.png")
-        .setTimestamp();
-}
 /**
  *
  * Calculate the penalties for a lavalink node.
@@ -117,50 +103,6 @@ export class StelleManager extends LavalinkManager {
         const node = nodes.reduce((a, b) => (penalties(a) < penalties(b) ? a : b));
 
         return node.search({ query, source }, null, false).catch(() => null);
-    }
-
-    /**
-     *
-     * Set the default embed for the request channel.
-     * @param {string} id The id of the request channel.
-     * @returns {Promise<void>} A promise with all the lovelies.
-     */
-    public async setDefaultEmbed(id: string): Promise<void> {
-        const data = await this.client.database.getRequest(id);
-        if (!data) return;
-
-        const embed = newEmbed.call(this);
-
-        if (data.messageId) {
-            const message = await this.client.messages.fetch(data.messageId, data.channelId).catch(() => null);
-            if (!message) {
-                await this.client.messages
-                    .write(data.channelId, { embeds: [embed], components: [] })
-                    .then((x): Promise<void> => this.client.database.setRequest(id, { channelId: data.channelId, messageId: x.id }));
-
-                return;
-            }
-
-            await message.edit({ embeds: [embed], components: [] }).catch(() => null);
-
-            return;
-        }
-
-        await this.client.messages
-            .write(data.channelId, { embeds: [embed] })
-            .then((x): Promise<void> => this.client.database.setRequest(id, { channelId: data.channelId, messageId: x.id }));
-    }
-
-    public async clearMessages(id: string): Promise<void> {
-        const data = await this.client.database.getRequest(id);
-        if (!data) return;
-
-        const messageId = data.messageId;
-        if (!messageId) return;
-
-        const messageIds = (await this.client.messages.list(data.channelId, { limit: 100, before: messageId })).map((x) => x.id);
-
-        await this.client.messages.purge(messageIds, data.channelId).catch(() => null);
     }
 
     /**

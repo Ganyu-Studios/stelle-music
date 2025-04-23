@@ -152,7 +152,6 @@ export default {
             mention: ({ clientName, defaultPrefix, commandName }: IMention): string =>
                 `\`📢\` Hey! My name is: **${clientName}** and my prefix is: \`${defaultPrefix}\` and **/** too!\n\`📋\` If you want to see my commands, type: \`${defaultPrefix} ${commandName}\` or /${commandName}.`,
             hasMembers: ({ clientName }: IClientName): string => `\`🎧\` ${clientName} is not alone anymore... Resuming.`,
-            onlyRequest: "`❌` This is the **request channel**... You can't use that here.",
             onlyDeveloper: "`❌` Only the **bot developer** can use this.",
             onlyGuildOwner: "`❌` Only the **guild owner** can use this.",
             noCommand: "`❌` I don't have the required command *yet*, try again in a moment.",
@@ -412,14 +411,6 @@ export default {
                     name: "bot",
                     description: "Get the bot info.",
                 },
-            },
-        },
-        setrequest: {
-            name: "setrequest",
-            description: "Set the request channel.",
-            option: {
-                name: "channel",
-                description: "Select the text channel.",
             },
         },
     },

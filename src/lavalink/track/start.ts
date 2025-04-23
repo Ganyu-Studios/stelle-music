@@ -1,9 +1,9 @@
 import { ActionRow, Button, Embed } from "seyfert";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
-import { type APIUser, ButtonStyle } from "seyfert/lib/types/index.js";
+import { ButtonStyle } from "seyfert/lib/types/index.js";
 
-import { LavalinkEventTypes } from "#stelle/types";
+import { LavalinkEventTypes, type StelleUser } from "#stelle/types";
 import { TimeFormat } from "#stelle/utils/functions/time.js";
 
 import { Constants } from "#stelle/utils/data/constants.js";
@@ -16,7 +16,6 @@ export default createLavalinkEvent({
         if (!track) return;
 
         const isAutoplay = player.get<boolean | undefined>("enabledAutoplay") ?? false;
-        const isRequest = player.get<boolean | undefined>("enabledRequest") ?? false;
 
         const locale = player.get<string | undefined>("localeString");
         if (!locale) return;
@@ -34,7 +33,7 @@ export default createLavalinkEvent({
             .setDescription(
                 messages.events.trackStart.embed({
                     duration,
-                    requester: (track.requester as APIUser).id,
+                    requester: (track.requester as StelleUser).id,
                     title: track.info.title,
                     url: track.info.uri,
                     volume: player.volume,
@@ -103,20 +102,7 @@ export default createLavalinkEvent({
                 )
                 .catch(() => null);
 
-        if (isRequest) {
-            const data = await client.database.getRequest(player.guildId);
-            if (!data) return;
-
-            if (data.messageId) {
-                const message = await client.messages.fetch(data.messageId, player.textChannelId).catch(() => null);
-                if (message) {
-                    player.set("messageId", message.id);
-                    await message.edit({ embeds: [embed], components }).catch(() => null);
-                }
-            }
-        } else {
-            const message = await client.messages.write(player.textChannelId, { embeds: [embed], components }).catch(() => null);
-            if (message) player.set("messageId", message.id);
-        }
+        const message = await client.messages.write(player.textChannelId, { embeds: [embed], components }).catch(() => null);
+        if (message) player.set("messageId", message.id);
     },
 });

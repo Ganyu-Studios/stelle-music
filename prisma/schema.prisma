@@ -30,8 +30,3 @@ model guildPlayer {
   defaultVolume  Int    @default(100)
 }
 
-model guildRequest {
-  id        String @id @map("_id")
-  channelId String
-  messageId String?
-}
