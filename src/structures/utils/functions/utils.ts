@@ -124,7 +124,7 @@ export const requesterTransformer = (requester: unknown): StelleUser => {
 /**
  *
  * Edit a non-link or non-premium button rows with specific options.
- * @param {MessageActionRowComponent<ActionRowMessageComponents>} rows The rows to edit.
+ * @param {TopLevelComponents[]} rows The rows to edit.
  * @param {EditButtonOptions} options The options to edit the rows.
  * @returns {ActionRow<Button>[]} The edited rows.
  */
