@@ -1,7 +1,7 @@
 import {
+    type ActionBuilderComponents,
     ActionRow,
     type AnyContext,
-    type BuilderComponents,
     Button,
     type ButtonInteraction,
     type Embed,
@@ -11,7 +11,7 @@ import {
     type StringSelectMenuInteraction,
     type WebhookMessage,
 } from "seyfert";
-import { type APIButtonComponentWithCustomId, ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
+import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType, MessageFlags } from "seyfert/lib/types/index.js";
 
 import {
     type Awaitable,
@@ -27,7 +27,7 @@ import { InvalidComponentRun, InvalidEmbedsLength, InvalidMessage, InvalidPageNu
 /**
  * The options of the paginator.
  */
-type PaginatorOptions = {
+interface PaginatorOptions {
     /**
      * The pages of the paginator.
      * @type {number}
@@ -69,7 +69,7 @@ type PaginatorOptions = {
      * @default null
      */
     message: Message | WebhookMessage | null;
-};
+}
 
 /**
  * The callback function of a component.
@@ -262,21 +262,26 @@ export class EmbedPaginator {
             onStop: async (reason): Promise<void> => {
                 if (this.options.message && reason === "idle") {
                     await this.edit({
-                        components: this.options.message.components.map(
-                            (component): ActionRow<BuilderComponents> =>
-                                new ActionRow({
-                                    components: component.components.map((row) => {
-                                        row.data.disabled = true;
+                        components: this.options.message.components.map((row): ActionRow<ActionBuilderComponents> => {
+                            if (row.data.type === ComponentType.ActionRow)
+                                return new ActionRow({
+                                    components: row.data.components.map((row) => {
+                                        if (row.type === ComponentType.TextInput) return row;
+
+                                        row.disabled = true;
 
                                         // for some reason, the label saves the position it is in when the paginator is sent,
                                         // so, set it to 0/0 is the best option instead of returning the saved one.
-                                        if ("label" in row.data && "custom_id" in row.data && row.data.custom_id === "pagination-pagePos")
-                                            row.data.label = "0/0";
+                                        if ("label" in row && "custom_id" in row && row.custom_id === "pagination-pagePos")
+                                            row.label = "0/0";
 
-                                        return row.toJSON();
+                                        return row;
                                     }),
-                                }),
-                        ),
+                                });
+
+                            // ignore other components
+                            return new ActionRow({ components: [] });
+                        }),
                     });
                 }
             },

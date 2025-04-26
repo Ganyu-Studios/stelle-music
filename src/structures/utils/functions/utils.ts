@@ -1,23 +1,7 @@
-import {
-    ActionRow,
-    type ActionRowMessageComponents,
-    type AnyContext,
-    type Button,
-    type DefaultLocale,
-    type User,
-    extendContext,
-} from "seyfert";
-import type { MessageActionRowComponent } from "seyfert/lib/components/ActionRow.js";
+import { ActionRow, type AnyContext, type Button, type DefaultLocale, type TopLevelComponents, type User, extendContext } from "seyfert";
 
 import type { Player } from "lavalink-client";
-import {
-    type APIActionRowComponent,
-    type APIActionRowComponentTypes,
-    type APIMessageComponentEmoji,
-    ButtonStyle,
-    ComponentType,
-    type LocaleString,
-} from "seyfert/lib/types/index.js";
+import { type APIMessageComponentEmoji, ButtonStyle, ComponentType, type LocaleString } from "seyfert/lib/types/index.js";
 import type { EditButtonOptions, Omit, StelleUser } from "#stelle/types";
 
 import { inspect } from "node:util";
@@ -144,12 +128,11 @@ export const requesterTransformer = (requester: unknown): StelleUser => {
  * @param {EditButtonOptions} options The options to edit the rows.
  * @returns {ActionRow<Button>[]} The edited rows.
  */
-export const editButtonComponents = (
-    rows: MessageActionRowComponent<ActionRowMessageComponents>[],
-    options: EditButtonOptions,
-): ActionRow<Button>[] =>
+export const editButtonComponents = (rows: TopLevelComponents[], options: EditButtonOptions): ActionRow<Button>[] =>
     rows.map((builder): ActionRow<Button> => {
-        const row: APIActionRowComponent<APIActionRowComponentTypes> = builder.toJSON();
+        const row = builder.toJSON();
+
+        if (row.type !== ComponentType.ActionRow) return new ActionRow<Button>({ components: [] });
 
         return new ActionRow<Button>({
             components: row.components.map((component) => {
