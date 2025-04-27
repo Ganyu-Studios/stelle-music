@@ -58,7 +58,7 @@ export default class EvalCommand extends Command {
             const watcher = Yuna.watchers.find(ctx.client, { userId: ctx.author.id, command: this, channelId: ctx.channelId });
             if (!watcher) return;
 
-            watcher.stop("Another execution");
+            watcher.stop("Another instance running.");
         },
         onStop(reason): void {
             this.ctx?.editOrReply({
@@ -81,7 +81,7 @@ export default class EvalCommand extends Command {
         let output: string | null = null;
         let typecode: any;
 
-        await client.channels.typing(channelId);
+        if (ctx.message) await client.channels.typing(channelId);
 
         if (!code.length)
             return ctx.editOrReply({
