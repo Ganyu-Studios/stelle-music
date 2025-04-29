@@ -3,9 +3,9 @@ import type { RestOrArray } from "seyfert/lib/common/index.js";
 import type { StellePlayerJson } from "#stelle/types";
 
 import { InvalidNodeSession } from "#stelle/utils/errors.js";
+import { ms } from "#stelle/utils/functions/time.js";
 
 import MeowDB from "meowdb";
-import { ms } from "../functions/time.js";
 
 /**
  * The storage for player sessions.
