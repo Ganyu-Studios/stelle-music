@@ -37,6 +37,12 @@ export interface LavalinkEvent<K extends keyof LavalinkEvents> {
      * @type {LavalinkEventRun<K>}
      */
     run: LavalinkEventRun<K>;
+    /**
+     * The event once property.
+     * @type {boolean}
+     * @default false
+     */
+    once?: boolean;
 }
 
 /**

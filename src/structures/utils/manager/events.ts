@@ -36,6 +36,14 @@ export class Lavalink<K extends keyof LavalinkEvents = keyof LavalinkEvents> imp
     readonly run: LavalinkEventRun<K>;
 
     /**
+     * The event once property.
+     * @type {boolean}
+     * @readonly
+     * @default false
+     */
+    readonly once: boolean = false;
+
+    /**
      *
      * Create a new lavalink event.
      * @param event The event.

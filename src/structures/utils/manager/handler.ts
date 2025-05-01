@@ -83,8 +83,13 @@ export class LavalinkHandler extends BaseHandler {
 
             event.filepath = file.path;
 
-            if (event.isNode()) this.client.manager.nodeManager.on(event.name, run);
-            else if (event.isManager()) this.client.manager.on(event.name, run);
+            if (event.isNode()) {
+                if (event.once) this.client.manager.nodeManager.once(event.name, run);
+                else this.client.manager.nodeManager.on(event.name, run);
+            } else if (event.isManager()) {
+                if (event.once) this.client.manager.once(event.name, run);
+                else this.client.manager.on(event.name, run);
+            }
 
             this.values.set(event.name, event);
         }
@@ -107,8 +112,13 @@ export class LavalinkHandler extends BaseHandler {
 
         const run = (...args: LavalinkEventParameters) => newEvent.run(this.client, ...args);
 
-        if (newEvent.isNode()) this.client.manager.nodeManager.on(newEvent.name, run);
-        else if (newEvent.isManager()) this.client.manager.on(newEvent.name, run);
+        if (event.isNode()) {
+            if (event.once) this.client.manager.nodeManager.once(event.name, run);
+            else this.client.manager.nodeManager.on(event.name, run);
+        } else if (event.isManager()) {
+            if (event.once) this.client.manager.once(event.name, run);
+            else this.client.manager.on(event.name, run);
+        }
 
         this.values.set(newEvent.name, newEvent);
     }
