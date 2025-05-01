@@ -20,6 +20,9 @@ export const Configuration: StelleConfiguration = {
     defaultVolume: 100,
     lyricsLines: 10,
     disconnectTime: ms("30s"),
+    inviteLink:
+        "https://discord.com/oauth2/authorize?client_id=1241085977544359968&permissions=36793344&integration_type=0&scope=bot+applications.commands",
+    githubLink: "https://github.com/Ganyu-Studios/stelle-music",
     nodes: Sessions.resolve({
         id: "SN #1", // <--- AKA Stelle Node
         host: "localhost",
@@ -29,9 +32,6 @@ export const Configuration: StelleConfiguration = {
         retryAmount: 25,
         retryDelay: ms("20s"),
     }),
-    inviteLink:
-        "https://discord.com/oauth2/authorize?client_id=1241085977544359968&permissions=36793344&integration_type=0&scope=bot+applications.commands",
-    githubLink: "https://github.com/Ganyu-Studios/stelle-music",
     developerIds: [
         "391283181665517568", // <-- JustEvil
     ],
