@@ -1,9 +1,10 @@
 import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 
+import { Constants } from "#stelle/utils/data/constants.js";
 import { editButtonComponents } from "#stelle/utils/functions/utils.js";
 
-import { Constants } from "#stelle/utils/data/constants.js";
+import type { PausedState } from "#stelle/types";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class PauseTrackComponent extends ComponentCommand {
@@ -18,8 +19,8 @@ export default class PauseTrackComponent extends ComponentCommand {
         const player = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
-        const type = player.paused ? "resume" : "pause";
-        await player[type]();
+        const state: PausedState = player.paused ? "resume" : "pause";
+        await player[state]();
 
         await ctx.interaction.deferUpdate();
         await ctx.interaction.message.edit({

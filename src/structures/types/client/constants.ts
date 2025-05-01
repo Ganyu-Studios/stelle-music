@@ -76,11 +76,10 @@ export interface StelleConstants {
      */
     SecretMessage(): string;
     /**
-     * Get the current working directory of the bot.
-     * @param {boolean} dev Whether the bot is running in development mode or not.
+     * Get the current working directory of the bot. (By default, it's obtained from the `Dev` property.)
      * @returns {WorkingDirectory} The current working directory of the bot.
      */
-    WorkingDirectory(dev: boolean): WorkingDirectory;
+    WorkingDirectory(): WorkingDirectory;
     /**
      *
      * Get the autoplay state of the player.

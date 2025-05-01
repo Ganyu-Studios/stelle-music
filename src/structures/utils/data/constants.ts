@@ -6,7 +6,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { ActivityType } from "seyfert/lib/types/index.js";
 
-// funny thing, this sucks, but it works.
+// funny thing, it sucks, but it works.
 const packageJson = JSON.parse(await readFile(resolve("package.json"), "utf-8"));
 
 /**
@@ -17,9 +17,15 @@ export const Constants: StelleConstants = {
     Version: packageJson.version,
     Dev: process.argv.includes("--dev"),
     Debug: process.argv.includes("--debug"),
-    WorkingDirectory: (dev): WorkingDirectory => (dev ? "src" : "dist"),
-    AutoplayState: (state): AutoplayState => (state ? "enabled" : "disabled"),
-    PauseState: (state): PausedState => (state ? "pause" : "resume"),
+    PauseState(state): PausedState {
+        return state ? "resume" : "pause";
+    },
+    AutoplayState(state): AutoplayState {
+        return state ? "enabled" : "disabled";
+    },
+    WorkingDirectory(): WorkingDirectory {
+        return this.Dev ? "src" : "dist";
+    },
     ThinkMessage(): string {
         const messages: string[] = [
             "is thinking...",

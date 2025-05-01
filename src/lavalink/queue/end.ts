@@ -1,6 +1,8 @@
 import { LavalinkEventTypes } from "#stelle/types";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
+import type { LyricsResult } from "lavalink-client";
+
 import { Embed } from "seyfert";
 
 export default createLavalinkEvent({
@@ -13,7 +15,8 @@ export default createLavalinkEvent({
         if (lyricsId) {
             await client.messages.delete(lyricsId, player.textChannelId).catch(() => null);
 
-            if (player.get<boolean | undefined>("lyricsEnabled")) await player.node.lyrics.unsubscribe(player.guildId).catch(() => null);
+            if (player.get<boolean | undefined>("lyricsEnabled") && player.get<LyricsResult | undefined>("lyrics"))
+                await player.node.lyrics.unsubscribe(player.guildId).catch(() => null);
 
             player.set("lyricsId", undefined);
             player.set("lyrics", undefined);
