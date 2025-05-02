@@ -6,6 +6,7 @@ import type { EditButtonOptions, Omit, StelleUser } from "#stelle/types";
 
 import { inspect } from "node:util";
 import { resolvePartialEmoji } from "seyfert/lib/common/index.js";
+import { InvalidRow } from "../errors.js";
 
 /**
  * The webhook object is used to parse the webhook url.
@@ -132,12 +133,13 @@ export const editButtonComponents = (rows: TopLevelComponents[], options: EditBu
     rows.map((builder): ActionRow<Button> => {
         const row = builder.toJSON();
 
-        if (row.type !== ComponentType.ActionRow) return new ActionRow<Button>({ components: [] });
+        if (row.type !== ComponentType.ActionRow) throw new InvalidRow("Invalid row type, expected ActionRow.");
 
         return new ActionRow<Button>({
             components: row.components.map((component) => {
                 if (component.type !== ComponentType.Button) return component;
                 if (component.style === ButtonStyle.Link || component.style === ButtonStyle.Premium) return component;
+
                 if (component.custom_id === options.customId) {
                     options.style ??= component.style;
 

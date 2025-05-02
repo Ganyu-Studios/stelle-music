@@ -16,13 +16,14 @@ import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType, Messag
 import {
     type Awaitable,
     EmbedColors,
+    type InteractionCreateBodyRequest,
+    type InteractionMessageUpdateBodyRequest,
     type MakeRequired,
-    type MessageUpdateBodyRequest,
     type MessageWebhookCreateBodyRequest,
 } from "seyfert/lib/common/index.js";
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
 import type { Omit } from "#stelle/types";
-import { InvalidComponentRun, InvalidEmbedsLength, InvalidMessage, InvalidPageNumber } from "./errors.js";
+import { InvalidComponentRun, InvalidComponentType, InvalidEmbedsLength, InvalidMessage, InvalidPageNumber, InvalidRow } from "./errors.js";
 
 /**
  * The options of the paginator.
@@ -263,24 +264,23 @@ export class EmbedPaginator {
                 if (this.options.message && reason === "idle") {
                     await this.edit({
                         components: this.options.message.components.map((row): ActionRow<ActionBuilderComponents> => {
-                            if (row.data.type === ComponentType.ActionRow)
-                                return new ActionRow({
-                                    components: row.data.components.map((row) => {
-                                        if (row.type === ComponentType.TextInput) return row;
-
-                                        row.disabled = true;
-
-                                        // for some reason, the label saves the position it is in when the paginator is sent,
-                                        // so, set it to 0/0 is the best option instead of returning the saved one.
-                                        if ("label" in row && "custom_id" in row && row.custom_id === "pagination-pagePos")
-                                            row.label = "0/0";
-
-                                        return row;
-                                    }),
-                                });
-
                             // ignore other components
-                            return new ActionRow({ components: [] });
+                            if (row.data.type !== ComponentType.ActionRow) throw new InvalidRow("Invalid row type, expected ActionRow.");
+
+                            return new ActionRow({
+                                components: row.data.components.map((row) => {
+                                    if (row.type === ComponentType.TextInput)
+                                        throw new InvalidComponentType(`The component ${row.type} is not a valid component type`);
+
+                                    row.disabled = true;
+
+                                    // for some reason, the label saves the position it is in when the paginator is sent,
+                                    // so, set it to 0/0 is the best option instead of returning the saved one.
+                                    if ("label" in row && "custom_id" in row && row.custom_id === "pagination-pagePos") row.label = "0/0";
+
+                                    return row;
+                                }),
+                            });
                         }),
                     });
                 }
@@ -312,7 +312,7 @@ export class EmbedPaginator {
                                 this.options.pages = n;
 
                                 // funny thing
-                                if (!interaction.replied) await interaction.deferUpdate();
+                                if (!(await interaction.replied)) await interaction.deferUpdate();
 
                                 await this.update();
                             });
@@ -427,13 +427,13 @@ export class EmbedPaginator {
     /**
      *
      * Edit a current embed paginator.
-     * @param {MessageUpdateBodyRequest} body The body.
+     * @param {InteractionCreateBodyRequest | InteractionMessageUpdateBodyRequest} body The body.
      * @returns {Promise<this>} The paginator instance.
      */
-    public async edit(body: MessageUpdateBodyRequest): Promise<this> {
-        if (!this.options.message) throw new InvalidMessage("I can't set the page to an unknown pagination.");
+    public async edit(body: InteractionCreateBodyRequest | InteractionMessageUpdateBodyRequest): Promise<this> {
+        if (!this.options.message) throw new InvalidMessage("I can't edit the message to an unknown pagination.");
 
-        await this.options.message.edit(body).catch(() => null);
+        await this.options.ctx.editOrReply(body).catch(() => null);
 
         return this;
     }

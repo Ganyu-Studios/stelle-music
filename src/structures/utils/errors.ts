@@ -69,3 +69,27 @@ export class InvalidNodeSession extends Error {
         this.name = "Stelle [InvalidSession]";
     }
 }
+
+/**
+ * Error thrown when an invalid component is provided.
+ * @class InvalidRow
+ * @extends {Error}
+ */
+export class InvalidRow extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "Stelle [InvalidRow]";
+    }
+}
+
+/**
+ * Error thrown when an invalid component type is provided.
+ * @class InvalidComponentType
+ * @extends {Error}
+ */
+export class InvalidComponentType extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "Stelle [InvalidComponentType]";
+    }
+}

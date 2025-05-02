@@ -103,7 +103,7 @@ export default class HelpCommand extends Command {
             .map((command) => Number(command.category))
             .filter((item, index, commands) => commands.indexOf(item) === index);
 
-        const getAlias = (category: StelleCategory) => messages.commands.help.aliases[category];
+        const getAlias = (category: StelleCategory): string => messages.commands.help.aliases[category];
 
         if (!options.command) {
             const paginator = new EmbedPaginator({ ctx, disabled: true });
