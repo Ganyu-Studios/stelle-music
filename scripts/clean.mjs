@@ -8,15 +8,17 @@ import { resolve } from "node:path";
  * Deletes the dist folder if it exists.
  * @type {() => Promise<void>}
  */
-(async () => {
-    console.info("Deleting files...");
+(
+    async () => {
+        console.info("Deleting files...");
 
-    try {
-        const path = resolve("dist");
-        if (existsSync(path)) await rm(path, { recursive: true });
-        console.info("Done! Cleared.");
-    } catch (error) {
-        console.info(error);
-        process.exit(1);
+        try {
+            const path = resolve("dist");
+            if (existsSync(path)) await rm(path, { recursive: true });
+            console.info("Done! Cleared.");
+        } catch (error) {
+            console.info(error);
+            process.exit(1);
+        }
     }
-})();
+)();
