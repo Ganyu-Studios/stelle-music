@@ -32,7 +32,7 @@
     "scripts": {
         "build": "tsc",
         "typecheck": "tsc --noEmit",
-        "clean": "node ./scripts/clean.js && pnpm build",
+        "clean": "node ./scripts/clean.mjs && pnpm build",
         "start": "node ./dist/index.js",
         "dev": "tsx ./src/index.ts --debug --dev",
         "lint": "biome lint --write .",
