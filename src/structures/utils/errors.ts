@@ -93,3 +93,15 @@ export class InvalidComponentType extends Error {
         this.name = "Stelle [InvalidComponentType]";
     }
 }
+
+/**
+ * Error thrown when an invalid queue store is provided.
+ * @class InvalidQueue
+ * @extends {Error}
+ */
+export class InvalidQueue extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "Stelle [InvalidQueue]";
+    }
+}

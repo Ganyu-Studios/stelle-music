@@ -57,7 +57,9 @@ export class StelleManager extends LavalinkManager {
             autoSkipOnResolveError: true,
             sendToShard: (guildId, payload) => {
                 // just in case, but this should never happen
-                if (typeof guildId !== "string") return client.logger.warn("StelleManager#sendToShard: guildId is not a string.");
+                if (typeof guildId !== "string" || typeof guildId === "undefined")
+                    return client.logger.warn("StelleManager#sendToShard: guildId is not a string.");
+
                 return client.gateway.send(client.gateway.calculateShardId(guildId), payload);
             },
             queueOptions: {

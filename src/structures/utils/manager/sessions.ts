@@ -1,11 +1,22 @@
 import type { LavalinkNodeOptions } from "lavalink-client";
-import type { RestOrArray } from "seyfert/lib/common/index.js";
+import type { MakeRequired, RestOrArray } from "seyfert/lib/common/index.js";
 import type { StellePlayerJson } from "#stelle/types";
 
 import { InvalidNodeSession } from "#stelle/utils/errors.js";
 import { ms } from "#stelle/utils/functions/time.js";
 
 import MeowDB from "meowdb";
+
+/**
+ * Lavalink node options without the `sessionId`.
+ */
+//i don't know how to name this type, so i just called like this
+type NonResumableNodeOptions = Omit<LavalinkNodeOptions, "sessionId">;
+
+/**
+ * The player json with the required properties.
+ */
+type RequiredPlayerJson = MakeRequired<StellePlayerJson, "nodeId" | "nodeSessionId">;
 
 /**
  * The storage for player sessions.
@@ -18,14 +29,10 @@ const storage: MeowDB = new MeowDB({ dir: process.cwd(), name: "./sessions" });
  * @type {Map<string, string>}
  */
 const ids: Map<string, string> = new Map<string, string>(
-    Object.values<StellePlayerJson>(storage.all()).map((session) => [session.nodeId!, session.nodeSessionId!]),
+    Object.values<StellePlayerJson>(storage.all())
+        .filter((session): session is RequiredPlayerJson => typeof session.nodeId === "string" && typeof session.nodeSessionId === "string")
+        .map((session) => [session.nodeId, session.nodeSessionId]),
 );
-
-/**
- * Lavalink node options without the `sessionId`.
- */
-//i don't know how to name this type, so i just called like this
-type NonResumableNodeOptions = Omit<LavalinkNodeOptions, "sessionId">;
 
 /**
  * Utility to manage Lavalink node sessions.
@@ -65,10 +72,12 @@ export const Sessions = {
      * @returns {LavalinkNodeOptions[]} The resolved nodes.
      */
     resolve(...nodes: RestOrArray<NonResumableNodeOptions>): LavalinkNodeOptions[] {
+        nodes = nodes.flat();
+
         if (nodes.some((node) => "sessionId" in node && typeof node.sessionId === "string"))
             throw new InvalidNodeSession("The 'sessionId' property is not allowed in the node options.");
 
-        return nodes.flat().map((node) => {
+        return nodes.map((node) => {
             // default settings, if not set by the user.
             node.id ??= `${node.host}:${node.port}`;
             node.retryAmount ??= 25;

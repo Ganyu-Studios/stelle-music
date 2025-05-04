@@ -1,5 +1,6 @@
 import type { QueueStoreManager, StoredQueue } from "lavalink-client";
 import { Constants } from "#stelle/utils/data/constants.js";
+import { InvalidQueue } from "#stelle/utils/errors.js";
 import type { RedisClient } from "./modules/Redis.js";
 
 /**
@@ -43,8 +44,11 @@ export class RedisQueueStore implements QueueStoreManager {
      * @param {string} id The guild id to get the queue.
      * @returns {Promise<StoredQueue | string>} The queue.
      */
-    public get(id: string): Promise<StoredQueue | string> {
-        return this.redis.get<StoredQueue | string>(buildKey(id)) as Promise<StoredQueue | string>;
+    public async get(id: string): Promise<StoredQueue | string> {
+        const data = await this.redis.get<StoredQueue | string>(buildKey(id));
+        if (!data) throw new InvalidQueue(`No queue found for guild ${id}`);
+
+        return data;
     }
 
     /**
@@ -75,7 +79,7 @@ export class RedisQueueStore implements QueueStoreManager {
      * @returns {Promise<StoredQueue | string>} The stringified value.
      */
     public stringify(value: StoredQueue | string): Promise<StoredQueue | string> {
-        return Promise.resolve(typeof value === "object" ? JSON.stringify(value) : value);
+        return Promise.resolve<StoredQueue | string>(typeof value === "object" ? JSON.stringify(value) : value);
     }
 
     /**
@@ -85,6 +89,6 @@ export class RedisQueueStore implements QueueStoreManager {
      * @returns {Promise<PartialStoredQueue>} The parsed value.
      */
     public parse(value: StoredQueue | string): Promise<PartialStoredQueue> {
-        return Promise.resolve(typeof value === "string" ? JSON.parse(value) : value);
+        return Promise.resolve<PartialStoredQueue>(typeof value === "string" ? JSON.parse(value) : value);
     }
 }

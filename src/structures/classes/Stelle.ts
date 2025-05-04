@@ -8,7 +8,7 @@ import type { NonGlobalCommands, StelleConfiguration } from "#stelle/types";
 import { StelleMiddlewares } from "#stelle/middlewares";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 import { Constants } from "#stelle/utils/data/constants.js";
-import { StelleContext } from "#stelle/utils/functions/utils.js";
+import { StelleContext, getInspect } from "#stelle/utils/functions/utils.js";
 
 import { onBotPermissionsFail, onOptionsError, onPermissionsFail, onRunError } from "#stelle/utils/functions/overrides.js";
 import { sendErrorReport } from "#stelle/utils/functions/report.js";
@@ -183,7 +183,7 @@ export class Stelle extends Client<true> {
 
             this.logger.info("Stelle has been reloaded.");
         } catch (error) {
-            this.logger.error("Error -", error);
+            this.logger.error(`Error - ${getInspect(error)}`);
             throw error;
         }
     }
