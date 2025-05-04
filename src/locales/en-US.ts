@@ -266,7 +266,7 @@ export default {
                 },
                 bot: {
                     description: "`📢` Hey! I'm missing some permissions to do this.",
-                    field: "`📋` Permissions",
+                    field: "`📋` Missing Permissions",
                 },
                 channel: {
                     description: ({ channelId }: IChannel): string =>
