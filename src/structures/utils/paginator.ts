@@ -11,7 +11,13 @@ import {
     type StringSelectMenuInteraction,
     type WebhookMessage,
 } from "seyfert";
-import { type APIButtonComponentWithCustomId, ButtonStyle, ComponentType, MessageFlags } from "seyfert/lib/types/index.js";
+import {
+    type APIButtonComponentWithCustomId,
+    type APIMessageActionRowComponent,
+    ButtonStyle,
+    ComponentType,
+    MessageFlags,
+} from "seyfert/lib/types/index.js";
 
 import {
     type Awaitable,
@@ -268,7 +274,7 @@ export class EmbedPaginator {
                             if (row.data.type !== ComponentType.ActionRow) throw new InvalidRow("Invalid row type, expected ActionRow.");
 
                             return new ActionRow({
-                                components: row.data.components.map((row) => {
+                                components: row.data.components.map((row): APIMessageActionRowComponent => {
                                     if (row.type === ComponentType.TextInput)
                                         throw new InvalidComponentType(`The component ${row.type} is not a valid component type`);
 
