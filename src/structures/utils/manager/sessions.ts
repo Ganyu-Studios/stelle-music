@@ -7,6 +7,8 @@ import { ms } from "#stelle/utils/functions/time.js";
 
 import { join } from "node:path";
 
+import { existsSync } from "node:fs";
+import { mkdir } from "node:fs/promises";
 import MeowDB from "meowdb";
 
 /**
@@ -21,10 +23,25 @@ type NonResumableNodeOptions = Omit<LavalinkNodeOptions, "sessionId">;
 type RequiredPlayerJson = MakeRequired<StellePlayerJson, "nodeId" | "nodeSessionId">;
 
 /**
+ * The directory where the cache is stored.
+ * @type {string}
+ */
+const dir: string = join(process.cwd(), "cache");
+
+/**
+ * Check if the cache directory exists.
+ * @type {boolean}
+ */
+const isCache: boolean = existsSync(dir);
+
+// Create the directory if it doesn't exist.
+if (!isCache) await mkdir(dir, { recursive: true }).catch(() => null);
+
+/**
  * The storage for player sessions.
  * @type {MeowDB}
  */
-const storage: MeowDB = new MeowDB({ dir: join(process.cwd(), "cache"), name: "./sessions" });
+const storage: MeowDB = new MeowDB({ dir, name: "./sessions" });
 
 /**
  * The session ids of the nodes.
