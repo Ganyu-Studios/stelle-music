@@ -15,12 +15,18 @@ export function validateEnv(): void {
     if (Constants.Debug) logger.warn("Running in debug mode.");
     if (Constants.Dev) logger.warn("Running in development mode.");
 
-    if (!Environment.Token) throw new InvalidEnvValue("The variable 'TOKEN' cannot be empty or undefined.");
-    if (!Environment.DatabaseUrl) throw new InvalidEnvValue("The variable'DATABASE_URL' cannot be empty or undefined.");
-    if (!Environment.ErrorsWebhook) throw new InvalidEnvValue("The variable'ERRORS_WEBHOOK' cannot be empty or undefined.");
-    if (!Environment.RedisHost) throw new InvalidEnvValue("The variable'REDIS_HOST' cannot be empty or undefined.");
-    if (!Environment.RedisPort) throw new InvalidEnvValue("The variable'REDIS_PORT' cannot be empty or undefined.");
-    if (!Environment.RedisPassword) throw new InvalidEnvValue("The variable'REDIS_PASSWORD' cannot be empty or undefined.");
+    if (!Environment.Token || typeof Environment.Token !== "string")
+        throw new InvalidEnvValue("The variable 'TOKEN' cannot be empty or undefined.");
+    if (!Environment.DatabaseUrl || typeof Environment.DatabaseUrl !== "string")
+        throw new InvalidEnvValue("The variable'DATABASE_URL' cannot be empty or undefined.");
+    if (!Environment.ErrorsWebhook || typeof Environment.ErrorsWebhook !== "string")
+        throw new InvalidEnvValue("The variable'ERRORS_WEBHOOK' cannot be empty or undefined.");
+    if (!Environment.RedisHost || typeof Environment.RedisHost !== "string")
+        throw new InvalidEnvValue("The variable'REDIS_HOST' cannot be empty or undefined.");
+    if (!Environment.RedisPort || typeof Environment.RedisPort !== "number")
+        throw new InvalidEnvValue("The variable'REDIS_PORT' cannot be empty or undefined.");
+    if (!Environment.RedisPassword || typeof Environment.RedisPassword !== "string")
+        throw new InvalidEnvValue("The variable'REDIS_PASSWORD' cannot be empty or undefined.");
 
     logger.info("Not able to found missing variables.");
 }
