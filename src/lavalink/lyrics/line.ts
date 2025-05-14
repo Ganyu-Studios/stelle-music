@@ -6,9 +6,10 @@ export default createLavalinkEvent({
     name: "LyricsLine",
     type: LavalinkEventTypes.Manager,
     async run(client, player, track, payload): Promise<void> {
-        if (!(player.get<boolean | undefined>("lyricsEnabled") && player.textChannelId)) return;
-
         if (payload.skipped) return;
+
+        if (!player.get<boolean | undefined>("lyricsEnabled")) return;
+        if (!player.textChannelId) return;
 
         const lyricsId = player.get<string | undefined>("lyricsId");
         if (!lyricsId) return;
@@ -19,8 +20,6 @@ export default createLavalinkEvent({
         const lyrics = player.get<LyricsResult | undefined>("lyrics");
         if (!lyrics) {
             await message.delete().catch(() => null);
-
-            if (player.get<boolean | undefined>("lyricsEnabled")) await player.node.lyrics.unsubscribe(player.guildId).catch(() => null);
 
             player.set("lyricsId", undefined);
             player.set("lyrics", undefined);
@@ -45,10 +44,10 @@ export default createLavalinkEvent({
 
         const end = Math.min(lyrics.lines.length, start + totalLines);
 
-        const lines = lyrics.lines
+        const lines: string = lyrics.lines
             .slice(start, end)
-            .map((l, i) => {
-                if (!l.line.length) return "-# ...";
+            .map((l, i): string => {
+                if (!l.line.length) l.line = "...";
                 return i + start === index ? `**${l.line}**` : `-# ${l.line}`;
             })
             .join("\n");

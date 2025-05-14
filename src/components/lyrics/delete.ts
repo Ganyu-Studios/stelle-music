@@ -1,8 +1,7 @@
-import type { LyricsResult } from "lavalink-client";
 import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
-export default class LyricsComponent extends ComponentCommand {
+export default class LyricsDeleteComponent extends ComponentCommand {
     override componentType = "Button" as const;
     override customId = "player-lyricsDelete";
 
@@ -18,11 +17,7 @@ export default class LyricsComponent extends ComponentCommand {
         await ctx.deferUpdate();
         await ctx.deleteResponse();
 
-        if (player.get<boolean | undefined>("lyricsEnabled") && player.get<LyricsResult | undefined>("lyrics"))
-            await player.node.lyrics.unsubscribe(player.guildId).catch(() => null);
-
+        player.set("lyricsEnabled", undefined);
         player.set("lyricsId", undefined);
-        player.set("lyrics", undefined);
-        player.set("lyricsEnabled", true);
     }
 }

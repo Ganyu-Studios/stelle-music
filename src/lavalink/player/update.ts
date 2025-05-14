@@ -1,6 +1,5 @@
 import type { PlayerJson } from "lavalink-client";
-import type { ClientUser } from "seyfert";
-import { type CustomUser, LavalinkEventTypes, type SessionJson } from "#stelle/types";
+import { LavalinkEventTypes, type SessionJson, type StelleUser } from "#stelle/types";
 import { omitKeys } from "#stelle/utils/functions/utils.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
@@ -46,7 +45,7 @@ export default createLavalinkEvent({
                 messageId: newPlayer.get("messageId"),
                 enabledAutoplay: newPlayer.get("enabledAutoplay"),
                 localeString: newPlayer.get<string | undefined>("localeString"),
-                me: newPlayer.get<CustomUser<ClientUser> | undefined>("me"),
+                me: newPlayer.get<StelleUser | undefined>("me"),
                 lyricsId: newPlayer.get<string | undefined>("lyricsId"),
                 lyricsEnabled: newPlayer.get<boolean | undefined>("lyricsEnabled"),
             });

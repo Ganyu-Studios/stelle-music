@@ -1,6 +1,7 @@
 import { ActionRow, Button, type ClientUser, Declare, Embed, type Guild, type GuildCommandContext, LocalesT, SubCommand } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 
+import { Shortcut } from "yunaforseyfert";
 import { Constants } from "#stelle/utils/data/constants.js";
 import { formatMemoryUsage } from "#stelle/utils/functions/logger.js";
 
@@ -9,6 +10,7 @@ import { formatMemoryUsage } from "#stelle/utils/functions/logger.js";
     description: "Get the info about the bot.",
 })
 @LocalesT("locales.info.subcommands.bot.name", "locales.info.subcommands.bot.description")
+@Shortcut()
 export default class BotSubcommand extends SubCommand {
     public override async run(ctx: GuildCommandContext): Promise<void> {
         const { messages } = await ctx.getLocale();

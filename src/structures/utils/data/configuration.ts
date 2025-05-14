@@ -14,7 +14,7 @@ export const Configuration: StelleConfiguration = {
     defaultLocale: "en-US",
     defaultPrefix: "stelle",
     prefixes: ["st!"],
-    fileName: "commands.json",
+    fileName: "./cache/commands.json",
     cacheSize: 5,
     defaultSearchPlatform: "spotify",
     defaultVolume: 100,

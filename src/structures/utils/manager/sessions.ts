@@ -5,6 +5,8 @@ import type { StellePlayerJson } from "#stelle/types";
 import { InvalidNodeSession } from "#stelle/utils/errors.js";
 import { ms } from "#stelle/utils/functions/time.js";
 
+import { join } from "node:path";
+
 import MeowDB from "meowdb";
 
 /**
@@ -22,7 +24,7 @@ type RequiredPlayerJson = MakeRequired<StellePlayerJson, "nodeId" | "nodeSession
  * The storage for player sessions.
  * @type {MeowDB}
  */
-const storage: MeowDB = new MeowDB({ dir: process.cwd(), name: "./sessions" });
+const storage: MeowDB = new MeowDB({ dir: join(process.cwd(), "cache"), name: "./sessions" });
 
 /**
  * The session ids of the nodes.

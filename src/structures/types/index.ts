@@ -1,5 +1,5 @@
 import type { PlayerJson } from "lavalink-client";
-import type { ClientUser, Command, ContextMenuCommand, SubCommand, User } from "seyfert";
+import type { Command, ContextMenuCommand, SubCommand, User } from "seyfert";
 import type { EmojiResolvable } from "seyfert/lib/common/index.js";
 import type { APIUser, ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
@@ -150,7 +150,7 @@ export type SessionJson = StellePlayerJson & {
     /**
      * The client user object.
      */
-    me?: CustomUser<ClientUser>;
+    me?: StelleUser;
     /**
      * The locale string of the guild.
      */

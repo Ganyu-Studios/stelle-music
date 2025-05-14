@@ -1,11 +1,12 @@
-import { ActionRow, Button, ComponentCommand, Embed, type GuildComponentContext, Middlewares } from "seyfert";
+import { ActionRow, Button, ComponentCommand, Embed, type GuildComponentContext, Middlewares, type WebhookMessage } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
 
+import type { LyricsResult } from "lavalink-client";
 import { EmbedPaginator } from "#stelle/utils/paginator.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
-export default class LyricsComponent extends ComponentCommand {
+export default class LyricsShowComponent extends ComponentCommand {
     override componentType = "Button" as const;
     override customId = "player-lyricsShow";
 
@@ -20,7 +21,21 @@ export default class LyricsComponent extends ComponentCommand {
 
         const { messages } = await ctx.getLocale();
 
-        const lyrics = await player.node.lyrics.getCurrent(ctx.guildId).catch(() => null);
+        const lyrics: LyricsResult | null =
+            player.get<LyricsResult | undefined>("lyrics") ??
+            (await player
+                .getCurrentLyrics()
+                .then((lyrics) => {
+                    if (!lyrics) return null;
+
+                    if (typeof lyrics.provider !== "string") lyrics.provider = "Unknown";
+
+                    lyrics.provider = lyrics.provider.replace("Source:", "").trim();
+
+                    return lyrics;
+                })
+                .catch(() => null));
+
         if (!lyrics)
             return ctx.editOrReply({
                 flags: MessageFlags.Ephemeral,
@@ -31,10 +46,6 @@ export default class LyricsComponent extends ComponentCommand {
                     },
                 ],
             });
-
-        if (typeof lyrics.provider !== "string") lyrics.provider = "Unknown";
-
-        lyrics.provider = lyrics.provider.replace("Source:", "").trim();
 
         if (!Array.isArray(lyrics.lines)) {
             if (!lyrics.text)
@@ -76,10 +87,14 @@ export default class LyricsComponent extends ComponentCommand {
             return;
         }
 
-        const lines = lyrics.lines
+        const lines: string = lyrics.lines
             .slice(0, client.config.lyricsLines)
-            .map((l, i) => (i === 0 ? `**${l.line}**` : `-# ${l.line}`))
+            .map((l): string => {
+                if (!l.line.length) l.line = "...";
+                return `-# ${l.line}`;
+            })
             .join("\n");
+
         const embed = new Embed()
             .setThumbnail(track.info.artworkUrl ?? undefined)
             .setColor(client.config.color.extra)
@@ -96,14 +111,14 @@ export default class LyricsComponent extends ComponentCommand {
                 }),
             );
 
-        const row = new ActionRow<Button>().addComponents(
+        const row: ActionRow<Button> = new ActionRow<Button>().addComponents(
             new Button().setCustomId("player-lyricsDelete").setLabel(messages.commands.lyrics.close).setStyle(ButtonStyle.Secondary),
         );
 
-        const message = await ctx.editOrReply({ embeds: [embed], components: [row] }, true);
+        const message: WebhookMessage = await ctx.editOrReply({ embeds: [embed], components: [row] }, true);
 
-        // cuz this returns an exception, idk why
-        if (!player.get<boolean | undefined>("lyricsEnabled")) await player.node.lyrics.subscribe(ctx.guildId).catch(() => null);
+        const isEnabled: boolean = !!player.get<boolean | undefined>("lyricsEnabled");
+        if (!isEnabled) await player.subscribeLyrics().catch(() => null);
 
         player.set("lyrics", lyrics);
         player.set("lyricsId", message.id);

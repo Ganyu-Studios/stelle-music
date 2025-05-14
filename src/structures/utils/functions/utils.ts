@@ -1,4 +1,4 @@
-import { ActionRow, type AnyContext, type Button, type DefaultLocale, type TopLevelComponents, type User, extendContext } from "seyfert";
+import { ActionRow, type AnyContext, type Button, type DefaultLocale, type TopLevelComponents, User, extendContext } from "seyfert";
 
 import type { Player } from "lavalink-client";
 import { type APIMessageComponentEmoji, ButtonStyle, ComponentType, type LocaleString } from "seyfert/lib/types/index.js";
@@ -112,14 +112,17 @@ export const parseWebhook = (url: string): WebhookObject | null => {
  * @returns {StelleUser} The transformed user.
  */
 export const requesterTransformer = (requester: unknown): StelleUser => {
-    const requesterUser = requester as User;
-    const user = omitKeys(requesterUser, ["client"]);
+    if (requester instanceof User) {
+        const user = omitKeys(requester, ["client"]);
 
-    return {
-        ...user,
-        global_name: requesterUser.username,
-        tag: requesterUser.bot ? requesterUser.username : requesterUser.tag,
-    };
+        return {
+            ...user,
+            global_name: requester.username,
+            tag: requester.bot ? requester.username : requester.tag,
+        };
+    }
+
+    return requester as StelleUser;
 };
 
 /**

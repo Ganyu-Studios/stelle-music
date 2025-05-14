@@ -2,8 +2,6 @@ node_modules
 dist
 logs
 generated
+cache
 
 .env
-
-commands.json
-sessions.json

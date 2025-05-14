@@ -2,8 +2,8 @@ import type { InvalidLavalinkRestRequest, LavalinkNode, LavalinkPlayer } from "l
 import type { UsingClient } from "seyfert";
 import type { SessionJson } from "#stelle/types";
 
-import { Constants } from "../../data/constants.js";
-import { Sessions } from "../../manager/sessions.js";
+import { Constants } from "#stelle/utils/data/constants.js";
+import { Sessions } from "#stelle/utils/manager/sessions.js";
 
 /**
  *
@@ -48,8 +48,8 @@ export async function resumeListener(
         player.set("enabledAutoplay", session.enabledAutoplay);
         player.set("me", session.me);
         player.set("localeString", session.localeString);
-        player.set("lyricsEnabled", session.lyricsEnabled);
         player.set("lyricsId", session.lyricsId);
+        player.set("lyricsEnabled", session.lyricsEnabled);
 
         player.voice = data.voice;
 
