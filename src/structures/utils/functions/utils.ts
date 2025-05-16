@@ -1,12 +1,13 @@
 import { ActionRow, type AnyContext, type Button, type DefaultLocale, type TopLevelComponents, User, extendContext } from "seyfert";
 
 import type { Player } from "lavalink-client";
+import { resolvePartialEmoji } from "seyfert/lib/common/index.js";
 import { type APIMessageComponentEmoji, ButtonStyle, ComponentType, type LocaleString } from "seyfert/lib/types/index.js";
+
 import type { EditButtonOptions, Omit, StelleUser } from "#stelle/types";
+import { InvalidRow } from "#stelle/utils/errors.js";
 
 import { inspect } from "node:util";
-import { resolvePartialEmoji } from "seyfert/lib/common/index.js";
-import { InvalidRow } from "../errors.js";
 
 /**
  * The webhook object is used to parse the webhook url.
@@ -45,12 +46,37 @@ export const getInspect = (object: any, depth: number = 0): string => inspect(ob
 /**
  *
  * Omit keys from an object.
- * @param obj The object to omit keys.
- * @param keys The keys to omit.
+ * @param {T} obj The object to omit keys.
+ * @param {K[]} keys The keys to omit.
  * @returns {Omit<T, K>} The object without the keys.
  */
 export const omitKeys = <T extends Record<string, any>, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> =>
     Object.fromEntries(Object.entries(obj).filter(([key]) => !keys.includes(key as K))) as Omit<T, K>;
+
+/**
+ *
+ * Check if the value is valid.
+ * @param {unknown} value
+ * @returns {boolean} True if the value is valid.
+ */
+export const isValid = (value: unknown): boolean => {
+    if (value === null || value === undefined) return false;
+
+    if (typeof value === "string" && !value.length) return false;
+    if (typeof value === "object" && !Object.keys(value).length) return false;
+    if (typeof value === "number" && Number.isNaN(Number(value))) return false;
+
+    if (Array.isArray(value) && !value.length) return false;
+
+    return true;
+};
+
+/**
+ * Convert a string to snake_case.
+ * @param {string} text The text to convert.
+ * @returns {string} The converted text.
+ */
+export const convertToSnakeCase = (text: string): string => text.replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase();
 
 /**
  * The custom context is used to extend the context.

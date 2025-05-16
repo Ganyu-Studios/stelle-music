@@ -32,10 +32,9 @@ const dir: string = join(process.cwd(), "cache");
  * Check if the cache directory exists.
  * @type {boolean}
  */
-const isCache: boolean = existsSync(dir);
-
-// Create the directory if it doesn't exist.
-if (!isCache) await mkdir(dir, { recursive: true }).catch(() => null);
+// create the directory if it doesn't exist.
+const isDirectory: boolean = existsSync(dir);
+if (!isDirectory) await mkdir(dir, { recursive: true }).catch(() => null);
 
 /**
  * The storage for player sessions.
