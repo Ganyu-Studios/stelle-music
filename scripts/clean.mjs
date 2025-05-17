@@ -14,7 +14,10 @@ import { resolve } from "node:path";
 
         try {
             const path = resolve("dist");
-            if (existsSync(path)) await rm(path, { recursive: true });
+            const exists = existsSync(path);
+
+            if (exists) await rm(path, { recursive: true });
+            
             console.info("Done! Cleared.");
         } catch (error) {
             console.info(error);
