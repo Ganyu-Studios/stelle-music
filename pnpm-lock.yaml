@@ -18,14 +18,14 @@ importers:
         specifier: ^5.6.1
         version: 5.6.1
       lavalink-client:
-        specifier: ^2.5.1
-        version: 2.5.1
+        specifier: ^2.5.3
+        version: 2.5.3
       meowdb:
         specifier: ^2.2.3
         version: 2.2.3
       seyfert:
         specifier: github:tiramisulabs/seyfert
-        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/0d8ad177b748d459552c5b4b836774266f0a8b89
+        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/c20f2fd0a3fd24bd2b00170c9833b9add7626f6a
       yunaforseyfert:
         specifier: ^1.1.2
         version: 1.1.2
@@ -405,8 +405,8 @@ packages:
     resolution: {integrity: sha512-rg9zJN+G4n2nfJl5MW3BMygZX56zKPNVEYYqq7adpmMh4Jn2QNEwhvQlFy6jPVdcod7txZtKHWnyZiA3a0zP7A==}
     hasBin: true
 
-  lavalink-client@2.5.1:
-    resolution: {integrity: sha512-3k7O9j/r3ZOCTNLnLVUF8JbgqajRFegtlBegiS8finBq1unDz0WoAuWMKrc8y+6U2V6KPszyT7cbH4bT34LkOg==}
+  lavalink-client@2.5.3:
+    resolution: {integrity: sha512-4R87S7Xti3TSvA/vlLgu0sQWoz6FtetPzilkgLH1J9iHAXua7bSh9NX2gVaoPuClD6AANPyxy3nbph2IVag5KA==}
     engines: {bun: '>=1.1.27', node: '>=18.0.0'}
 
   lilconfig@3.1.3:
@@ -491,8 +491,8 @@ packages:
   rfdc@1.4.1:
     resolution: {integrity: sha512-q1b3N5QkRUWUl7iyylaaj3kOpIT0N2i9MqIEQXP73GVsN9cw3fdx8X63cEmWhJGi2PPCF23Ijp7ktmd39rawIA==}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/0d8ad177b748d459552c5b4b836774266f0a8b89:
-    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/0d8ad177b748d459552c5b4b836774266f0a8b89}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/c20f2fd0a3fd24bd2b00170c9833b9add7626f6a:
+    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/c20f2fd0a3fd24bd2b00170c9833b9add7626f6a}
     version: 3.1.2
 
   signal-exit@4.1.0:
@@ -824,7 +824,7 @@ snapshots:
 
   jiti@2.4.2: {}
 
-  lavalink-client@2.5.1:
+  lavalink-client@2.5.3:
     dependencies:
       tslib: 2.8.1
       ws: 8.18.2
@@ -913,7 +913,7 @@ snapshots:
 
   rfdc@1.4.1: {}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/0d8ad177b748d459552c5b4b836774266f0a8b89: {}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/c20f2fd0a3fd24bd2b00170c9833b9add7626f6a: {}
 
   signal-exit@4.1.0: {}
 
