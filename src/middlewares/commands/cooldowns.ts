@@ -1,6 +1,8 @@
 import { type AnyContext, type LimitedCollection, type MiddlewareContext, createMiddleware } from "seyfert";
+
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
+
 import { getCollectionKey } from "#stelle/utils/functions/utils.js";
 
 /**
@@ -9,6 +11,7 @@ import { getCollectionKey } from "#stelle/utils/functions/utils.js";
  */
 export const checkCooldown: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, next, pass }) => {
     // avoid components for now
+    // this will make someone happy
     if (context.isComponent()) return next();
 
     const { client, command } = context;

@@ -3,6 +3,8 @@ import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 import { Embed } from "seyfert";
 
+import { Constants } from "#stelle/utils/data/constants.js";
+
 export default createLavalinkEvent({
     name: "queueEnd",
     type: LavalinkEventTypes.Manager,
@@ -12,9 +14,6 @@ export default createLavalinkEvent({
         const lyricsId = player.get<string | undefined>("lyricsId");
         if (lyricsId) {
             await client.messages.delete(lyricsId, player.textChannelId).catch(() => null);
-
-            const isEnabled = !!player.get<boolean | undefined>("lyricsEnabled");
-            if (isEnabled) await player.unsubscribeLyrics(player.guildId).catch(() => null);
 
             player.set("lyricsId", undefined);
             player.set("lyrics", undefined);
@@ -39,5 +38,7 @@ export default createLavalinkEvent({
         await client.messages.write(player.textChannelId, { embeds: [embed] }).catch(() => null);
 
         player.set("messageId", undefined);
+
+        if (Constants.Debug) client.debugger?.info(`Player: ${player.guildId} | Queue Ended: ${JSON.stringify(player.toJSON())}`);
     },
 });

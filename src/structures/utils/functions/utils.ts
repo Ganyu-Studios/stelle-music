@@ -54,6 +54,13 @@ export const omitKeys = <T extends Record<string, any>, K extends keyof T>(obj: 
     Object.fromEntries(Object.entries(obj).filter(([key]) => !keys.includes(key as K))) as Omit<T, K>;
 
 /**
+ * Convert a string to snake_case.
+ * @param {string} text The text to convert.
+ * @returns {string} The converted text.
+ */
+export const convertToSnakeCase = (text: string): string => text.replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase();
+
+/**
  *
  * Check if the value is valid.
  * @param {unknown} value
@@ -70,13 +77,6 @@ export const isValid = (value: unknown): boolean => {
 
     return true;
 };
-
-/**
- * Convert a string to snake_case.
- * @param {string} text The text to convert.
- * @returns {string} The converted text.
- */
-export const convertToSnakeCase = (text: string): string => text.replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase();
 
 /**
  * The custom context is used to extend the context.
@@ -138,15 +138,12 @@ export const parseWebhook = (url: string): WebhookObject | null => {
  * @returns {StelleUser} The transformed user.
  */
 export const requesterTransformer = (requester: unknown): StelleUser => {
-    if (requester instanceof User) {
-        const user = omitKeys(requester, ["client"]);
-
+    if (requester instanceof User)
         return {
-            ...user,
+            ...omitKeys(requester, ["client"]),
             global_name: requester.username,
             tag: requester.bot ? requester.username : requester.tag,
         };
-    }
 
     return requester as StelleUser;
 };

@@ -17,7 +17,7 @@ import { resolve } from "node:path";
             const exists = existsSync(path);
 
             if (exists) await rm(path, { recursive: true });
-            
+
             console.info("Done! Cleared.");
         } catch (error) {
             console.info(error);

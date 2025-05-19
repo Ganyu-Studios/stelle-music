@@ -104,5 +104,7 @@ export default createLavalinkEvent({
 
         const message = await client.messages.write(player.textChannelId, { embeds: [embed], components }).catch(() => null);
         if (message) player.set("messageId", message.id);
+
+        if (Constants.Debug) client.debugger?.info(`Player: ${player.guildId} | Track Started: ${JSON.stringify(track)}`);
     },
 });

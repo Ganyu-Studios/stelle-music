@@ -3,6 +3,9 @@ import { type PausedState, type PermissionNames, StelleCategory } from "#stelle/
 
 import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 
+/**
+ * The English locale for Stelle.
+ */
 export default {
     metadata: {
         name: "English",

@@ -3,6 +3,9 @@ import type { DefaultLocale } from "seyfert";
 import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 
+/**
+ * The Spanish locale for Stelle.
+ */
 export default {
     metadata: {
         name: "Spanish",

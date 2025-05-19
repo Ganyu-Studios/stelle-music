@@ -1,4 +1,5 @@
 import { type AnyContext, type MiddlewareContext, createMiddleware } from "seyfert";
+
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 

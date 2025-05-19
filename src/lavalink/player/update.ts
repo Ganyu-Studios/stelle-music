@@ -51,7 +51,7 @@ export default createLavalinkEvent({
             });
 
             if (Constants.Debug)
-                client.logger.debug(
+                client.debugger?.info(
                     `Session: ${newPlayer.guildId} | Updated Session: ${JSON.stringify(Sessions.get<SessionJson>(newPlayer.guildId))}`,
                 );
         }
