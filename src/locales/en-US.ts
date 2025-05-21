@@ -1,8 +1,11 @@
 import type { RepeatMode } from "lavalink-client";
-import { type PausedMode, type PermissionNames, StelleCategory } from "#stelle/types";
+import { type PausedState, type PermissionNames, StelleCategory } from "#stelle/types";
 
 import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 
+/**
+ * The English locale for Stelle.
+ */
 export default {
     metadata: {
         name: "English",
@@ -11,25 +14,58 @@ export default {
     },
     messages: {
         commands: {
-            nowplaying: ({ title, url, author, requester, bar, duration, position }: INowplaying) =>
+            nowplaying: ({ title, url, author, requester, bar, duration, position }: INowplaying): string =>
                 `\`📻\` Now playing: [\`${title}\`](${url}) - \`${author}\`\n\`👤\` **Requested by**: <@${requester}>\n \n\`🕛\` ${bar} | \`${position}\` - \`(${duration})\``,
-            setprefix: ({ prefix }: IPrefix) => `\`✅\` The **new prefix** for this guild is now: \`${prefix}\``,
-            skip: ({ amount }: IAmount) => `\`✅\` Skipped the amount of: \`${amount} tracks\`.`,
-            move: ({ textId, voiceId }: IMove) => `\`✅\` Moved to the voice channel <#${voiceId}> and the text channel: <#${textId}>`,
-            previous: ({ title, uri }: IPrevious) => `\`✅\` The previous track [**${title}**](${uri}) has been added to the queue.`,
+            setprefix: ({ prefix }: IPrefix): string => `\`✅\` The **new prefix** for this guild is now: \`${prefix}\``,
+            skip: ({ amount }: IAmount): string => `\`✅\` Skipped the amount of: \`${amount} tracks\`.`,
+            move: ({ textId, voiceId }: IMove): string =>
+                `\`✅\` Moved to the voice channel <#${voiceId}> and the text channel: <#${textId}>`,
+            previous: ({ title, uri }: IPrevious): string =>
+                `\`✅\` The previous track [**${title}**](${uri}) has been added to the queue.`,
             stop: "`👋` Stopping and leaving...",
             shuffle: "`✅` The queue has been shuffled.",
+            lyrics: {
+                noLyrics: "`❌` **No lyrics** was found for this track...",
+                close: "Close",
+                embed: {
+                    title: ({ title }: ILyricsEmbedTitle): string => `\`📜\` Lyrics for: ${title}`,
+                    description: ({ provider, lines, author }: ILyricsEmbedDescription): string =>
+                        `-# Provided by: ${provider}\n-# By: ${author}\n\n${lines}`,
+                    footer: ({ userName }: ILyricsEmbedFooter): string => `Requested by: ${userName}`,
+                },
+            },
+            info: {
+                bot: {
+                    description: ({ clientName, defaultPrefix }: IBotInfo): string =>
+                        `\`📋\` Here are some stats about **${clientName}**, by default my prefix is: \`${defaultPrefix}\`.`,
+                    invite: "Invite the Bot",
+                    repository: "Github Repository",
+                    fields: {
+                        info: {
+                            name: "`📋` Info",
+                            value: ({ guilds, users, players }: IBotInfoGeneralField): string =>
+                                `\`📦\` Guilds: \`${guilds}\`\n\`👤\` Users: \`${users}\`\n\`🎤\` Players: \`${players}\``,
+                        },
+                        system: {
+                            name: "`📋` System",
+                            value: ({ memory, uptime, version }: IBotInfoSystemField): string =>
+                                `\`🧠\` Memory: \`${memory}\`\n\`📜\` Version: \`v${version}\`\n\`🕛\` Uptime: <t:${uptime}:R>`,
+                        },
+                    },
+                },
+            },
             help: {
-                noCommand: "`❌` **No command** was found for this search...",
-                title: ({ clientName }: Pick<IMention, "clientName">) => `${clientName} - Help Menu`,
-                description: ({ defaultPrefix }: Pick<IHelp, "defaultPrefix">) =>
+                title: ({ clientName }: Pick<IMention, "clientName">): string => `${clientName} - Help Menu`,
+                description: ({ defaultPrefix }: Pick<IHelp, "defaultPrefix">): string =>
                     `\`📦\` Hello! Here is the information about my commands and stuff.\n\`📜\` Select the command category of your choice.\n\n-# You can search a specific command by typing: \`${defaultPrefix} help <command>\``,
+                noCommand: "`❌` **No command** was found for this search...",
                 selectMenu: {
-                    description: ({ category }: IHelpMenu) => `Select the ${category} category.`,
+                    description: ({ category }: IHelpMenu): string => `Select the ${category} category.`,
                     placeholder: "Select a command category.",
                     options: {
-                        description: ({ options }: Pick<IHelp, "options">) => `-# **Optional []**\n-# **Required <>**\n\n${options}`,
-                        title: ({ clientName, category }: IHelpMenuEmbed) => `${clientName} - Help Menu | ${category}`,
+                        description: ({ options }: Pick<IHelp, "options">): string =>
+                            `-# * **Optional []**\n-# * **Required <>**\n\n${options}`,
+                        title: ({ clientName, category }: IHelpMenuEmbed): string => `${clientName} - Help Menu | ${category}`,
                     },
                 },
                 aliases: {
@@ -40,41 +76,33 @@ export default {
                 } satisfies Record<StelleCategory, string>,
             },
             default: {
-                engine: ({ engine }: IEngine) => `\`✅\` The default search engine of Stelle is now: **${engine}**.`,
-                volume: ({ volume }: IVolume) => `\`✅\` The default volume of Stelle is now: **${volume}%**.`,
+                engine: ({ engine, clientName }: IEngine): string =>
+                    `\`✅\` The default search engine of ${clientName} is now: **${engine}**.`,
+                volume: ({ volume, clientName }: IVolume): string => `\`✅\` The default volume of ${clientName} is now: **${volume}%**.`,
             },
             setlocale: {
-                invalidLocale: ({ locale, available }: ILocale & { available: string }) =>
+                invalidLocale: ({ locale, available }: ILocale & { available: string }): string =>
                     `\`❌\` The locale : \`${locale}\` is invalid.\n\`📢\` **Available locales**: \`${available}\``,
-                newLocale: ({ locale }: ILocale) => `\`✅\` The locale of **Stelle** is now: \`${locale}\``,
+                newLocale: ({ locale }: ILocale): string => `\`✅\` The locale of **Stelle** is now: \`${locale}\``,
             },
             ping: {
-                message: "`🪶` Calculating...",
-                response: ({ wsPing, clientPing, shardPing }: IPing) =>
+                response: ({ wsPing, clientPing, shardPing }: IPing): string =>
                     `\`🌐\` Pong! (**Client**: \`${wsPing}ms\` - **API**: \`${clientPing}ms\` - **Shard**: \`${shardPing}ms\`)`,
+                message: "`🪶` Calculating...",
             },
             play: {
                 undetermined: "Undetermined",
                 live: "🔴 LIVE",
                 noResults: "`❌` **No results** was found for this search...\n`🪶` Try searching something different.",
-                autocomplete: {
-                    noNodes: "Stelle - I'm not connected to any of my nodes.",
-                    noVoiceChannel: "Stelle - You are not in a voice channel... Join to play music.",
-                    noSameVoice: "Stelle - You are not in the same voice channel as me.",
-                    noQuery: "Stelle - Enter a track name or URL to play it.",
-                    noTracks: "Stelle - No tracks was found. Enter another track name or URL.",
-                },
                 embed: {
-                    playlist: ({ playlist, tracks, volume, query, requester }: IPlayList) =>
+                    playlist: ({ playlist, tracks, volume, query, requester }: IPlayList): string =>
                         `\`🎵\` The playlist [\`${playlist}\`](${query}) has been added to the queue.\n\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>\n\`🔰\` **With**: \`${tracks} tracks\``,
-                    result: ({ title, url, duration, volume, requester }: IPlayTrack) =>
-                        `\`🎵\` Added [\`${title}\`](${url}) to the queue.\n\n\`🕛\` **Duration**: \`${duration}\`\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>`,
-                    results: ({ title, url, duration, volume, requester, position }: IPlayTrack) =>
+                    result: ({ title, url, duration, volume, requester, position }: IPlayTrack): string =>
                         `\`🎵\` Added [\`${title}\`](${url}) to the queue.\n\n\`🕛\` **Duration**: \`${duration}\`\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>\n\n\`📋\` **Position in queue**: \`#${position}\``,
                 },
             },
             loop: {
-                toggled: ({ type }: IType) => `\`✅\` The **loop mode** is now: \`${type}\``,
+                toggled: ({ type }: IType): string => `\`✅\` The **loop mode** is now: \`${type}\``,
                 loopType: {
                     off: "Off",
                     queue: "Queue",
@@ -82,15 +110,15 @@ export default {
                 } satisfies Record<RepeatMode, string>,
             },
             autoplay: {
-                toggled: ({ type }: IType) => `\`✅\` The **autoplay mode** is now: \`${type}\``,
+                toggled: ({ type }: IType): string => `\`✅\` The **autoplay mode** is now: \`${type}\``,
                 autoplayType: {
                     enabled: "On",
                     disabled: "Off",
                 },
             },
             nodes: {
-                value: ({ state, uptime, players }: INodes) =>
-                    `\`📘\` State: \`${state}\`\n\`🕛\` Uptime: \`${uptime}\`\n\`🎤\` Players: \`${players}\``,
+                value: ({ state, uptime, players, memory, cpu }: INodes): string =>
+                    `\`📘\` State: \`${state}\`\n\`🕛\` Uptime: \`${uptime}\`\n\`🎤\` Players: \`${players}\`\n\`🪭\` Usage: \`${memory}\`\n\`📦\` CPU: \`${cpu}\``,
                 description: "`📋` List of all Stelle nodes.",
                 noNodes: "`❌` No nodes available at the moment.",
                 states: {
@@ -99,13 +127,13 @@ export default {
                 } satisfies Record<string, string>,
             },
             volume: {
-                changed: ({ volume }: IVolume) => `\`✅\` The volume has been set to: **${volume}%**.`,
+                changed: ({ volume }: IVolume): string => `\`✅\` The volume has been set to: **${volume}%**.`,
                 paused: "`🔰` The volume is **1%**, so the player has been paused.",
             },
             seek: {
-                invalidTime: ({ time }: Pick<ISeek, "time">) => `\`❌\` The time \`${time}\` is not a valid time.`,
-                seeked: ({ time, type }: ISeek) => `\`✅\` The track has been **${type}** to \`${time}\`.`,
-                exeedsTime: ({ time }: Pick<ISeek, "time">) => `\`❌\` The time \`${time}\` exceeds the current track time.`,
+                invalidTime: ({ time }: Pick<ISeek, "time">): string => `\`❌\` The time \`${time}\` is not a valid time.`,
+                seeked: ({ time, type }: ISeek): string => `\`✅\` The track has been **${type}** to \`${time}\`.`,
+                exeedsTime: ({ time }: Pick<ISeek, "time">): string => `\`❌\` The time \`${time}\` exceeds the current track time.`,
                 noSeekable: "`❌` The **current track** is not `seekable`.",
                 type: {
                     seeked: "seeked",
@@ -114,28 +142,41 @@ export default {
             },
         },
         events: {
-            inCooldown: ({ time }: ICooldown) => `\`❌\` You need to wait: <t:${time}:R> (<t:${time}:t>) to use this.`,
-            noSameVoice: ({ channelId }: IChannel) => `\`❌\` You are not in the **same voice channel** as me. (<#${channelId}>)`,
-            noCollector: ({ userId }: IUser) => `\`❌\` Only the user: <@${userId}> can use this.`,
-            invalidOptions: ({ options, list }: IOptions) =>
+            inCooldown: ({ time }: ICooldown): string => `\`❌\` You need to wait: <t:${time}:R> (<t:${time}:t>) to use this.`,
+            invalidOptions: ({ options, list }: IOptions): string =>
                 `\`❌\` Invalid command options or arguments.\n-# - **Required**: \`<>\`\n-# - **Optional**: \`[]\`\n\n\`📋\` **Usage**:\n ${options}\n\`📢\` **Options Available**:\n${list}`,
-            playerQueue: ({ tracks }: ITracks) => `\`📋\` Here is the full server queue: \n\n${tracks}`,
-            channelEmpty: ({ type }: IType) => `\`🎧\` Stelle is alone in the **voice channel**... Pausing and waiting **${type}**.`,
-            mention: ({ clientName, defaultPrefix, commandName }: IMention) =>
+            noSameVoice: ({ channelId }: IChannel): string => `\`❌\` You are not in the **same voice channel** as me. (<#${channelId}>)`,
+            noCollector: ({ userId }: IUser): string => `\`❌\` Only the user: <@${userId}> can use this.`,
+            noMembers: ({ clientName }: IClientName): string =>
+                `\`🎧\` ${clientName} is alone in the **voice channel**... Leaving the channel.`,
+            playerQueue: ({ tracks }: ITracks): string => `\`📋\` Here is the full server queue: \n\n${tracks}`,
+            channelEmpty: ({ type, clientName }: ITypeName): string =>
+                `\`🎧\` ${clientName} is alone in the **voice channel**... Pausing and waiting **${type}**.`,
+            mention: ({ clientName, defaultPrefix, commandName }: IMention): string =>
                 `\`📢\` Hey! My name is: **${clientName}** and my prefix is: \`${defaultPrefix}\` and **/** too!\n\`📋\` If you want to see my commands, type: \`${defaultPrefix} ${commandName}\` or /${commandName}.`,
-            noCommand: "`❌` I don't have the required command *yet*, try again in a moment.",
-            noMembers: "`🎧` Stelle is alone in the **voice channel**... Leaving the channel.",
-            hasMembers: "`🎧` Stelle is not alone anymore... Resuming.",
+            hasMembers: ({ clientName }: IClientName): string => `\`🎧\` ${clientName} is not alone anymore... Resuming.`,
             onlyDeveloper: "`❌` Only the **bot developer** can use this.",
             onlyGuildOwner: "`❌` Only the **guild owner** can use this.",
+            noCommand: "`❌` I don't have the required command *yet*, try again in a moment.",
             noVoiceChannel: "`❌` You are not in a **voice channel**... Join to play music.",
             noNodes: "`❌` I'm not connected to any of my nodes.",
             noPlayer: "`❌` Nothing is playing right now...",
             noPrevious: "`❌` There is no previous track to add.",
             noTracks: "`❌` There are no more tracks in the queue.",
+            noQuery: "`❌` Enter a track name or URL to play it.",
             playerEnd: "`🔰` The queue has finished... Waiting for more tracks.",
             moreTracks: "`❌` In order to enable **this** `one or more tracks` are required.",
             commandError: "`❌` Something unexpected ocurred during the execution.\n`📢` If the problem persists, report the issue.",
+            autocomplete: {
+                noAnything: "Stelle - Something unexpected happened using this autocomplete.",
+                noNodes: "Stelle - I'm not connected to any of my nodes.",
+                noVoiceChannel: "Stelle - You are not in a voice channel... Join to play music.",
+                noSameVoice: "Stelle - You are not in the same voice channel as me.",
+                noQuery: "Stelle - Enter a track name or URL to play it.",
+                noTracks: "Stelle - No tracks was found. Enter another track name or URL.",
+                noGuild: "Stelle - This autocomplete only can be used in a guild.",
+                noCommand: "Stelle - Invalid command name.",
+            },
             optionTypes: {
                 [ApplicationCommandOptionType.Subcommand]: "subcommand",
                 [ApplicationCommandOptionType.SubcommandGroup]: "subcommand group",
@@ -150,23 +191,24 @@ export default {
                 [ApplicationCommandOptionType.Attachment]: "attachment",
             } satisfies Record<ApplicationCommandOptionType, string>,
             voiceStatus: {
-                trackStart: ({ title, author }: IVoiceStatus) => `${title} by ${author}`,
+                trackStart: ({ title, author }: IVoiceStatus): string => `${title} by ${author}`,
                 queueEnd: "The queue is empty.",
             },
             trackStart: {
-                embed: ({ duration, requester, title, url, volume, author, size }: ITrackStart) =>
+                embed: ({ duration, requester, title, url, volume, author, size }: ITrackStart): string =>
                     `\`📻\` Now playing [\`${title}\`](${url})\n\n\`🎤\` **Author**: \`${author}\`\n\`🕛\` **Duration**: \`${duration}\`\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>\n\n\`📋\` **In queue**: \`${size} tracks\``,
                 components: {
-                    loop: ({ type }: IType) => `Loop: ${type}`,
-                    autoplay: ({ type }: IType) => `Autoplay: ${type}`,
+                    loop: ({ type }: IType): string => `Loop: ${type}`,
+                    autoplay: ({ type }: IType): string => `Autoplay: ${type}`,
                     stop: "Stop",
                     skip: "Skip",
                     previous: "Previous",
                     queue: "Queue",
+                    lyrics: "Lyrics",
                     paused: {
                         resume: "Resume",
                         pause: "Pause",
-                    } satisfies Record<PausedMode, string>,
+                    } satisfies Record<PausedState, string>,
                 },
             },
             permissions: {
@@ -227,10 +269,11 @@ export default {
                 },
                 bot: {
                     description: "`📢` Hey! I'm missing some permissions to do this.",
-                    field: "`📋` Permissions",
+                    field: "`📋` Missing Permissions",
                 },
                 channel: {
-                    description: ({ channelId }: IChannel) => `\`📢\` Hey! I'm missing some permissions in the channel. <#${channelId}>`,
+                    description: ({ channelId }: IChannel): string =>
+                        `\`📢\` Hey! I'm missing some permissions in the channel. <#${channelId}>`,
                     field: "`📋` Missing Permissions",
                 },
             },
@@ -287,11 +330,11 @@ export default {
             options: {
                 voice: {
                     name: "voice",
-                    description: "Select the channel.",
+                    description: "Select the voice channel.",
                 },
                 text: {
                     name: "text",
-                    description: "Select the channel.",
+                    description: "Select the text channel.",
                 },
             },
         },
@@ -305,7 +348,7 @@ export default {
             option: {
                 to: {
                     name: "to",
-                    description: "Skip a specific amount of songs.",
+                    description: "Skip a specific amount of tracks.",
                 },
             },
         },
@@ -353,7 +396,7 @@ export default {
         },
         nowplaying: {
             name: "nowplaying",
-            description: "Get the current playing song.",
+            description: "Get the current playing track.",
         },
         help: {
             name: "help",
@@ -363,27 +406,45 @@ export default {
                 description: "The command to get help for.",
             },
         },
+        info: {
+            name: "info",
+            description: "Get the info about the bot or a user.",
+            subcommands: {
+                bot: {
+                    name: "bot",
+                    description: "Get the bot info.",
+                },
+            },
+        },
     },
 };
 
-type IHelpMenuEmbed = Pick<IMention, "clientName"> & IHelpMenu;
-type IVoiceStatus = Pick<ITrackStart, "title" | "author">;
+type ILyricsEmbedFooter = { userName: string };
+type ILyricsEmbedDescription = { lines: string; provider: string; author: string };
+type ILyricsEmbedTitle = { title: string };
+type IBotInfoGeneralField = { guilds: number; users: number; players: number };
+type IBotInfoSystemField = { memory: string; uptime: number; version: string };
+type IBotInfo = { clientName: string; defaultPrefix: string };
+type IHelpMenuEmbed = { clientName: string; category: string };
+type IVoiceStatus = { title: string; author: string };
+type IClientName = { clientName: string };
 type IHelp = { defaultPrefix: string; options: string };
 type IHelpMenu = { category: string };
 type IMention = { clientName: string; defaultPrefix: string; commandName: string };
 type INowplaying = { title: string; url: string; duration: string; requester: string; author: string; bar: string; position: string };
-type IEngine = { engine: string };
+type IEngine = { engine: string; clientName: string };
 type IPrefix = { prefix: string };
 type ISeek = { time: string | number; type: string };
 type IAmount = { amount: number };
 type IMove = { textId: string; voiceId: string };
-type IVolume = { volume: number };
+type IVolume = { volume: number; clientName: string };
 type IType = { type: string };
+type ITypeName = { type: string; clientName: string };
 type ILocale = { locale: string };
 type IPrevious = { title: string; uri: string };
 type ITracks = { tracks: string };
 type IOptions = { options: string; list: string };
-type INodes = { state: string; uptime: string; players: number };
+type INodes = { state: string; uptime: string; players: number; memory: string; cpu: string };
 type ITrackStart = { title: string; url: string; duration: string; volume: number; requester: string; author: string; size: number };
 type IPlayTrack = { title: string; url: string; duration: string; volume: number; requester: string; position: number };
 type IPlayList = { query: string; playlist: string; volume: number; requester: string; tracks: number };

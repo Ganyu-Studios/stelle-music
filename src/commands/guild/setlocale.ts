@@ -1,5 +1,15 @@
-import { Command, type CommandContext, Declare, type DefaultLocale, LocalesT, Options, createStringOption } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
+import {
+    Command,
+    Declare,
+    type DefaultLocale,
+    type GuildCommandContext,
+    LocalesT,
+    type Message,
+    Options,
+    type WebhookMessage,
+    createStringOption,
+} from "seyfert";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
@@ -16,7 +26,7 @@ const options = {
             const { client } = interaction;
 
             await interaction.respond(
-                Object.entries<DefaultLocale>(client.langs!.values)
+                Object.entries<DefaultLocale>(client.langs.values)
                     .map(([value, l]) => ({
                         name: `${l.metadata.name} [${l.metadata.emoji}] - ${l.metadata.translators.join(", ")}`,
                         value,
@@ -38,16 +48,14 @@ const options = {
 @StelleOptions({ cooldown: 10, category: StelleCategory.Guild })
 @LocalesT("locales.setlocale.name", "locales.setlocale.description")
 @Options(options)
-export default class SetlangCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>) {
+export default class SetLocaleCommand extends Command {
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
         const { client, options } = ctx;
         const { locale } = options;
 
-        if (!ctx.guildId) return;
-
         const { messages } = await ctx.getLocale();
 
-        const locales = Object.keys(client.langs!.values);
+        const locales = Object.keys(client.langs.values);
         if (!locales.includes(locale))
             return ctx.editOrReply({
                 flags: MessageFlags.Ephemeral,

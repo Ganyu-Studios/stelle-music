@@ -1,14 +1,14 @@
-import { Command, type CommandContext, Declare, LocalesT, Middlewares, type User } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
-import { StelleCategory } from "#stelle/types";
+import { Command, Declare, Embed, type GuildCommandContext, LocalesT, type Message, Middlewares, type WebhookMessage } from "seyfert";
+import { StelleCategory, type StelleUser } from "#stelle/types";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
-import { TimeFormat } from "#stelle/utils/TimeFormat.js";
+import { TimeFormat } from "#stelle/utils/functions/time.js";
 import { createBar } from "#stelle/utils/functions/utils.js";
 
 @Declare({
     name: "nowplaying",
-    description: "Get the current playing song.",
+    description: "Get the current playing track.",
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
     aliases: ["np"],
@@ -17,14 +17,12 @@ import { createBar } from "#stelle/utils/functions/utils.js";
 @LocalesT("locales.nowplaying.name", "locales.nowplaying.description")
 @Middlewares(["checkNodes", "checkPlayer"])
 export default class NowPlayingCommand extends Command {
-    public override async run(ctx: CommandContext) {
-        const { client, guildId } = ctx;
-
-        if (!guildId) return;
+    public override async run(ctx: GuildCommandContext): Promise<Message | WebhookMessage | void> {
+        const { client } = ctx;
 
         const { messages } = await ctx.getLocale();
 
-        const player = client.manager.getPlayer(guildId);
+        const player = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
         const track = player.queue.current;
@@ -38,22 +36,21 @@ export default class NowPlayingCommand extends Command {
                 ],
             });
 
-        await ctx.editOrReply({
-            embeds: [
-                {
-                    thumbnail: { url: track.info.artworkUrl ?? "" },
-                    color: client.config.color.success,
-                    description: messages.commands.nowplaying({
-                        title: track.info.title,
-                        url: track.info.uri,
-                        duration: TimeFormat.toDotted(track.info.duration),
-                        author: track.info.author,
-                        position: TimeFormat.toDotted(player.position),
-                        requester: (track.requester as User).id,
-                        bar: createBar(player),
-                    }),
-                },
-            ],
-        });
+        const embed = new Embed()
+            .setThumbnail(track.info.artworkUrl ?? undefined)
+            .setColor(client.config.color.success)
+            .setDescription(
+                messages.commands.nowplaying({
+                    title: track.info.title,
+                    url: track.info.uri,
+                    duration: TimeFormat.toDotted(track.info.duration),
+                    author: track.info.author,
+                    position: TimeFormat.toDotted(player.position),
+                    requester: (track.requester as StelleUser).id,
+                    bar: createBar(player),
+                }),
+            );
+
+        await ctx.editOrReply({ embeds: [embed] });
     }
 }

@@ -1,23 +1,23 @@
-import { type AnyContext, Embed, type PermissionStrings } from "seyfert";
+import { type AnyContext, type AutocompleteInteraction, Embed, type Message, type PermissionStrings, type WebhookMessage } from "seyfert";
+
+import { getFormattedOptions } from "#stelle/utils/functions/options.js";
+import { sendErrorReport } from "#stelle/utils/functions/report.js";
 
 import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
-import { formatOptions } from "./formatter.js";
-
 /**
  *
- * The Stelle's default error handler.
- * @param ctx The context of the command.
- * @param error The error that was thrown.
- * @returns
+ * The default error default handler.
+ * @param {AnyContext} ctx The context of the command.
+ * @param {unknown} error The error that was thrown.
+ * @returns {Promise<void>} A promise... duh.
  */
-export async function onRunError(ctx: AnyContext, error: unknown) {
+export async function onRunError(ctx: AnyContext, error: unknown): Promise<void> {
     const { messages } = await ctx.getLocale();
 
-    ctx.client.logger.error(error);
-
-    return ctx.editOrReply({
+    await sendErrorReport({ error, ctx });
+    await ctx.editOrReply({
         content: "",
         flags: MessageFlags.Ephemeral,
         embeds: [
@@ -31,12 +31,34 @@ export async function onRunError(ctx: AnyContext, error: unknown) {
 
 /**
  *
- * The Stelle's default error handler for missing permissions.
+ * The default error handler for autocomplete.
+ * @param interaction The interaction.
+ * @param error The error that was thrown.
+ * @returns {Promise<void>} A promise... and a half.
+ */
+export async function onAutocompleteError(interaction: AutocompleteInteraction, error: unknown): Promise<void> {
+    if (!interaction.guildId) return;
+
+    const { messages } = interaction.client.t(await interaction.client.database.getLocale(interaction.guildId)).get();
+
+    await sendErrorReport({ error });
+
+    return interaction.respond([
+        {
+            name: messages.events.autocomplete.noAnything,
+            value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT",
+        },
+    ]);
+}
+
+/**
+ *
+ * The default error handler for missing permissions.
  * @param ctx The context of the command.
  * @param permissions The permissions that the user is missing.
- * @returns
+ * @returns {Promise<void>} A promise... and a half.
  */
-export async function onPermissionsFail(ctx: AnyContext, permissions: PermissionStrings) {
+export async function onPermissionsFail(ctx: AnyContext, permissions: PermissionStrings): Promise<Message | WebhookMessage | void> {
     const { messages } = await ctx.getLocale();
 
     return ctx.editOrReply({
@@ -62,9 +84,9 @@ export async function onPermissionsFail(ctx: AnyContext, permissions: Permission
  * The Stelle's default error handler for missing bot permissions.
  * @param ctx The context of the command.
  * @param permissions The permissions that the bot is missing.
- * @returns
+ * @returns {Promise<void>} A promise... and a half too.
  */
-export async function onBotPermissionsFail(ctx: AnyContext, permissions: PermissionStrings) {
+export async function onBotPermissionsFail(ctx: AnyContext, permissions: PermissionStrings): Promise<Message | WebhookMessage | void> {
     const { messages } = await ctx.getLocale();
 
     return ctx.editOrReply({
@@ -89,15 +111,15 @@ export async function onBotPermissionsFail(ctx: AnyContext, permissions: Permiss
  *
  * The Stelle's default error handler for invalid options.
  * @param ctx The context of the command.
- * @returns
+ * @returns {Promise<void>} A promise... and a half maybe.
  */
-export async function onOptionsError(ctx: AnyContext) {
+export async function onOptionsError(ctx: AnyContext): Promise<Message | WebhookMessage | void> {
     if (!ctx.isChat()) return;
 
     const { messages } = await ctx.getLocale();
 
     const command = ctx.command.toJSON();
-    const options = formatOptions(command.options, messages.events.optionTypes);
+    const options = getFormattedOptions(command.options, messages.events.optionTypes);
 
     const embed = new Embed()
         .setColor("Red")
@@ -105,7 +127,9 @@ export async function onOptionsError(ctx: AnyContext) {
         .setDescription(
             messages.events.invalidOptions({
                 options: Formatter.codeBlock(options.map(({ option }) => option).join(" "), "js"),
-                list: options.map(({ option, description, range }) => `* \`${option}\` \`[${range || "N/A"}]\`: ${description}`).join("\n"),
+                list: options
+                    .map(({ option, description, range }) => `* \`${option}\` ${range ? `\`[${range}]\`` : ""}: ${description}`.trim())
+                    .join("\n"),
             }),
         )
         .setTimestamp();

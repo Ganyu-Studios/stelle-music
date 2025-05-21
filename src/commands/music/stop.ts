@@ -1,6 +1,6 @@
-import { Command, type CommandContext, Declare, LocalesT, Middlewares } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
+import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares } from "seyfert";
 import { StelleCategory } from "#stelle/types";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 @Declare({
     name: "stop",
@@ -13,14 +13,12 @@ import { StelleCategory } from "#stelle/types";
 @LocalesT("locales.stop.name", "locales.stop.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class StopCommand extends Command {
-    public override async run(ctx: CommandContext) {
-        const { client, guildId } = ctx;
-
-        if (!guildId) return;
+    public override async run(ctx: GuildCommandContext): Promise<void> {
+        const { client } = ctx;
 
         const { messages } = await ctx.getLocale();
 
-        const player = client.manager.getPlayer(guildId);
+        const player = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
         await player.destroy();

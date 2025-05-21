@@ -1,8 +1,11 @@
-import { Lavalink } from "#stelle/classes";
-import { DEBUG_MODE } from "#stelle/data/Constants.js";
+import { LavalinkEventTypes } from "#stelle/types";
+import { Constants } from "#stelle/utils/data/constants.js";
+import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
-export default new Lavalink({
+export default createLavalinkEvent({
     name: "raw",
-    type: "node",
-    run: (client, node, payload) => DEBUG_MODE && client.debugger?.info(`[Node ${node.id}] Payload: `, payload),
+    type: LavalinkEventTypes.Node,
+    run(client, node, payload): void {
+        if (Constants.Debug) client.debugger?.info(`Node: ${node.id} | Raw Payload: ${JSON.stringify(payload)}`);
+    },
 });

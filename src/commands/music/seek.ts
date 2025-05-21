@@ -1,14 +1,25 @@
-import { Command, type CommandContext, Declare, LocalesT, Middlewares, type OKFunction, Options, createStringOption } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
+import {
+    Command,
+    Declare,
+    type GuildCommandContext,
+    LocalesT,
+    type Message,
+    Middlewares,
+    type OKFunction,
+    Options,
+    type WebhookMessage,
+    createStringOption,
+} from "seyfert";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
 
 import { StelleCategory } from "#stelle/types";
-import { TimeFormat, ms } from "#stelle/utils/TimeFormat.js";
+import { TimeFormat, ms } from "#stelle/utils/functions/time.js";
 
 const options = {
     time: createStringOption({
-        description: "Enter the time. (Ex: 2min=",
+        description: "Enter the time. (Ex: 2min)",
         required: true,
         locales: {
             name: "locales.seek.option.name",
@@ -38,15 +49,13 @@ const options = {
 @LocalesT("locales.seek.name", "locales.seek.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class SeekCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>) {
-        const { client, options, guildId } = ctx;
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
+        const { client, options } = ctx;
         const { time } = options;
-
-        if (!guildId) return;
 
         const { messages } = await ctx.getLocale();
 
-        const player = client.manager.getPlayer(guildId);
+        const player = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
         const position = player.position;

@@ -1,4 +1,5 @@
-import { type CommandContext, Declare, LocalesT, Options, SubCommand, createStringOption } from "seyfert";
+import { Declare, type GuildCommandContext, LocalesT, Options, SubCommand, createStringOption } from "seyfert";
+import { Shortcut } from "yunaforseyfert";
 
 const engines: Record<string, string> = {
     spsearch: "Spotify",
@@ -42,21 +43,23 @@ const options = {
 })
 @Options(options)
 @LocalesT("locales.default.subcommands.engine.name", "locales.default.subcommands.engine.description")
+@Shortcut()
 export default class EngineSubcommand extends SubCommand {
-    async run(ctx: CommandContext<typeof options>) {
-        const { client, options, guildId } = ctx;
+    async run(ctx: GuildCommandContext<typeof options>): Promise<void> {
+        const { client, options } = ctx;
         const { engine } = options;
-
-        if (!guildId) return;
 
         const { messages } = await ctx.getLocale();
 
-        await client.database.setPlayer({ guildId, searchEngine: engine });
+        await client.database.setPlayer(ctx.guildId, { searchPlatform: engine });
         await ctx.editOrReply({
             embeds: [
                 {
                     color: client.config.color.success,
-                    description: messages.commands.default.engine({ engine: engines[engine] }),
+                    description: messages.commands.default.engine({
+                        engine: engines[engine],
+                        clientName: client.me.username,
+                    }),
                 },
             ],
         });

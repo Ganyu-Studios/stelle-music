@@ -3,6 +3,9 @@ import type { DefaultLocale } from "seyfert";
 import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 
+/**
+ * The Spanish locale for Stelle.
+ */
 export default {
     metadata: {
         name: "Spanish",
@@ -11,25 +14,54 @@ export default {
     },
     messages: {
         commands: {
-            nowplaying: ({ title, url, author, requester, bar, duration, position }) =>
+            nowplaying: ({ title, url, author, requester, bar, duration, position }): string =>
                 `\`📻\` Ahora: [\`${title}\`](${url}) - \`${author}\`\n\`👤\` **Solicitado por**: <@${requester}>\n \n\`🕛\` ${bar} | \`${position}\` - \`(${duration})\``,
-            setprefix: ({ prefix }) => `\`✅\` El **nuevo prefijo** para este servidor es: \`${prefix}\``,
-            skip: ({ amount }) => `\`✅\` Saltando la cantidad de: \`${amount} canciones\`.`,
-            move: ({ textId, voiceId }) => `\`✅\` Me movi al canal de voz <#${voiceId}> y canal de texto: <#${textId}>`,
-            previous: ({ title, uri }) => `\`✅\` La canción anterior [**${title}**](${uri}) ha sido añadida a la cola.`,
+            setprefix: ({ prefix }): string => `\`✅\` El **nuevo prefijo** para este servidor es: \`${prefix}\``,
+            skip: ({ amount }): string => `\`✅\` Saltando la cantidad de: \`${amount} canciones\`.`,
+            move: ({ textId, voiceId }): string => `\`✅\` Me movi al canal de voz <#${voiceId}> y canal de texto: <#${textId}>`,
+            previous: ({ title, uri }): string => `\`✅\` La canción anterior [**${title}**](${uri}) ha sido añadida a la cola.`,
             stop: "`👋` Deteniendo y abandonando el canal...",
             shuffle: "`✅` La cola ha sido mezclada.",
+            lyrics: {
+                noLyrics: "`❌` **No se encontraron letras** para esta canción...",
+                close: "Cerrar",
+                embed: {
+                    title: ({ title }): string => `\`📜\` Letrs para: ${title}`,
+                    description: ({ lines, provider, author }): string => `-# Proveido por: ${provider}\nPor: ${author}\n\n${lines}`,
+                    footer: ({ userName }): string => `Pedido por: ${userName}`,
+                },
+            },
+            info: {
+                bot: {
+                    description: ({ clientName, defaultPrefix }): string =>
+                        `\`📋\` Aqui hay unas estadísticas acerca de **${clientName}**, por defecto mi prefijo es: \`${defaultPrefix}\`.`,
+                    invite: "Invitar la Bot",
+                    repository: "Repositorio de Github",
+                    fields: {
+                        info: {
+                            name: "`📋` Info",
+                            value: ({ guilds, users, players }): string =>
+                                `\`📦\` Servidores: \`${guilds}\`\n\`👤\` Usuarios: \`${users}\`\n\`🎤\` Reproductores: \`${players}\``,
+                        },
+                        system: {
+                            name: "`📋` Sistema",
+                            value: ({ memory, uptime, version }): string =>
+                                `\`🧠\` Memoria: \`${memory}\`\n\`📜\` Version: \`v${version}\`\n\`🕛\` Tiempo de Encendido: <t:${uptime}:R>`,
+                        },
+                    },
+                },
+            },
             help: {
                 noCommand: "`❌` **No se encontró** ningún comando para esta búsqueda...",
-                title: ({ clientName }) => `${clientName} - Menú de Ayuda`,
-                description: ({ defaultPrefix }) =>
+                title: ({ clientName }): string => `${clientName} - Menú de Ayuda`,
+                description: ({ defaultPrefix }): string =>
                     `\`📦\` ¡Hola! Aquí está la información sobre mis comandos y cosas.\n\`📜\` Selecciona la categoría de comando de tu elección.\n\n-# Puedes buscar un comando específico escribiendo: \`${defaultPrefix} help <comando>\``,
                 selectMenu: {
-                    description: ({ category }) => `Selecciona la categoría ${category}.`,
+                    description: ({ category }): string => `Selecciona la categoría ${category}.`,
                     placeholder: "Selecciona una categoría de comando.",
                     options: {
-                        description: ({ options }) => `-# **Opcional []**\n-# **Requerido <>**\n\n${options}`,
-                        title: ({ clientName, category }) => `${clientName} - Menú de Ayuda | ${category}`,
+                        description: ({ options }): string => `-# * **Opcional []**\n-# * **Requerido <>**\n\n${options}`,
+                        title: ({ clientName, category }): string => `${clientName} - Menú de Ayuda | ${category}`,
                     },
                 },
                 aliases: {
@@ -40,41 +72,33 @@ export default {
                 },
             },
             default: {
-                engine: ({ engine }) => `\`✅\` El tipo de búsqueda por defecto de Stelle ahora es: **${engine}**.`,
-                volume: ({ volume }) => `\`✅\` El volumen por defecto de Stelle ahora es: **${volume}%**.`,
+                engine: ({ engine, clientName }): string =>
+                    `\`✅\` El tipo de búsqueda por defecto de ${clientName} ahora es: **${engine}**.`,
+                volume: ({ volume, clientName }): string => `\`✅\` El volumen por defecto de ${clientName} ahora es: **${volume}%**.`,
             },
             setlocale: {
-                invalidLocale: ({ locale, available }) =>
+                invalidLocale: ({ locale, available }): string =>
                     `\`❌\` El idioma : \`${locale}\` es inválido.\n\`📢\` **Idiomas disponibles**: \`${available}\``,
-                newLocale: ({ locale }) => `\`✅\` El idioma de **Stelle** ahora es: \`${locale}\``,
+                newLocale: ({ locale }): string => `\`✅\` El idioma de **Stelle** ahora es: \`${locale}\``,
             },
             ping: {
                 message: "`🪶` Calculando...",
-                response: ({ wsPing, clientPing, shardPing }) =>
+                response: ({ wsPing, clientPing, shardPing }): string =>
                     `\`🌐\` Pong! (**Cliente**: \`${wsPing}ms\` - **API**: \`${clientPing}ms\` - **Fragmento**: \`${shardPing}ms\`)`,
             },
             play: {
                 undetermined: "Indeterminado",
                 live: "🔴 EN DIRECTO",
                 noResults: "`❌` **Sin resultados** para esta búsqueda...\n`🪶` Intenta buscando otra cosa.",
-                autocomplete: {
-                    noNodes: "Stelle - No estoy conectada a ninguno de mis nodos.",
-                    noVoiceChannel: "Stelle - No estás en un canal de voz... Únete a uno para reproducir música.",
-                    noSameVoice: "Stelle - No estás en el mismo canal de voz que yo.",
-                    noQuery: "Stelle - Introduce el nombre o el URL para reproducir.",
-                    noTracks: "Stelle - No encontre la canción. Introduce otro nombre o el URL.",
-                },
                 embed: {
-                    playlist: ({ playlist, tracks, volume, query, requester }) =>
+                    playlist: ({ playlist, tracks, volume, query, requester }): string =>
                         `\`🎵\` La lista de canciones [\`${playlist}\`](${query}) ha sido añadida a la cola.\n\n\`🔊\` **Volumen**: \`${volume}%\`\n\`👤\` **Solicitada por**: <@${requester}>\n\`🔰\` **Con**: \`${tracks} canciones\``,
-                    result: ({ title, url, duration, volume, requester }) =>
-                        `\`🎵\` Añadida [\`${title}\`](${url}) a la cola.\n\n\`🕛\` **Duración**: \`${duration}\`\n\`🔊\` **Volumen**: \`${volume}%\`\n\`👤\` **Solicitada por**: <@${requester}>`,
-                    results: ({ title, url, duration, volume, requester, position }) =>
+                    result: ({ title, url, duration, volume, requester, position }): string =>
                         `\`🎵\` Añadida [\`${title}\`](${url}) a la cola.\n\n\`🕛\` **Duración**: \`${duration}\`\n\`🔊\` **Volumen**: \`${volume}%\`\n\`👤\` **Solicitada por**: <@${requester}>\n\n\`📋\` **Posición en la cola**: \`#${position}\``,
                 },
             },
             loop: {
-                toggled: ({ type }) => `\`✅\` El **modo de bucle** ahora es: \`${type}\``,
+                toggled: ({ type }): string => `\`✅\` El **modo de bucle** ahora es: \`${type}\``,
                 loopType: {
                     off: "Desactivado",
                     queue: "Cola",
@@ -82,15 +106,15 @@ export default {
                 },
             },
             autoplay: {
-                toggled: ({ type }) => `\`✅\` El modo de la **reproducción automática** ahora es: \`${type}\``,
+                toggled: ({ type }): string => `\`✅\` El modo de la **reproducción automática** ahora es: \`${type}\``,
                 autoplayType: {
                     enabled: "Activado",
                     disabled: "Desactivado",
                 },
             },
             nodes: {
-                value: ({ state, uptime, players }) =>
-                    `\`📘\` Estado: \`${state}\`\n\`🕛\` Tiempo de actividad: \`${uptime}\`\n\`🎤\` Reproductores: \`${players}\``,
+                value: ({ state, uptime, players, memory, cpu }): string =>
+                    `\`📘\` Estado: \`${state}\`\n\`🕛\` Tiempo de actividad: \`${uptime}\`\n\`🎤\` Reproductores: \`${players}\`\n\`🪭\` Uso: \`${memory}\`\n\`📦\` CPU: \`${cpu}\``,
                 description: "`📋` Lista de los nodos de Stelle.",
                 noNodes: "`❌` No hay nodos disponibles por el momento.",
                 states: {
@@ -99,13 +123,13 @@ export default {
                 },
             },
             volume: {
-                changed: ({ volume }) => `\`✅\` El volumen ha sido establecido a: **${volume}%**.`,
+                changed: ({ volume }): string => `\`✅\` El volumen ha sido establecido a: **${volume}%**.`,
                 paused: "`🔰` El volumen es **1%**, así que el reproductor ha sido pausado.",
             },
             seek: {
-                invalidTime: ({ time }) => `\`❌\` El tiempo \`${time}\` no es válido.`,
-                seeked: ({ time, type }) => `\`✅\` La canción ha sido **${type}** hacia \`${time}\`.`,
-                exeedsTime: ({ time }) => `\`❌\` El tiempo \`${time}\` excede la duración de la canción actual.`,
+                invalidTime: ({ time }): string => `\`❌\` El tiempo \`${time}\` no es válido.`,
+                seeked: ({ time, type }): string => `\`✅\` La canción ha sido **${type}** hacia \`${time}\`.`,
+                exeedsTime: ({ time }): string => `\`❌\` El tiempo \`${time}\` excede la duración de la canción actual.`,
                 noSeekable: "`❌` La **canción actual** no es `adelantable`.",
                 type: {
                     seeked: "adelantada",
@@ -114,29 +138,40 @@ export default {
             },
         },
         events: {
-            inCooldown: ({ time }) => `\`❌\` Necesitas esperar: <t:${time}:R> (<t:${time}:t>) para usar esto.`,
-            noSameVoice: ({ channelId }) => `\`❌\` No estás en el **mismo canal de voz** que yo. (<#${channelId}>)`,
-            noCollector: ({ userId }) => `\`❌\` Solo el usuario: <@${userId}> puede usar esto.`,
-            invalidOptions: ({ options, list }) =>
+            inCooldown: ({ time }): string => `\`❌\` Necesitas esperar: <t:${time}:R> (<t:${time}:t>) para usar esto.`,
+            noSameVoice: ({ channelId }): string => `\`❌\` No estás en el **mismo canal de voz** que yo. (<#${channelId}>)`,
+            noCollector: ({ userId }): string => `\`❌\` Solo el usuario: <@${userId}> puede usar esto.`,
+            invalidOptions: ({ options, list }): string =>
                 `\`❌\` Opciones o argumentos del comando inválidos.\n- **Requerido**: \`<>\`\n- **Opcional**: \`[]\`\n\n\`📋\` **Uso**:\n ${options}\n\`📢\` **Opciones Disponibles**:\n${list}`,
-            playerQueue: ({ tracks }) => `\`📋\` Aquí está la cola completa del servidor: \n\n${tracks}`,
-            channelEmpty: ({ type }) => `\`🎧\` Stelle está sola en el **canal de voz**... Pausando y esperando **${type}**.`,
-            mention: ({ clientName, defaultPrefix, commandName }) =>
+            playerQueue: ({ tracks }): string => `\`📋\` Aquí está la cola completa del servidor: \n\n${tracks}`,
+            channelEmpty: ({ type }): string => `\`🎧\` Stelle está sola en el **canal de voz**... Pausando y esperando **${type}**.`,
+            mention: ({ clientName, defaultPrefix, commandName }): string =>
                 `\`📢\` Hey! Mi nombre es: **${clientName}** y mi prefijo es: \`${defaultPrefix}\` y **/** también!\n\`📋\` Si tu quieres ver mis comandos, escribe: \`${defaultPrefix} ${commandName}\` o /${commandName}.`,
-            noCommand: "`❌` No tengo el comando necesitado *todavía*, intenta de nuevo en un momento.",
-            noMembers: "`🎧` Stelle está sola en el **canal de voz**... Abandonando el canal.",
-            hasMembers: "`🎧` Stelle dejó de estar sola... Resumiendo.",
+            noMembers: ({ clientName }): string => `\`🎧\` ${clientName} está sola en el **canal de voz**... Abandonando el canal.`,
+            hasMembers: ({ clientName }): string => `\`🎧\` ${clientName} dejó de estar sola... Resumiendo.`,
             onlyDeveloper: "`❌` Solo el **dueño del bot** puede usar esto.",
             onlyGuildOwner: "`❌` Solo el **dueño del servidor** puede usar esto.",
+            noCommand: "`❌` No tengo el comando necesitado *todavía*, intenta de nuevo en un momento.",
             noVoiceChannel: "`❌` No estás en un **canal de voz**... Únete a uno para reproducir música.",
             noNodes: "`❌` No estoy conectada a ninguno de mis nodos.",
             noPlayer: "`❌` No estoy reproduciendo nada ahora mismo...",
             noPrevious: "`❌` No hubo una canción antes de esta.",
             noTracks: "`❌` No hay más canciones en la cola.",
+            noQuery: "`❌` Introduce el nombre o el URL para reproducir.",
             playerEnd: "`🔰` La cola ha terminado... Esperando más canciones.",
             moreTracks: "`❌` Para habilitar **esto** `una o más canciones` son requeridas.",
             commandError:
                 "`❌` Algo inesperado ocurrió durante la ejecución del comando.\n`📢` Si el problema persiste, reporta el problema.",
+            autocomplete: {
+                noAnything: "Stelle - Algo ocurrió intentando usar este autocompletado.",
+                noNodes: "Stelle - No estoy conectada a ninguno de mis nodos.",
+                noVoiceChannel: "Stelle - No estás en un canal de voz... Únete a uno para reproducir música.",
+                noSameVoice: "Stelle - No estás en el mismo canal de voz que yo.",
+                noQuery: "Stelle - Introduce el nombre o el URL para reproducir.",
+                noTracks: "Stelle - No encontre la canción. Introduce otro nombre o el URL.",
+                noGuild: "Stelle - Este autocomplete solo puede ser usado en servidores.",
+                noCommand: "Stelle - Nombre de comando inválido.",
+            },
             optionTypes: {
                 [ApplicationCommandOptionType.Subcommand]: "subcomando",
                 [ApplicationCommandOptionType.SubcommandGroup]: "grupo de subcomando",
@@ -151,19 +186,20 @@ export default {
                 [ApplicationCommandOptionType.Attachment]: "achivo",
             },
             voiceStatus: {
-                trackStart: ({ title, author }) => `${title} por ${author}`,
+                trackStart: ({ title, author }): string => `${title} por ${author}`,
                 queueEnd: "La cola está vacía.",
             },
             trackStart: {
-                embed: ({ duration, requester, title, url, volume, author, size }) =>
+                embed: ({ duration, requester, title, url, volume, author, size }): string =>
                     `\`📻\` Reproduciendo ahora [\`${title}\`](${url})\n\n\`🎤\` **Autor**: \`${author}\`\n\`🕛\` **Duración**: \`${duration}\`\n\`🔊\` **Volumen**: \`${volume}%\`\n\`👤\` **Solicitado por**: <@${requester}>\n\n\`📋\` **En cola**: \`${size} canciones\``,
                 components: {
-                    loop: ({ type }) => `Bucle: ${type}`,
-                    autoplay: ({ type }) => `Aleatorio: ${type}`,
+                    loop: ({ type }): string => `Bucle: ${type}`,
+                    autoplay: ({ type }): string => `Aleatorio: ${type}`,
                     stop: "Parar",
                     skip: "Saltar",
                     previous: "Anterior",
                     queue: "Cola",
+                    lyrics: "Letra",
                     paused: {
                         resume: "Resumir",
                         pause: "Pausar",
@@ -231,7 +267,7 @@ export default {
                     field: "`📋` Permisos Faltantes",
                 },
                 channel: {
-                    description: ({ channelId }) => `\`📢\` ¡Oye! Me faltan algunos permisos en el canal: <#${channelId}>`,
+                    description: ({ channelId }): string => `\`📢\` ¡Oye! Me faltan algunos permisos en el canal: <#${channelId}>`,
                     field: "`📋` Permisos Faltantes",
                 },
             },
@@ -288,11 +324,11 @@ export default {
             options: {
                 voice: {
                     name: "voz",
-                    description: "Selecciona el canal.",
+                    description: "Selecciona el canal de voz.",
                 },
                 text: {
                     name: "texto",
-                    description: "Selecciona el canal",
+                    description: "Selecciona el canal de texto.",
                 },
             },
         },
@@ -362,6 +398,16 @@ export default {
             option: {
                 name: "comando",
                 description: "El comando a obtener ayuda.",
+            },
+        },
+        info: {
+            name: "info",
+            description: "Obtén la información de la bot o de un usuario.",
+            subcommands: {
+                bot: {
+                    name: "bot",
+                    description: "Obtén la información de la bot.",
+                },
             },
         },
     },

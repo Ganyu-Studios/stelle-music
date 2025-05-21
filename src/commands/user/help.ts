@@ -1,27 +1,70 @@
 import {
     ActionRow,
     Command,
-    type CommandContext,
     ContextMenuCommand,
     Declare,
     Embed,
+    type GuildCommandContext,
     LocalesT,
+    type Message,
     Options,
     StringSelectOption,
     SubCommand,
+    type WebhookMessage,
     createStringOption,
 } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import type { APIApplicationCommandOption, ApplicationCommandOptionType, LocaleString } from "seyfert/lib/types/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
-import { EmbedPaginator, StelleStringMenu } from "#stelle/utils/Paginator.js";
-import { formatOptions } from "#stelle/utils/functions/formatter.js";
+import { getFormattedOptions } from "#stelle/utils/functions/options.js";
+import { TimeFormat } from "#stelle/utils/functions/time.js";
+import { sliceText } from "#stelle/utils/functions/utils.js";
+import { EmbedPaginator, StelleStringMenu } from "#stelle/utils/paginator.js";
 
 const options = {
     command: createStringOption({
+        autocomplete(interaction): Promise<void> {
+            const { client } = interaction;
+            const { messages } = client.t(interaction.locale).get();
+
+            const commands = client.commands.values.filter((command) => !command.guildId);
+            const input = interaction.getInput();
+            if (!input) {
+                return interaction.respond(
+                    commands
+                        .map((command) => {
+                            const description = command.description_localizations?.[interaction.locale] ?? command.description;
+
+                            return {
+                                name: `${command.name} - ${sliceText(description, 124)} (${TimeFormat.toHumanize((command.cooldown ?? 3) * 1000)})`,
+                                value: command.name,
+                            };
+                        })
+                        .slice(0, 25),
+                );
+            }
+
+            const command = commands.find((command) => command.name === input);
+            if (!command)
+                return interaction.respond([
+                    {
+                        name: messages.events.autocomplete.noCommand,
+                        value: "noCommand",
+                    },
+                ]);
+
+            const description = command.description_localizations?.[interaction.locale] ?? command.description;
+
+            return interaction.respond([
+                {
+                    name: `${command.name} - ${sliceText(description, 124)} (${TimeFormat.toHumanize((command.cooldown ?? 3) * 1000)})`,
+                    value: command.name,
+                },
+            ]);
+        },
         description: "The command to get help for.",
         locales: {
             name: "locales.help.option.name",
@@ -40,19 +83,30 @@ const options = {
 @StelleOptions({ category: StelleCategory.User, cooldown: 5 })
 @Options(options)
 export default class HelpCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>) {
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
         const { client, options } = ctx;
         const { messages } = await ctx.getLocale();
 
-        const categoryList = client
-            .commands!.values.filter((command) => !command.guildId)
+        if (options.command === "noCommand")
+            return ctx.editOrReply({
+                flags: MessageFlags.Ephemeral,
+                embeds: [
+                    {
+                        color: EmbedColors.Red,
+                        description: messages.commands.help.noCommand,
+                    },
+                ],
+            });
+
+        const commands = client.commands.values.filter((command) => !command.guildId);
+        const categoryList = commands
             .map((command) => Number(command.category))
             .filter((item, index, commands) => commands.indexOf(item) === index);
 
-        const getAlias = (category: StelleCategory) => messages.commands.help.aliases[category];
+        const getAlias = (category: StelleCategory): string => messages.commands.help.aliases[category];
 
         if (!options.command) {
-            const paginator = new EmbedPaginator(ctx).setDisabled(true);
+            const paginator = new EmbedPaginator({ ctx, disabled: true });
             const row = new ActionRow<StelleStringMenu>().addComponents(
                 new StelleStringMenu()
                     .setPlaceholder(messages.commands.help.selectMenu.placeholder)
@@ -68,7 +122,7 @@ export default class HelpCommand extends Command {
                     )
                     .setRun((interaction, setPage) => {
                         const category = Number(interaction.values[0]);
-                        const commands = client.commands!.values.filter((command) => command.category === Number(category));
+                        const commands = client.commands.values.filter((command) => command.category === Number(category));
 
                         paginator.setEmbeds([]).setDisabled(false);
 
@@ -118,7 +172,7 @@ export default class HelpCommand extends Command {
             return;
         }
 
-        const command = client.commands!.values.filter((command) => !command.guildId).find((command) => command.name === options.command);
+        const command = commands.find((command) => command.name === options.command);
         if (!command)
             return ctx.editOrReply({
                 flags: MessageFlags.Ephemeral,
@@ -155,7 +209,7 @@ export default class HelpCommand extends Command {
  * @param command The command to parse.
  * @param optionsType The options type.
  * @param locale The locale to use.
- * @returns
+ * @returns {string} The parsed command.
  */
 function parseCommand(
     command: Command | ContextMenuCommand,
@@ -168,7 +222,7 @@ function parseCommand(
         if (option instanceof SubCommand) {
             content += `\n    ${parseSubCommand(option, optionsType)}`;
         } else {
-            content += ` ${formatOptions([option as APIApplicationCommandOption], optionsType).at(0)?.option}`;
+            content += ` ${getFormattedOptions([option as APIApplicationCommandOption], optionsType).at(0)?.option}`;
         }
     }
 
@@ -180,11 +234,11 @@ function parseCommand(
  * Parses a subcommand to a string.
  * @param subCommand The subcommand to parse.
  * @param optionsType The options type.
- * @returns
+ * @returns {string} The parsed subcommand.
  */
 function parseSubCommand(subCommand: SubCommand, optionsType: Record<ApplicationCommandOptionType, string>): string {
-    if (!subCommand.options?.length) return subCommand.name;
-    return `↪ ${subCommand.group ? subCommand.group : ""} ${subCommand.name} ${formatOptions(
+    if (!subCommand.options?.length) return `↪ ${subCommand.name}`;
+    return `↪ ${subCommand.group ?? ""} ${subCommand.name} ${getFormattedOptions(
         subCommand.options as APIApplicationCommandOption[],
         optionsType,
     )

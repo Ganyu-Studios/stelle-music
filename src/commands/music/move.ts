@@ -1,12 +1,12 @@
-import { Command, type CommandContext, Declare, LocalesT, Middlewares, Options, createChannelOption } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
+import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares, Options, createChannelOption } from "seyfert";
 import { StelleCategory } from "#stelle/types";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { ChannelType } from "seyfert/lib/types/index.js";
 
 const options = {
     voice: createChannelOption({
-        description: "Select the channel.",
+        description: "Select the voice channel.",
         channel_types: [ChannelType.GuildVoice],
         required: true,
         locales: {
@@ -15,7 +15,7 @@ const options = {
         },
     }),
     text: createChannelOption({
-        description: "Select the channel.",
+        description: "Select the text channel.",
         channel_types: [ChannelType.GuildText],
         locales: {
             name: "locales.move.options.text.name",
@@ -34,17 +34,15 @@ const options = {
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })
 @Options(options)
 @LocalesT("locales.move.name", "locales.move.description")
-@Middlewares(["checkNodes", "checkVoiceChannel", "checkPlayer"])
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class MoveCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>) {
-        const { client, options, guildId } = ctx;
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<void> {
+        const { client, options } = ctx;
         const { voice, text } = options;
-
-        if (!guildId) return;
 
         const { messages } = await ctx.getLocale();
 
-        const player = client.manager.getPlayer(guildId);
+        const player = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
         if (text) {
@@ -55,7 +53,7 @@ export default class MoveCommand extends Command {
         player.options.voiceChannelId = voice.id;
         player.voiceChannelId = voice.id;
 
-        const channel = await ctx.channel();
+        const textId = text?.id ?? player.textChannelId ?? player.options.textChannelId ?? ctx.channelId;
 
         await player.connect();
         await ctx.editOrReply({
@@ -63,8 +61,8 @@ export default class MoveCommand extends Command {
                 {
                     color: client.config.color.success,
                     description: messages.commands.move({
+                        textId,
                         voiceId: voice.id,
-                        textId: text?.id ?? channel?.id ?? "1143606303850483280",
                     }),
                 },
             ],

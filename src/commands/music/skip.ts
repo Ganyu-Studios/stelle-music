@@ -1,10 +1,10 @@
-import { Command, type CommandContext, Declare, LocalesT, Middlewares, Options, createIntegerOption } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
+import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares, Options, createIntegerOption } from "seyfert";
 import { StelleCategory } from "#stelle/types";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 const options = {
     to: createIntegerOption({
-        description: "Skip a specific amount of songs.",
+        description: "Skip a specific amount of tracks.",
         locales: {
             name: "locales.skip.option.to.name",
             description: "locales.skip.option.to.description",
@@ -27,18 +27,16 @@ const options = {
 @LocalesT("locales.skip.name", "locales.skip.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
 export default class SkipCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>) {
-        const { client, options, guildId } = ctx;
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<void> {
+        const { client, options } = ctx;
         const { to } = options;
-
-        if (!guildId) return;
 
         const { messages } = await ctx.getLocale();
 
-        const player = client.manager.getPlayer(guildId);
+        const player = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
-        if (to) await player.skip(to - 1, !player.get("enabledAutoplay"));
+        if (to) await player.skip(to, !player.get("enabledAutoplay"));
         else await player.skip(undefined, !player.get("enabledAutoplay"));
 
         await ctx.editOrReply({

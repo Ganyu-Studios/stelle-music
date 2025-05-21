@@ -1,7 +1,10 @@
-import { Lavalink } from "#stelle/classes";
+import { LavalinkEventTypes } from "#stelle/types";
+import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
-export default new Lavalink({
+export default createLavalinkEvent({
     name: "reconnecting",
-    type: "node",
-    run: (client, node) => client.logger.warn(`Music - The node: ${node.id} is reconnecting...`),
+    type: LavalinkEventTypes.Node,
+    run(client, node): void {
+        client.logger.warn(`Lavalink - The node: ${node.id} is reconnecting...`);
+    },
 });

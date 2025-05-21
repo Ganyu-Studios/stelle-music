@@ -1,9 +1,9 @@
 import { createEvent } from "seyfert";
-import { mentionListener } from "#stelle/listeners";
+import { mentionListener } from "#stelle/utils/listeners/message/mentionListener.js";
 
 export default createEvent({
     data: { name: "messageCreate" },
-    run: async (message, client) => {
+    async run(message, client): Promise<void> {
         await mentionListener(client, message);
     },
 });

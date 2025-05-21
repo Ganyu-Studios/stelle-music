@@ -1,19 +1,14 @@
-import { ComponentCommand, type ComponentContext, Middlewares } from "seyfert";
+import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class StopComponent extends ComponentCommand {
-    componentType = "Button" as const;
+    override componentType = "Button" as const;
+    override customId = "player-stopPlayer";
 
-    filter(ctx: ComponentContext<typeof this.componentType>): boolean {
-        return ctx.customId === "player-stopPlayer";
-    }
+    async run(ctx: GuildComponentContext<typeof this.componentType>): Promise<void> {
+        const { client } = ctx;
 
-    async run(ctx: ComponentContext<typeof this.componentType>): Promise<void> {
-        const { client, guildId } = ctx;
-
-        if (!guildId) return;
-
-        const player = client.manager.getPlayer(guildId);
+        const player = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
         await player.destroy();

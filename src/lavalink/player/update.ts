@@ -1,16 +1,18 @@
-import type { ClientUser } from "seyfert";
-import { Lavalink, sessions } from "#stelle/classes";
-import type { StellePlayerJson } from "#stelle/types";
+import type { PlayerJson } from "lavalink-client";
+import { LavalinkEventTypes, type SessionJson, type StelleUser } from "#stelle/types";
+import { omitKeys } from "#stelle/utils/functions/utils.js";
+import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
-import { DEBUG_MODE } from "#stelle/data/Constants.js";
+import { Constants } from "#stelle/utils/data/constants.js";
+import { Sessions } from "#stelle/utils/manager/sessions.js";
 
-export default new Lavalink({
+export default createLavalinkEvent({
     name: "playerUpdate",
-    type: "manager",
-    run: (client, oldPlayer, newPlayer) => {
+    type: LavalinkEventTypes.Manager,
+    run(client, oldPlayer, newPlayer): void {
         if (!client.config.sessions.enabled) return;
 
-        const newPlayerJson = newPlayer.toJSON();
+        const newPlayerJson: PlayerJson = newPlayer.toJSON();
 
         if (
             !oldPlayer ||
@@ -26,28 +28,32 @@ export default new Lavalink({
         ) {
             if (newPlayerJson.queue?.current) newPlayerJson.queue.current.userData = {};
 
-            // yeah, we don't need specific data from the new player json.
-            // but I hate the way of destructuring the object...
-            const {
-                ping: _p,
-                createdTimeStamp: _cts,
-                lavalinkVolume: _lv,
-                equalizer: _eq,
-                lastPositionChange: _lpc,
-                paused: _pd,
-                playing: _pg,
-                ...newJson
-            } = newPlayerJson;
+            const newJson = omitKeys(newPlayerJson, [
+                "ping",
+                "createdTimeStamp",
+                "lavalinkVolume",
+                "equalizer",
+                "lastPositionChange",
+                "paused",
+                "playing",
+                "queue",
+                "filters",
+            ]);
 
-            sessions.set<StellePlayerJson>(newPlayer.guildId, {
+            Sessions.set<SessionJson>(newPlayer.guildId, {
                 ...newJson,
                 messageId: newPlayer.get("messageId"),
                 enabledAutoplay: newPlayer.get("enabledAutoplay"),
                 localeString: newPlayer.get<string | undefined>("localeString"),
-                me: newPlayer.get<ClientUser | undefined>("me"),
+                me: newPlayer.get<StelleUser | undefined>("me"),
+                lyricsId: newPlayer.get<string | undefined>("lyricsId"),
+                lyricsEnabled: newPlayer.get<boolean | undefined>("lyricsEnabled"),
             });
 
-            return DEBUG_MODE && client.logger.debug(`[Lavalink PlayerUpdate] Saved new player data for guild ${newPlayer.guildId}`);
+            if (Constants.Debug)
+                client.debugger?.info(
+                    `Session: ${newPlayer.guildId} | Updated Session: ${JSON.stringify(Sessions.get<SessionJson>(newPlayer.guildId))}`,
+                );
         }
     },
 });

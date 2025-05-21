@@ -38,16 +38,16 @@
 		"prefix": "@stelle:component",
 		"scope": "typescript",
 		"body": [
-			"import { ComponentCommand, type ComponentContext } from \"seyfert\";",
+			"import { ComponentCommand, type GuildComponentContext } from \"seyfert\";",
 			"",
 			"export default class ${1:Example}Component extends ComponentCommand {",
 			"    componentType = \"${2:Example}\" as const;",
 			"",
-			"    filter(ctx: ComponentContext<typeof this.componentType>): boolean {",
+			"    filter(ctx: GuildComponentContext<typeof this.componentType>): boolean {",
 			"        return ctx.customId === \"${3:example}\";   ",
 			"    }",
 			"",
-			"    async run(ctx: ComponentContext<typeof this.componentType>): Promise<void> {}",
+			"    async run(ctx: GuildComponentContext<typeof this.componentType>): Promise<void> {}",
 			"}"
 		],
 		"description": "Create a new Stelle component."
@@ -56,14 +56,14 @@
 		"prefix": "@stelle:subcommand",
 		"scope": "typescript",
 		"body": [
-			"import { Declare, type CommandContext, SubCommand } from \"seyfert\";",
+			"import { Declare, type GuildCommandContext, SubCommand } from \"seyfert\";",
 			"",
 			"@Declare({",
 			"    name: \"${1:example}\",",
 			"    description: \"${2:example}\",",
 			"})",
 			"export default class ${3:Example}Subcommand extends SubCommand {",
-			"    async run(ctx: CommandContext): Promise<void> {}",
+			"    async run(ctx: GuildCommandContext): Promise<void> {}",
 			"}"
 		],
 		"description": "Create a new Stelle subcommand."

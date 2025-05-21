@@ -1,5 +1,5 @@
-import { Command, type CommandContext, Declare } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
+import { Command, type CommandContext, Declare, type Message, type WebhookMessage } from "seyfert";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
 
@@ -16,27 +16,29 @@ export default class ReloadCommand extends Command {
         await ctx.deferReply(true);
         await ctx.client
             .reload()
-            .then(() =>
-                ctx.editOrReply({
-                    content: "",
-                    embeds: [
-                        {
-                            description: "`✅` Stelle has been reloaded.",
-                            color: ctx.client.config.color.success,
-                        },
-                    ],
-                }),
+            .then(
+                (): Promise<Message | WebhookMessage | void> =>
+                    ctx.editOrReply({
+                        content: "",
+                        embeds: [
+                            {
+                                description: "`✅` Stelle has been reloaded.",
+                                color: ctx.client.config.color.success,
+                            },
+                        ],
+                    }),
             )
-            .catch(() =>
-                ctx.editOrReply({
-                    content: "",
-                    embeds: [
-                        {
-                            description: "`❌` Something failed during the reload.",
-                            color: EmbedColors.Red,
-                        },
-                    ],
-                }),
+            .catch(
+                (): Promise<Message | WebhookMessage | void> =>
+                    ctx.editOrReply({
+                        content: "",
+                        embeds: [
+                            {
+                                description: "`❌` Something failed during the reload.",
+                                color: EmbedColors.Red,
+                            },
+                        ],
+                    }),
             );
     }
 }

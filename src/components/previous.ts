@@ -1,23 +1,19 @@
-import { ComponentCommand, type ComponentContext, Middlewares } from "seyfert";
+import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class PreviousTrackComponent extends ComponentCommand {
-    componentType = "Button" as const;
+    override componentType = "Button" as const;
+    override customId = "player-previousTrack";
 
-    filter(ctx: ComponentContext<typeof this.componentType>): boolean {
-        return ctx.customId === "player-previousTrack";
-    }
-
-    async run(ctx: ComponentContext<typeof this.componentType>) {
-        const { client, guildId } = ctx;
-        if (!guildId) return;
+    async run(ctx: GuildComponentContext<typeof this.componentType>): Promise<void> {
+        const { client } = ctx;
 
         const { messages } = await ctx.getLocale();
 
-        const player = client.manager.getPlayer(guildId);
+        const player = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
         const track = await player.queue.shiftPrevious();

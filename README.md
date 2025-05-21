@@ -6,7 +6,7 @@
 
 ### 🐐 What is Stelle? 
 
-*Stelle was created with the purpose of exploring, learning and using the possibilities offered by [`Seyfert`](https://github.com/tiramisulabs/seyfert) a new library to interact with the Discord API.*
+Stelle was created with the purpose of exploring, learning and using the possibilities offered by [`Seyfert`](https://github.com/tiramisulabs/seyfert) a new library to interact with the Discord API.
 
 [![Invite](https://img.shields.io/badge/Add%20the%20bot-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/oauth2/authorize?client_id=1241085977544359968&permissions=36793344&integration_type=0&scope=bot+applications.commands)
 [![Server](https://img.shields.io/badge/Support%20Server-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/invite/4JmKY8wgB6)
@@ -17,14 +17,9 @@ She has been created with the following technologies:
 
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white) ![Prisma](https://img.shields.io/badge/Prisma-1a202c?style=for-the-badge&logo=prisma&logoColor=white) ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![PNPM](https://img.shields.io/badge/pnpm-%234a4a4a.svg?style=for-the-badge&logo=pnpm&logoColor=f69220) ![seyfert](https://img.shields.io/badge/seyfert-%23CB3837.svg?style=for-the-badge&logo=npm&logoColor=white)
 
-## ⚙️ Minimum Requeriments
+## 📦 Wiki!
 
-- [PNPM v9.15.0x](pnpm.io/installation)
-- [NodeJS v.22.11.0x](https://nodejs.org/en/download/prebuilt-installer)
-- [Visual Studio Code](https://code.visualstudio.com)
-- [MongoDB Database](https://www.mongodb.com/) (You can create a _free*_ mongodb cluster)
-
-See the the [how to install](/INSTALLATION.md) for more.
+* Stelle now has a wiki! Everything related to the bot, will be showed in the [wiki](https://github.com/Ganyu-Studios/stelle-music/wiki)
 
 ## 🤝 Contributing
 
@@ -45,7 +40,7 @@ If you would like to support the development of Stelle, you can make a donation 
 
 Stelle has several features, more can be added.
 
-- **AUTOPLAY**: Stelle will play songs based on the queue.
+- **AUTOPLAY**: Stelle will play tracks based on the queue.
 - **COOLDOWN**: To avoid command spamming.
 - **DATABASE**: Stelle uses `Prisma` as `ORM` and `MongoDB` as database.
 - **NO HANDLERS**: Stelle will do it all for you, you just have to implement it.
@@ -58,7 +53,7 @@ Stelle has several features, more can be added.
 
 ## 🔎 FAQ
 
-There are some [FAQs](/FAQ.md) (Frequently Asked Question).
+There are some [FAQs](https://github.com/Ganyu-Studios/stelle-music/wiki/FAQ) (Frequently Asked Question).
 
 ## 📝 License
 

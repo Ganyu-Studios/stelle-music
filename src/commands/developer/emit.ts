@@ -1,5 +1,5 @@
-import { Command, type CommandContext, Declare, type Guild, Options, createStringOption } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
+import { Command, Declare, type Guild, type GuildCommandContext, Options, createStringOption } from "seyfert";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
@@ -30,20 +30,19 @@ const options = {
 @StelleOptions({ onlyDeveloper: true })
 @Options(options)
 export default class ReloadCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>): Promise<void> {
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<void> {
         const { options, client } = ctx;
         const { event } = options;
 
         await ctx.deferReply(true);
 
-        const guild = ctx.guild();
-        if (!guild) return;
+        const guild = await ctx.guild();
 
         switch (event) {
             case "GUILD_CREATE":
             case "GUILD_DELETE":
                 {
-                    await client.events!.values[event]?.run(guild as unknown as Guild<"create">, client, ctx.shardId);
+                    await client.events.values[event]?.run(guild as never as Guild<"create">, client, ctx.shardId);
                     await ctx.editOrReply({
                         flags: MessageFlags.Ephemeral,
                         content: "",

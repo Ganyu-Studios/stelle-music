@@ -1,20 +1,18 @@
-import { ComponentCommand, type ComponentContext, Embed, Middlewares, type User } from "seyfert";
+import { ComponentCommand, Embed, type GuildComponentContext, Middlewares } from "seyfert";
 import { MessageFlags } from "seyfert/lib/types/index.js";
-import { EmbedPaginator } from "#stelle/utils/Paginator.js";
+
+import type { StelleUser } from "#stelle/types";
+import { EmbedPaginator } from "#stelle/utils/paginator.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
 export default class QueueComponent extends ComponentCommand {
-    componentType = "Button" as const;
+    override componentType = "Button" as const;
+    override customId = "player-guildQueue";
 
-    filter(ctx: ComponentContext<typeof this.componentType>): boolean {
-        return ctx.customId === "player-guildQueue";
-    }
-
-    async run(ctx: ComponentContext<typeof this.componentType>): Promise<void> {
+    async run(ctx: GuildComponentContext<typeof this.componentType>): Promise<void> {
         const { client, author } = ctx;
 
         const guild = await ctx.guild();
-        if (!guild) return;
 
         const { messages } = await ctx.getLocale();
 
@@ -23,7 +21,7 @@ export default class QueueComponent extends ComponentCommand {
 
         const tracksPerPage = 20;
         const tracks = player.queue.tracks.map(
-            (track, i) => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${(track.requester as User).tag}`,
+            (track, i) => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${(track.requester as StelleUser).tag}`,
         );
 
         if (tracks.length < tracksPerPage) {
@@ -39,7 +37,7 @@ export default class QueueComponent extends ComponentCommand {
                 ],
             });
         } else {
-            const paginator = new EmbedPaginator(ctx);
+            const paginator = new EmbedPaginator({ ctx });
 
             for (let i = 0; i < tracks.length; i += tracksPerPage) {
                 paginator.addEmbed(

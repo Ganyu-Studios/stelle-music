@@ -1,15 +1,32 @@
-import { Lavalink, sessions } from "#stelle/classes";
-import { DEBUG_MODE } from "#stelle/data/Constants.js";
+import { LavalinkEventTypes } from "#stelle/types";
+import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
-export default new Lavalink({
+import { Constants } from "#stelle/utils/data/constants.js";
+import { Sessions } from "#stelle/utils/manager/sessions.js";
+
+export default createLavalinkEvent({
     name: "playerDestroy",
-    type: "manager",
-    run: async (client, player) => {
-        sessions.delete(player.guildId);
+    type: LavalinkEventTypes.Manager,
+    async run(client, player): Promise<void> {
+        Sessions.delete(player.guildId);
 
         const voice = await client.channels.fetch(player.voiceChannelId ?? player.options.voiceChannelId);
-        if (voice.is(["GuildVoice"])) await voice.setVoiceStatus(null).catch(() => null);
+        if (voice.isVoice()) await voice.setVoiceStatus(null).catch(() => null);
 
-        return DEBUG_MODE && client.logger.debug(`[Lavalink PlayerDestroy] Destroyed player for guild ${player.guildId}`);
+        if (!player.textChannelId) return;
+
+        const messageId = player.get<string | undefined>("messageId");
+        if (messageId) await client.messages.edit(messageId, player.textChannelId, { components: [] }).catch(() => null);
+
+        const lyricsId = player.get<string | undefined>("lyricsId");
+        if (lyricsId) {
+            await client.messages.delete(lyricsId, player.textChannelId).catch(() => null);
+
+            player.set("lyricsId", undefined);
+            player.set("lyrics", undefined);
+            player.set("lyricsEnabled", undefined);
+        }
+
+        if (Constants.Debug) client.debugger?.info(`Player: ${player.guildId} | Destroyed Player: ${JSON.stringify(player.toJSON())}`);
     },
 });

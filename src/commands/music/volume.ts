@@ -1,12 +1,22 @@
-import { Command, type CommandContext, Declare, LocalesT, Middlewares, Options, createIntegerOption } from "seyfert";
-import { StelleOptions } from "#stelle/decorators";
+import {
+    Command,
+    Declare,
+    type GuildCommandContext,
+    LocalesT,
+    type Message,
+    Middlewares,
+    Options,
+    type WebhookMessage,
+    createIntegerOption,
+} from "seyfert";
 import { StelleCategory } from "#stelle/types";
+import { StelleOptions } from "#stelle/utils/decorator.js";
 
 const options = {
     volume: createIntegerOption({
         description: "Enter the volume.",
         required: true,
-        min_value: 0,
+        min_value: 1,
         max_value: 100,
         locales: {
             name: "locales.volume.option.name",
@@ -27,15 +37,13 @@ const options = {
 @LocalesT("locales.volume.name", "locales.volume.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class VolumeCommand extends Command {
-    public override async run(ctx: CommandContext<typeof options>) {
-        const { client, options, guildId } = ctx;
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
+        const { client, options } = ctx;
         const { volume } = options;
-
-        if (!guildId) return;
 
         const { messages } = await ctx.getLocale();
 
-        const player = client.manager.getPlayer(guildId);
+        const player = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
         if (volume === 1) {
@@ -59,8 +67,11 @@ export default class VolumeCommand extends Command {
             return ctx.editOrReply({
                 embeds: [
                     {
-                        description: messages.commands.volume.changed({ volume }),
                         color: client.config.color.success,
+                        description: messages.commands.volume.changed({
+                            volume,
+                            clientName: client.me.username,
+                        }),
                     },
                 ],
             });
@@ -70,8 +81,11 @@ export default class VolumeCommand extends Command {
         await ctx.editOrReply({
             embeds: [
                 {
-                    description: messages.commands.volume.changed({ volume }),
                     color: client.config.color.success,
+                    description: messages.commands.volume.changed({
+                        volume,
+                        clientName: client.me.username,
+                    }),
                 },
             ],
         });
