@@ -169,7 +169,7 @@ export const editButtonComponents = (rows: TopLevelComponents[], options: EditBu
                 if (component.custom_id === options.customId) {
                     options.style ??= component.style;
 
-                    if (options.emoji) component.emoji = resolvePartialEmoji(options.emoji) as APIMessageComponentEmoji;
+                    if (options.emoji) component.emoji = resolvePartialEmoji(options.emoji) as APIMessageComponentEmoji | undefined;
 
                     component.label = options.label;
                     component.style = options.style;

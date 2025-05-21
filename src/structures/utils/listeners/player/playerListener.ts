@@ -1,4 +1,4 @@
-import type { UsingClient, VoiceState } from "seyfert";
+import type { GuildMember, UsingClient, VoiceState } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 
 import { TimeFormat } from "#stelle/utils/functions/time.js";
@@ -32,8 +32,8 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
     const channel = await client.channels.fetch(player.voiceChannelId);
     if (!channel.is(["GuildStageVoice", "GuildVoice"])) return;
 
-    const members = await Promise.all(channel.states().map((c) => c.member()));
-    const isEmpty = members.filter(({ user }) => !user.bot).length === 0;
+    const members = await Promise.all(channel.states().map((c): Promise<GuildMember> => c.member()));
+    const isEmpty = !members.filter(({ user }) => !user.bot).length;
 
     if (
         isEmpty &&
@@ -43,7 +43,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
         player.connected
     ) {
         await player.destroy();
-        await client.messages.write(player.textChannelId!, {
+        await client.messages.write(player.textChannelId, {
             embeds: [
                 {
                     color: EmbedColors.Yellow,
@@ -59,7 +59,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
 
     if (isEmpty && !player.playing && player.paused && player.queue.current && !player.queue.tracks.length) {
         await player.destroy();
-        await client.messages.write(player.textChannelId!, {
+        await client.messages.write(player.textChannelId, {
             embeds: [
                 {
                     color: EmbedColors.Yellow,

@@ -80,7 +80,7 @@ export class Lavalink<K extends keyof LavalinkEvents = keyof LavalinkEvents> imp
  * @returns {Lavalink<K>} The created event.
  */
 // just to follow the same way to create a event provided by seyfert.
-export const createLavalinkEvent = <K extends keyof LavalinkEvents>(event: LavalinkEvent<K>): LavalinkEvent<K> => new Lavalink(event);
+export const createLavalinkEvent = <K extends keyof LavalinkEvents>(event: LavalinkEvent<K>): LavalinkEvent<K> => new Lavalink<K>(event);
 
 /**
  * The type of the lavalink node event.

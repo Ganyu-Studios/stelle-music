@@ -1,4 +1,5 @@
 import { Declare, type GuildCommandContext, LocalesT, Options, SubCommand, createStringOption } from "seyfert";
+import { Shortcut } from "yunaforseyfert";
 
 const engines: Record<string, string> = {
     spsearch: "Spotify",
@@ -42,6 +43,7 @@ const options = {
 })
 @Options(options)
 @LocalesT("locales.default.subcommands.engine.name", "locales.default.subcommands.engine.description")
+@Shortcut()
 export default class EngineSubcommand extends SubCommand {
     async run(ctx: GuildCommandContext<typeof options>): Promise<void> {
         const { client, options } = ctx;

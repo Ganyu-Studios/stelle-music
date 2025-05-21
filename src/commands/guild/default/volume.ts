@@ -1,4 +1,5 @@
 import { Declare, type GuildCommandContext, LocalesT, Options, SubCommand, createIntegerOption } from "seyfert";
+import { Shortcut } from "yunaforseyfert";
 
 const options = {
     volume: createIntegerOption({
@@ -19,6 +20,7 @@ const options = {
 })
 @Options(options)
 @LocalesT("locales.default.subcommands.volume.name", "locales.default.subcommands.volume.description")
+@Shortcut()
 export default class VolumeSubcommand extends SubCommand {
     async run(ctx: GuildCommandContext<typeof options>): Promise<void> {
         const { client, options } = ctx;

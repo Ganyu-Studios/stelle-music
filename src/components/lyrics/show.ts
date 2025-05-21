@@ -19,6 +19,8 @@ export default class LyricsShowComponent extends ComponentCommand {
         const track = player.queue.current;
         if (!track) return;
 
+        await ctx.deferReply();
+
         const { messages } = await ctx.getLocale();
 
         const lyrics: LyricsResult | null =

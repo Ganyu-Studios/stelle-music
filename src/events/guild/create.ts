@@ -1,9 +1,12 @@
 import { Embed, createEvent } from "seyfert";
+import { Constants } from "#stelle/utils/data/constants.js";
 
 export default createEvent({
     data: { name: "guildCreate" },
     async run(guild, client): Promise<void> {
         if (guild.unavailable) return;
+
+        if (Constants.Debug) return client.debugger?.info(`Guild: ${guild.id} | Created: ${guild.name}`);
 
         const owner = await guild.fetchOwner();
         const embed = new Embed()

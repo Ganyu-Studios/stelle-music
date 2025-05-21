@@ -147,6 +147,9 @@ export class Stelle extends Client<true> {
                 override resolveCommandFromContent = Yuna.resolver({
                     client: this.client,
                     logResult: Constants.Debug,
+                    afterPrepare: (metadata) => {
+                        if (Constants.Debug) this.client.logger.debug(`Client - Ready to use ${metadata.commands.length} commands !`);
+                    },
                 });
             },
             langs: {

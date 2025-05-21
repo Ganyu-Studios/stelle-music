@@ -11,7 +11,7 @@ type PartialStoredQueue = Partial<StoredQueue>;
 /**
  *
  * Build a key for the queue.
- * @param guildId The guild id.
+ * @param {string} guildId The guild id.
  * @returns {string} The built key.
  */
 const buildKey = (guildId: string): string => (Constants.Dev ? `queue:${guildId}` : `stelle:queue:${guildId}`);
