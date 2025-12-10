@@ -13,9 +13,10 @@
 
 1. Fork the repo and create your branch from `dev`.
 2. First, install the dependencies with `pnpm install`.
-3. Make your code change.
-4. Try to be clear and concise as possible.
-5. Open a PR (If it is possible)
+3. Build the project with `pnpm build` (required before running the bot).
+4. Make your code change.
+5. Try to be clear and concise as possible.
+6. Open a PR (If it is possible)
 
 ## 🐛 Issues
 
