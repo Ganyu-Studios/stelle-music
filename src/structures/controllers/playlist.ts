@@ -3,8 +3,14 @@ import type { userPlaylist } from "#stelle/prisma";
 import { CacheKeys } from "#stelle/types";
 import { omitKeys } from "#stelle/utils/functions/utils.js";
 
+/**
+ * The type of the playlist data without the id and userId.
+ */
 type PlaylistData = Omit<userPlaylist, "id" | "userId">;
 
+/**
+ * The type of the playlist filter function.
+ */
 type PlaylistFilter = (data: userPlaylist) => boolean;
 
 /**

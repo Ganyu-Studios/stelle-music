@@ -50,17 +50,17 @@ export class PlayerController extends Controller<"guildPlayer"> {
     /**
      *
      * Set the guild player to the database.
-     * @param {string} id The guild id.
+     * @param {string} guildId The guild id.
      * @param {Partial<StoredPlayer>} player The player data to set.
      * @returns {Promise<void>} A promise that resolves when the player is set.
      */
-    public async set(id: string, player: Partial<StoredPlayer>): Promise<void> {
+    public async set(guildId: string, player: Partial<StoredPlayer>): Promise<void> {
         await this.model
             .upsert({
-                where: { guildId: id },
+                where: { guildId },
                 update: player,
                 create: {
-                    guildId: id,
+                    guildId,
                     ...player,
                 },
             })
