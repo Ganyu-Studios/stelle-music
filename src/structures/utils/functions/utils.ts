@@ -35,6 +35,33 @@ interface WebhookObject {
     token: string;
 }
 
+interface CreateIdOptions {
+    /**
+     * The length of each segment.
+     * @type {number}
+     * @default 8
+     */
+    length?: number;
+    /**
+     * The number of segments.
+     * @type {number}
+     * @default 1
+     */
+    segments?: number;
+    /**
+     * The separator between segments.
+     * @type {string}
+     * @default "-"
+     */
+    separator?: string;
+    /**
+     * Whether to uppercase the ID.
+     * @type {boolean}
+     * @default false
+     */
+    uppercase?: boolean;
+}
+
 /**
  * The custom context is used to extend the context.
  * @returns {CustomContext} The custom context.
@@ -198,6 +225,28 @@ export const createDirectory = async (dirname: string): Promise<string> => {
 };
 
 /**
+ * Create a random ID with optional separators.
+ * @param {CreateIdOptions} [options] The id creation options.
+ * @returns {string} The formatted random id.
+ */
+export const createId = (options: CreateIdOptions = { length: 8, segments: 1, separator: "-", uppercase: false }): string => {
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result: string = "";
+
+    for (let i: number = 0; i < options.segments!; i++) {
+        for (let j: number = 0; j < options.length!; j++) {
+            result += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+
+        if (i < options.segments! - 1) {
+            result += options.separator;
+        }
+    }
+
+    return options.uppercase ? result.toUpperCase() : result;
+};
+
+/**
  * Cleanup function to gracefully shut down the client.
  * @param client {UsingClient} The client instance.
  * @returns {void} Aishite, aishite, motto, motto
@@ -258,3 +307,11 @@ export const convertToSnakeCase = (text: string, upper: boolean = false): string
  */
 export const customImport = <T>(path: string): Promise<T> =>
     import(`${pathToFileURL(path)}?update=${Date.now()}`).then((x) => x.default ?? x) as Promise<T>;
+
+/**
+ *
+ * Wait for a specified number of milliseconds.
+ * @param {number} ms The milliseconds to wait.
+ * @returns {Promise<void>} A promise that resolves after the specified time.
+ */
+export const wait = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));

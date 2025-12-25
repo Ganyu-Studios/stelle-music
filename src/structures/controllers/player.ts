@@ -1,7 +1,5 @@
 import type { SearchPlatform } from "lavalink-client";
-import type { UsingClient } from "seyfert";
 import { Controller } from "#stelle/classes/Controller.js";
-import type { StelleDatabase } from "#stelle/classes/Database.js";
 import { CacheKeys } from "#stelle/types";
 
 /**
@@ -29,23 +27,6 @@ export class PlayerController extends Controller<"guildPlayer"> {
     readonly modelName = "guildPlayer";
 
     /**
-     * The client instance for config access.
-     * @type {UsingClient}
-     * @readonly
-     * @private
-     */
-    private readonly client: UsingClient;
-
-    /**
-     * Create a player controller instance.
-     * @param {StelleDatabase} database The database instance.
-     */
-    constructor(database: StelleDatabase) {
-        super(database);
-        this.client = database.client;
-    }
-
-    /**
      *
      * Get the guild player from the database.
      * @param {string} id The guild id.
@@ -59,7 +40,7 @@ export class PlayerController extends Controller<"guildPlayer"> {
                 searchPlatform: cache.searchPlatform as SearchPlatform,
             };
 
-        const data = await this.model.findUnique({ where: { id } });
+        const data = await this.model.findUnique({ where: { guildId: id } });
         return {
             defaultVolume: data?.defaultVolume ?? this.client.config.defaultVolume,
             searchPlatform: (data?.searchPlatform as SearchPlatform | null | undefined) ?? this.client.config.defaultSearchPlatform,
@@ -76,13 +57,13 @@ export class PlayerController extends Controller<"guildPlayer"> {
     public async set(id: string, player: Partial<StoredPlayer>): Promise<void> {
         await this.model
             .upsert({
-                where: { id },
+                where: { guildId: id },
                 update: player,
                 create: {
-                    id,
+                    guildId: id,
                     ...player,
                 },
             })
-            .then(({ id, ...rest }) => this.cache.set(CacheKeys.Player, id, rest));
+            .then((data) => this.cache.set(CacheKeys.Player, data.guildId, data));
     }
 }

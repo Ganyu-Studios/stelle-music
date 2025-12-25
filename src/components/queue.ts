@@ -19,17 +19,17 @@ export default class QueueComponent extends ComponentCommand {
         const player = client.manager.getPlayer(guild.id);
         if (!player) return;
 
-        const tracksPerPage = 20;
+        const amount = 20;
         const tracks = player.queue.tracks.map(
             (track, i) => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${(track.requester as StelleUser).tag}`,
         );
 
-        if (tracks.length < tracksPerPage) {
+        if (tracks.length < amount) {
             await ctx.editOrReply({
                 flags: MessageFlags.Ephemeral,
                 embeds: [
                     new Embed()
-                        .setDescription(messages.events.playerQueue({ tracks: tracks.slice(0, tracksPerPage).join("\n") }))
+                        .setDescription(messages.events.playerQueue({ tracks: tracks.slice(0, amount).join("\n") }))
                         .setColor(client.config.color.extra)
                         .setThumbnail(guild.iconURL())
                         .setTimestamp()
@@ -39,10 +39,10 @@ export default class QueueComponent extends ComponentCommand {
         } else {
             const paginator = new EmbedPaginator({ ctx });
 
-            for (let i = 0; i < tracks.length; i += tracksPerPage) {
+            for (let i = 0; i < tracks.length; i += amount) {
                 paginator.addEmbed(
                     new Embed()
-                        .setDescription(messages.events.playerQueue({ tracks: tracks.slice(i, i + tracksPerPage).join("\n") }))
+                        .setDescription(messages.events.playerQueue({ tracks: tracks.slice(i, i + amount).join("\n") }))
                         .setColor(client.config.color.extra)
                         .setThumbnail(guild.iconURL())
                         .setTimestamp()

@@ -24,6 +24,17 @@ export default {
                 `\`✅\` The previous track [**${title}**](${uri}) has been added to the queue.`,
             stop: "`👋` Stopping and leaving...",
             shuffle: "`✅` The queue has been shuffled.",
+            playlist: {
+                created: ({ name, state }: IPlaylist): string =>
+                    `\`✅\` The playlist **${name}** has been created successfully.\n\`📋\` **Visibility**: \`${state}\``,
+                load: ({ id }: IPlaylistLoad): string => `\`✅\` The playlist with id: \`${id}\` has been loaded successfully.`,
+                noPlaylist: "`❌` **No playlist** was found with this id...",
+                noTracks: "`❌` **No tracks** were found in this playlist...",
+                state: {
+                    public: "Public",
+                    private: "Private",
+                },
+            },
             lyrics: {
                 noLyrics: "`❌` **No lyrics** was found for this track...",
                 close: "Close",
@@ -96,7 +107,7 @@ export default {
                 live: "🔴 LIVE",
                 noResults: "`❌` **No results** was found for this search...\n`🪶` Try searching something different.",
                 embed: {
-                    playlist: ({ playlist, tracks, volume, query, requester }: IPlayList): string =>
+                    playlist: ({ playlist, tracks, volume, query, requester }: IPlayPlaylist): string =>
                         `\`🎵\` The playlist [\`${playlist}\`](${query}) has been added to the queue.\n\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>\n\`🔰\` **With**: \`${tracks} tracks\``,
                     result: ({ title, url, duration, volume, requester, position }: IPlayTrack): string =>
                         `\`🎵\` Added [\`${title}\`](${url}) to the queue.\n\n\`🕛\` **Duration**: \`${duration}\`\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>\n\n\`📋\` **Position in queue**: \`#${position}\``,
@@ -171,10 +182,14 @@ export default {
             noPrevious: "`❌` There is no previous track to add.",
             noTracks: "`❌` There are no more tracks in the queue.",
             noQuery: "`❌` Enter a track name or URL to play it.",
+            invalidInput: "`❌` The provided input is not valid (cannot be a URL or any other invalid format).",
             playerEnd: "`🔰` The queue has finished... Waiting for more tracks.",
             moreTracks: "`❌` In order to enable **this** `one or more tracks` are required.",
             commandError: "`❌` Something unexpected ocurred during the execution.\n`📢` If the problem persists, report the issue.",
             autocomplete: {
+                loadPlaylist: ({ name, visibility, author }: IAutocompletePlaylist): string =>
+                    `Name: ${name} - State: ${visibility} | by ${author}`,
+                noPlaylist: "`❌` No playlists found.",
                 noAnything: "Stelle - Something unexpected happened using this autocomplete.",
                 noNodes: "Stelle - I'm not connected to any of my nodes.",
                 noVoiceChannel: "Stelle - You are not in a voice channel... Join to play music.",
@@ -439,6 +454,34 @@ export default {
             name: "lyrics",
             description: "Show lyrics for the current track.",
         },
+        playlist: {
+            name: "playlist",
+            description: "Manage your music playlists.",
+            commands: {
+                create: {
+                    name: "create",
+                    description: "Create a new music playlist.",
+                    options: {
+                        name: {
+                            name: "name",
+                            description: "The name of the playlist to create.",
+                        },
+                        public: {
+                            name: "public",
+                            description: "Whether the playlist should be public or private.",
+                        },
+                    },
+                },
+                load: {
+                    name: "load",
+                    description: "Load a music playlist.",
+                    option: {
+                        name: "id",
+                        description: "The id of the playlist to load.",
+                    },
+                },
+            },
+        },
     },
 };
 
@@ -470,8 +513,11 @@ type IOptions = { options: string; list: string };
 type INodes = { state: string; uptime: string; players: number; memory: string; cpu: string };
 type ITrackStart = { title: string; url: string; duration: string; volume: number; requester: string; author: string; size: number };
 type IPlayTrack = { title: string; url: string; duration: string; volume: number; requester: string; position: number };
-type IPlayList = { query: string; playlist: string; volume: number; requester: string; tracks: number };
+type IPlayPlaylist = { query: string; playlist: string; volume: number; requester: string; tracks: number };
 type IChannel = { channelId: string };
 type IUser = { userId: string };
 type IPing = { wsPing: number; clientPing: number; shardPing: number; shardId: number };
 type ICooldown = { time: number };
+type IPlaylist = { name: string; state: string };
+type IAutocompletePlaylist = { name: string; visibility: string; author: string };
+type IPlaylistLoad = { id: string };

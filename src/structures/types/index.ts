@@ -61,6 +61,10 @@ export enum CacheKeys {
      * The guild prefix key.
      */
     Prefix = "guild:prefix",
+    /**
+     * The user playlist key.
+     */
+    Playlist = "user:playlist",
 }
 
 /**
@@ -92,6 +96,11 @@ export interface Options {
      * @default StelleCategory.Unknown
      */
     category?: StelleCategory;
+    /**
+     * Skip registering the command.
+     * @default false
+     */
+    skip?: boolean;
 }
 
 /**

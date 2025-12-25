@@ -21,7 +21,7 @@ export default class ReloadCommand extends Command {
                         content: "",
                         embeds: [
                             {
-                                description: "`✅` Stelle has been reloaded.",
+                                description: `\`✅\` ${ctx.client.me.username} has been reloaded.`,
                                 color: ctx.client.config.color.success,
                             },
                         ],

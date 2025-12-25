@@ -1,6 +1,4 @@
-import type { UsingClient } from "seyfert";
 import { Controller } from "#stelle/classes/Controller.js";
-import type { StelleDatabase } from "#stelle/classes/Database.js";
 import { CacheKeys } from "#stelle/types";
 
 /**
@@ -12,32 +10,15 @@ export class PrefixController extends Controller<"guildPrefix"> {
     readonly modelName = "guildPrefix";
 
     /**
-     * The client instance for config access.
-     * @type {UsingClient}
-     * @readonly
-     * @private
-     */
-    private readonly client: UsingClient;
-
-    /**
-     * Create a prefix controller instance.
-     * @param {StelleDatabase} database The database instance.
-     */
-    constructor(database: StelleDatabase) {
-        super(database);
-        this.client = database.client;
-    }
-
-    /**
      * Get the prefix for a guild.
-     * @param {string} id The id of the guild.
+     * @param {string} guildId The id of the guild.
      * @returns {Promise<string>} The prefix for the guild.
      */
-    public async get(id: string): Promise<string> {
-        const cached = this.cache.get(CacheKeys.Prefix, id);
+    public async get(guildId: string): Promise<string> {
+        const cached = this.cache.get(CacheKeys.Prefix, guildId);
         if (cached?.prefix) return cached.prefix;
 
-        const data = await this.model.findUnique({ where: { id } });
+        const data = await this.model.findUnique({ where: { guildId } });
         if (data?.prefix) return data.prefix;
 
         return this.client.config.defaultPrefix;
@@ -52,10 +33,10 @@ export class PrefixController extends Controller<"guildPrefix"> {
     public async set(id: string, prefix: string): Promise<void> {
         await this.model
             .upsert({
-                where: { id },
-                create: { id, prefix },
+                where: { guildId: id },
+                create: { guildId: id, prefix },
                 update: { prefix },
             })
-            .then(({ id, ...rest }) => this.cache.set(CacheKeys.Prefix, id, rest));
+            .then((data) => this.cache.set(CacheKeys.Prefix, data.guildId, data));
     }
 }

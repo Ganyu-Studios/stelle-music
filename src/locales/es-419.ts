@@ -23,13 +23,24 @@ export default {
             previous: ({ title, uri }): string => `\`✅\` La canción anterior [**${title}**](${uri}) ha sido añadida a la cola.`,
             stop: "`👋` Deteniendo y abandonando el canal...",
             shuffle: "`✅` La cola ha sido mezclada.",
+            playlist: {
+                created: ({ name, state }): string =>
+                    `\`✅\` La playlist **${name}** ha sido creada correctamente.\n\`📋\` **Visibilidad**: \`${state}\``,
+                load: ({ id }): string => `\`✅\` La playlist con id: \`${id}\` ha sido cargada correctamente.`,
+                noPlaylist: "`❌` **No se encontró ninguna playlist** con este id...",
+                noTracks: "`❌` **No se encontraron canciones** en esta playlist...",
+                state: {
+                    public: "Pública",
+                    private: "Privada",
+                },
+            },
             lyrics: {
                 noLyrics: "`❌` **No se encontraron letras** para esta canción...",
                 close: "Cerrar",
                 sync: "Sincronizar",
                 embed: {
-                    title: ({ title }): string => `\`📜\` Letrs para: ${title}`,
-                    description: ({ lines, provider, author }): string => `-# Proveido por: ${provider}\nPor: ${author}\n\n${lines}`,
+                    title: ({ title }): string => `\`📜\` Letras para: ${title}`,
+                    description: ({ lines, provider, author }): string => `-# Provisto por: ${provider}\nPor: ${author}\n\n${lines}`,
                     footer: ({ userName }): string => `Pedido por: ${userName}`,
                 },
             },
@@ -166,11 +177,14 @@ export default {
             noPrevious: "`❌` No hubo una canción antes de esta.",
             noTracks: "`❌` No hay más canciones en la cola.",
             noQuery: "`❌` Introduce el nombre o el URL para reproducir.",
+            invalidInput: "`❌` La entrada proporcionada no es válida (no puede ser un URL u otro formato inválido).",
             playerEnd: "`🔰` La cola ha terminado... Esperando más canciones.",
             moreTracks: "`❌` Para habilitar **esto** `una o más canciones` son requeridas.",
             commandError:
                 "`❌` Algo inesperado ocurrió durante la ejecución del comando.\n`📢` Si el problema persiste, reporta el problema.",
             autocomplete: {
+                loadPlaylist: ({ name, visibility, author }): string => `Nombre: ${name} - Estado: ${visibility} | por ${author}`,
+                noPlaylist: "`❌` No se encontraron playlists.",
                 noAnything: "Stelle - Algo ocurrió intentando usar este autocompletado.",
                 noNodes: "Stelle - No estoy conectada a ninguno de mis nodos.",
                 noVoiceChannel: "Stelle - No estás en un canal de voz... Únete a uno para reproducir música.",
@@ -433,6 +447,34 @@ export default {
         lyrics: {
             name: "letras",
             description: "Muestra las letras de la canción actual.",
+        },
+        playlist: {
+            name: "playlist",
+            description: "Administra tus playlists de música.",
+            commands: {
+                create: {
+                    name: "crear",
+                    description: "Crea una nueva playlist de música.",
+                    options: {
+                        name: {
+                            name: "nombre",
+                            description: "El nombre de la playlist a crear.",
+                        },
+                        public: {
+                            name: "publica",
+                            description: "Si la playlist debe ser pública o privada.",
+                        },
+                    },
+                },
+                load: {
+                    name: "cargar",
+                    description: "Carga una playlist de música.",
+                    option: {
+                        name: "id",
+                        description: "El id de la playlist a cargar.",
+                    },
+                },
+            },
         },
     },
 } satisfies DefaultLocale;

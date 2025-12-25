@@ -1,16 +1,24 @@
 import { LimitedCollection } from "seyfert";
-import type { guildLocale, guildPlayer, guildPrefix } from "#stelle/prisma";
-import { CacheKeys, type Omit, type Prettify } from "#stelle/types";
+import type { guildLocale, guildPlayer, guildPrefix, userPlaylist } from "#stelle/prisma";
+import { CacheKeys, type Prettify } from "#stelle/types";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 
 /**
  * The interface of the database cache keys.
  */
 interface CacheMap {
-    [CacheKeys.Locale]: Prettify<Omit<guildLocale, "id">>;
-    [CacheKeys.Player]: Prettify<Omit<guildPlayer, "id">>;
-    [CacheKeys.Prefix]: Prettify<Omit<guildPrefix, "id">>;
+    [CacheKeys.Locale]: Prettify<guildLocale>;
+    [CacheKeys.Player]: Prettify<guildPlayer>;
+    [CacheKeys.Prefix]: Prettify<guildPrefix>;
+    [CacheKeys.Playlist]: Prettify<userPlaylist>;
 }
+
+/**
+ * The interface of the filter functions for each cache key.
+ */
+type FilterMap = {
+    [K in CacheKeys]: (data: CacheMap[K]) => boolean;
+};
 
 /**
  * Class representing the cache of the bot.
@@ -68,16 +76,23 @@ export class Cache {
      * @returns {void} Nothing... just sets the data to the cache.
      */
     public set<T extends CacheKeys = CacheKeys>(key: T, id: string, data: CacheMap[T]): void {
-        if (this.internal.has(id) && !this.internal.get(id)?.has(key)) {
-            this.internal.get(id)?.set(key, data);
-            return;
-        }
+        const existing = this.internal.get(id) ?? new LimitedCollection<CacheKeys, unknown>();
+        existing.set(key, data);
+        this.internal.set(id, existing);
+    }
 
-        const collection = new LimitedCollection<CacheKeys, unknown>();
-        collection.set(key, data);
+    /**
+     *
+     * Get all cached data for a specific key.
+     * @param {T} key The key to get all cached data for.
+     * @param {FilterMap[T]} [filter] Optional filter function to filter the cached data.
+     * @returns {CacheMap[T][]} An array of all cached data for the key.
+     */
+    public all<T extends CacheKeys = CacheKeys>(key: T, filter?: FilterMap[T]): CacheMap[T][] {
+        const values = [...this.internal.values()].map((collection) => collection.value.get(key)) as CacheMap[T][];
 
-        this.internal.set(id, collection);
+        if (filter) return values.filter(filter);
 
-        return;
+        return values;
     }
 }

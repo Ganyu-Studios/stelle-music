@@ -1,9 +1,9 @@
 import type { UsingClient } from "seyfert";
 import { LocaleController } from "#stelle/controllers/locale.js";
 import { PlayerController } from "#stelle/controllers/player.js";
+import { PlaylistController } from "#stelle/controllers/playlist.js";
 import { PrefixController } from "#stelle/controllers/prefix.js";
 import { PrismaClient } from "#stelle/prisma";
-
 import { Cache } from "./Cache.js";
 
 // cuz prisma do weird stuff
@@ -57,6 +57,13 @@ export class StelleDatabase {
     public readonly players: PlayerController;
 
     /**
+     * The playlist controller.
+     * @type {PlaylistController}
+     * @readonly
+     */
+    public readonly playlist: PlaylistController;
+
+    /**
      * Indicates whether the database is connected.
      * @type {boolean}
      * @default false
@@ -73,6 +80,7 @@ export class StelleDatabase {
         this.locales = new LocaleController(this);
         this.prefixes = new PrefixController(this);
         this.players = new PlayerController(this);
+        this.playlist = new PlaylistController(this);
     }
 
     /**

@@ -1,3 +1,4 @@
+import type { UsingClient } from "seyfert";
 import type { Prisma, PrismaClient } from "#stelle/prisma";
 import type { Cache } from "./Cache.js";
 import type { StelleDatabase } from "./Database.js";
@@ -31,12 +32,21 @@ export abstract class Controller<M extends ModelNames> {
     protected readonly cache: Cache;
 
     /**
+     * The client instance for config access.
+     * @type {UsingClient}
+     * @readonly
+     * @protected
+     */
+    protected readonly client: UsingClient;
+
+    /**
      * Create a controller instance.
      * @param {StelleDatabase} database The database instance.
      */
     public constructor(database: StelleDatabase) {
         this.prisma = database.prisma;
         this.cache = database.cache;
+        this.client = database.client;
     }
 
     /**

@@ -15,6 +15,7 @@ export default createLavalinkEvent({
         const isAutoplay = player.get<boolean | undefined>("enabledAutoplay") ?? false;
 
         const locale = player.get<string | undefined>("localeString");
+        console.info(locale);
         if (!locale) return;
 
         const voice = await client.channels.fetch(player.voiceChannelId);

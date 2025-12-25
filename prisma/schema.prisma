@@ -21,17 +21,35 @@ datasource db {
 }
 
 model guildLocale {
-  id     String @id @map("_id")
-  locale String @default("en-US")
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  guildId String @unique
+  locale  String @default("en-US")
 }
 
 model guildPrefix {
-  id     String @id @map("_id")
-  prefix String
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  guildId String @unique
+  prefix  String
 }
 
 model guildPlayer {
-  id             String @id @map("_id")
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  guildId        String @unique
   searchPlatform String @default("spsearch")
   defaultVolume  Int    @default(100)
+}
+
+type RawTrack {
+  encoded     String
+  requesterId String
+}
+
+model userPlaylist {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String
+  playlistId   String     @unique
+  playlistName String
+  createdAt    DateTime   @default(now())
+  public       Boolean    @default(false)
+  tracks       RawTrack[]
 }
