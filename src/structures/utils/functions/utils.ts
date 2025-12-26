@@ -229,21 +229,23 @@ export const createDirectory = async (dirname: string): Promise<string> => {
  * @param {CreateIdOptions} [options] The id creation options.
  * @returns {string} The formatted random id.
  */
-export const createId = (options: CreateIdOptions = { length: 8, segments: 1, separator: "-", uppercase: false }): string => {
+export const createId = (options: CreateIdOptions = {}): string => {
+    const { length = 8, segments = 1, separator = "-", uppercase = false } = options;
+
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let result: string = "";
 
-    for (let i: number = 0; i < options.segments!; i++) {
-        for (let j: number = 0; j < options.length!; j++) {
+    for (let i: number = 0; i < segments; i++) {
+        for (let j: number = 0; j < length; j++) {
             result += characters.charAt(Math.floor(Math.random() * characters.length));
         }
 
-        if (i < options.segments! - 1) {
-            result += options.separator;
+        if (i < segments - 1) {
+            result += separator;
         }
     }
 
-    return options.uppercase ? result.toUpperCase() : result;
+    return uppercase ? result.toUpperCase() : result;
 };
 
 /**
