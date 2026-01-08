@@ -27,6 +27,8 @@ export default {
                 created: ({ name, state }): string =>
                     `\`✅\` La playlist **${name}** ha sido creada correctamente.\n\`📋\` **Visibilidad**: \`${state}\``,
                 load: ({ id }): string => `\`✅\` La playlist con id: \`${id}\` ha sido cargada correctamente.`,
+                renamed: ({ name }): string => `\`✅\` La playlist ha sido renombrada a: **${name}** exitosamente.`,
+                deleted: ({ name }): string => `\`✅\` La playlist **${name}** ha sido eliminada exitosamente.`,
                 noPlaylist: "`❌` **No se encontró ninguna playlist** con este id...",
                 noTracks: "`❌` **No se encontraron canciones** en esta playlist...",
                 state: {
@@ -473,6 +475,18 @@ export default {
                         name: "id",
                         description: "El id de la playlist a cargar.",
                     },
+                },
+                rename: {
+                    name: "renombrar",
+                    description: "Renombra una playlist de música.",
+                    option: {
+                        name: "nombre",
+                        description: "El nuevo nombre de la playlist.",
+                    },
+                },
+                delete: {
+                    name: "eliminar",
+                    description: "Elimina una playlist de música.",
                 },
             },
         },

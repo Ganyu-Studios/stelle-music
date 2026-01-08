@@ -249,6 +249,21 @@ export const createId = (options: CreateIdOptions = {}): string => {
 };
 
 /**
+ *
+ * Checks if the given input string is a valid URL.
+ * @param {string} input The input string to check.
+ * @returns {boolean} True if the input is a valid URL, false otherwise.
+ */
+export const checkUrl = (input: string): boolean => {
+    const patterns = [
+        /(?:https?:\/\/)?(?:www\.)?(?:discord(?:app)?\.(?:com\/invite|gg))\/\S+/i,
+        /^(?:https?:\/\/)?(?:www\.)?[\w.-]+\.[\w]{2,}(?:\/\S*)?$/i,
+    ];
+
+    return patterns.some((pattern) => pattern.test(input));
+};
+
+/**
  * Cleanup function to gracefully shut down the client.
  * @param client {UsingClient} The client instance.
  * @returns {void} Aishite, aishite, motto, motto

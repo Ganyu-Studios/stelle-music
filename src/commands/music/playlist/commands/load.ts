@@ -8,75 +8,20 @@ import {
     Middlewares,
     Options,
     SubCommand,
-    type User,
     type WebhookMessage,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
+import { playlistAutocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
 import { omitKeys, requesterTransformer } from "#stelle/utils/functions/utils.js";
 
 const options = {
     id: createStringOption({
         description: "The id of the playlist to load.",
         required: true,
+        autocomplete: playlistAutocomplete,
         locales: {
             name: "locales.playlist.commands.load.option.name",
             description: "locales.playlist.commands.load.option.description",
-        },
-        async autocomplete(interaction) {
-            const { client, user } = interaction;
-
-            if (!interaction.guildId) return;
-
-            const { messages } = client.t(await client.database.locales.get(interaction.guildId)).get();
-
-            const data = await client.database.playlist.all();
-            if (!data || !data.length)
-                return interaction.respond([
-                    {
-                        name: messages.events.autocomplete.noPlaylist,
-                        value: "no-playlists-found",
-                    },
-                ]);
-
-            /**
-             *
-             * Get the visibility of the playlist.
-             * @param {boolean} isPublic True if the playlist is public, false otherwise.
-             * @returns {string} The visibility of the playlist.
-             */
-            const getPlaylistVisibility = (isPublic: boolean): string => {
-                const type = isPublic ? "public" : "private";
-                return messages.commands.playlist.state[type];
-            };
-
-            const playlists = await Promise.all(
-                data
-                    .filter((playlist) => playlist.userId === user.id || playlist.public)
-                    .sort((a, b) => (a.public === b.public ? 0 : a.public ? -1 : 1))
-                    .map(async (playlist) => {
-                        const author: User = await client.users.fetch(playlist.userId);
-                        return {
-                            value: playlist.playlistId,
-                            name: messages.events.autocomplete.loadPlaylist({
-                                name: playlist.playlistName,
-                                visibility: getPlaylistVisibility(playlist.public),
-                                author: author.tag,
-                            }),
-                        };
-                    })
-                    .slice(0, 25),
-            );
-
-            if (!playlists.length) {
-                return interaction.respond([
-                    {
-                        name: messages.events.autocomplete.noPlaylist,
-                        value: "no-playlists-found",
-                    },
-                ]);
-            }
-
-            return interaction.respond(playlists);
         },
     }),
 };
@@ -93,10 +38,10 @@ export default class LoadSubcommand extends SubCommand {
         await ctx.deferReply();
 
         const { client, member, channelId } = ctx;
+        const { id } = ctx.options;
 
         const { messages } = await ctx.locale();
 
-        const id = ctx.options.id;
         const playlist = await client.database.playlist.get(id);
         if (!playlist)
             return ctx.editOrReply({

@@ -46,7 +46,11 @@ export class PlaylistController extends Controller<"userPlaylist"> {
         if ("userId" in data) data = omitKeys(data, ["userId"]);
 
         await this.model
-            .create({ data: { userId, ...data } })
+            .upsert({
+                where: { userId, playlistId: data.playlistId },
+                create: { userId, ...data },
+                update: data,
+            })
             .then((created) => this.cache.set(CacheKeys.Playlist, created.playlistId, created));
     }
 
@@ -64,6 +68,18 @@ export class PlaylistController extends Controller<"userPlaylist"> {
         const updated = await this.model.update({ where: { userId, playlistId: data.playlistId }, data });
 
         this.cache.set(CacheKeys.Playlist, updated.playlistId, updated);
+    }
+
+    /**
+     *
+     * Delete the playlist of a user from the database.
+     * @param {string} userId The user id to delete the playlist for.
+     * @param {string} playlistId The playlist id to delete.
+     * @returns {Promise<void>} A promise that resolves when the playlist is deleted.
+     */
+    public async delete(userId: string, playlistId: string): Promise<void> {
+        await this.model.delete({ where: { userId, playlistId } });
+        this.cache.deleteKey(CacheKeys.Playlist, playlistId);
     }
 
     /**

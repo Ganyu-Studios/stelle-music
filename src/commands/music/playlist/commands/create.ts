@@ -1,22 +1,7 @@
 import { createBooleanOption, createStringOption, Declare, type GuildCommandContext, LocalesT, Options, SubCommand } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
-import { createId } from "#stelle/utils/functions/utils.js";
-
-/**
- *
- * Checks if the given input string is a valid URL.
- * @param {string} input The input string to check.
- * @returns {boolean} True if the input is a valid URL, false otherwise.
- */
-function checkUrl(input: string): boolean {
-    const patterns = [
-        /(?:https?:\/\/)?(?:www\.)?(?:discord(?:app)?\.(?:com\/invite|gg))\/\S+/i,
-        /^(?:https?:\/\/)?(?:www\.)?[\w.-]+\.[\w]{2,}(?:\/\S*)?$/i,
-    ];
-
-    return patterns.some((pattern) => pattern.test(input));
-}
+import { checkUrl, createId } from "#stelle/utils/functions/utils.js";
 
 const options = {
     name: createStringOption({

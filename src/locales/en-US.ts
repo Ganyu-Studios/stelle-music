@@ -28,6 +28,8 @@ export default {
                 created: ({ name, state }: IPlaylist): string =>
                     `\`✅\` The playlist **${name}** has been created successfully.\n\`📋\` **Visibility**: \`${state}\``,
                 load: ({ id }: IPlaylistLoad): string => `\`✅\` The playlist with id: \`${id}\` has been loaded successfully.`,
+                renamed: ({ name }: IPlaylistName): string => `\`✅\` The playlist has been renamed to: **${name}** successfully.`,
+                deleted: ({ name }: IPlaylistName): string => `\`✅\` The playlist **${name}** has been deleted successfully.`,
                 noPlaylist: "`❌` **No playlist** was found with this id...",
                 noTracks: "`❌` **No tracks** were found in this playlist...",
                 state: {
@@ -480,6 +482,18 @@ export default {
                         description: "The id of the playlist to load.",
                     },
                 },
+                rename: {
+                    name: "rename",
+                    description: "Rename a music playlist.",
+                    option: {
+                        name: "name",
+                        description: "The new name of the playlist.",
+                    },
+                },
+                delete: {
+                    name: "delete",
+                    description: "Delete a music playlist.",
+                },
             },
         },
     },
@@ -521,3 +535,4 @@ type ICooldown = { time: number };
 type IPlaylist = { name: string; state: string };
 type IAutocompletePlaylist = { name: string; visibility: string; author: string };
 type IPlaylistLoad = { id: string };
+type IPlaylistName = { name: string };
