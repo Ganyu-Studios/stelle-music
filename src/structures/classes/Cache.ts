@@ -16,9 +16,7 @@ interface CacheMap {
 /**
  * The interface of the filter functions for each cache key.
  */
-type FilterMap = {
-    [K in CacheKeys]: (data: CacheMap[K]) => boolean;
-};
+type FilterMap<T extends CacheKeys = CacheKeys> = (data: CacheMap[T]) => boolean;
 
 /**
  * Class representing the cache of the bot.
@@ -88,7 +86,7 @@ export class Cache {
      * @param {FilterMap[T]} [filter] Optional filter function to filter the cached data.
      * @returns {CacheMap[T][]} An array of all cached data for the key.
      */
-    public all<T extends CacheKeys = CacheKeys>(key: T, filter?: FilterMap[T]): CacheMap[T][] {
+    public all<T extends CacheKeys = CacheKeys>(key: T, filter?: FilterMap<T>): CacheMap[T][] {
         const values = [...this.internal.values()].map((collection) => collection.value.get(key)) as CacheMap[T][];
 
         if (filter) return values.filter(filter);

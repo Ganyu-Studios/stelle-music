@@ -19,22 +19,22 @@ export class PrefixController extends Controller<"guildPrefix"> {
         if (cached?.prefix) return cached.prefix;
 
         const data = await this.model.findUnique({ where: { guildId } });
-        if (data?.prefix) return data.prefix;
+        if (!data?.prefix) return this.client.config.defaultPrefix;
 
-        return this.client.config.defaultPrefix;
+        return data.prefix;
     }
 
     /**
      * Set the prefix for a guild.
-     * @param {string} id The id of the guild.
+     * @param {string} guildId The id of the guild.
      * @param {string} prefix The prefix to set.
      * @returns {Promise<void>} A promise that resolves when the prefix is set.
      */
-    public async set(id: string, prefix: string): Promise<void> {
+    public async set(guildId: string, prefix: string): Promise<void> {
         await this.model
             .upsert({
-                where: { guildId: id },
-                create: { guildId: id, prefix },
+                where: { guildId },
+                create: { guildId, prefix },
                 update: { prefix },
             })
             .then((data) => this.cache.set(CacheKeys.Prefix, data.guildId, data));

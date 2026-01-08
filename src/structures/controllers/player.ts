@@ -33,17 +33,23 @@ export class PlayerController extends Controller<"guildPlayer"> {
      * @returns {Promise<StoredPlayer>} The player data of the guild.
      */
     public async get(id: string): Promise<StoredPlayer> {
-        const cache = this.cache.get(CacheKeys.Player, id);
-        if (cache?.defaultVolume && cache?.searchPlatform)
+        const cached = this.cache.get(CacheKeys.Player, id);
+        if (cached)
             return {
-                defaultVolume: cache.defaultVolume,
-                searchPlatform: cache.searchPlatform as SearchPlatform,
+                defaultVolume: cached.defaultVolume,
+                searchPlatform: cached.searchPlatform as SearchPlatform,
             };
 
         const data = await this.model.findUnique({ where: { guildId: id } });
+        if (!data)
+            return {
+                defaultVolume: this.client.config.defaultVolume,
+                searchPlatform: this.client.config.defaultSearchPlatform,
+            };
+
         return {
-            defaultVolume: data?.defaultVolume ?? this.client.config.defaultVolume,
-            searchPlatform: (data?.searchPlatform as SearchPlatform | null | undefined) ?? this.client.config.defaultSearchPlatform,
+            defaultVolume: data.defaultVolume,
+            searchPlatform: data.searchPlatform as SearchPlatform,
         };
     }
 
@@ -51,17 +57,17 @@ export class PlayerController extends Controller<"guildPlayer"> {
      *
      * Set the guild player to the database.
      * @param {string} guildId The guild id.
-     * @param {Partial<StoredPlayer>} player The player data to set.
+     * @param {Partial<StoredPlayer>} data The player data to set.
      * @returns {Promise<void>} A promise that resolves when the player is set.
      */
-    public async set(guildId: string, player: Partial<StoredPlayer>): Promise<void> {
+    public async set(guildId: string, data: Partial<StoredPlayer>): Promise<void> {
         await this.model
             .upsert({
                 where: { guildId },
-                update: player,
+                update: data,
                 create: {
                     guildId,
-                    ...player,
+                    ...data,
                 },
             })
             .then((data) => this.cache.set(CacheKeys.Player, data.guildId, data));

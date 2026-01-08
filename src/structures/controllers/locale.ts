@@ -21,9 +21,9 @@ export class LocaleController extends Controller<"guildLocale"> {
         if (cached?.locale) return cached.locale as LocaleString;
 
         const data = await this.model.findUnique({ where: { guildId } });
-        if (data?.locale) return data.locale as LocaleString;
+        if (!data?.locale) return this.client.config.defaultLocale;
 
-        return this.client.config.defaultLocale;
+        return data.locale as LocaleString;
     }
 
     /**

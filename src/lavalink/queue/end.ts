@@ -44,6 +44,6 @@ export default createLavalinkEvent({
 
         player.set("messageId", undefined);
 
-        if (Constants.Debug) client.debugger?.info(`Player: ${player.guildId} | Queue Ended: ${JSON.stringify(player.toJSON())}`);
+        if (Constants.Debug) client.debugger?.info(`[Player ${player.guildId}] Queue Ended: ${JSON.stringify(player.toJSON())}`);
     },
 });

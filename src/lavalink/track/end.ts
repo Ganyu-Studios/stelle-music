@@ -24,6 +24,6 @@ export default createLavalinkEvent({
 
         player.set("messageId", undefined);
 
-        if (Constants.Debug) client.debugger?.info(`Player: ${player.guildId} | Track Ended: ${JSON.stringify(track)}`);
+        if (Constants.Debug) client.debugger?.info(`[Player ${player.guildId}] Track Ended: ${JSON.stringify(track)}`);
     },
 });

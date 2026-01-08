@@ -1,6 +1,6 @@
 import { Controller } from "#stelle/classes/Controller.js";
 import type { userPlaylist } from "#stelle/prisma";
-import { CacheKeys } from "#stelle/types";
+import { CacheKeys, type Omit } from "#stelle/types";
 import { omitKeys } from "#stelle/utils/functions/utils.js";
 
 /**
@@ -38,7 +38,7 @@ export class PlaylistController extends Controller<"userPlaylist"> {
      *
      * Set the playlist of a user to the database.
      * @param {string} userId The user id to set the playlist for.
-     * @param {Omit<userPlaylist, "id">} data The playlist data to set.
+     * @param {PlaylistData} data The playlist data to set.
      * @returns {Promise<void>} A promise that resolves when the playlist is set.
      */
     public async set(userId: string, data: PlaylistData): Promise<void> {
@@ -52,22 +52,6 @@ export class PlaylistController extends Controller<"userPlaylist"> {
                 update: data,
             })
             .then((created) => this.cache.set(CacheKeys.Playlist, created.playlistId, created));
-    }
-
-    /**
-     *
-     * Update the playlist of a user in the database.
-     * @param {string} userId The user id to update the playlist for.
-     * @param {Partial<PlaylistData>} data The playlist data to update.
-     * @returns {Promise<void>} A promise that resolves when the playlist is updated.
-     */
-    public async update(userId: string, data: Partial<PlaylistData>): Promise<void> {
-        if ("id" in data) data = omitKeys(data, ["id"]);
-        if ("userId" in data) data = omitKeys(data, ["userId"]);
-
-        const updated = await this.model.update({ where: { userId, playlistId: data.playlistId }, data });
-
-        this.cache.set(CacheKeys.Playlist, updated.playlistId, updated);
     }
 
     /**

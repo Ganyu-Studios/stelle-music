@@ -113,7 +113,7 @@ export default class LoadSubcommand extends SubCommand {
             content: "",
             embeds: [
                 {
-                    description: messages.commands.playlist.load({ id: playlist.playlistId }),
+                    description: messages.commands.playlist.loaded({ name: playlist.playlistName }),
                     color: client.config.color.success,
                 },
             ],

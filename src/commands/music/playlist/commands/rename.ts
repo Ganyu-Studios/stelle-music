@@ -72,7 +72,9 @@ export default class RenameSubcommand extends SubCommand {
                 ],
             });
 
-        await client.database.playlist.update(ctx.author.id, { playlistName: name });
+        playlist.playlistName = name;
+
+        await client.database.playlist.set(ctx.author.id, playlist);
         await ctx.editOrReply({
             content: "",
             embeds: [

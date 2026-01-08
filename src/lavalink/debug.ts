@@ -6,6 +6,6 @@ export default createLavalinkEvent({
     name: "debug",
     type: LavalinkEventTypes.Manager,
     run(client, key, data): void {
-        if (Constants.Debug) client.debugger?.info(`Manager: ${key} | Debug: ${JSON.stringify(data)}`);
+        if (Constants.Debug) client.debugger?.info(`[Manager ${key}] Debug: ${JSON.stringify(data)}`);
     },
 });
