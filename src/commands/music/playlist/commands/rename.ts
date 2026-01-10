@@ -48,7 +48,7 @@ export default class RenameSubcommand extends SubCommand {
 
         const { id, name } = ctx.options;
 
-        const playlist = await client.database.playlist.get(id);
+        const playlist = await client.database.playlist.get(id, ctx.author.id);
         if (!playlist)
             return ctx.editOrReply({
                 content: "",

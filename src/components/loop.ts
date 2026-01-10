@@ -1,6 +1,6 @@
 import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
 import { Constants } from "#stelle/utils/data/constants.js";
-import { editButtonComponents } from "#stelle/utils/functions/utils.js";
+import { disableButtons } from "#stelle/utils/functions/utils.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class ToggleLoopComponent extends ComponentCommand {
@@ -19,7 +19,7 @@ export default class ToggleLoopComponent extends ComponentCommand {
 
         await ctx.interaction.deferUpdate();
         await ctx.interaction.message.edit({
-            components: editButtonComponents(ctx.interaction.message.components, {
+            components: disableButtons(ctx.interaction.message.components, {
                 customId: "player-toggleLoop",
                 label: messages.events.trackStart.components.loop({
                     type: messages.commands.loop.loopType[player.repeatMode],

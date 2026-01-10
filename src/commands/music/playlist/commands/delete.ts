@@ -38,7 +38,7 @@ export default class DeleteSubcommand extends SubCommand {
 
         const { id } = ctx.options;
 
-        const playlist = await client.database.playlist.get(id);
+        const playlist = await client.database.playlist.get(id, ctx.author.id);
         if (!playlist)
             return ctx.editOrReply({
                 content: "",

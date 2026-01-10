@@ -9,6 +9,27 @@ import { RedisClient } from "./modules/Redis.js";
 import { RedisQueueStore } from "./Store.js";
 
 /**
+ * Options for searching tracks in the manager.
+ */
+interface ManagerSearchOptions {
+    /**
+     * The search query.
+     * @type {string}
+     */
+    query: string;
+    /**
+     * The search platform.
+     * @type {SearchPlatform}
+     */
+    source?: SearchPlatform;
+    /**
+     * The requester object.
+     * @type {unknown}
+     */
+    requester?: unknown;
+}
+
+/**
  *
  * Calculate the penalties for a lavalink node.
  * @param {LavalinkNode} node The lavalink node to check the penalties for.
@@ -94,17 +115,19 @@ export class StelleManager extends LavalinkManager {
 
     /**
      *
-     * Search tracks.
-     * @param query The query.
+     * Search for a track or playlist.
+     * @param {ManagerSearchOptions} options The search options.
      * @returns {Promise<SearchResult>} The search result.
      */
-    public search(query: string, source?: SearchPlatform): Promise<SearchResult | null> {
+    public search(options: ManagerSearchOptions): Promise<SearchResult | null> {
+        const { query, source, requester } = options;
+
         if (!query.length) return Promise.resolve(null);
 
         const nodes = this.nodeManager.leastUsedNodes();
         const node = nodes.reduce((a, b) => (penalties(a) < penalties(b) ? a : b));
 
-        return node.search({ query, source }, null, false).catch(() => null);
+        return node.search({ query, source }, requester, false).catch(() => null);
     }
 
     /**

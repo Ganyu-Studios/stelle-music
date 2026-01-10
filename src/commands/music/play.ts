@@ -49,7 +49,7 @@ const options = {
                     { name: messages.events.autocomplete.noQuery, value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT" },
                 ]);
 
-            const res = await client.manager.search(query, searchPlatform);
+            const res = await client.manager.search({ query, source: searchPlatform }).catch(() => null);
             if (!res?.tracks.length) return interaction.respond([{ name: messages.events.autocomplete.noTracks, value: "noTracks" }]);
 
             await interaction.respond(

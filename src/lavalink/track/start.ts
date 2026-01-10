@@ -86,7 +86,7 @@ export default createLavalinkEvent({
                 new Button()
                     .setCustomId("player-pauseTrack")
                     .setStyle(ButtonStyle.Primary)
-                    .setLabel(messages.events.trackStart.components.paused[Constants.PauseState(player.paused)]),
+                    .setLabel(messages.events.trackStart.components.states[Constants.PauseState(player.paused)]),
             ),
         ];
 

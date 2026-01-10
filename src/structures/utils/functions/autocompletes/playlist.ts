@@ -28,7 +28,7 @@ export async function playlistAutocomplete(interaction: AutocompleteInteraction)
      * @param {boolean} isPublic True if the playlist is public, false otherwise.
      * @returns {string} The visibility of the playlist.
      */
-    const getPlaylistVisibility = (isPublic: boolean): string => {
+    const getVisibility = (isPublic: boolean): string => {
         const type = isPublic ? "public" : "private";
         return messages.commands.playlist.state[type];
     };
@@ -43,7 +43,7 @@ export async function playlistAutocomplete(interaction: AutocompleteInteraction)
                     value: playlist.playlistId,
                     name: messages.events.autocomplete.loadPlaylist({
                         name: playlist.playlistName,
-                        visibility: getPlaylistVisibility(playlist.public),
+                        visibility: getVisibility(playlist.public),
                         author: author.tag,
                     }),
                 };

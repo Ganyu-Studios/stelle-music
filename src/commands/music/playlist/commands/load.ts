@@ -42,7 +42,7 @@ export default class LoadSubcommand extends SubCommand {
 
         const { messages } = await ctx.locale();
 
-        const playlist = await client.database.playlist.get(id);
+        const playlist = await client.database.playlist.get(id, ctx.author.id);
         if (!playlist)
             return ctx.editOrReply({
                 content: "",

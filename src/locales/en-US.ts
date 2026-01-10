@@ -32,6 +32,41 @@ export default {
                 deleted: ({ name }: IPlaylistName): string => `\`✅\` The playlist \`${name}\` has been deleted successfully.`,
                 noPlaylist: "`❌` **No playlist** was found with this id...",
                 noTracks: "`❌` **No tracks** were found in this playlist...",
+                manage: {
+                    title: ({ name }: IPlaylistName): string => `\`🎵\` Managing Playlist: \`${name}\``,
+                    description:
+                        "`📦` Here is the place to manage your playlist in a *~at least that's the intention~* easy and simple way.\n`📜` You can save any track, at any time in whatever you are... and delete them.\n\n`⚠️` __Keep in mind, more tracks you add, maybe can take a little longer to load the playlist.__\n\n-# Select an action to manage your playlist.",
+                    options: {
+                        toggle: ({ state }: IState): string => `Make ${state}`,
+                        save: "Save Tracks",
+                        delete: "Delete Tracks",
+                        info: "Playlist Info",
+                    },
+                    save: {
+                        saved: ({ type, amount }: IPlaylistSave) =>
+                            `\`✅\` Successfully saved **${amount} track(s)** from **${type}** to your playlist.`,
+                        description: "`📢` Select one of the options below to save tracks to your playlist.",
+                        alreadyExists: "`❌` The **track(s)** you are trying to save already exist(s) in your playlist.",
+                        modal: {
+                            title: "Save from URL",
+                            label: {
+                                label: "Save from URL",
+                                description: "Enter the track or playlist URL to save tracks from it.",
+                                component: "Enter the track or playlist URL here...",
+                            },
+                        },
+                        options: {
+                            current: "Current Track",
+                            queue: "Current Queue",
+                            url: "From URL",
+                        },
+                        saveType: {
+                            current: "current track",
+                            queue: "current queue",
+                            url: "URL",
+                        },
+                    },
+                },
                 state: {
                     public: "Public",
                     private: "Private",
@@ -138,7 +173,7 @@ export default {
                 states: {
                     connected: "🟢 Connected.",
                     disconnected: "🔴 Disconnected.",
-                } satisfies Record<string, string>,
+                },
             },
             volume: {
                 changed: ({ volume }: IVolume): string => `\`✅\` The volume has been set to: **${volume}%**.`,
@@ -191,7 +226,7 @@ export default {
             autocomplete: {
                 loadPlaylist: ({ name, visibility, author }: IAutocompletePlaylist): string =>
                     `Name: ${name} - State: ${visibility} | by ${author}`,
-                noPlaylist: "`❌` No playlists found.",
+                noPlaylist: "Stelle - No playlists found.",
                 noAnything: "Stelle - Something unexpected happened using this autocomplete.",
                 noNodes: "Stelle - I'm not connected to any of my nodes.",
                 noVoiceChannel: "Stelle - You are not in a voice channel... Join to play music.",
@@ -229,7 +264,7 @@ export default {
                     previous: "Previous",
                     queue: "Queue",
                     lyrics: "Lyrics",
-                    paused: {
+                    states: {
                         resume: "Resume",
                         pause: "Pause",
                     } satisfies Record<PausedState, string>,
@@ -494,6 +529,10 @@ export default {
                     name: "delete",
                     description: "Delete a music playlist.",
                 },
+                manage: {
+                    name: "manage",
+                    description: "Manage a music playlist.",
+                },
             },
         },
     },
@@ -535,3 +574,5 @@ type ICooldown = { time: number };
 type IPlaylist = { name: string; state: string };
 type IAutocompletePlaylist = { name: string; visibility: string; author: string };
 type IPlaylistName = { name: string };
+type IState = { state: string };
+type IPlaylistSave = { type: string; amount: number };

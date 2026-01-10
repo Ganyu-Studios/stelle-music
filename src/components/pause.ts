@@ -2,7 +2,7 @@ import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfe
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 import type { PausedState } from "#stelle/types";
 import { Constants } from "#stelle/utils/data/constants.js";
-import { editButtonComponents } from "#stelle/utils/functions/utils.js";
+import { disableButtons } from "#stelle/utils/functions/utils.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class PauseTrackComponent extends ComponentCommand {
@@ -22,9 +22,9 @@ export default class PauseTrackComponent extends ComponentCommand {
 
         await ctx.interaction.deferUpdate();
         await ctx.interaction.message.edit({
-            components: editButtonComponents(ctx.interaction.message.components, {
+            components: disableButtons(ctx.interaction.message.components, {
                 customId: "player-pauseTrack",
-                label: messages.events.trackStart.components.paused[Constants.PauseState(player.paused)],
+                label: messages.events.trackStart.components.states[Constants.PauseState(player.paused)],
                 style: player.paused ? ButtonStyle.Secondary : ButtonStyle.Primary,
             }),
         });

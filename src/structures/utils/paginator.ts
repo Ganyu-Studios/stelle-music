@@ -254,7 +254,7 @@ export class EmbedPaginator {
             idle: this.options.time,
             filter: (interaction): boolean => interaction.user.id === this.options.ctx.author.id,
             onPass: async (interaction): Promise<void> => {
-                await interaction.write({
+                await interaction.editOrReply({
                     flags: MessageFlags.Ephemeral,
                     embeds: [
                         {

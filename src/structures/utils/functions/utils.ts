@@ -158,7 +158,7 @@ export const requesterTransformer = (requester: unknown): StelleUser => {
  * @param {EditButtonOptions} options The options to edit the rows.
  * @returns {ActionRow<Button>[]} The edited rows.
  */
-export const editButtonComponents = (rows: TopLevelComponents[], options: EditButtonOptions): ActionRow<Button>[] =>
+export const disableButtons = (rows: TopLevelComponents[], options?: EditButtonOptions): ActionRow<Button>[] =>
     rows.map((builder): ActionRow<Button> => {
         const row = builder.toJSON();
 
@@ -169,7 +169,7 @@ export const editButtonComponents = (rows: TopLevelComponents[], options: EditBu
                 if (component.type !== ComponentType.Button) return component;
                 if (component.style === ButtonStyle.Link || component.style === ButtonStyle.Premium) return component;
 
-                if (component.custom_id === options.customId) {
+                if (options && component.custom_id === options.customId) {
                     options.style ??= component.style;
 
                     if (options.emoji) component.emoji = resolvePartialEmoji(options.emoji) as APIMessageComponentEmoji | undefined;

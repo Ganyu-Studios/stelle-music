@@ -36,8 +36,7 @@ export default class SkipCommand extends Command {
         const player = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
-        if (to) await player.skip(to, !player.get("enabledAutoplay"));
-        else await player.skip(undefined, !player.get("enabledAutoplay"));
+        await player.skip(to, !player.get("enabledAutoplay"));
 
         await ctx.editOrReply({
             embeds: [

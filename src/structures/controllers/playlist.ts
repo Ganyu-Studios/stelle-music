@@ -27,11 +27,11 @@ export class PlaylistController extends Controller<"userPlaylist"> {
      * @param {string} playlistId The playlist id to get.
      * @returns {Promise<userPlaylist | null>} The playlist of the user.
      */
-    public get(playlistId: string): Promise<userPlaylist | null> {
+    public get(playlistId: string, userId: string): Promise<userPlaylist | null> {
         const cached = this.cache.get(CacheKeys.Playlist, playlistId);
         if (cached) return Promise.resolve(cached);
 
-        return this.model.findUnique({ where: { playlistId } });
+        return this.model.findUnique({ where: { playlistId, userId } });
     }
 
     /**

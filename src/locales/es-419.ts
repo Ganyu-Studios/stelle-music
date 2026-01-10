@@ -31,6 +31,40 @@ export default {
                 deleted: ({ name }): string => `\`✅\` La playlist \`${name}\` ha sido eliminada exitosamente.`,
                 noPlaylist: "`❌` **No se encontró ninguna playlist** con este id...",
                 noTracks: "`❌` **No se encontraron canciones** en esta playlist...",
+                manage: {
+                    title: ({ name }): string => `\`🎵\` Gestionando Playlist: \`${name}\``,
+                    description:
+                        "`📦` Aquí es donde puedes gestionar tu playlist de una manera *~al menos eso es la intención~* fácil y simple.\n`📜` Puedes guardar cualquier canción, en cualquier momento en lo que estés... y eliminarlas.\n\n`⚠️` __Ten en cuenta, más canciones agregues, quizás tome un poco más tiempo para cargar la playlist.__\n\n-# Selecciona una acción para gestionar tu playlist.",
+                    options: {
+                        toggle: ({ state }): string => `Hacer ${state}`,
+                        save: "Guardar Canciones",
+                        delete: "Eliminar Canciones",
+                        info: "Info. Playlist",
+                    },
+                    save: {
+                        saved: ({ type, amount }) => `\`✅\` Guardado exitosamente **${amount} canción(es)** de **${type}** a tu playlist.`,
+                        description: "`📢` Selecciona una de las opciones abajo para guardar canciones a tu playlist.",
+                        alreadyExists: "`❌` Las **canciones** que estás intentando guardar ya existen en tu playlist.",
+                        modal: {
+                            title: "Guardar desde URL",
+                            label: {
+                                label: "Guardar desde URL",
+                                description: "Introduce la URL de la canción o playlist para guardar canciones de ella.",
+                                component: "Introduce la URL de la canción o playlist aquí...",
+                            },
+                        },
+                        options: {
+                            current: "Canción Actual",
+                            queue: "Cola Actual",
+                            url: "Desde URL",
+                        },
+                        saveType: {
+                            current: "canción actual",
+                            queue: "cola actual",
+                            url: "URL",
+                        },
+                    },
+                },
                 state: {
                     public: "Pública",
                     private: "Privada",
@@ -186,7 +220,7 @@ export default {
                 "`❌` Algo inesperado ocurrió durante la ejecución del comando.\n`📢` Si el problema persiste, reporta el problema.",
             autocomplete: {
                 loadPlaylist: ({ name, visibility, author }): string => `Nombre: ${name} - Estado: ${visibility} | por ${author}`,
-                noPlaylist: "`❌` No se encontraron playlists.",
+                noPlaylist: "Stelle - No se encontraron playlists.",
                 noAnything: "Stelle - Algo ocurrió intentando usar este autocompletado.",
                 noNodes: "Stelle - No estoy conectada a ninguno de mis nodos.",
                 noVoiceChannel: "Stelle - No estás en un canal de voz... Únete a uno para reproducir música.",
@@ -224,7 +258,7 @@ export default {
                     previous: "Anterior",
                     queue: "Cola",
                     lyrics: "Letra",
-                    paused: {
+                    states: {
                         resume: "Resumir",
                         pause: "Pausar",
                     },
@@ -487,6 +521,10 @@ export default {
                 delete: {
                     name: "eliminar",
                     description: "Elimina una playlist de música.",
+                },
+                manage: {
+                    name: "gestionar",
+                    description: "Gestiona una playlist de música.",
                 },
             },
         },

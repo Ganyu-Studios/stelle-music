@@ -1,6 +1,6 @@
 import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
 import { Constants } from "#stelle/utils/data/constants.js";
-import { editButtonComponents } from "#stelle/utils/functions/utils.js";
+import { disableButtons } from "#stelle/utils/functions/utils.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
 export default class AutoplayComponent extends ComponentCommand {
@@ -21,7 +21,7 @@ export default class AutoplayComponent extends ComponentCommand {
 
         await ctx.interaction.deferUpdate();
         await ctx.interaction.message.edit({
-            components: editButtonComponents(ctx.interaction.message.components, {
+            components: disableButtons(ctx.interaction.message.components, {
                 customId: "player-toggleAutoplay",
                 label: messages.events.trackStart.components.autoplay({
                     type: messages.commands.autoplay.autoplayType[Constants.AutoplayState(isAutoplay)],
