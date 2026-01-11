@@ -33,8 +33,10 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | Message | W
                 if (!lyrics) return null;
 
                 if (typeof lyrics.provider !== "string") lyrics.provider = "Unknown";
+                if (typeof lyrics.sourceName !== "string") lyrics.sourceName = "Unknown";
 
                 lyrics.provider = lyrics.provider.replace("Source:", "").trim();
+                lyrics.sourceName = lyrics.sourceName.replace("Source:", "").trim();
 
                 player.set("lyrics", lyrics);
 

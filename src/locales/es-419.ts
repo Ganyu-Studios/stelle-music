@@ -34,12 +34,12 @@ export default {
                 manage: {
                     title: ({ name }): string => `\`🎵\` Gestionando Playlist: \`${name}\``,
                     description:
-                        "`📦` Aquí es donde puedes gestionar tu playlist de una manera *~al menos eso es la intención~* fácil y simple.\n`📜` Puedes guardar cualquier canción, en cualquier momento en lo que estés... y eliminarlas.\n\n`⚠️` __Ten en cuenta, más canciones agregues, quizás tome un poco más tiempo para cargar la playlist.__\n\n-# Selecciona una acción para gestionar tu playlist.",
+                        "`📦` Aquí es donde puedes gestionar tu playlist de una manera *~~al menos eso es la intención~~* fácil y simple.\n`📜` Puedes guardar cualquier canción, en cualquier momento en lo que estés... y eliminarlas.\n\n`⚠️` __Ten en cuenta, más canciones agregues, quizás tome un poco más tiempo para cargar la playlist.__\n\n-# Selecciona una acción para gestionar tu playlist.",
                     options: {
                         toggle: ({ state }): string => `Hacer ${state}`,
-                        save: "Guardar Canciones",
-                        delete: "Eliminar Canciones",
-                        info: "Info. Playlist",
+                        save: "Guardar",
+                        delete: "Eliminar",
+                        info: "Info",
                     },
                     save: {
                         saved: ({ type, amount }) => `\`✅\` Guardado exitosamente **${amount} canción(es)** de **${type}** a tu playlist.`,

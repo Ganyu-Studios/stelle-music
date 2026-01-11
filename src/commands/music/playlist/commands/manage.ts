@@ -18,7 +18,6 @@ import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
 import { playlistAutocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
 import { playlistTrackSaveHandler } from "#stelle/utils/functions/components/playlist.js";
 import { ms } from "#stelle/utils/functions/time.js";
-import { disableButtons } from "#stelle/utils/functions/utils.js";
 
 const options = {
     id: createStringOption({
@@ -82,11 +81,11 @@ export default class ManageSubcommand extends SubCommand {
 
         const row: ActionRow<Button> = new ActionRow<Button>().addComponents(
             new Button()
-                .setCustomId("playlist-trackSave")
+                .setCustomId("playlist-tracksSave")
                 .setLabel(messages.commands.playlist.manage.options.save)
                 .setStyle(ButtonStyle.Primary),
             new Button()
-                .setCustomId("playlist-trackDelete")
+                .setCustomId("playlist-tracksDelete")
                 .setLabel(messages.commands.playlist.manage.options.delete)
                 .setStyle(ButtonStyle.Danger),
             new Button()
@@ -109,41 +108,28 @@ export default class ManageSubcommand extends SubCommand {
         const collector: CreateComponentCollectorResult = message.createComponentCollector({
             idle: ms("1min"),
             filter: (i): boolean => i.user.id === ctx.author.id,
-            async onStop(reason): Promise<void> {
-                if (reason === "idle") await message.edit({ components: disableButtons(message.components) });
-            },
-            async onPass(interaction): Promise<void> {
-                await interaction.editOrReply({
-                    flags: MessageFlags.Ephemeral,
-                    embeds: [
-                        {
-                            description: messages.events.noCollector({ userId: ctx.author.id }),
-                            color: EmbedColors.Red,
-                        },
-                    ],
-                });
-            },
         });
 
-        collector.run(["playlist-saveTrack", "playlist-deleteTrack", "playlist-info", "playlist-changeStatus"], async (interaction) => {
-            if (!interaction.isButton()) return;
+        collector.run(
+            ["playlist-tracksSave", "playlist-tracksDelete", "playlist-info", "playlist-toggleVisibility"],
+            async (interaction) => {
+                if (!interaction.isButton()) return;
 
-            await interaction.update({ components: disableButtons(message.components) });
+                switch (interaction.customId) {
+                    case "playlist-tracksSave":
+                        await playlistTrackSaveHandler(ctx, interaction, playlist);
+                        break;
 
-            switch (interaction.customId) {
-                case "playlist-trackSave":
-                    await playlistTrackSaveHandler(ctx, interaction, playlist);
-                    break;
+                    case "playlist-tracksDelete":
+                        break;
 
-                case "playlist-trackDelete":
-                    break;
+                    case "playlist-info":
+                        break;
 
-                case "playlist-info":
-                    break;
-
-                case "playlist-toggleVisibility":
-                    break;
-            }
-        });
+                    case "playlist-toggleVisibility":
+                        break;
+                }
+            },
+        );
     }
 }

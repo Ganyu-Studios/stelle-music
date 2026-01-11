@@ -116,17 +116,22 @@ export interface EditButtonOptions {
      * The style of the button.
      * @type {NonUniqueButtonStyles}
      */
-    style?: NonUniqueButtonStyles;
+    style: NonUniqueButtonStyles;
     /**
      * The label of the button.
      * @type {string}
      */
-    label?: string;
+    label: string;
     /**
      * The emoji of the button.
      * @type {EmojiResolvable}
      */
-    emoji?: EmojiResolvable;
+    emoji: EmojiResolvable;
+    /**
+     * Whatever the button is disabled or not.
+     * @type {boolean}
+     */
+    disabled: boolean;
 }
 
 /**

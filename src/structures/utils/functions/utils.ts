@@ -158,7 +158,7 @@ export const requesterTransformer = (requester: unknown): StelleUser => {
  * @param {EditButtonOptions} options The options to edit the rows.
  * @returns {ActionRow<Button>[]} The edited rows.
  */
-export const disableButtons = (rows: TopLevelComponents[], options?: EditButtonOptions): ActionRow<Button>[] =>
+export const disableButtons = (rows: TopLevelComponents[], options?: Partial<EditButtonOptions>): ActionRow<Button>[] =>
     rows.map((builder): ActionRow<Button> => {
         const row = builder.toJSON();
 
@@ -168,6 +168,8 @@ export const disableButtons = (rows: TopLevelComponents[], options?: EditButtonO
             components: row.components.map((component) => {
                 if (component.type !== ComponentType.Button) return component;
                 if (component.style === ButtonStyle.Link || component.style === ButtonStyle.Premium) return component;
+
+                if (options?.disabled) component.disabled = options.disabled;
 
                 if (options && component.custom_id === options.customId) {
                     options.style ??= component.style;

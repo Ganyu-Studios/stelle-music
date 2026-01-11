@@ -35,12 +35,12 @@ export default {
                 manage: {
                     title: ({ name }: IPlaylistName): string => `\`🎵\` Managing Playlist: \`${name}\``,
                     description:
-                        "`📦` Here is the place to manage your playlist in a *~at least that's the intention~* easy and simple way.\n`📜` You can save any track, at any time in whatever you are... and delete them.\n\n`⚠️` __Keep in mind, more tracks you add, maybe can take a little longer to load the playlist.__\n\n-# Select an action to manage your playlist.",
+                        "`📦` Here is the place to manage your playlist in a *~~at least that's the intention~~* easy and simple way.\n`📜` You can save any track, at any time in whatever you are... and delete them.\n\n`⚠️` __Keep in mind, more tracks you add, maybe can take a little longer to load the playlist.__\n\n-# Select an action to manage your playlist.",
                     options: {
                         toggle: ({ state }: IState): string => `Make ${state}`,
-                        save: "Save Tracks",
-                        delete: "Delete Tracks",
-                        info: "Playlist Info",
+                        save: "Save",
+                        delete: "Delete",
+                        info: "Info",
                     },
                     save: {
                         saved: ({ type, amount }: IPlaylistSave) =>
