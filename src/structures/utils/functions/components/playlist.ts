@@ -14,7 +14,7 @@ import { EmbedColors } from "seyfert/lib/common/index.js";
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
 import { type APIUser, ButtonStyle, MessageFlags, TextInputStyle } from "seyfert/lib/types/index.js";
 import type { userPlaylist } from "#stelle/prisma";
-import { ms } from "../time.js";
+import { ms } from "#stelle/utils/functions/time.js";
 
 type SaveType = "queue" | "current" | "url";
 
