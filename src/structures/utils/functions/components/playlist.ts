@@ -23,7 +23,7 @@ type SaveType = "queue" | "current" | "url";
  * @param {CommandContext} ctx The command context.
  * @param {ButtonInteraction} interaction The component button interaction.
  * @param {userPlaylist} playlist The user's playlist.
- * @param {"queue" | "current" | "url"} type The type of save operation.
+ * @param {SaveType} type The type of save operation.
  * @returns {Promise<Message | WebhookMessage | void>} The response message.
  */
 async function playlistTrackSave(
