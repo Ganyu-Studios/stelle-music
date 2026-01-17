@@ -185,12 +185,6 @@ export default {
                     rewond: "devuelta",
                 },
             },
-            setchannel: {
-                noChannel: "`❌` Debes proporcionar un canal válido.",
-                noTextChannel: "`❌` El canal debe ser un canal de texto.",
-                noSameGuild: "`❌` El canal debe estar en este servidor.",
-                success: "`✅` El canal de solicitudes ha sido establecido exitosamente.",
-            },
         },
         events: {
             inCooldown: ({ time }): string => `\`❌\` Necesitas esperar: <t:${time}:R> (<t:${time}:t>) para usar esto.`,
@@ -213,6 +207,7 @@ export default {
             noPrevious: "`❌` No hubo una canción antes de esta.",
             noTracks: "`❌` No hay más canciones en la cola.",
             noQuery: "`❌` Introduce el nombre o el URL para reproducir.",
+            noSameGuild: "`❌` El canal debe estar en este servidor.",
             invalidInput: "`❌` La entrada proporcionada no es válida (no puede ser un URL u otro formato inválido).",
             playerEnd: "`🔰` La cola ha terminado... Esperando más canciones.",
             moreTracks: "`❌` Para habilitar **esto** `una o más canciones` son requeridas.",
@@ -466,14 +461,6 @@ export default {
                     name: "bot",
                     description: "Obtén la información de la bot.",
                 },
-            },
-        },
-        setchannel: {
-            name: "solicitudes",
-            description: "Establece el canal de solicitudes de Stelle.",
-            option: {
-                name: "canal",
-                description: "Introduce el nuevo canal.",
             },
         },
         join: {

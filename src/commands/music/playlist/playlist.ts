@@ -8,7 +8,7 @@ import { StelleOptions } from "#stelle/utils/decorator.js";
     integrationTypes: ["GuildInstall"],
     contexts: ["Guild"],
 })
-@StelleOptions({ category: StelleCategory.Music, cooldown: 3 })
+@StelleOptions({ category: StelleCategory.Music, cooldown: 3, skip: true })
 @AutoLoad()
 @LocalesT("locales.playlist.name", "locales.playlist.description")
 export default class PlaylistCommand extends Command {}

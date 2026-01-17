@@ -189,12 +189,6 @@ export default {
                     rewond: "rewond",
                 },
             },
-            setchannel: {
-                noChannel: "`❌` You must provide a valid channel.",
-                noTextChannel: "`❌` The channel must be a text channel.",
-                noSameGuild: "`❌` The channel must be in this guild.",
-                success: "`✅` The requests channel has been set successfully.",
-            },
         },
         events: {
             inCooldown: ({ time }: ICooldown): string => `\`❌\` You need to wait: <t:${time}:R> (<t:${time}:t>) to use this.`,
@@ -219,6 +213,7 @@ export default {
             noPrevious: "`❌` There is no previous track to add.",
             noTracks: "`❌` There are no more tracks in the queue.",
             noQuery: "`❌` Enter a track name or URL to play it.",
+            noSameGuild: "`❌` The channel must be in this guild.",
             invalidInput: "`❌` The provided input is not valid (cannot be a URL or any other invalid format).",
             playerEnd: "`🔰` The queue has finished... Waiting for more tracks.",
             moreTracks: "`❌` In order to enable **this** `one or more tracks` are required.",
@@ -473,14 +468,6 @@ export default {
                     name: "bot",
                     description: "Get the bot info.",
                 },
-            },
-        },
-        setchannel: {
-            name: "setchannel",
-            description: "Set the requests channel of Stelle.",
-            option: {
-                name: "channel",
-                description: "Enter the new channel.",
             },
         },
         join: {

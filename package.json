@@ -55,9 +55,9 @@
         "url": "https://github.com/Ganyu-Studios/stelle-music/issues"
     },
     "dependencies": {
-        "@prisma/client": "^6.19.1",
+        "@prisma/client": "^6.19.2",
         "dotenv": "^17.2.3",
-        "ioredis": "^5.9.1",
+        "ioredis": "^5.9.2",
         "lavalink-client": "github:tomato6966/lavalink-client",
         "meowdb": "^2.2.3",
         "seyfert": "github:tiramisulabs/seyfert",
@@ -65,10 +65,10 @@
     },
     "devDependencies": {
         "@biomejs/biome": "^2.3.11",
-        "@types/node": "^25.0.6",
+        "@types/node": "^25.0.9",
         "husky": "^9.1.7",
         "lint-staged": "^16.2.7",
-        "prisma": "^6.19.1",
+        "prisma": "^6.19.2",
         "tsx": "^4.21.0",
         "typescript": "^5.9.3"
     },
