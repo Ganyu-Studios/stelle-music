@@ -177,6 +177,14 @@ export type SessionJson = StellePlayerJson & {
      * Whatever the lyrics is enabled or not.
      */
     lyricsEnabled?: boolean;
+    /**
+     * Whatever the 24/7 mode is enabled or not.
+     */
+    is247?: boolean;
+    /**
+     * Whatever the auto-pause in 24/7 mode is enabled or not.
+     */
+    isAutoPause?: boolean;
 };
 
 /**

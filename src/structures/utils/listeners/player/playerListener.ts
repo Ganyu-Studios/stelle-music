@@ -35,6 +35,29 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
     const members = await Promise.all(channel.states().map((c): Promise<GuildMember> => c.member()));
     const isEmpty = !members.filter(({ user }) => !user.bot).length;
 
+    const is247 = player.get<boolean | undefined>("is247") || client.config.twentyforseven.is247;
+    const isAutoPause = player.get<boolean | undefined>("isAutoPause") ?? client.config.twentyforseven.autoPause;
+
+    if (is247) {
+        if (isAutoPause) {
+            if (isEmpty && (player.paused || player.playing)) await player.pause();
+            else if (!isEmpty && player.paused) await player.resume();
+        }
+
+        if (isEmpty) {
+            await client.messages.write(player.textChannelId, {
+                embeds: [
+                    {
+                        color: EmbedColors.Green,
+                        description: messages.events.is247Enabled,
+                    },
+                ],
+            });
+        }
+
+        return;
+    }
+
     if (
         isEmpty &&
         !player.playing &&

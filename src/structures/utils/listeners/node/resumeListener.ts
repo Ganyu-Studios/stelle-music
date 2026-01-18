@@ -50,6 +50,8 @@ export async function resumeListener(
         player.set("localeString", session.localeString);
         player.set("lyricsId", session.lyricsId);
         player.set("lyricsEnabled", session.lyricsEnabled);
+        player.set("is247", session.is247);
+        player.set("isAutoPause", session.isAutoPause);
 
         player.voice = data.voice;
 

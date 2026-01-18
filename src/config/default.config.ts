@@ -63,4 +63,8 @@ export default createConfig({
         onTrackSkip: false,
         onPlayerStop: false,
     },
+    twentyforseven: {
+        autoPause: true,
+        is247: false,
+    },
 });

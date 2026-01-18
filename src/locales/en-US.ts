@@ -24,6 +24,14 @@ export default {
                 `\`✅\` The previous track [**${title}**](${uri}) has been added to the queue.`,
             stop: "`👋` Stopping and leaving...",
             shuffle: "`✅` The queue has been shuffled.",
+            is247: {
+                enabled: ({ is247, autoPause }: ITwentyForSeven): string =>
+                    `\`✅\` The 24/7 mode is now \`${is247}\` with auto-pause \`${autoPause}\``,
+                enabledType: {
+                    enabled: "Enabled",
+                    disabled: "Disabled",
+                },
+            },
             playlist: {
                 created: ({ name, state }: IPlaylist): string =>
                     `\`✅\` The playlist \`${name}\` has been created successfully.\n\`📋\` **Visibility**: \`${state}\``,
@@ -204,6 +212,7 @@ export default {
             mention: ({ clientName, defaultPrefix, commandName }: IMention): string =>
                 `\`📢\` Hey! My name is: **${clientName}** and my prefix is: \`${defaultPrefix}\` and **/** too!\n\`📋\` If you want to see my commands, type: \`${defaultPrefix} ${commandName}\` or /${commandName}.`,
             hasMembers: ({ clientName }: IClientName): string => `\`🎧\` ${clientName} is not alone anymore... Resuming.`,
+            is247Enabled: "`✅` The 24/7 mode is enabled... I will stay in the voice channel until you tell me to leave.",
             onlyDeveloper: "`❌` Only the **bot developer** can use this.",
             onlyGuildOwner: "`❌` Only the **guild owner** can use this.",
             noCommand: "`❌` I don't have the required command *yet*, try again in a moment.",
@@ -522,6 +531,14 @@ export default {
                 },
             },
         },
+        twentyforseven: {
+            name: "247",
+            description: "Toggles the 24/7 mode for the bot.",
+            option: {
+                name: "autopause",
+                description: "Whether to auto-pause the player when everyone leaves the voice channel.",
+            },
+        },
     },
 };
 
@@ -563,3 +580,4 @@ type IAutocompletePlaylist = { name: string; visibility: string; author: string 
 type IPlaylistName = { name: string };
 type IState = { state: string };
 type IPlaylistSave = { type: string; amount: number };
+type ITwentyForSeven = { is247: string; autoPause: string };

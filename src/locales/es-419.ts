@@ -23,6 +23,13 @@ export default {
             previous: ({ title, uri }): string => `\`✅\` La canción anterior [**${title}**](${uri}) ha sido añadida a la cola.`,
             stop: "`👋` Deteniendo y abandonando el canal...",
             shuffle: "`✅` La cola ha sido mezclada.",
+            is247: {
+                enabled: ({ is247, autoPause }): string => `\`✅\` El modo 24/7 ahora está \`${is247}\` con auto-pausa \`${autoPause}\``,
+                enabledType: {
+                    enabled: "Activado",
+                    disabled: "Desactivado",
+                },
+            },
             playlist: {
                 created: ({ name, state }): string =>
                     `\`✅\` La playlist \`${name}\` ha sido creada correctamente.\n\`📋\` **Visibilidad**: \`${state}\``,
@@ -198,6 +205,7 @@ export default {
                 `\`📢\` Hey! Mi nombre es: **${clientName}** y mi prefijo es: \`${defaultPrefix}\` y **/** también!\n\`📋\` Si tu quieres ver mis comandos, escribe: \`${defaultPrefix} ${commandName}\` o /${commandName}.`,
             noMembers: ({ clientName }): string => `\`🎧\` ${clientName} está sola en el **canal de voz**... Abandonando el canal.`,
             hasMembers: ({ clientName }): string => `\`🎧\` ${clientName} dejó de estar sola... Resumiendo.`,
+            is247Enabled: "`✅` El modo 24/7 está activado... Me quedaré en el canal de voz hasta que me digas que me vaya.",
             onlyDeveloper: "`❌` Solo el **dueño del bot** puede usar esto.",
             onlyGuildOwner: "`❌` Solo el **dueño del servidor** puede usar esto.",
             noCommand: "`❌` No tengo el comando necesitado *todavía*, intenta de nuevo en un momento.",
@@ -513,6 +521,14 @@ export default {
                     name: "gestionar",
                     description: "Gestiona una playlist de música.",
                 },
+            },
+        },
+        twentyforseven: {
+            name: "247",
+            description: "Alterna el modo 24/7 para la bot.",
+            option: {
+                name: "autopause",
+                description: "Si se debe auto-pausar el reproductor cuando todos salen del canal de voz.",
             },
         },
     },

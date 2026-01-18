@@ -47,6 +47,8 @@ export default createLavalinkEvent({
                 me: newPlayer.get<StelleUser | undefined>("me"),
                 lyricsId: newPlayer.get<string | undefined>("lyricsId"),
                 lyricsEnabled: newPlayer.get<boolean | undefined>("lyricsEnabled"),
+                is247: newPlayer.get<boolean | undefined>("is247"),
+                isAutoPause: newPlayer.get<boolean | undefined>("isAutoPause"),
             });
 
             if (Constants.Debug)

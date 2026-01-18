@@ -115,6 +115,21 @@ interface Deleter {
     onPlayerStop: boolean;
 }
 
+interface TwentyForSeven {
+    /**
+     * Whether the bot should stay 24/7 in the voice channel.
+     * @type {boolean}
+     * @default false
+     */
+    is247: boolean;
+    /**
+     * Whether to auto-pause the player when twentyforseven is enabled.
+     * @type {boolean}
+     * @default true
+     */
+    autoPause: boolean;
+}
+
 /**
  * The configuration interface.
  */
@@ -222,6 +237,12 @@ export interface StelleConfiguration {
      * @type {Deleter}
      */
     deleter: Deleter;
+    /**
+     * Whether the bot should stay 24/7 in the voice channel.
+     * @type {boolean}
+     * @default false
+     */
+    twentyforseven: TwentyForSeven;
 }
 
 /**
