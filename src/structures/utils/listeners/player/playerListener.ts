@@ -35,6 +35,8 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
     const members = await Promise.all(channel.states().map((c): Promise<GuildMember> => c.member()));
     const isEmpty = !members.filter(({ user }) => !user.bot).length;
 
+    const isChannel = oldState?.channelId === player.voiceChannelId && newState.channelId !== oldState?.channelId;
+
     const is247 = player.get<boolean | undefined>("is247") || client.config.twentyforseven.is247;
     const isAutoPause = player.get<boolean | undefined>("isAutoPause") ?? client.config.twentyforseven.autoPause;
 
@@ -44,7 +46,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
             else if (!isEmpty && player.paused) await player.resume();
         }
 
-        if (isEmpty) {
+        if (isEmpty && isChannel) {
             await client.messages.write(player.textChannelId, {
                 embeds: [
                     {
@@ -59,6 +61,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
     }
 
     if (
+        isChannel &&
         isEmpty &&
         !player.playing &&
         !player.paused &&
@@ -80,7 +83,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
         return;
     }
 
-    if (isEmpty && !player.playing && player.paused && player.queue.current && !player.queue.tracks.length) {
+    if (isChannel && isEmpty && !player.playing && player.paused && player.queue.current && !player.queue.tracks.length) {
         await player.destroy();
         await client.messages.write(player.textChannelId, {
             embeds: [
@@ -96,7 +99,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
         return;
     }
 
-    if (isEmpty && (player.paused || player.playing)) {
+    if (isChannel && isEmpty && (player.paused || player.playing)) {
         await player.pause();
         await client.messages.write(player.textChannelId, {
             embeds: [
