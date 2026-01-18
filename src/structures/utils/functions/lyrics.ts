@@ -30,6 +30,11 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | Message | W
         (await player
             .getCurrentLyrics()
             .then((lyrics) => {
+                // If the lyrics object contains an error or trace property, it means an error occurred
+                // So we return null in that case
+                if ("error" in lyrics && "trace" in lyrics) return null;
+
+                // If for some reason lyrics is null or undefined, we return null
                 if (!lyrics) return null;
 
                 if (typeof lyrics.provider !== "string") lyrics.provider = "Unknown";
