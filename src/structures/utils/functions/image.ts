@@ -117,6 +117,9 @@ export async function renderImage(data: ImageData): Promise<Uint8Array> {
     const font: Buffer<ArrayBuffer> = await readFile(join(fontsPath, "BoldFont.ttf"));
     const albumImage: Image = await getAlbumImage(albumURL);
 
+    if (albumImage.width === albumImage.height) albumImage.resize(504, 504);
+    else albumImage.crop((albumImage.width - 504) / 2, (albumImage.height - 504) / 2, 504, 504);
+
     const dominant: number = albumImage.dominantColor();
     const opaque: boolean = isOpaque(Image.colorToRGB(dominant));
     const mainColor: number = opaque ? ImageColors.Text : ImageColors.Base;
@@ -150,7 +153,7 @@ export async function renderImage(data: ImageData): Promise<Uint8Array> {
     const canvas: Image = new Image(1080, 1350)
         .fill(dominant)
         .composite(text, 0, 100)
-        .composite(albumImage.roundCorners(50).resize(504, 504), 288, 348)
+        .composite(albumImage.roundCorners(50), 288, 348)
         .composite(borderImage, 0, 0);
 
     return canvas.encode();
