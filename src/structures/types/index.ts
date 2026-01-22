@@ -5,6 +5,7 @@ import type { APIUser, ButtonStyle, PermissionFlagsBits } from "seyfert/lib/type
 
 export type { LoadableStelleConfiguration, StelleConfiguration, StelleEnvironment } from "./client/configuration.js";
 export type { AutoplayState, PausedState, StelleConstants, WorkingDirectory } from "./client/constants.js";
+export type { ImageData } from "./client/image.js";
 
 export {
     type LavalinkEvent,

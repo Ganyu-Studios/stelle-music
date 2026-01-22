@@ -14,14 +14,13 @@ export default {
     messages: {
         commands: {
             join: ({ channelId }: IChannel): string => `\`✅\` Joined the voice channel <#${channelId}>.`,
-            nowplaying: ({ title, url, author, requester, bar, duration, position }: INowplaying): string =>
-                `\`📻\` Now playing: [\`${title}\`](${url}) - \`${author}\`\n\`👤\` **Requested by**: <@${requester}>\n \n\`🕛\` ${bar} | \`${position}\` - \`(${duration})\``,
             setprefix: ({ prefix }: IPrefix): string => `\`✅\` The **new prefix** for this guild is now: \`${prefix}\``,
             skip: ({ amount }: IAmount): string => `\`✅\` Skipped the amount of: \`${amount} tracks\`.`,
             move: ({ textId, voiceId }: IMove): string =>
                 `\`✅\` Moved to the voice channel <#${voiceId}> and the text channel: <#${textId}>`,
             previous: ({ title, uri }: IPrevious): string =>
                 `\`✅\` The previous track [**${title}**](${uri}) has been added to the queue.`,
+            nowplaying: ({ userName, time }: INowPlaying): string => `-# Requested by ${userName} with ${time}`,
             stop: "`👋` Stopping and leaving...",
             shuffle: "`✅` The queue has been shuffled.",
             is247: {
@@ -554,7 +553,6 @@ type IClientName = { clientName: string };
 type IHelp = { defaultPrefix: string; options: string };
 type IHelpMenu = { category: string };
 type IMention = { clientName: string; defaultPrefix: string; commandName: string };
-type INowplaying = { title: string; url: string; duration: string; requester: string; author: string; bar: string; position: string };
 type IEngine = { engine: string; clientName: string };
 type IPrefix = { prefix: string };
 type ISeek = { time: string | number; type: string };
@@ -581,3 +579,4 @@ type IPlaylistName = { name: string };
 type IState = { state: string };
 type IPlaylistSave = { type: string; amount: number };
 type ITwentyForSeven = { is247: string; autoPause: string };
+type INowPlaying = { userName: string; time: string };

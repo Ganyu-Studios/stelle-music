@@ -22,7 +22,7 @@ importers:
         version: 5.9.2
       lavalink-client:
         specifier: github:tomato6966/lavalink-client
-        version: https://codeload.github.com/tomato6966/lavalink-client/tar.gz/0fafd37b38117af5a6c28aa27579731528987242
+        version: https://codeload.github.com/tomato6966/lavalink-client/tar.gz/c901f82ad9e3c3102b842de282e38c3560133995
       meowdb:
         specifier: ^2.2.3
         version: 2.2.3
@@ -336,6 +336,9 @@ packages:
   citty@0.1.6:
     resolution: {integrity: sha512-tskPPKEs8D2KPafUypv2gxwJP8h/OaJmC82QQGGDQcHvXX43xF2VDACcJVmZ0EuSxkpO9Kc4MlrA3q0+FG58AQ==}
 
+  citty@0.2.0:
+    resolution: {integrity: sha512-8csy5IBFI2ex2hTVpaHN2j+LNE199AgiI7y4dMintrr8i0lQiFn+0AWMZrWdHKIgMOer65f8IThysYhoReqjWA==}
+
   cli-cursor@5.0.0:
     resolution: {integrity: sha512-aCj4O5wKyszjMmDT4tZj93kxyydN/K5zPWSCe6/0AV/AA1pqe5ZBIw0a2ZfPQV7lL5/yb5HsUreJ6UFAF1tEQw==}
     engines: {node: '>=18'}
@@ -412,8 +415,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  eventemitter3@5.0.1:
-    resolution: {integrity: sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==}
+  eventemitter3@5.0.4:
+    resolution: {integrity: sha512-mlsTRyGaPBjPedk6Bvw+aqbsXDtoAyAzm5MO7JgU+yVRyMQ5O8bD4Kcci7BS85f93veegeCPkL8R4GLClnjLFw==}
 
   exsolve@1.0.8:
     resolution: {integrity: sha512-LmDxfWXwcTArk8fUEnOfSZpHOJ6zOMUJKOtFLFqJLoKJetuQG874Uc7/Kki7zFLzYybmZhp1M7+98pfMqeX8yA==}
@@ -467,8 +470,8 @@ packages:
     resolution: {integrity: sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==}
     hasBin: true
 
-  lavalink-client@https://codeload.github.com/tomato6966/lavalink-client/tar.gz/0fafd37b38117af5a6c28aa27579731528987242:
-    resolution: {tarball: https://codeload.github.com/tomato6966/lavalink-client/tar.gz/0fafd37b38117af5a6c28aa27579731528987242}
+  lavalink-client@https://codeload.github.com/tomato6966/lavalink-client/tar.gz/c901f82ad9e3c3102b842de282e38c3560133995:
+    resolution: {tarball: https://codeload.github.com/tomato6966/lavalink-client/tar.gz/c901f82ad9e3c3102b842de282e38c3560133995}
     version: 2.7.8
     engines: {bun: '>=1.1.27', node: '>=18.0.0'}
 
@@ -512,9 +515,9 @@ packages:
   node-fetch-native@1.6.7:
     resolution: {integrity: sha512-g9yhqoedzIUm0nTnTqAQvueMPVOuIY16bqgAJJC8XOOubYFNwz6IER9qs0Gq2Xd0+CecCKFjtdDTMA4u4xG06Q==}
 
-  nypm@0.6.2:
-    resolution: {integrity: sha512-7eM+hpOtrKrBDCh7Ypu2lJ9Z7PNZBdi/8AT3AX8xoCj43BBVHD0hPSTEvMtkMpfs8FCqBGhxB+uToIQimA111g==}
-    engines: {node: ^14.16.0 || >=16.10.0}
+  nypm@0.6.4:
+    resolution: {integrity: sha512-1TvCKjZyyklN+JJj2TS3P4uSQEInrM/HkkuSXsEzm1ApPgBffOn8gFguNnZf07r/1X6vlryfIqMUkJKQMzlZiw==}
+    engines: {node: '>=18'}
     hasBin: true
 
   ohash@2.0.11:
@@ -852,6 +855,8 @@ snapshots:
     dependencies:
       consola: 3.4.2
 
+  citty@0.2.0: {}
+
   cli-cursor@5.0.0:
     dependencies:
       restore-cursor: 5.1.0
@@ -927,7 +932,7 @@ snapshots:
       '@esbuild/win32-ia32': 0.27.2
       '@esbuild/win32-x64': 0.27.2
 
-  eventemitter3@5.0.1: {}
+  eventemitter3@5.0.4: {}
 
   exsolve@1.0.8: {}
 
@@ -954,7 +959,7 @@ snapshots:
       consola: 3.4.2
       defu: 6.1.4
       node-fetch-native: 1.6.7
-      nypm: 0.6.2
+      nypm: 0.6.4
       pathe: 2.0.3
 
   husky@9.1.7: {}
@@ -983,7 +988,7 @@ snapshots:
 
   jiti@2.6.1: {}
 
-  lavalink-client@https://codeload.github.com/tomato6966/lavalink-client/tar.gz/0fafd37b38117af5a6c28aa27579731528987242:
+  lavalink-client@https://codeload.github.com/tomato6966/lavalink-client/tar.gz/c901f82ad9e3c3102b842de282e38c3560133995:
     dependencies:
       tslib: 2.8.1
       ws: 8.19.0
@@ -1005,7 +1010,7 @@ snapshots:
     dependencies:
       cli-truncate: 5.1.1
       colorette: 2.0.20
-      eventemitter3: 5.0.1
+      eventemitter3: 5.0.4
       log-update: 6.1.0
       rfdc: 1.4.1
       wrap-ansi: 9.0.2
@@ -1037,12 +1042,10 @@ snapshots:
 
   node-fetch-native@1.6.7: {}
 
-  nypm@0.6.2:
+  nypm@0.6.4:
     dependencies:
-      citty: 0.1.6
-      consola: 3.4.2
+      citty: 0.2.0
       pathe: 2.0.3
-      pkg-types: 2.3.0
       tinyexec: 1.0.2
 
   ohash@2.0.11: {}

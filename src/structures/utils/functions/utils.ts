@@ -3,7 +3,6 @@ import { mkdir } from "node:fs/promises";
 import { isAbsolute, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { inspect as nodeInspect } from "node:util";
-import type { Player } from "lavalink-client";
 import {
     ActionRow,
     type AnyContext,
@@ -187,29 +186,6 @@ export const disableButtons = (rows: TopLevelComponents[], options?: Partial<Edi
 
 /**
  *
- * Create a new player progress bar.
- * @param {Player} player The player.
- * @returns {string} The player track bar.
- */
-export const createPlayerBar = (player: Player): string => {
-    const size = 15;
-    const line = "▬";
-    const slider = "🔘";
-
-    if (!player.queue.current) return `${slider}${line.repeat(size - 1)}`;
-
-    const current = player.position;
-    const total = player.queue.current.info.duration;
-
-    const progress = Math.min(current / total, 1);
-    const filledLength = Math.round(size * progress);
-    const emptyLength = size - filledLength;
-
-    return `${line.repeat(filledLength).slice(0, -1)}${slider}${line.repeat(emptyLength)}`;
-};
-
-/**
- *
  * Create a directory if it doesn't exist.
  * @param {string} dirname The directory name to create.
  * @return {Promise<string>} The absolute path of the created directory.
@@ -220,7 +196,7 @@ export const createDirectory = async (dirname: string): Promise<string> => {
         return join(process.cwd(), dirname);
     })();
 
-    const isExists = existsSync(dir);
+    const isExists: boolean = existsSync(dir);
     if (!isExists) await mkdir(dir, { recursive: true });
 
     return dir;
@@ -257,7 +233,7 @@ export const createId = (options: CreateIdOptions = {}): string => {
  * @returns {boolean} True if the input is a valid URL, false otherwise.
  */
 export const checkUrl = (input: string): boolean => {
-    const patterns = [
+    const patterns: RegExp[] = [
         /(?:https?:\/\/)?(?:www\.)?(?:discord(?:app)?\.(?:com\/invite|gg))\/\S+/i,
         /^(?:https?:\/\/)?(?:www\.)?[\w.-]+\.[\w]{2,}(?:\/\S*)?$/i,
     ];
@@ -314,7 +290,7 @@ export const omitKeys = <T extends Record<string, any>, K extends keyof T>(obj: 
  * @returns {string} The converted text.
  */
 export const convertToSnakeCase = (text: string, upper: boolean = false): string => {
-    const result = text.replace(/([a-z])([A-Z])/g, "$1_$2");
+    const result: string = text.replace(/([a-z])([A-Z])/g, "$1_$2");
     return upper ? result.toUpperCase() : result.toLowerCase();
 };
 
@@ -333,4 +309,4 @@ export const customImport = <T>(path: string): Promise<T> =>
  * @param {number} ms The milliseconds to wait.
  * @returns {Promise<void>} A promise that resolves after the specified time.
  */
-export const wait = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
+export const wait = (ms: number): Promise<void> => new Promise((resolve): NodeJS.Timeout => setTimeout(resolve, ms));

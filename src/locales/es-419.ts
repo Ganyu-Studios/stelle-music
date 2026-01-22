@@ -15,12 +15,11 @@ export default {
     messages: {
         commands: {
             join: ({ channelId }): string => `\`✅\` Me uní al canal de voz <#${channelId}>.`,
-            nowplaying: ({ title, url, author, requester, bar, duration, position }): string =>
-                `\`📻\` Ahora: [\`${title}\`](${url}) - \`${author}\`\n\`👤\` **Solicitado por**: <@${requester}>\n \n\`🕛\` ${bar} | \`${position}\` - \`(${duration})\``,
             setprefix: ({ prefix }): string => `\`✅\` El **nuevo prefijo** para este servidor es: \`${prefix}\``,
             skip: ({ amount }): string => `\`✅\` Saltando la cantidad de: \`${amount} canciones\`.`,
             move: ({ textId, voiceId }): string => `\`✅\` Me movi al canal de voz <#${voiceId}> y canal de texto: <#${textId}>`,
             previous: ({ title, uri }): string => `\`✅\` La canción anterior [**${title}**](${uri}) ha sido añadida a la cola.`,
+            nowplaying: ({ userName, time }): string => `-# Pedido por: ${userName} con ${time}`,
             stop: "`👋` Deteniendo y abandonando el canal...",
             shuffle: "`✅` La cola ha sido mezclada.",
             is247: {
