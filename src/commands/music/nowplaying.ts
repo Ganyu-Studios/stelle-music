@@ -79,7 +79,7 @@ export default class NowPlayingCommand extends Command {
         const dominantColor: number = albumImage.dominantColor();
         const embedColor: number = (dominantColor >> 8) & 0xffffff;
 
-        const attachment: AttachmentBuilder = new AttachmentBuilder().setName(`${this.name}.png`).setFile("buffer", Buffer.from(image));
+        const attachment: AttachmentBuilder = new AttachmentBuilder().setName(`${this.name}.png`).setFile("buffer", image);
         const container: Container = new Container().setColor(embedColor).addComponents(
             new MediaGallery().addItems(new MediaGalleryItem().setMedia(`attachment://${this.name}.png`)),
             new TextDisplay().setContent(
