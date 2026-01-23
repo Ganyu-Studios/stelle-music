@@ -101,7 +101,7 @@ export interface Options {
      * Skip registering the command.
      * @default false
      */
-    skip?: boolean;
+    skipRegister?: boolean;
 }
 
 /**

@@ -8,5 +8,5 @@ import { StelleOptions } from "#stelle/utils/decorator.js";
     contexts: ["Guild"],
     defaultMemberPermissions: ["Administrator"],
 })
-@StelleOptions({ onlyDeveloper: true, skip: true })
+@StelleOptions({ onlyDeveloper: true, skipRegister: true })
 export default class TestCommand extends Command {}

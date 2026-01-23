@@ -110,7 +110,10 @@ export class Stelle extends Client<true> {
 
             if (command.type === ApplicationCommandType.PrimaryEntryPoint) return command;
             if (command.onlyDeveloper) (command as NonGlobalCommands).guildId = this.config.guildIds;
-            if (command.skip) return false;
+            if (command.skipRegister) {
+                this.logger.info(`Command - Skipped loading command: ${command.name}`);
+                return false;
+            }
 
             return command;
         };
