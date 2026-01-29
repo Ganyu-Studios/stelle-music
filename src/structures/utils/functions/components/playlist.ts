@@ -1,3 +1,4 @@
+import type { Player, SearchResult, Track } from "lavalink-client";
 import {
     ActionRow,
     Button,
@@ -7,6 +8,7 @@ import {
     Label,
     type Message,
     Modal,
+    type ModalSubmitInteraction,
     TextInput,
     type WebhookMessage,
 } from "seyfert";
@@ -15,6 +17,7 @@ import type { CreateComponentCollectorResult } from "seyfert/lib/components/hand
 import { ButtonStyle, MessageFlags, TextInputStyle } from "seyfert/lib/types/index.js";
 import type { userPlaylist } from "#stelle/prisma";
 import { ms } from "#stelle/utils/functions/time.js";
+import { isUrl } from "#stelle/utils/functions/utils.js";
 
 type SaveType = "queue" | "current" | "url";
 
@@ -37,7 +40,7 @@ async function playlistTrackSave(
 
     if (!ctx.inGuild()) return;
 
-    const player = client.manager.getPlayer(ctx.guildId);
+    const player: Player | undefined = client.manager.getPlayer(ctx.guildId);
     if ((!player || !player.playing) && ["queue", "current"].includes(type))
         return interaction.editOrReply({
             content: "",
@@ -68,7 +71,7 @@ async function playlistTrackSave(
                     {
                         description: messages.commands.playlist.manage.save.saved({
                             type: messages.commands.playlist.manage.save.saveType[type],
-                            amount: 1,
+                            amount: tracks.length,
                         }),
                     },
                 ],
@@ -78,7 +81,7 @@ async function playlistTrackSave(
         }
 
         case "current": {
-            const track = player!.queue.current;
+            const track: Track | null = player!.queue.current;
             if (!track) return;
 
             if (playlist.tracks.some((t) => t.encoded === track.encoded))
@@ -116,7 +119,7 @@ async function playlistTrackSave(
         }
 
         case "url": {
-            const modal = new Modal()
+            const modal: Modal = new Modal()
                 .setTitle(messages.commands.playlist.manage.save.modal.title)
                 .setCustomId("playlist-saveFromURL-modal")
                 .addComponents(
@@ -131,16 +134,49 @@ async function playlistTrackSave(
                                 .setRequired(true),
                         ),
                 )
-                .run(async (modal) => {
-                    const url = modal.getInputValue("playlist-saveFromURL-input", true) as string;
-
+                .run(async (modal: ModalSubmitInteraction): Promise<void> => {
                     await modal.deferReply(MessageFlags.Ephemeral);
 
-                    const res = await client.manager.search({ query: url, requester: ctx.author });
-                    if (!res || !res.tracks.length) return;
+                    const url: string = modal.getInputValue("playlist-saveFromURL-input", true) as string;
+                    if (!isUrl(url))
+                        return modal.editOrReply({
+                            content: "",
+                            flags: MessageFlags.Ephemeral,
+                            embeds: [
+                                {
+                                    description: messages.commands.playlist.manage.save.invalidUrl,
+                                    color: EmbedColors.Red,
+                                },
+                            ],
+                        });
 
-                    const track = res.tracks.filter((track) => !playlist.tracks.some((t) => t.encoded === track.encoded)).at(0);
-                    if (!track) return;
+                    const res: SearchResult | null = await client.manager.search({ query: url, requester: ctx.author });
+                    if (!res || !res.tracks.length)
+                        return modal.editOrReply({
+                            content: "",
+                            flags: MessageFlags.Ephemeral,
+                            embeds: [
+                                {
+                                    description: messages.commands.playlist.manage.save.noResults,
+                                    color: EmbedColors.Red,
+                                },
+                            ],
+                        });
+
+                    const track: Track | undefined = res.tracks
+                        .filter((track): boolean => !playlist.tracks.some((t): boolean => t.encoded === track.encoded))
+                        .at(0);
+                    if (!track)
+                        return modal.editOrReply({
+                            content: "",
+                            flags: MessageFlags.Ephemeral,
+                            embeds: [
+                                {
+                                    description: messages.commands.playlist.manage.save.alreadyExists,
+                                    color: EmbedColors.Red,
+                                },
+                            ],
+                        });
 
                     playlist.tracks.push({
                         encoded: track.encoded!,
@@ -231,7 +267,7 @@ export async function playlistTrackSaveHandler(ctx: CommandContext, interaction:
             "playlist-saveFromURL": "url",
         } as const;
 
-        const type = saveType[interaction.customId];
+        const type: SaveType = saveType[interaction.customId];
 
         await playlistTrackSave(ctx, interaction, playlist, type);
     });

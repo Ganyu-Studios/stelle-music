@@ -274,6 +274,14 @@ export const inspect = (object: any, depth: number = 0): string => nodeInspect(o
 
 /**
  *
+ * Check if a string is a valid URL.
+ * @param {string} input The string to check.
+ * @returns {boolean} True if the string is a valid URL, false otherwise.
+ */
+export const isUrl = (input: string): boolean => /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-./?%&=]*)?$/i.test(input);
+
+/**
+ *
  * Omit keys from an object and convert to plain object without functions.
  * @param {T} obj The object to omit keys.
  * @param {K[]} keys The keys to omit.

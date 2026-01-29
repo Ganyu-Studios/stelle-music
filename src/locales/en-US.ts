@@ -52,7 +52,9 @@ export default {
                     save: {
                         saved: ({ type, amount }: IPlaylistSave) =>
                             `\`✅\` Successfully saved **${amount} track(s)** from **${type}** to your playlist.`,
+                        noResults: "`❌` No tracks were found from the provided URL.",
                         description: "`📢` Select one of the options below to save tracks to your playlist.",
+                        invalidUrl: "`❌` The URL you entered is not valid.",
                         alreadyExists: "`❌` The **track(s)** you are trying to save already exist(s) in your playlist.",
                         modal: {
                             title: "Save from URL",

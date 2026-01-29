@@ -49,6 +49,8 @@ export default {
                     },
                     save: {
                         saved: ({ type, amount }) => `\`✅\` Guardado exitosamente **${amount} canción(es)** de **${type}** a tu playlist.`,
+                        noResults: "`❌` No se encontraron canciones de la URL proporcionada.",
+                        invalidUrl: "`❌` La URL que ingresaste no es válida.",
                         description: "`📢` Selecciona una de las opciones abajo para guardar canciones a tu playlist.",
                         alreadyExists: "`❌` Las **canciones** que estás intentando guardar ya existen en tu playlist.",
                         modal: {
