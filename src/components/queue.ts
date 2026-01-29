@@ -1,7 +1,6 @@
 import { ComponentCommand, Embed, type GuildComponentContext, Middlewares } from "seyfert";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
-import type { StelleUser } from "#stelle/types";
 import { EmbedPaginator } from "#stelle/utils/paginator.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
@@ -21,7 +20,7 @@ export default class QueueComponent extends ComponentCommand {
 
         const amount = 20;
         const tracks = player.queue.tracks.map(
-            (track, i) => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${(track.requester as StelleUser).tag}`,
+            (track, i) => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${track.requester!.tag}`,
         );
 
         if (tracks.length < amount) {

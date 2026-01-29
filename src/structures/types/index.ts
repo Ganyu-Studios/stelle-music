@@ -1,7 +1,7 @@
 import type { PlayerJson } from "lavalink-client";
 import type { Command, ContextMenuCommand, SubCommand, User } from "seyfert";
 import type { EmojiResolvable } from "seyfert/lib/common/index.js";
-import type { APIUser, ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
+import type { ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
 export type { LoadableStelleConfiguration, StelleConfiguration, StelleEnvironment } from "./client/configuration.js";
 export type { AutoplayState, PausedState, StelleConstants, WorkingDirectory } from "./client/constants.js";
@@ -138,9 +138,7 @@ export interface EditButtonOptions {
 /**
  * The type of the api user.
  */
-export type StelleUser = APIUser & {
-    tag: string;
-};
+export type StelleUser = Omit<Plain<User>, "client">;
 
 /**
  * The type of the player session.
@@ -189,11 +187,12 @@ export type SessionJson = StellePlayerJson & {
 };
 
 /**
- * The type to prettify the object.
+ * The type to get the plain object without functions.
  */
-export type Prettify<T> = {
-    [K in keyof T]: T[K];
-} & {};
+export type Plain<T> = {
+    // biome-ignore lint/complexity/noBannedTypes: Just want to exclude functions
+    [K in keyof T as T[K] extends Function ? never : K]: T[K];
+};
 
 /**
  * The type of the permission flags.
@@ -215,8 +214,3 @@ export type NonCommandOptions = Omit<Options, "category">;
  * The types for non-global commands.
  */
 export type NonGlobalCommands = Command | ContextMenuCommand | SubCommand;
-
-/**
- * The type of the user without the client.
- */
-export type CustomUser<T extends User = User> = Omit<T, "client">;

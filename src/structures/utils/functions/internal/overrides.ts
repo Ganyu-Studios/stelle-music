@@ -1,8 +1,8 @@
 import { type AnyContext, type AutocompleteInteraction, Embed, type Message, type PermissionStrings, type WebhookMessage } from "seyfert";
 import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
-import { getFormattedOptions } from "#stelle/utils/functions/options.js";
-import { sendErrorReport } from "#stelle/utils/functions/report.js";
+import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js";
+import { sendErrorReport } from "#stelle/utils/functions/internal/report.js";
 
 /**
  *

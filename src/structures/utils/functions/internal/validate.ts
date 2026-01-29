@@ -1,8 +1,8 @@
 import { Environment } from "#stelle/utils/data/configuration.js";
 import { Constants } from "#stelle/utils/data/constants.js";
 import { InvalidEnvValue } from "#stelle/utils/errors.js";
-import { logger } from "#stelle/utils/functions/logger.js";
-import { convertToSnakeCase, isValid } from "./utils.js";
+import { logger } from "#stelle/utils/functions/internal/logger.js";
+import { convertToSnakeCase, isValid } from "#stelle/utils/functions/utils.js";
 
 /**
  *

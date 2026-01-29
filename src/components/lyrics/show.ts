@@ -1,5 +1,5 @@
 import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
-import { displayLyrics } from "#stelle/utils/functions/lyrics.js";
+import { displayLyrics } from "#stelle/utils/functions/manager/lyrics.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
 export default class LyricsShowComponent extends ComponentCommand {

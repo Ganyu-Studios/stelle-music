@@ -1,16 +1,16 @@
 import { LimitedCollection } from "seyfert";
 import type { guildLocale, guildPlayer, guildPrefix, userPlaylist } from "#stelle/prisma";
-import { CacheKeys, type Prettify } from "#stelle/types";
+import { CacheKeys } from "#stelle/types";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 
 /**
  * The interface of the database cache keys.
  */
 interface CacheMap {
-    [CacheKeys.Locale]: Prettify<guildLocale>;
-    [CacheKeys.Player]: Prettify<guildPlayer>;
-    [CacheKeys.Prefix]: Prettify<guildPrefix>;
-    [CacheKeys.Playlist]: Prettify<userPlaylist>;
+    [CacheKeys.Locale]: guildLocale;
+    [CacheKeys.Player]: guildPlayer;
+    [CacheKeys.Prefix]: guildPrefix;
+    [CacheKeys.Playlist]: userPlaylist;
 }
 
 /**

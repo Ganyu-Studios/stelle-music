@@ -5,7 +5,7 @@ import { client } from "#stelle/client";
 import { Environment } from "#stelle/utils/data/configuration.js";
 import { Constants } from "#stelle/utils/data/constants.js";
 
-import { logger } from "#stelle/utils/functions/logger.js";
+import { logger } from "#stelle/utils/functions/internal/logger.js";
 import { parseWebhook, truncate } from "#stelle/utils/functions/utils.js";
 
 /**

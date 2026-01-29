@@ -2,7 +2,7 @@ import { LavalinkManager, type LavalinkNode, type SearchPlatform, type SearchRes
 import type { UsingClient } from "seyfert";
 
 import { Constants } from "#stelle/utils/data/constants.js";
-import { autoPlayFunction } from "#stelle/utils/functions/autoplay.js";
+import { autoPlayFunction } from "#stelle/utils/functions/manager/autoplay.js";
 import { requesterTransformer } from "#stelle/utils/functions/utils.js";
 import { LavalinkHandler } from "#stelle/utils/manager/handler.js";
 import { RedisClient } from "./modules/Redis.js";

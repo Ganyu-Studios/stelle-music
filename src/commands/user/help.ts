@@ -18,7 +18,7 @@ import type { APIApplicationCommandOption, ApplicationCommandOptionType, LocaleS
 import { MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
-import { getFormattedOptions } from "#stelle/utils/functions/options.js";
+import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js";
 import { TimeFormat } from "#stelle/utils/functions/time.js";
 import { truncate } from "#stelle/utils/functions/utils.js";
 import { EmbedPaginator, StelleStringMenu } from "#stelle/utils/paginator.js";

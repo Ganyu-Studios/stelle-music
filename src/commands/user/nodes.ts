@@ -2,7 +2,7 @@ import { Command, Declare, Embed, type GuildCommandContext, LocalesT, type Messa
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
-import { formatMemoryUsage } from "#stelle/utils/functions/logger.js";
+import { formatMemoryUsage } from "#stelle/utils/functions/internal/logger.js";
 import { TimeFormat } from "#stelle/utils/functions/time.js";
 import { EmbedPaginator } from "#stelle/utils/paginator.js";
 

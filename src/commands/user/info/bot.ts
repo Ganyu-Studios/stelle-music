@@ -3,7 +3,7 @@ import { ButtonStyle } from "seyfert/lib/types/index.js";
 
 import { Shortcut } from "yunaforseyfert";
 import { Constants } from "#stelle/utils/data/constants.js";
-import { formatMemoryUsage } from "#stelle/utils/functions/logger.js";
+import { formatMemoryUsage } from "#stelle/utils/functions/internal/logger.js";
 
 @Declare({
     name: "bot",

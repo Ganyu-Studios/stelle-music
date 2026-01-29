@@ -1,5 +1,5 @@
 import { Command, Declare, Embed, type GuildCommandContext, LocalesT, Middlewares } from "seyfert";
-import { StelleCategory, type StelleUser } from "#stelle/types";
+import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { EmbedPaginator } from "#stelle/utils/paginator.js";
 
@@ -28,7 +28,7 @@ export default class QueueCommand extends Command {
 
         const tracksPerPage = 20;
         const tracks = player.queue.tracks.map(
-            (track, i) => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${(track.requester as StelleUser).tag}`,
+            (track, i) => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${track.requester!.tag}`,
         );
 
         if (tracks.length < tracksPerPage) {

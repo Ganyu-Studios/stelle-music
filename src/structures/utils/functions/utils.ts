@@ -15,7 +15,7 @@ import {
 } from "seyfert";
 import { resolvePartialEmoji } from "seyfert/lib/common/index.js";
 import { type APIMessageComponentEmoji, ButtonStyle, ComponentType, type LocaleString } from "seyfert/lib/types/index.js";
-import type { EditButtonOptions, Omit, StelleUser } from "#stelle/types";
+import type { EditButtonOptions, Omit, Plain, StelleUser } from "#stelle/types";
 import { InvalidRow } from "#stelle/utils/errors.js";
 
 /**
@@ -143,7 +143,6 @@ export const requesterTransformer = (requester: unknown): StelleUser => {
     if (requester instanceof User)
         return {
             ...omitKeys(requester, ["client"]),
-            global_name: requester.username,
             tag: requester.bot ? requester.username : requester.tag,
         };
 
@@ -275,14 +274,13 @@ export const inspect = (object: any, depth: number = 0): string => nodeInspect(o
 
 /**
  *
- * Omit keys from an object.
+ * Omit keys from an object and convert to plain object without functions.
  * @param {T} obj The object to omit keys.
  * @param {K[]} keys The keys to omit.
- * @returns {Omit<T, K>} The object without the keys.
+ * @returns {Plain<Omit<T, K>>} The object without the keys and without functions.
  */
-export const omitKeys = <T extends Record<string, any>, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> =>
-    Object.fromEntries(Object.entries(obj).filter(([key]) => !keys.includes(key as K))) as Omit<T, K>;
-
+export const omitKeys = <T extends Record<string, any>, K extends readonly (keyof T)[]>(obj: T, keys: K): Plain<Omit<T, K[number]>> =>
+    Object.fromEntries(Object.entries(obj).filter(([key]) => !keys.includes(key as any))) as Plain<Omit<T, K[number]>>;
 /**
  * Convert a string to snake_case.
  * @param {string} text The text to convert.

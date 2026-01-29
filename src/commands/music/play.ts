@@ -12,9 +12,9 @@ import {
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
-import { StelleCategory, type StelleUser } from "#stelle/types";
+import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
-import { onAutocompleteError } from "#stelle/utils/functions/overrides.js";
+import { onAutocompleteError } from "#stelle/utils/functions/internal/overrides.js";
 import { TimeFormat } from "#stelle/utils/functions/time.js";
 import { omitKeys, truncate } from "#stelle/utils/functions/utils.js";
 
@@ -159,7 +159,7 @@ export default class PlayCommand extends Command {
                         .setDescription(
                             messages.commands.play.embed.result({
                                 duration: status,
-                                requester: (track.requester as StelleUser).id,
+                                requester: track.requester!.id,
                                 position: player.queue.tracks.findIndex((t) => t.info.identifier === track.info.identifier) + 1,
                                 title: track.info.title,
                                 url: track.info.uri!,
@@ -190,7 +190,7 @@ export default class PlayCommand extends Command {
                             messages.commands.play.embed.playlist({
                                 query,
                                 playlist: playlist?.name ?? playlist?.title ?? track.info.title,
-                                requester: (track.requester as StelleUser).id,
+                                requester: track.requester!.id,
                                 tracks: tracks.length,
                                 volume: player.volume,
                             }),

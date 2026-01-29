@@ -12,7 +12,7 @@ import {
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
-import { type APIUser, ButtonStyle, MessageFlags, TextInputStyle } from "seyfert/lib/types/index.js";
+import { ButtonStyle, MessageFlags, TextInputStyle } from "seyfert/lib/types/index.js";
 import type { userPlaylist } from "#stelle/prisma";
 import { ms } from "#stelle/utils/functions/time.js";
 
@@ -56,7 +56,7 @@ async function playlistTrackSave(
                 .filter((track) => !playlist.tracks.some((t) => t.encoded === track.encoded))
                 .map((t) => ({
                     encoded: t.encoded!,
-                    requesterId: (t.requester as APIUser).id,
+                    requesterId: t.requester!.id,
                 }));
 
             playlist.tracks.push(...tracks);
@@ -95,7 +95,7 @@ async function playlistTrackSave(
 
             playlist.tracks.push({
                 encoded: track.encoded!,
-                requesterId: (track.requester as APIUser).id,
+                requesterId: track.requester!.id,
             });
 
             await client.database.playlist.set(interaction.user.id, playlist);
@@ -144,7 +144,7 @@ async function playlistTrackSave(
 
                     playlist.tracks.push({
                         encoded: track.encoded!,
-                        requesterId: (track.requester as APIUser).id,
+                        requesterId: track.requester!.id,
                     });
 
                     await client.database.playlist.set(interaction.user.id, playlist);

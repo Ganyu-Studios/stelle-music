@@ -40,7 +40,7 @@ export class RedisClient {
      * @param key The key to get.
      */
     public async get<T>(key: string): Promise<T | null> {
-        const value = await this.redis.get(key);
+        const value: string | null = await this.redis.get(key);
         if (!value) return null;
 
         return JSON.parse(inflateRawSync(Buffer.from(value, "base64")).toString());
@@ -53,8 +53,8 @@ export class RedisClient {
      * @param value The value to set.
      */
     public async set<T>(key: string, value: T): Promise<void> {
-        const json = JSON.stringify(value);
-        const buffer = deflateRawSync(Buffer.from(json)).toString("base64");
+        const json: string = JSON.stringify(value);
+        const buffer: string = deflateRawSync(Buffer.from(json)).toString("base64");
 
         await this.redis.set(key, buffer);
 

@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { createEvent } from "seyfert";
 import { Constants } from "#stelle/utils/data/constants.js";
-import { changePresence } from "#stelle/utils/functions/presence.js";
+import { changePresence } from "#stelle/utils/functions/internal/presence.js";
 
 export default createEvent({
     data: { name: "ready", once: true },

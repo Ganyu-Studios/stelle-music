@@ -22,7 +22,7 @@ const customColor: ColorFunction = (text: string): string => rgb24(text, Configu
  * @param {string} label The label.
  * @returns {string} The label with padding.
  */
-function addPadding(label: string): string {
+function setPadding(label: string): string {
     const maxLength = 6;
     const bar = "|";
 
@@ -40,8 +40,8 @@ function addPadding(label: string): string {
  * @returns {string} The formatted memory usage data.
  */
 export function formatMemoryUsage(bytes: number): string {
-    const units = ["B", "KB", "MB", "GB", "TB"];
-    let i = 0;
+    const units: string[] = ["B", "KB", "MB", "GB", "TB"];
+    let i: number = 0;
 
     while (bytes >= 1024 && i < units.length - 1) {
         bytes /= 1024;
@@ -150,7 +150,7 @@ export function customLogger(_this: Logger, level: LogLevels, args: unknown[]): 
 
     const text = `${gray(`${timeFormat}`)} ${gray(`[RAM: ${formatMemoryUsage(memory.rss)}]`)} ${emojis[level]} [${colors[level](
         label,
-    )}] ${addPadding(label)}`;
+    )}] ${setPadding(label)}`;
 
     return [text, ...args];
 }

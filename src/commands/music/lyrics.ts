@@ -1,7 +1,7 @@
 import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares } from "seyfert";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
-import { displayLyrics } from "#stelle/utils/functions/lyrics.js";
+import { displayLyrics } from "#stelle/utils/functions/manager/lyrics.js";
 
 @Declare({
     name: "lyrics",
