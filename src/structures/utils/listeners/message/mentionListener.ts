@@ -20,7 +20,7 @@ export async function mentionListener(client: UsingClient, message: Message): Pr
 
         const command = client.commands.values.find((command) => command.name === "help");
         if (!command) {
-            await message.react("❌").catch(() => null);
+            await message.react("❌").catch((): null => null);
             await message.reply({
                 allowed_mentions: {
                     replied_user: true,
@@ -36,7 +36,7 @@ export async function mentionListener(client: UsingClient, message: Message): Pr
             return;
         }
 
-        await message.react("🌟").catch(() => null);
+        await message.react("🌟").catch((): null => null);
         await message.reply({
             allowed_mentions: {
                 replied_user: true,

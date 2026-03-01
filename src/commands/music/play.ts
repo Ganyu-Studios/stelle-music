@@ -40,7 +40,7 @@ const options = {
 
             if (!client.manager.useable) return interaction.respond([{ name: messages.events.autocomplete.noNodes, value: "noNodes" }]);
 
-            const voice = await member.voice().catch(() => null);
+            const voice = await member.voice().catch((): null => null);
             if (!voice) return interaction.respond([{ name: messages.events.autocomplete.noVoiceChannel, value: "noVoice" }]);
 
             const query = interaction.getInput();
@@ -49,7 +49,7 @@ const options = {
                     { name: messages.events.autocomplete.noQuery, value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT" },
                 ]);
 
-            const res = await client.manager.search({ query, source: searchPlatform }).catch(() => null);
+            const res = await client.manager.search({ query, source: searchPlatform }).catch((): null => null);
             if (!res?.tracks.length) return interaction.respond([{ name: messages.events.autocomplete.noTracks, value: "noTracks" }]);
 
             await interaction.respond(
@@ -89,7 +89,7 @@ export default class PlayCommand extends Command {
         const me = await ctx.me();
         if (!me) return;
 
-        const state = await member.voice().catch(() => null);
+        const state = await member.voice().catch((): null => null);
         if (!state) return;
 
         const voice = await state.channel();
@@ -110,8 +110,8 @@ export default class PlayCommand extends Command {
 
         if (!player.connected) await player.connect();
 
-        let bot = await me.voice().catch(() => null);
-        if (!bot) bot = await me.voice().catch(() => null);
+        let bot = await me.voice().catch((): null => null);
+        if (!bot) bot = await me.voice().catch((): null => null);
 
         if (bot && bot.channelId !== voice.id) return;
         if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);

@@ -46,7 +46,7 @@ export default class JoinCommand extends Command {
         const me = await ctx.me();
         if (!me) return;
 
-        const state = await member.voice().catch(() => null);
+        const state = await member.voice().catch((): null => null);
         if (!state) return;
 
         const voice = await state.channel();
@@ -77,8 +77,8 @@ export default class JoinCommand extends Command {
 
         if (!player.connected) await player.connect();
 
-        let bot = await me.voice().catch(() => null);
-        if (!bot) bot = await me.voice().catch(() => null);
+        let bot = await me.voice().catch((): null => null);
+        if (!bot) bot = await me.voice().catch((): null => null);
         if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);
 
         await ctx.editOrReply({

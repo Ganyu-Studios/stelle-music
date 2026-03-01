@@ -127,7 +127,7 @@ export class StelleManager extends LavalinkManager {
         const nodes = this.nodeManager.leastUsedNodes();
         const node = nodes.reduce((a, b) => (penalties(a) < penalties(b) ? a : b));
 
-        return node.search({ query, source }, requester, false).catch(() => null);
+        return node.search({ query, source }, requester, false).catch((): null => null);
     }
 
     /**

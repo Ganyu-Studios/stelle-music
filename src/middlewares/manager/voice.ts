@@ -18,7 +18,7 @@ export const checkBotVoiceChannel: MiddlewareContext<void, AnyContext> = createM
     const state = await context.member.voice();
     if (!state) return pass();
 
-    const bot = await me.voice().catch(() => null);
+    const bot = await me.voice().catch((): null => null);
     if (bot && bot.channelId !== state.channelId) {
         await context.editOrReply({
             flags: MessageFlags.Ephemeral,
@@ -45,9 +45,9 @@ export const checkVoiceChannel: MiddlewareContext<void, AnyContext> = createMidd
 
     const { messages } = await context.locale();
 
-    const state = await context.member.voice().catch(() => null);
+    const state = await context.member.voice().catch((): null => null);
 
-    const channel = await state?.channel().catch(() => null);
+    const channel = await state?.channel().catch((): null => null);
     if (!channel) {
         await context.editOrReply({
             flags: MessageFlags.Ephemeral,
@@ -72,10 +72,10 @@ export const checkVoiceChannel: MiddlewareContext<void, AnyContext> = createMidd
 export const checkVoicePermissions: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, pass, next }) => {
     if (!context.inGuild()) return next();
 
-    const state = await context.member.voice().catch(() => null);
+    const state = await context.member.voice().catch((): null => null);
     if (!state) return pass();
 
-    const channel = await state.channel().catch(() => null);
+    const channel = await state.channel().catch((): null => null);
     if (!channel) return pass();
 
     const { stagePermissions, voicePermissions } = context.client.config.permissions;

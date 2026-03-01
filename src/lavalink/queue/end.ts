@@ -12,7 +12,7 @@ export default createLavalinkEvent({
         // only unsubscribe if the queue is ended.
         const lyricsId = player.get<string | undefined>("lyricsId");
         if (lyricsId) {
-            await client.messages.delete(lyricsId, player.textChannelId).catch(() => null);
+            await client.messages.delete(lyricsId, player.textChannelId).catch((): null => null);
 
             const isEnabled = !!player.get<boolean | undefined>("lyricsEnabled");
             if (isEnabled) await player.unsubscribeLyrics();
@@ -24,8 +24,8 @@ export default createLavalinkEvent({
 
         const messageId = player.get<string | undefined>("messageId");
         if (messageId) {
-            if (client.config.deleter.onTrackEnd) await client.messages.delete(messageId, player.textChannelId).catch(() => null);
-            else await client.messages.edit(messageId, player.textChannelId, { components: [] }).catch(() => null);
+            if (client.config.deleter.onTrackEnd) await client.messages.delete(messageId, player.textChannelId).catch((): null => null);
+            else await client.messages.edit(messageId, player.textChannelId, { components: [] }).catch((): null => null);
         }
 
         const locale = player.get<string | undefined>("localeString");
@@ -36,11 +36,11 @@ export default createLavalinkEvent({
 
         const { messages } = client.t(locale).get();
 
-        if (voice.isVoice()) await voice.setVoiceStatus(messages.events.voiceStatus.queueEnd).catch(() => null);
+        if (voice.isVoice()) await voice.setVoiceStatus(messages.events.voiceStatus.queueEnd).catch((): null => null);
 
         const embed = new Embed().setDescription(messages.events.playerEnd).setColor(client.config.color.success).setTimestamp();
 
-        await client.messages.write(player.textChannelId, { embeds: [embed] }).catch(() => null);
+        await client.messages.write(player.textChannelId, { embeds: [embed] }).catch((): null => null);
 
         player.set("messageId", undefined);
 

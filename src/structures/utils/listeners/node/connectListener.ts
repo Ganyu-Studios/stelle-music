@@ -28,7 +28,7 @@ export async function connectListener(client: UsingClient, node: LavalinkNode): 
                     const messageId = player.get<string | undefined>("messageId");
                     const channelId = player.textChannelId ?? player.options.textChannelId;
 
-                    if (messageId && channelId) await client.messages.delete(messageId, channelId).catch(() => null);
+                    if (messageId && channelId) await client.messages.delete(messageId, channelId).catch((): null => null);
 
                     const track = player.queue.current;
 

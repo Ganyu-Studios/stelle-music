@@ -98,9 +98,9 @@ export default createLavalinkEvent({
                         title: track.info.title,
                     }),
                 )
-                .catch(() => null);
+                .catch((): null => null);
 
-        const message = await client.messages.write(player.textChannelId, { embeds: [embed], components }).catch(() => null);
+        const message = await client.messages.write(player.textChannelId, { embeds: [embed], components }).catch((): null => null);
         if (message) player.set("messageId", message.id);
 
         if (Constants.Debug) client.debugger?.info(`[Player ${player.guildId}] Track Started: ${JSON.stringify(track)}`);

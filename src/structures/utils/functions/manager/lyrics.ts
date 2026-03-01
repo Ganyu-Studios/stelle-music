@@ -1,6 +1,7 @@
-import type { LyricsResult } from "lavalink-client";
+import type { LyricsResult, Player, Track } from "lavalink-client";
 import { ActionRow, type AnyContext, Button, Embed, type Message, type WebhookMessage } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
+import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
 import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
 import { ms } from "#stelle/utils/functions/time.js";
 
@@ -15,10 +16,10 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | Message | W
 
     const { client } = ctx;
 
-    const player = client.manager.getPlayer(ctx.guildId);
+    const player: Player | undefined = client.manager.getPlayer(ctx.guildId);
     if (!player) return;
 
-    const track = player.queue.current;
+    const track: Track | null = player.queue.current;
     if (!track) return;
 
     await ctx.deferReply();
@@ -29,25 +30,33 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | Message | W
         player.get<LyricsResult | undefined>("lyrics") ??
         (await player
             .getCurrentLyrics()
-            .then((lyrics) => {
+            .then(async (lyrics): Promise<LyricsResult | null> => {
+                let lyricsResult: LyricsResult | null = null;
+
                 // If the lyrics object contains an error or trace property, it means an error occurred
-                // So we return null in that case
-                if ("error" in lyrics && "trace" in lyrics) return null;
+                if ("error" in lyrics && "trace" in lyrics) {
+                    // Fallback in case the response from the lyrics provider is a 400
+                    // which means that the lyrics were not found
+                    if (typeof lyrics.trace === "string" && lyrics.trace.includes("Response code from channel info is 400"))
+                        lyricsResult = await player.getCurrentLyrics(true);
+                }
 
                 // If for some reason lyrics is null or undefined, we return null
-                if (!lyrics) return null;
+                if (!lyricsResult) return null;
 
-                if (typeof lyrics.provider !== "string") lyrics.provider = "Unknown";
-                if (typeof lyrics.sourceName !== "string") lyrics.sourceName = "Unknown";
+                if (typeof lyricsResult.provider !== "string") lyricsResult.provider = "Unknown";
+                if (typeof lyricsResult.sourceName !== "string") lyricsResult.sourceName = "Unknown";
 
-                lyrics.provider = lyrics.provider.replace("Source:", "").trim();
-                lyrics.sourceName = lyrics.sourceName.replace("Source:", "").trim();
+                lyricsResult.provider = lyricsResult.provider.replace("Source:", "").trim();
+                lyricsResult.sourceName = lyricsResult.sourceName.replace("Source:", "").trim();
 
-                player.set("lyrics", lyrics);
+                console.info({ lyricsResult });
 
-                return lyrics;
+                player.set("lyrics", lyricsResult);
+
+                return lyricsResult;
             })
-            .catch(() => null));
+            .catch((): null => null));
 
     if (!lyrics)
         return ctx.editOrReply({
@@ -60,8 +69,8 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | Message | W
             ],
         });
 
-    const lines = lyrics.lines
-        .map((line) => {
+    const lines: string = lyrics.lines
+        .map((line): string => {
             if (!line.line.length) line.line = "...";
             return line.line;
         })
@@ -89,10 +98,10 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | Message | W
     );
 
     const message: WebhookMessage | Message = await ctx.editOrReply({ embeds: [embed], components: [row] }, true);
-    const collector = message.createComponentCollector({
-        filter: (i) => i.user.id === ctx.author.id,
+    const collector: CreateComponentCollectorResult = message.createComponentCollector({
+        filter: (i): boolean => i.user.id === ctx.author.id,
         idle: ms("1min"),
-        async onPass(interaction) {
+        async onPass(interaction): Promise<void> {
             await interaction.editOrReply({
                 content: "",
                 flags: MessageFlags.Ephemeral,
@@ -106,12 +115,12 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | Message | W
         },
     });
 
-    collector.run("player-syncLyrics", async (interaction) => {
-        const isEnabled = !!player.get("lyricsEnabled");
-        if (!isEnabled) await player.subscribeLyrics();
+    collector.run("player-syncLyrics", async (interaction): Promise<void> => {
+        const isEnabled: boolean = !!player.get("lyricsEnabled");
+        if (!isEnabled) await player.subscribeLyrics().catch((): null => null);
 
-        const lines = lyrics.lines
-            .map((line) => `-# ${line.line}`)
+        const lines: string = lyrics.lines
+            .map((line): string => `-# ${line.line}`)
             .slice(0, client.config.lyricsLines)
             .join("\n");
 
@@ -130,7 +139,7 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | Message | W
             new Button().setCustomId("player-lyricsDelete").setLabel(messages.commands.lyrics.close).setStyle(ButtonStyle.Secondary),
         );
 
-        await interaction.update({ embeds: [embed], components: [row] }).catch(() => null);
+        await interaction.update({ embeds: [embed], components: [row] }).catch((): null => null);
 
         collector.stop();
     });

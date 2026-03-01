@@ -14,12 +14,12 @@ export default createLavalinkEvent({
         const lyricsId = player.get<string | undefined>("lyricsId");
         if (!lyricsId) return;
 
-        const message = await client.messages.fetch(lyricsId, player.textChannelId).catch(() => null);
+        const message = await client.messages.fetch(lyricsId, player.textChannelId).catch((): null => null);
         if (!message) return;
 
         const lyrics = player.get<LyricsResult | undefined>("lyrics");
         if (!lyrics) {
-            await message.delete().catch(() => null);
+            await message.delete().catch((): null => null);
 
             player.set("lyricsId", undefined);
             player.set("lyrics", undefined);

@@ -14,7 +14,7 @@ export default class StopComponent extends ComponentCommand {
         await player.destroy();
         await ctx.interaction.deferUpdate();
 
-        if (client.config.deleter.onPlayerStop) await ctx.interaction.message.delete().catch(() => null);
+        if (client.config.deleter.onPlayerStop) await ctx.interaction.message.delete().catch((): null => null);
         else await ctx.interaction.message.edit({ components: [] });
     }
 }

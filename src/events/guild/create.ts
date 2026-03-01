@@ -8,7 +8,7 @@ export default createEvent({
 
         if (Constants.Debug) return client.debugger?.info(`Guild: ${guild.id} | Created: ${guild.name}`);
 
-        const owner = await guild.fetchOwner().catch(() => null);
+        const owner = await guild.fetchOwner().catch((): null => null);
         const ownerName = owner?.displayName ?? "Unknown";
 
         const embed = new Embed()

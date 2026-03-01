@@ -10,13 +10,13 @@ export default createLavalinkEvent({
 
         const messageId = player.get<string | undefined>("messageId");
         if (messageId) {
-            if (client.config.deleter.onTrackEnd) await client.messages.delete(messageId, player.textChannelId).catch(() => null);
-            else await client.messages.edit(messageId, player.textChannelId, { components: [] }).catch(() => null);
+            if (client.config.deleter.onTrackEnd) await client.messages.delete(messageId, player.textChannelId).catch((): null => null);
+            else await client.messages.edit(messageId, player.textChannelId, { components: [] }).catch((): null => null);
         }
 
         const lyricsId = player.get<string | undefined>("lyricsId");
         if (lyricsId) {
-            await client.messages.delete(lyricsId, player.textChannelId).catch(() => null);
+            await client.messages.delete(lyricsId, player.textChannelId).catch((): null => null);
 
             player.set("lyricsId", undefined);
             player.set("lyrics", undefined);
