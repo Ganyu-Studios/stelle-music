@@ -3,7 +3,7 @@ import type { Command, ContextMenuCommand, SubCommand, User } from "seyfert";
 import type { EmojiResolvable } from "seyfert/lib/common/index.js";
 import type { ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
-export type { LoadableStelleConfiguration, StelleConfiguration, StelleEnvironment } from "./client/configuration.js";
+export type { LoadableStelleConfiguration, StelleConfiguration } from "./client/configuration.js";
 export type { AutoplayState, PausedState, StelleConstants, WorkingDirectory } from "./client/constants.js";
 export type { ImageData } from "./client/image.js";
 

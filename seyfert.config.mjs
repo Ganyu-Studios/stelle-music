@@ -17,7 +17,7 @@ import { Constants } from "#stelle/utils/data/constants.js";
 const base = Constants.WorkingDirectory();
 
 export default config.bot({
-    token: Environment.Token ?? "Ganyu on top!",
+    token: Environment.TOKEN ?? "Ganyu on top!",
     debug: Constants.Debug,
     intents: [
         GatewayIntentBits.Guilds,

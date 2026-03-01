@@ -12,7 +12,7 @@ import {
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 import { playlistAutocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
-import { checkUrl } from "#stelle/utils/functions/utils.js";
+import { isUrl } from "#stelle/utils/functions/utils.js";
 
 const options = {
     id: createStringOption({
@@ -60,7 +60,7 @@ export default class RenameSubcommand extends SubCommand {
                 ],
             });
 
-        if (checkUrl(name))
+        if (isUrl(name))
             return ctx.editOrReply({
                 content: "",
                 flags: MessageFlags.Ephemeral,

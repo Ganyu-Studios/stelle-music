@@ -88,23 +88,6 @@ export const StelleContext = extendContext((i) => ({
 
 /**
  *
- * Check if the value is valid.
- * @param {unknown} value
- * @returns {boolean} True if the value is valid.
- */
-export const isValid = (value: unknown): boolean => {
-    return (
-        value !== null &&
-        value !== undefined &&
-        (typeof value !== "string" || value.length > 0) &&
-        (typeof value !== "object" || Object.keys(value).length > 0) &&
-        (typeof value !== "number" || !Number.isNaN(Number(value))) &&
-        (!Array.isArray(value) || value.length > 0)
-    );
-};
-
-/**
- *
  * Return the cooldown collection key.
  * @param {AnyContext} ctx The context.
  * @returns {string} The collection key.
@@ -226,21 +209,6 @@ export const createId = (options: CreateIdOptions = {}): string => {
 };
 
 /**
- *
- * Checks if the given input string is a valid URL.
- * @param {string} input The input string to check.
- * @returns {boolean} True if the input is a valid URL, false otherwise.
- */
-export const checkUrl = (input: string): boolean => {
-    const patterns: RegExp[] = [
-        /(?:https?:\/\/)?(?:www\.)?(?:discord(?:app)?\.(?:com\/invite|gg))\/\S+/i,
-        /^(?:https?:\/\/)?(?:www\.)?[\w.-]+\.[\w]{2,}(?:\/\S*)?$/i,
-    ];
-
-    return patterns.some((pattern) => pattern.test(input));
-};
-
-/**
  * Cleanup function to gracefully shut down the client.
  * @param client {UsingClient} The client instance.
  * @returns {void} Aishite, aishite, motto, motto
@@ -289,16 +257,6 @@ export const isUrl = (input: string): boolean => /^(https?:\/\/)?([\w-]+(\.[\w-]
  */
 export const omitKeys = <T extends Record<string, any>, K extends readonly (keyof T)[]>(obj: T, keys: K): Plain<Omit<T, K[number]>> =>
     Object.fromEntries(Object.entries(obj).filter(([key]) => !keys.includes(key as any))) as Plain<Omit<T, K[number]>>;
-/**
- * Convert a string to snake_case.
- * @param {string} text The text to convert.
- * @param {boolean} [upper=false] Whether to convert to uppercase or not.
- * @returns {string} The converted text.
- */
-export const convertToSnakeCase = (text: string, upper: boolean = false): string => {
-    const result: string = text.replace(/([a-z])([A-Z])/g, "$1_$2");
-    return upper ? result.toUpperCase() : result.toLowerCase();
-};
 
 /**
  *

@@ -1,10 +1,24 @@
 import { join } from "node:path";
-import type { LoadableStelleConfiguration, StelleConfiguration, StelleEnvironment } from "#stelle/types";
+import { z } from "zod";
+import type { LoadableStelleConfiguration, StelleConfiguration } from "#stelle/types";
 import { InvalidConfiguration } from "#stelle/utils/errors.js";
 import { customImport } from "../functions/utils.js";
 
-// extract the environment variables from the .env file
-const { TOKEN, DATABASE_URL, ERRORS_WEBHOOK, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, REDIS_USERNAME } = process.env;
+const envSchema = z.object({
+    TOKEN: z.string(),
+    DATABASE_URL: z.string(),
+    ERRORS_WEBHOOK: z.string(),
+    REDIS_HOST: z.string().optional(),
+    REDIS_PORT: z.coerce.number().optional(),
+    REDIS_PASSWORD: z.string().optional(),
+    REDIS_USERNAME: z.string().optional(),
+});
+
+/**
+ * The environment variables schema.
+ * @type {z.infer<typeof envSchema>}
+ */
+export type StelleEnvironment = z.infer<typeof envSchema>;
 
 /**
  * The flag to check if the configuration is initialized.
@@ -30,7 +44,7 @@ export const Configuration: LoadableStelleConfiguration = {
 
         for (const filename of filenames) {
             for (const ext of extensions) {
-                const file = join(directory, `${filename}${ext}`);
+                const file: string = join(directory, `${filename}${ext}`);
 
                 const i: StelleConfiguration | null = await customImport<StelleConfiguration>(file).catch((error) => {
                     if (error.stack.includes("ERR_MODULE_NOT_FOUND")) return null;
@@ -60,12 +74,17 @@ export const createConfig = (data: StelleConfiguration): StelleConfiguration => 
  * The environment variables.
  * @type {StelleEnvironment}
  */
-export const Environment: StelleEnvironment = {
-    Token: TOKEN,
-    DatabaseUrl: DATABASE_URL,
-    ErrorsWebhook: ERRORS_WEBHOOK,
-    RedisHost: REDIS_HOST ?? "localhost",
-    RedisPort: Number(REDIS_PORT ?? 6379),
-    RedisPassword: REDIS_PASSWORD,
-    RedisUsername: REDIS_USERNAME ?? "default",
-};
+export const Environment: StelleEnvironment = envSchema
+    .catch(({ issues }): never => {
+        const message: string = issues
+            .map(
+                (issue): string =>
+                    `❌ Stelle [${issue.path?.join(".") ?? "UNKNOWN"}]: Invalid input: expected ${issue.expected}, received ${issue.received}`,
+            )
+            .join("\n");
+
+        console.info(message);
+
+        throw new Error("Invalid environment variables.");
+    })
+    .parse(process.env);

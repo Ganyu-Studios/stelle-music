@@ -1,7 +1,7 @@
 import { createBooleanOption, createStringOption, Declare, type GuildCommandContext, LocalesT, Options, SubCommand } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
-import { checkUrl, createId } from "#stelle/utils/functions/utils.js";
+import { createId, isUrl } from "#stelle/utils/functions/utils.js";
 
 const options = {
     name: createStringOption({
@@ -38,7 +38,7 @@ export default class CreateSubCommand extends SubCommand {
         const { client, author } = ctx;
         const { messages } = await ctx.locale();
 
-        if (checkUrl(playlistName))
+        if (isUrl(playlistName))
             return ctx.editOrReply({
                 content: "",
                 flags: MessageFlags.Ephemeral,

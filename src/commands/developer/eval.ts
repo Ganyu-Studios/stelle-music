@@ -22,7 +22,7 @@ const concatRegex = /".*?"\s*\+\s*".*?"(?:\s*\+\s*".*?")*/;
 const awaitableRegex = /^(?:\(?)\s*await\b/;
 const envRegex = new RegExp(
     Object.values(Environment)
-        .map((value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+        .map((value): string => String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
         .join("|"),
     "g",
 );

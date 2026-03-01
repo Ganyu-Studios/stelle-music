@@ -88,7 +88,7 @@ export async function sendErrorReport(options: ReportOptions): Promise<Message |
         }
     }
 
-    const webhook = parseWebhook(Environment.ErrorsWebhook!);
+    const webhook = parseWebhook(Environment.ERRORS_WEBHOOK);
     if (!webhook) return;
 
     await client.webhooks.writeMessage(webhook.id, webhook.token, {

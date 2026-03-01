@@ -15,10 +15,10 @@ export class RedisClient {
      * @readonly
      */
     readonly redis: Redis = new Redis({
-        host: Environment.RedisHost,
-        port: Environment.RedisPort,
-        password: Environment.RedisPassword,
-        username: Environment.RedisUsername,
+        host: Environment.REDIS_HOST,
+        port: Environment.REDIS_PORT,
+        password: Environment.REDIS_PASSWORD,
+        username: Environment.REDIS_USERNAME,
         tls: {
             rejectUnauthorized: false,
         },
