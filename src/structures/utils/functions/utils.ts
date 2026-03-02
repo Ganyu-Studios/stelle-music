@@ -3,7 +3,7 @@ import { mkdir } from "node:fs/promises";
 import { isAbsolute, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { inspect as nodeInspect } from "node:util";
-import type { Awaitable, TrackRequester } from "hoshimi";
+import type { TrackRequester } from "hoshimi";
 import {
     ActionRow,
     type AnyContext,
@@ -123,7 +123,7 @@ export const parseWebhook = (url: string): WebhookObject | null => {
  * @param {unknown} requester The requester user.
  * @returns {StelleUser} The transformed user.
  */
-export const requesterFn = <T extends TrackRequester = TrackRequester>(requester: TrackRequester): Awaitable<T> => {
+export const requesterFn = <T extends TrackRequester = TrackRequester>(requester: TrackRequester): T => {
     if (requester instanceof User)
         return {
             ...omitKeys(requester, ["client"]),

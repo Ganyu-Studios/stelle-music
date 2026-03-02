@@ -105,7 +105,7 @@ export default class LoadSubcommand extends SubCommand {
         const tracks: TrackStructure[] = await Promise.all(
             playlist.tracks.map(async (track): Promise<TrackStructure> => {
                 const requester: User = await client.users.fetch(track.requesterId);
-                return player.node.decode.single(track.encoded, await requesterFn(requester));
+                return player.node.decode.single(track.encoded, requesterFn(requester));
             }),
         );
 

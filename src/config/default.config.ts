@@ -52,7 +52,7 @@ export default createConfig({
     },
     sessions: {
         enabled: true,
-        resumeTime: ms("1min"),
+        resumeTime: 60,
         resumePlayers: true,
     },
     cache: {
