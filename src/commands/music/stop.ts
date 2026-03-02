@@ -1,3 +1,4 @@
+import type { PlayerStructure } from "hoshimi";
 import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares } from "seyfert";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
@@ -18,7 +19,7 @@ export default class StopCommand extends Command {
 
         const { messages } = await ctx.locale();
 
-        const player = client.manager.getPlayer(ctx.guildId);
+        const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
         await player.destroy();

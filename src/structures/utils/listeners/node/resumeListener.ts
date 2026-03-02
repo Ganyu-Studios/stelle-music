@@ -1,7 +1,6 @@
-import type { InvalidLavalinkRestRequest, LavalinkNode, LavalinkPlayer } from "lavalink-client";
+import type { LavalinkPlayer, NodeStructure } from "hoshimi";
 import type { UsingClient } from "seyfert";
 import type { SessionJson } from "#stelle/types";
-
 import { Constants } from "#stelle/utils/data/constants.js";
 import { Sessions } from "#stelle/utils/manager/sessions.js";
 
@@ -11,16 +10,11 @@ import { Sessions } from "#stelle/utils/manager/sessions.js";
  * This event is emitted when the Lavalink node is resumed.
  * @param {UsingClient} client The client instance.
  * @param {LavalinkNode} node The Lavalink node instance.
- * @param {LavalinkPlayer[] | InvalidLavalinkRestRequest} players The players that are resumed.
+ * @param {LavalinkPlayer[]} players The players that are resumed.
  * @returns {Promise<void>} Whatever, this is a void function.
  */
-export async function resumeListener(
-    client: UsingClient,
-    node: LavalinkNode,
-    players: LavalinkPlayer[] | InvalidLavalinkRestRequest,
-): Promise<void> {
+export async function resumeListener(client: UsingClient, node: NodeStructure, players: LavalinkPlayer[]): Promise<void> {
     if (!client.config.sessions.enabled) return;
-    if (!Array.isArray(players)) return;
 
     for (const data of players) {
         const session: SessionJson | undefined = Sessions.get<SessionJson>(data.guildId);
@@ -35,23 +29,20 @@ export async function resumeListener(
             guildId: data.guildId,
             volume: data.volume,
             node: node.id,
-            voiceChannelId: session.voiceChannelId,
-            textChannelId: session.textChannelId,
+            voiceId: session.voiceId!,
+            textId: session.textId!,
             selfDeaf: session.options?.selfDeaf,
             selfMute: session.options?.selfMute,
-            applyVolumeAsFilter: session.options.applyVolumeAsFilter,
-            instaUpdateFiltersFix: session.options.instaUpdateFiltersFix,
-            vcRegion: session.options.vcRegion,
         });
 
-        player.set("messageId", session.messageId);
-        player.set("enabledAutoplay", session.enabledAutoplay);
-        player.set("me", session.me);
-        player.set("localeString", session.localeString);
-        player.set("lyricsId", session.lyricsId);
-        player.set("lyricsEnabled", session.lyricsEnabled);
-        player.set("is247", session.is247);
-        player.set("isAutoPause", session.isAutoPause);
+        await player.data.set("messageId", session.messageId!);
+        await player.data.set("enabledAutoplay", session.enabledAutoplay!);
+        await player.data.set("me", session.me!);
+        await player.data.set("localeString", session.localeString!);
+        await player.data.set("lyricsId", session.lyricsId!);
+        await player.data.set("lyricsEnabled", session.lyricsEnabled!);
+        await player.data.set("is247", session.is247!);
+        await player.data.set("isAutoPause", session.isAutoPause!);
 
         player.voice = data.voice;
 
@@ -61,17 +52,15 @@ export async function resumeListener(
 
         await player.queue.utils.sync(true, false);
 
-        if (data.track) player.queue.current = client.manager.utils.buildTrack(data.track, session.me);
+        if (data.track) player.queue.current = await player.queue.build(data.track, session.me!);
 
         Object.assign(player, {
             lastPosition: data.state.position,
             lastPositionChange: Date.now(),
             paused: data.paused,
             playing: !data.paused && !!data.track,
-            repeatMode: session.repeatMode,
+            loop: session.loop,
         });
-
-        player.ping.lavalink = data.state.ping;
 
         if (Constants.Debug) client.debugger?.info(`Node: ${node.id} | Player: ${player.guildId} | Resumed`);
     }

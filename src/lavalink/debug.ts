@@ -1,11 +1,10 @@
-import { LavalinkEventTypes } from "#stelle/types";
+import { DebugLevels } from "hoshimi";
 import { Constants } from "#stelle/utils/data/constants.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 export default createLavalinkEvent({
     name: "debug",
-    type: LavalinkEventTypes.Manager,
-    run(client, key, data): void {
-        if (Constants.Debug) client.debugger?.info(`[Manager ${key}] Debug: ${JSON.stringify(data)}`);
+    run(client, level, message): void {
+        if (Constants.Debug) client.debugger?.info(`[Manager ${DebugLevels[level]}] Debug: ${message}`);
     },
 });

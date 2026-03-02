@@ -8,10 +8,11 @@ const envSchema = z.object({
     TOKEN: z.string(),
     DATABASE_URL: z.string(),
     ERRORS_WEBHOOK: z.string(),
-    REDIS_HOST: z.string().optional(),
-    REDIS_PORT: z.coerce.number().optional(),
-    REDIS_PASSWORD: z.string().optional(),
-    REDIS_USERNAME: z.string().optional(),
+    REDIS_HOST: z.string(),
+    REDIS_PORT: z.coerce.number(),
+    REDIS_PASSWORD: z.string(),
+    REDIS_USERNAME: z.string(),
+    REDIS_SECURE: z.coerce.boolean(),
 });
 
 /**

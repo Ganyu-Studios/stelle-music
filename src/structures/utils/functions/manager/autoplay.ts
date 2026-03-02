@@ -1,10 +1,5 @@
-import type { Player, Track, UnresolvedTrack } from "lavalink-client";
+import { type HoshimiTrack, type PlayerStructure, type QueryResult, SearchEngines, type TrackStructure } from "hoshimi";
 import type { StelleUser } from "#stelle/types";
-
-/**
- * The type of the resolvable tracks.
- */
-type ResolvableTrack = UnresolvedTrack | Track;
 
 /**
  * The maximum number of tracks to return.
@@ -28,11 +23,11 @@ const trackLimit: number = 10;
  * @param {ResolvableTrack[]}  tracks The tracks to filter.
  * @returns {ResolvableTrack[]} The filtered tracks.
  */
-const filter = (player: Player, lastTrack: Track, tracks: ResolvableTrack[]): ResolvableTrack[] =>
+const filter = (player: PlayerStructure, lastTrack: TrackStructure, tracks: HoshimiTrack[]): HoshimiTrack[] =>
     tracks.filter(
-        (track) =>
+        (track): boolean =>
             !(
-                player.queue.previous.some((t) => t.info.identifier === track.info.identifier) ||
+                player.queue.history.some((t) => t.info.identifier === track.info.identifier) ||
                 lastTrack.info.identifier === track.info.identifier
             ),
     );
@@ -44,29 +39,34 @@ const filter = (player: Player, lastTrack: Track, tracks: ResolvableTrack[]): Re
  * @param lastTrack The last track played.
  * @returns {Promise<void>} A promise... that does nothing.
  */
-export async function autoPlayFunction(player: Player, lastTrack?: Track): Promise<void> {
+export async function autoplayFn(player: PlayerStructure, lastTrack: TrackStructure | null): Promise<void> {
     if (!lastTrack) return;
-    if (!player.get("enabledAutoplay")) return;
+
+    if (!(await player.data.get("enabledAutoplay"))) return;
 
     //c'mon dude, this shit seems to work, so
-    if (!player.queue.previous.some((t) => t.info.identifier === lastTrack.info.identifier)) {
-        player.queue.previous.unshift(lastTrack);
+    if (!player.queue.history.some((t): boolean => t.info.identifier === lastTrack.info.identifier)) {
+        player.queue.history.unshift(lastTrack);
         await player.queue.utils.save();
     }
 
-    const me = player.get<StelleUser | undefined>("me");
+    const me: StelleUser | undefined = await player.data.get("me");
     if (!me) return;
 
     switch (lastTrack.info.sourceName) {
         case "spotify": {
-            const filtered = player.queue.previous.filter(({ info }) => info.sourceName === "spotify");
-            const first = filtered.at(0);
+            const filtered: TrackStructure[] = player.queue.history.filter(({ info }): boolean => info.sourceName === "spotify");
+            const first: TrackStructure | undefined = filtered.at(0);
             if (!first) return;
 
-            const res = await player.search({ query: `mix:track:${first.info.identifier}`, source: "sprec" }, me);
+            const res: QueryResult = await player.search({
+                query: first.info.identifier,
+                engine: SearchEngines.SpotifyTrackMix,
+                requester: me,
+            });
 
             if (res.tracks.length) {
-                const track = filter(player, lastTrack, res.tracks)[Math.floor(Math.random() * res.tracks.length)] as Track;
+                const track: HoshimiTrack = filter(player, lastTrack, res.tracks)[Math.floor(Math.random() * res.tracks.length)];
                 await player.queue.add(track);
             }
 
@@ -76,11 +76,12 @@ export async function autoPlayFunction(player: Player, lastTrack?: Track): Promi
         case "youtube":
         case "youtubemusic": {
             const search = `https://www.youtube.com/watch?v=${lastTrack.info.identifier}&list=RD${lastTrack.info.identifier}`;
-            const res = await player.search({ query: search }, me);
+            const res: QueryResult = await player.search({ query: search, engine: SearchEngines.YoutubeMusic, requester: me });
 
             if (res.tracks.length) {
-                const random = Math.floor(Math.random() * res.tracks.length);
-                const tracks = filter(player, lastTrack, res.tracks).slice(random, random + trackLimit) as Track[];
+                const random: number = Math.floor(Math.random() * res.tracks.length);
+                const tracks: HoshimiTrack[] = filter(player, lastTrack, res.tracks).slice(random, random + trackLimit);
+
                 await player.queue.add(tracks);
             }
 

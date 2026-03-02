@@ -1,4 +1,4 @@
-import type { PlayerJson } from "lavalink-client";
+import type { PlayerJson } from "hoshimi";
 import type { Command, ContextMenuCommand, SubCommand, User } from "seyfert";
 import type { EmojiResolvable } from "seyfert/lib/common/index.js";
 import type { ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
@@ -7,12 +7,9 @@ export type { LoadableStelleConfiguration, StelleConfiguration } from "./client/
 export type { AutoplayState, PausedState, StelleConstants, WorkingDirectory } from "./client/constants.js";
 export type { ImageData } from "./client/image.js";
 
-export {
-    type LavalinkEvent,
-    type LavalinkEventRun,
-    type LavalinkEvents,
-    type LavalinkEventType,
-    LavalinkEventTypes,
+export type {
+    LavalinkEvent,
+    LavalinkEventRun,
 } from "./client/lavalink.js";
 
 /**
@@ -145,7 +142,7 @@ export type StelleUser = Omit<Plain<User>, "client">;
  */
 export type StellePlayerJson = Omit<
     PlayerJson,
-    "ping" | "createdTimeStamp" | "lavalinkVolume" | "equalizer" | "lastPositionChange" | "paused" | "playing" | "queue" | "filters"
+    "ping" | "createdTimestamp" | "lastPositionUpdate" | "paused" | "playing" | "queue" | "filters"
 >;
 
 /**
@@ -193,6 +190,13 @@ export type Plain<T> = {
     // biome-ignore lint/complexity/noBannedTypes: Just want to exclude functions
     [K in keyof T as T[K] extends Function ? never : K]: T[K];
 };
+
+/**
+ * The type to prettify the object.
+ */
+export type Prettify<T> = {
+    [K in keyof T]: T[K];
+} & {};
 
 /**
  * The type of the permission flags.

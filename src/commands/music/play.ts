@@ -1,13 +1,17 @@
+import { LoadType, type QueryResult } from "hoshimi";
 import {
+    type AllGuildVoiceChannels,
     Command,
     createStringOption,
     Declare,
     Embed,
     type GuildCommandContext,
+    type GuildMember,
     LocalesT,
     type Message,
     Middlewares,
     Options,
+    type VoiceState,
     type WebhookMessage,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
@@ -38,25 +42,26 @@ const options = {
             const { searchPlatform } = await client.database.players.get(guildId);
             const { messages } = client.t(await client.database.locales.get(guildId)).get();
 
-            if (!client.manager.useable) return interaction.respond([{ name: messages.events.autocomplete.noNodes, value: "noNodes" }]);
+            if (!client.manager.isUseable()) return interaction.respond([{ name: messages.events.autocomplete.noNodes, value: "noNodes" }]);
 
-            const voice = await member.voice().catch((): null => null);
+            const voice: VoiceState | null = await member.voice().catch((): null => null);
             if (!voice) return interaction.respond([{ name: messages.events.autocomplete.noVoiceChannel, value: "noVoice" }]);
 
-            const query = interaction.getInput();
+            const query: string = interaction.getInput();
             if (!query)
                 return interaction.respond([
                     { name: messages.events.autocomplete.noQuery, value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT" },
                 ]);
 
-            const res = await client.manager.search({ query, source: searchPlatform }).catch((): null => null);
-            if (!res?.tracks.length) return interaction.respond([{ name: messages.events.autocomplete.noTracks, value: "noTracks" }]);
+            const { tracks }: QueryResult = await client.manager.search({ query, engine: searchPlatform });
+
+            if (!tracks.length) return interaction.respond([{ name: messages.events.autocomplete.noTracks, value: "noTracks" }]);
 
             await interaction.respond(
-                res.tracks.slice(0, 25).map((track) => {
+                tracks.slice(0, 25).map((track) => {
                     const duration = track.info.isStream
                         ? messages.commands.play.live
-                        : (TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined);
+                        : (TimeFormat.toDotted(track.info.length) ?? messages.commands.play.undetermined);
 
                     return {
                         name: `${truncate(track.info.title, 45)} (${duration}) - ${truncate(track.info.author, 30)}`,
@@ -86,13 +91,13 @@ export default class PlayCommand extends Command {
 
         if (!member) return;
 
-        const me = await ctx.me();
+        const me: GuildMember = await ctx.me();
         if (!me) return;
 
-        const state = await member.voice().catch((): null => null);
+        const state: VoiceState | null = await member.voice().catch((): null => null);
         if (!state) return;
 
-        const voice = await state.channel();
+        const voice: AllGuildVoiceChannels | undefined = await state.channel();
         if (!voice) return;
 
         await ctx.deferReply();
@@ -102,30 +107,30 @@ export default class PlayCommand extends Command {
 
         const player = client.manager.createPlayer({
             guildId: ctx.guildId,
-            textChannelId: channelId,
-            voiceChannelId: voice.id,
+            textId: channelId,
+            voiceId: voice.id,
             volume: defaultVolume,
             selfDeaf: true,
         });
 
         if (!player.connected) await player.connect();
 
-        let bot = await me.voice().catch((): null => null);
+        let bot: VoiceState | null = await me.voice().catch((): null => null);
         if (!bot) bot = await me.voice().catch((): null => null);
 
         if (bot && bot.channelId !== voice.id) return;
         if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);
 
-        const { loadType, playlist, tracks } = await player.search({ query, source: searchPlatform }, ctx.author);
+        const { loadType, playlist, tracks } = await player.search({ query, engine: searchPlatform, requester: ctx.author });
 
-        if (!player.get("localeString")) player.set("localeString", await ctx.localeString());
-        if (!player.get("me")) player.set("me", omitKeys(client.me, ["client"]));
+        if (!(await player.data.get("localeString"))) await player.data.set("localeString", await ctx.localeString());
+        if (!(await player.data.get("me"))) await player.data.set("me", omitKeys(client.me, ["client"]));
 
-        const autoplayIndex = player.get("enabledAutoplay") ? 0 : undefined;
+        const autoplayIndex = (await player.data.get("enabledAutoplay")) ? 0 : undefined;
 
         switch (loadType) {
-            case "empty":
-            case "error":
+            case LoadType.Empty:
+            case LoadType.Error:
                 {
                     if (!player.queue.current) await player.destroy();
 
@@ -142,8 +147,8 @@ export default class PlayCommand extends Command {
                 }
                 break;
 
-            case "track":
-            case "search":
+            case LoadType.Track:
+            case LoadType.Search:
                 {
                     const track = tracks[0];
 
@@ -151,7 +156,7 @@ export default class PlayCommand extends Command {
 
                     const status = track.info.isStream
                         ? messages.commands.play.live
-                        : (TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined);
+                        : (TimeFormat.toDotted(track.info.length) ?? messages.commands.play.undetermined);
 
                     const embed = new Embed()
                         .setThumbnail(track.info.artworkUrl ?? undefined)
@@ -177,7 +182,7 @@ export default class PlayCommand extends Command {
                 }
                 break;
 
-            case "playlist":
+            case LoadType.Playlist:
                 {
                     const track = tracks[0];
 
@@ -189,7 +194,7 @@ export default class PlayCommand extends Command {
                         .setDescription(
                             messages.commands.play.embed.playlist({
                                 query,
-                                playlist: playlist?.name ?? playlist?.title ?? track.info.title,
+                                playlist: playlist?.info.name ?? track.info.title,
                                 requester: track.requester!.id,
                                 tracks: tracks.length,
                                 volume: player.volume,

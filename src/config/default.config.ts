@@ -1,3 +1,4 @@
+import { SearchEngines } from "hoshimi";
 import { createConfig } from "#stelle/utils/data/configuration.js";
 import { ms } from "#stelle/utils/functions/time.js";
 import { Sessions } from "#stelle/utils/manager/sessions.js";
@@ -6,7 +7,7 @@ export default createConfig({
     defaultLocale: "en-US",
     defaultPrefix: "stelle",
     prefixes: ["st!"],
-    defaultSearchPlatform: "spotify",
+    defaultSearchEngine: SearchEngines.Spotify,
     defaultVolume: 100,
     lyricsLines: 10,
     disconnectTime: ms("30s"),
@@ -21,7 +22,7 @@ export default createConfig({
             id: "SN #1", // <--- AKA Stelle Node
             host: "localhost",
             port: 2333,
-            authorization: "youshallnotpass",
+            password: "youshallnotpass",
             secure: false,
             retryAmount: 25,
             retryDelay: ms("30s"),
@@ -30,7 +31,7 @@ export default createConfig({
             id: "SN #2",
             host: "localhost",
             port: 2334,
-            authorization: "youshallnotpass",
+            password: "youshallnotpass",
             secure: false,
             retryAmount: 25,
             retryDelay: ms("30s"),

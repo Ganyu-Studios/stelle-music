@@ -1,12 +1,15 @@
 import {
+    type AllGuildVoiceChannels,
     Command,
     createChannelOption,
     Declare,
     type GuildCommandContext,
+    type GuildMember,
     LocalesT,
     type Message,
     Middlewares,
     Options,
+    type VoiceState,
     type WebhookMessage,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
@@ -43,19 +46,19 @@ export default class JoinCommand extends Command {
 
         if (!member) return;
 
-        const me = await ctx.me();
+        const me: GuildMember = await ctx.me();
         if (!me) return;
 
-        const state = await member.voice().catch((): null => null);
+        const state: VoiceState | null = await member.voice().catch((): null => null);
         if (!state) return;
 
-        const voice = await state.channel();
+        const voice: AllGuildVoiceChannels | undefined = await state.channel();
         if (!voice) return;
 
         const { messages } = await ctx.locale();
         const { defaultVolume } = await client.database.players.get(ctx.guildId);
 
-        const channel = options.voice ?? voice;
+        const channel: AllGuildVoiceChannels = options.voice ?? voice;
         if (channel.guildId !== ctx.guildId)
             return ctx.editOrReply({
                 content: "",
@@ -69,15 +72,15 @@ export default class JoinCommand extends Command {
 
         const player = client.manager.createPlayer({
             guildId: ctx.guildId,
-            textChannelId: channelId,
-            voiceChannelId: channel.id,
+            textId: channelId,
+            voiceId: channel.id,
             volume: defaultVolume,
             selfDeaf: true,
         });
 
         if (!player.connected) await player.connect();
 
-        let bot = await me.voice().catch((): null => null);
+        let bot: VoiceState | null = await me.voice().catch((): null => null);
         if (!bot) bot = await me.voice().catch((): null => null);
         if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);
 

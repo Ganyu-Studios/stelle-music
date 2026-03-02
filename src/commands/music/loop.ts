@@ -1,30 +1,30 @@
-import type { Player, RepeatMode } from "lavalink-client";
-import { Command, createStringOption, Declare, type GuildCommandContext, LocalesT, Middlewares, Options } from "seyfert";
+import { LoopMode, type Player } from "hoshimi";
+import { Command, createNumberOption, Declare, type GuildCommandContext, LocalesT, Middlewares, Options } from "seyfert";
 import { StelleCategory } from "#stelle/types";
 import { Constants } from "#stelle/utils/data/constants.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
-const loopModes: Record<RepeatMode, RepeatMode> = {
-    off: "track",
-    track: "queue",
-    queue: "off",
+const loopModes: Record<LoopMode, LoopMode> = {
+    [LoopMode.Off]: LoopMode.Track,
+    [LoopMode.Track]: LoopMode.Queue,
+    [LoopMode.Queue]: LoopMode.Off,
 };
 
 const options = {
-    mode: createStringOption({
+    mode: createNumberOption({
         description: "Select the loop mode.",
         choices: [
             {
                 name: "Off",
-                value: "off",
+                value: LoopMode.Off,
             },
             {
                 name: "Track",
-                value: "track",
+                value: LoopMode.Track,
             },
             {
                 name: "Queue",
-                value: "queue",
+                value: LoopMode.Queue,
             },
         ] as const,
         locales: {
@@ -54,15 +54,15 @@ export default class LoopCommand extends Command {
         const player: Player | undefined = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
-        const mode: RepeatMode = options.mode ?? loopModes[player.repeatMode];
+        const mode: LoopMode = options.mode ?? loopModes[player.loop];
 
-        await player.setRepeatMode(mode);
+        await player.setLoop(mode);
         await ctx.editOrReply({
             embeds: [
                 {
                     color: client.config.color.success,
                     description: messages.commands.loop.toggled({
-                        type: messages.commands.loop.loopType[Constants.LoopMode(player.repeatMode, true)],
+                        type: messages.commands.loop.loopType[Constants.LoopMode(player.loop, true)],
                     }),
                 },
             ],

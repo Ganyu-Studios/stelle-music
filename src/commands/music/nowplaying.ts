@@ -1,5 +1,5 @@
+import type { PlayerStructure, TrackStructure } from "hoshimi";
 import type { Image } from "imagescript";
-import type { Player, Track } from "lavalink-client";
 import {
     AttachmentBuilder,
     Command,
@@ -39,10 +39,10 @@ export default class NowPlayingCommand extends Command {
 
         const { messages } = await ctx.locale();
 
-        const player: Player | undefined = client.manager.getPlayer(ctx.guildId);
+        const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
-        const track: Track | null = player.queue.current;
+        const track: TrackStructure | null = player.queue.current;
         if (!track)
             return ctx.editOrReply({
                 embeds: [
@@ -65,9 +65,9 @@ export default class NowPlayingCommand extends Command {
             guildName: guild.name,
             timestamp: {
                 progress: player.position,
-                end: track.info.duration,
+                end: track.info.length,
                 progressStart: TimeFormat.toDotted(player.position),
-                progressEnd: TimeFormat.toDotted(track.info.duration),
+                progressEnd: TimeFormat.toDotted(track.info.length),
             },
             queue: {
                 current: 1,

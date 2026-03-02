@@ -1,3 +1,4 @@
+import type { PlayerStructure, TrackStructure } from "hoshimi";
 import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
@@ -13,10 +14,10 @@ export default class PreviousTrackComponent extends ComponentCommand {
 
         const { messages } = await ctx.locale();
 
-        const player = client.manager.getPlayer(ctx.guildId);
+        const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
-        const track = await player.queue.shiftPrevious();
+        const track: TrackStructure | null = await player.queue.previous();
         if (!track)
             return ctx.editOrReply({
                 flags: MessageFlags.Ephemeral,

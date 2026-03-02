@@ -1,4 +1,4 @@
-import type { RepeatMode } from "lavalink-client";
+import { LoopMode, State } from "hoshimi";
 import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 import { type PausedState, type PermissionNames, StelleCategory } from "#stelle/types";
 
@@ -162,10 +162,10 @@ export default {
             loop: {
                 toggled: ({ type }: IType): string => `\`✅\` The **loop mode** is now: \`${type}\``,
                 loopType: {
-                    off: "Off",
-                    queue: "Queue",
-                    track: "Track",
-                } satisfies Record<RepeatMode, string>,
+                    [LoopMode.Off]: "Off",
+                    [LoopMode.Queue]: "Queue",
+                    [LoopMode.Track]: "Track",
+                } satisfies Record<LoopMode, string>,
             },
             autoplay: {
                 toggled: ({ type }: IType): string => `\`✅\` The **autoplay mode** is now: \`${type}\``,
@@ -180,9 +180,14 @@ export default {
                 description: "`📋` List of all Stelle nodes.",
                 noNodes: "`❌` No nodes available at the moment.",
                 states: {
-                    connected: "🟢 Connected.",
-                    disconnected: "🔴 Disconnected.",
-                },
+                    [State.Connected]: "🟢 Connected.",
+                    [State.Disconnected]: "🔴 Disconnected.",
+                    [State.Connecting]: "🟡 Connecting.",
+                    [State.Idle]: "⚪ Idle.",
+                    [State.Reconnecting]: "🟠 Reconnecting.",
+                    [State.Reconnected]: "🟢 Reconnected.",
+                    [State.Destroyed]: "⚫ Destroyed.",
+                } satisfies Record<State, string>,
             },
             volume: {
                 changed: ({ volume }: IVolume): string => `\`✅\` The volume has been set to: **${volume}%**.`,

@@ -1,4 +1,5 @@
-import { Command, Declare, Embed, type GuildCommandContext, LocalesT, Middlewares } from "seyfert";
+import type { PlayerStructure } from "hoshimi";
+import { Command, Declare, Embed, type Guild, type GuildCommandContext, LocalesT, Middlewares } from "seyfert";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { EmbedPaginator } from "#stelle/utils/paginator.js";
@@ -21,14 +22,14 @@ export default class QueueCommand extends Command {
 
         const { messages } = await ctx.locale();
 
-        const guild = await ctx.guild();
+        const guild: Guild<"cached" | "api"> = await ctx.guild();
 
-        const player = client.manager.getPlayer(guild.id);
+        const player: PlayerStructure | undefined = client.manager.getPlayer(guild.id);
         if (!player) return;
 
         const tracksPerPage = 20;
-        const tracks = player.queue.tracks.map(
-            (track, i) => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${track.requester!.tag}`,
+        const tracks: string[] = player.queue.tracks.map(
+            (track, i): string => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${track.requester!.tag}`,
         );
 
         if (tracks.length < tracksPerPage) {
@@ -45,7 +46,7 @@ export default class QueueCommand extends Command {
         } else {
             const paginator = new EmbedPaginator({ ctx });
 
-            for (let i = 0; i < tracks.length; i += tracksPerPage) {
+            for (let i: number = 0; i < tracks.length; i += tracksPerPage) {
                 paginator.addEmbed(
                     new Embed()
                         .setDescription(messages.events.playerQueue({ tracks: tracks.slice(i, i + tracksPerPage).join("\n") }))

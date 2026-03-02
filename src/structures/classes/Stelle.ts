@@ -1,5 +1,6 @@
 import { join } from "node:path";
-import { Client, LimitedCollection, LimitedMemoryAdapter } from "seyfert";
+import { createClient, type RedisClientType } from "@redis/client";
+import { Client, LimitedCollection, LimitedMemoryAdapter, type MessageStructure } from "seyfert";
 import { HandleCommand } from "seyfert/lib/commands/handle.js";
 import { ActivityType, ApplicationCommandType, type GatewayPresenceUpdateData, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
 import { Yuna } from "yunaforseyfert";
@@ -32,6 +33,13 @@ export class Stelle extends Client<true> {
      * @readonly
      */
     readonly cooldowns: LimitedCollection<string, number> = new LimitedCollection<string, number>();
+
+    /**
+     * The Redis client instance.
+     * @type {RedisClientType}
+     * @readonly
+     */
+    readonly redis: RedisClientType = createClient({ url: Constants.RedisUrl() });
 
     /**
      * The client database instance.
@@ -163,8 +171,12 @@ export class Stelle extends Client<true> {
 
         if (this.cache.messages) this.cache.messages.filter = (message) => message.author.id === this.botId;
 
-        this.events.onFail = (_, error) => sendErrorReport({ error });
+        this.events.onFail = (_, error): Promise<MessageStructure | void> => sendErrorReport({ error });
 
+        this.redis.on("connect", (): void => this.logger.info("Redis - Connected to Redis!"));
+        this.redis.on("error", (error): void => this.logger.error(`Redis - Redis client error: ${inspect(error)}`));
+
+        await this.redis.connect();
         await this.manager.load();
         await this.start();
     }

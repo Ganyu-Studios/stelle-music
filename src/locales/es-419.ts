@@ -1,5 +1,5 @@
+import { LoopMode, State } from "hoshimi";
 import type { DefaultLocale } from "seyfert";
-
 import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 
@@ -157,9 +157,9 @@ export default {
             loop: {
                 toggled: ({ type }): string => `\`✅\` El **modo de bucle** ahora es: \`${type}\``,
                 loopType: {
-                    off: "Desactivado",
-                    queue: "Cola",
-                    track: "Canción",
+                    [LoopMode.Off]: "Desactivado",
+                    [LoopMode.Queue]: "Cola",
+                    [LoopMode.Track]: "Canción",
                 },
             },
             autoplay: {
@@ -175,8 +175,13 @@ export default {
                 description: "`📋` Lista de los nodos de Stelle.",
                 noNodes: "`❌` No hay nodos disponibles por el momento.",
                 states: {
-                    connected: "🟢 Conectado.",
-                    disconnected: "🔴 Desconectado.",
+                    [State.Connected]: "🟢 Conectado.",
+                    [State.Disconnected]: "🔴 Desconectado.",
+                    [State.Connecting]: "🟡 Conectando...",
+                    [State.Idle]: "⚪ Inactivo.",
+                    [State.Reconnecting]: "🟠 Reconectando...",
+                    [State.Reconnected]: "🟢 Reconectado.",
+                    [State.Destroyed]: "⚫ Destruído.",
                 },
             },
             volume: {

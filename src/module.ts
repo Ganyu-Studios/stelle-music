@@ -1,3 +1,4 @@
+import type { LyricsResult } from "hoshimi";
 import type { ParseClient, ParseLocales, ParseMiddlewares } from "seyfert";
 import type { Stelle } from "#stelle/classes/Stelle.js";
 import type { Options, StelleUser } from "#stelle/types";
@@ -29,6 +30,20 @@ declare module "seyfert" {
     }
 }
 
-declare module "lavalink-client" {
-    interface TrackRequester extends StelleUser {}
+declare module "hoshimi" {
+    interface CustomizableTrack {
+        requester: StelleUser;
+    }
+
+    interface CustomizablePlayerStorage {
+        localeString: string;
+        me: StelleUser;
+        lyrics: LyricsResult;
+        lyricsEnabled: boolean;
+        lyricsId: string;
+        enabledAutoplay: boolean;
+        is247: boolean;
+        isAutoPause: boolean;
+        messageId: string;
+    }
 }

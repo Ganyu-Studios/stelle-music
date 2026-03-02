@@ -1,6 +1,6 @@
-import { ComponentCommand, Embed, type GuildComponentContext, Middlewares } from "seyfert";
+import type { PlayerStructure } from "hoshimi";
+import { ComponentCommand, Embed, type Guild, type GuildComponentContext, Middlewares } from "seyfert";
 import { MessageFlags } from "seyfert/lib/types/index.js";
-
 import { EmbedPaginator } from "#stelle/utils/paginator.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
@@ -11,16 +11,16 @@ export default class QueueComponent extends ComponentCommand {
     async run(ctx: GuildComponentContext<typeof this.componentType>): Promise<void> {
         const { client, author } = ctx;
 
-        const guild = await ctx.guild();
+        const guild: Guild<"cached" | "api"> = await ctx.guild();
 
         const { messages } = await ctx.locale();
 
-        const player = client.manager.getPlayer(guild.id);
+        const player: PlayerStructure | undefined = client.manager.getPlayer(guild.id);
         if (!player) return;
 
         const amount = 20;
-        const tracks = player.queue.tracks.map(
-            (track, i) => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${track.requester!.tag}`,
+        const tracks: string[] = player.queue.tracks.map(
+            (track, i): string => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${track.requester!.tag}`,
         );
 
         if (tracks.length < amount) {

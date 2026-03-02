@@ -1,6 +1,6 @@
+import type { PlayerStructure } from "hoshimi";
 import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
-import type { PausedState } from "#stelle/types";
 import { Constants } from "#stelle/utils/data/constants.js";
 import { disableButtons } from "#stelle/utils/functions/utils.js";
 
@@ -14,11 +14,10 @@ export default class PauseTrackComponent extends ComponentCommand {
 
         const { messages } = await ctx.locale();
 
-        const player = client.manager.getPlayer(ctx.guildId);
+        const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
-        const state: PausedState = player.paused ? "resume" : "pause";
-        await player[state]();
+        await player.setPaused(!player.paused);
 
         await ctx.interaction.deferUpdate();
         await ctx.interaction.message.edit({

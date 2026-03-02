@@ -1,4 +1,4 @@
-import type { Player, SearchResult, Track } from "lavalink-client";
+import type { PlayerStructure, QueryResult, TrackStructure } from "hoshimi";
 import {
     ActionRow,
     Button,
@@ -40,7 +40,7 @@ async function playlistTrackSave(
 
     if (!ctx.inGuild()) return;
 
-    const player: Player | undefined = client.manager.getPlayer(ctx.guildId);
+    const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
     if ((!player || !player.playing) && ["queue", "current"].includes(type))
         return interaction.editOrReply({
             content: "",
@@ -81,7 +81,7 @@ async function playlistTrackSave(
         }
 
         case "current": {
-            const track: Track | null = player!.queue.current;
+            const track: TrackStructure | null = player!.queue.current;
             if (!track) return;
 
             if (playlist.tracks.some((t) => t.encoded === track.encoded))
@@ -150,7 +150,7 @@ async function playlistTrackSave(
                             ],
                         });
 
-                    const res: SearchResult | null = await client.manager.search({ query: url, requester: ctx.author });
+                    const res: QueryResult | null = await client.manager.search({ query: url, requester: ctx.author });
                     if (!res || !res.tracks.length)
                         return modal.editOrReply({
                             content: "",
@@ -163,7 +163,7 @@ async function playlistTrackSave(
                             ],
                         });
 
-                    const track: Track | undefined = res.tracks
+                    const track: TrackStructure | undefined = res.tracks
                         .filter((track): boolean => !playlist.tracks.some((t): boolean => t.encoded === track.encoded))
                         .at(0);
                     if (!track)

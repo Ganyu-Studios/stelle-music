@@ -1,4 +1,4 @@
-import type { ChannelDeletePacket, VoicePacket, VoiceServer, VoiceState } from "lavalink-client";
+import type { ChannelDeletePacket, VoicePacket, VoiceServer, VoiceState } from "hoshimi";
 import { createEvent } from "seyfert";
 
 /**
@@ -9,6 +9,6 @@ type AnyPacket = VoicePacket | VoiceServer | VoiceState | ChannelDeletePacket;
 export default createEvent({
     data: { name: "raw" },
     async run(payload, client): Promise<void> {
-        await client.manager.sendRawData(payload as AnyPacket);
+        await client.manager.updateVoiceState(payload as AnyPacket);
     },
 });

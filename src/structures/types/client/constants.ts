@@ -1,4 +1,4 @@
-import type { RepeatMode } from "lavalink-client";
+import type { LoopMode } from "hoshimi";
 import type { GatewayActivityUpdateData } from "seyfert/lib/types/gateway.js";
 
 /**
@@ -111,14 +111,18 @@ export interface StelleConstants {
     PauseState(state: boolean): PausedState;
     /**
      * Get the loop state of the player.
-     * @param {RepeatMode} mode The repeat mode of the player.
+     * @param {LoopMode} mode The loop mode of the player.
      * @param {boolean} alt Whether to use the alternative mode or not.
      */
-    LoopMode(mode: RepeatMode, alt?: boolean): RepeatMode;
+    LoopMode(mode: LoopMode, alt?: boolean): LoopMode;
     /**
-     * Build the key for the Redis queue store.
-     * @param {string} guildId The guild id to build the key for.
-     * @returns {string} The built key.
+     * Get the name space for the Redis keys.
+     * @returns {string} The name space for the Redis keys.
      */
-    BuildKey(guildId: string): string;
+    GetNamespace(): string;
+    /**
+     * Get the Redis URL from the environment variables.
+     * @returns {string} The Redis URL.
+     */
+    RedisUrl(): string;
 }

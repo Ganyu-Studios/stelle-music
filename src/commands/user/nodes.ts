@@ -1,5 +1,6 @@
 import { Command, Declare, Embed, type GuildCommandContext, LocalesT, type Message, type WebhookMessage } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
+import type { APIEmbedField } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { formatMemoryUsage } from "#stelle/utils/functions/internal/logger.js";
@@ -19,16 +20,16 @@ export default class NodesCommand extends Command {
         const { client } = ctx;
         const { messages } = await ctx.locale();
 
-        const maxFields = 25;
-        const fields = client.manager.nodeManager.nodes.map((node) => ({
+        const limit = 25;
+        const fields: APIEmbedField[] = client.manager.nodeManager.nodes.map((node) => ({
             name: `\`🔰\` ${node.id}`,
             inline: true,
             value: messages.commands.nodes.value({
-                state: messages.commands.nodes.states[node.connected ? "connected" : "disconnected"],
-                players: node.stats.players,
-                uptime: TimeFormat.toHumanize(node.stats.uptime),
-                memory: `${formatMemoryUsage(node.stats.memory.used)} / ${formatMemoryUsage(node.stats.memory.allocated)}`,
-                cpu: `${node.stats.cpu.lavalinkLoad.toFixed(2)}% / ${node.stats.cpu.systemLoad.toFixed(2)}% (Cores: ${node.stats.cpu.cores})`,
+                state: messages.commands.nodes.states[node.state],
+                players: node.stats?.players ?? 0,
+                uptime: TimeFormat.toHumanize(node.stats?.uptime ?? 0),
+                memory: `${formatMemoryUsage(node.stats?.memory?.used ?? 0)} / ${formatMemoryUsage(node.stats?.memory?.allocated ?? 0)}`,
+                cpu: `${node.stats?.cpu?.lavalinkLoad.toFixed(2) ?? 0}% / ${node.stats?.cpu?.systemLoad.toFixed(2) ?? 0}% (Cores: ${node.stats?.cpu?.cores ?? 0})`,
             }),
         }));
 
@@ -42,25 +43,25 @@ export default class NodesCommand extends Command {
                 ],
             });
 
-        if (fields.length < maxFields) {
+        if (fields.length < limit) {
             await ctx.editOrReply({
                 embeds: [
                     new Embed()
                         .setDescription(messages.commands.nodes.description)
                         .setColor(client.config.color.success)
-                        .addFields(fields.slice(0, maxFields))
+                        .addFields(fields.slice(0, limit))
                         .setTimestamp(),
                 ],
             });
         } else {
             const pages = new EmbedPaginator({ ctx });
 
-            for (let i = 0; fields.length < maxFields; i += maxFields) {
+            for (let i = 0; i < fields.length; i += limit) {
                 pages.addEmbed(
                     new Embed()
                         .setDescription(messages.commands.nodes.description)
                         .setColor(client.config.color.success)
-                        .addFields(fields.slice(i, i + maxFields))
+                        .addFields(fields.slice(i, i + limit))
                         .setTimestamp(),
                 );
             }

@@ -1,3 +1,4 @@
+import type { PlayerStructure } from "hoshimi";
 import { type AnyContext, createMiddleware, type MiddlewareContext } from "seyfert";
 
 import { EmbedColors } from "seyfert/lib/common/index.js";
@@ -13,7 +14,7 @@ export const checkNodes: MiddlewareContext<void, AnyContext> = createMiddleware<
     const { messages } = await context.locale();
     const { client } = context;
 
-    if (!client.manager.useable) {
+    if (!client.manager.isUseable()) {
         await context.editOrReply({
             flags: MessageFlags.Ephemeral,
             embeds: [
@@ -40,7 +41,7 @@ export const checkPlayer: MiddlewareContext<void, AnyContext> = createMiddleware
     const { client } = context;
     const { messages } = await context.locale();
 
-    const player = client.manager.getPlayer(context.guildId);
+    const player: PlayerStructure | undefined = client.manager.getPlayer(context.guildId);
     if (!player) {
         await context.editOrReply({
             flags: MessageFlags.Ephemeral,
@@ -68,10 +69,10 @@ export const checkQueue: MiddlewareContext<void, AnyContext> = createMiddleware<
     const { client } = context;
     const { messages } = await context.locale();
 
-    const player = client.manager.getPlayer(context.guildId);
+    const player: PlayerStructure | undefined = client.manager.getPlayer(context.guildId);
     if (!player) return pass();
 
-    const isAutoplay = !!player.get<boolean | undefined>("enabledAutoplay");
+    const isAutoplay: boolean = !!(await player.data.get("enabledAutoplay"));
     if (!(isAutoplay || player.queue.tracks.length)) {
         await context.editOrReply({
             flags: MessageFlags.Ephemeral,
@@ -99,7 +100,7 @@ export const checkTracks: MiddlewareContext<void, AnyContext> = createMiddleware
     const { client } = context;
     const { messages } = await context.locale();
 
-    const player = client.manager.getPlayer(context.guildId);
+    const player: PlayerStructure | undefined = client.manager.getPlayer(context.guildId);
     if (!player) return pass();
 
     if (!(player.queue.tracks.length + Number(!!player.queue.current) >= 1)) {

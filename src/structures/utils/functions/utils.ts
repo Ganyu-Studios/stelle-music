@@ -3,6 +3,7 @@ import { mkdir } from "node:fs/promises";
 import { isAbsolute, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { inspect as nodeInspect } from "node:util";
+import type { Awaitable, TrackRequester } from "hoshimi";
 import {
     ActionRow,
     type AnyContext,
@@ -15,7 +16,7 @@ import {
 } from "seyfert";
 import { resolvePartialEmoji } from "seyfert/lib/common/index.js";
 import { type APIMessageComponentEmoji, ButtonStyle, ComponentType, type LocaleString } from "seyfert/lib/types/index.js";
-import type { EditButtonOptions, Omit, Plain, StelleUser } from "#stelle/types";
+import type { EditButtonOptions, Omit, Plain, Prettify } from "#stelle/types";
 import { InvalidRow } from "#stelle/utils/errors.js";
 
 /**
@@ -122,14 +123,14 @@ export const parseWebhook = (url: string): WebhookObject | null => {
  * @param {unknown} requester The requester user.
  * @returns {StelleUser} The transformed user.
  */
-export const requesterTransformer = (requester: unknown): StelleUser => {
+export const requesterFn = <T extends TrackRequester = TrackRequester>(requester: TrackRequester): Awaitable<T> => {
     if (requester instanceof User)
         return {
             ...omitKeys(requester, ["client"]),
             tag: requester.bot ? requester.username : requester.tag,
-        };
+        } as T;
 
-    return requester as StelleUser;
+    return requester as T;
 };
 
 /**
@@ -255,7 +256,10 @@ export const isUrl = (input: string): boolean => /^(https?:\/\/)?([\w-]+(\.[\w-]
  * @param {K[]} keys The keys to omit.
  * @returns {Plain<Omit<T, K>>} The object without the keys and without functions.
  */
-export const omitKeys = <T extends Record<string, any>, K extends readonly (keyof T)[]>(obj: T, keys: K): Plain<Omit<T, K[number]>> =>
+export const omitKeys = <T extends Record<string, any>, K extends readonly (keyof T)[]>(
+    obj: T,
+    keys: K,
+): Prettify<Plain<Omit<T, K[number]>>> =>
     Object.fromEntries(Object.entries(obj).filter(([key]) => !keys.includes(key as any))) as Plain<Omit<T, K[number]>>;
 
 /**

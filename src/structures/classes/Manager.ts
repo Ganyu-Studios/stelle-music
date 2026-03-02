@@ -1,56 +1,16 @@
-import { LavalinkManager, type LavalinkNode, type SearchPlatform, type SearchResult } from "lavalink-client";
+import { Hoshimi, SearchEngines } from "hoshimi";
 import type { UsingClient } from "seyfert";
-
-import { Constants } from "#stelle/utils/data/constants.js";
-import { autoPlayFunction } from "#stelle/utils/functions/manager/autoplay.js";
-import { requesterTransformer } from "#stelle/utils/functions/utils.js";
+import { autoplayFn } from "#stelle/utils/functions/manager/autoplay.js";
+import { requesterFn } from "#stelle/utils/functions/utils.js";
 import { LavalinkHandler } from "#stelle/utils/manager/handler.js";
-import { RedisClient } from "./modules/Redis.js";
 import { RedisQueueStore } from "./Store.js";
-
-/**
- * Options for searching tracks in the manager.
- */
-interface ManagerSearchOptions {
-    /**
-     * The search query.
-     * @type {string}
-     */
-    query: string;
-    /**
-     * The search platform.
-     * @type {SearchPlatform}
-     */
-    source?: SearchPlatform;
-    /**
-     * The requester object.
-     * @type {unknown}
-     */
-    requester?: unknown;
-}
-
-/**
- *
- * Calculate the penalties for a lavalink node.
- * @param {LavalinkNode} node The lavalink node to check the penalties for.
- * @returns {number} The penalties for the node.
- */
-const penalties = (node: LavalinkNode): number => {
-    if (!node.stats) return 0;
-
-    const { players, cpu, frameStats } = node.stats;
-    const cpuPenalty = Math.round(1.05 ** (100 * cpu.systemLoad) * 10 - 10);
-    const framePenalty = frameStats ? (frameStats.deficit ?? 0) + (frameStats.nulled ?? 0) * 2 : 0;
-
-    return players + cpuPenalty + framePenalty;
-};
 
 /**
  * Class representing the lavalink manager of the bot.
  * @extends LavalinkManager
  * @class StelleManager
  */
-export class StelleManager extends LavalinkManager {
+export class StelleManager extends Hoshimi {
     /**
      * The lavalink handler of the bot.
      * @type {LavalinkHandler}
@@ -74,60 +34,29 @@ export class StelleManager extends LavalinkManager {
     constructor(client: UsingClient) {
         super({
             nodes: client.config.nodes,
-            autoSkipOnResolveError: true,
-            sendToShard: (guildId, payload) => {
+            defaultSearchEngine: SearchEngines.Spotify,
+            sendPayload: (guildId, payload) => {
                 // just in case, but this should never happen
                 if (typeof guildId !== "string" || typeof guildId === "undefined")
-                    return client.logger.warn("StelleManager#sendToShard: guildId is not a string.");
+                    return client.logger.warn("StelleManager#sendPayload: guildId is not a string.");
 
                 return client.gateway.send(client.gateway.calculateShardId(guildId), payload);
             },
             queueOptions: {
-                queueStore: new RedisQueueStore(new RedisClient(client)),
-                maxPreviousTracks: 25,
-            },
-            advancedOptions: {
-                enableDebugEvents: Constants.Debug,
-                debugOptions: {
-                    logCustomSearches: Constants.Debug,
-                    noAudio: Constants.Debug,
-                    playerDestroy: {
-                        debugLog: Constants.Debug,
-                        dontThrowError: Constants.Debug,
-                    },
-                },
+                autoplayFn,
+                storage: new RedisQueueStore(client.redis),
+                maxHistory: 25,
             },
             playerOptions: {
-                requesterTransformer,
-                defaultSearchPlatform: "spsearch",
+                requesterFn,
                 onDisconnect: {
-                    destroyPlayer: true,
-                },
-                onEmptyQueue: {
-                    autoPlayFunction,
+                    autoDestroy: true,
                 },
             },
         });
 
         this.handler = new LavalinkHandler(client);
         this.client = client;
-    }
-
-    /**
-     *
-     * Search for a track or playlist.
-     * @param {ManagerSearchOptions} options The search options.
-     * @returns {Promise<SearchResult>} The search result.
-     */
-    public search(options: ManagerSearchOptions): Promise<SearchResult | null> {
-        const { query, source, requester } = options;
-
-        if (!query.length) return Promise.resolve(null);
-
-        const nodes = this.nodeManager.leastUsedNodes();
-        const node = nodes.reduce((a, b) => (penalties(a) < penalties(b) ? a : b));
-
-        return node.search({ query, source }, requester, false).catch((): null => null);
     }
 
     /**
@@ -144,8 +73,8 @@ export class StelleManager extends LavalinkManager {
      * Load the lavalink manager. Shortcut to `LavalinkHandler#load()`.
      * @returns {Promise<void>} A promise.
      */
-    public load(): Promise<void> {
+    public async load(): Promise<void> {
         this.client.logger.info("LavalinkHandler loaded");
-        return this.handler.load();
+        await this.handler.load();
     }
 }

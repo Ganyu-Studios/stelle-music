@@ -1,4 +1,4 @@
-import type { SearchPlatform } from "lavalink-client";
+import type { SearchEngines } from "hoshimi";
 import { Controller } from "#stelle/classes/Controller.js";
 import { CacheKeys } from "#stelle/types";
 
@@ -15,7 +15,7 @@ interface StoredPlayer {
      * The search platform of the player.
      * @type {SearchPlatform}
      */
-    searchPlatform: SearchPlatform;
+    searchPlatform: SearchEngines;
 }
 
 /**
@@ -37,19 +37,19 @@ export class PlayerController extends Controller<"guildPlayer"> {
         if (cached)
             return {
                 defaultVolume: cached.defaultVolume,
-                searchPlatform: cached.searchPlatform as SearchPlatform,
+                searchPlatform: cached.searchPlatform as SearchEngines,
             };
 
         const data = await this.model.findUnique({ where: { guildId: id } });
         if (!data)
             return {
                 defaultVolume: this.client.config.defaultVolume,
-                searchPlatform: this.client.config.defaultSearchPlatform,
+                searchPlatform: this.client.config.defaultSearchEngine,
             };
 
         return {
             defaultVolume: data.defaultVolume,
-            searchPlatform: data.searchPlatform as SearchPlatform,
+            searchPlatform: data.searchPlatform as SearchEngines,
         };
     }
 

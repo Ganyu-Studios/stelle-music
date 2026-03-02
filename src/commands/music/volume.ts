@@ -1,3 +1,4 @@
+import type { PlayerStructure } from "hoshimi";
 import {
     Command,
     createIntegerOption,
@@ -43,11 +44,11 @@ export default class VolumeCommand extends Command {
 
         const { messages } = await ctx.locale();
 
-        const player = client.manager.getPlayer(ctx.guildId);
+        const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
         if (volume === 1) {
-            await player.pause();
+            await player.setPaused(true);
             await player.setVolume(volume);
 
             return ctx.editOrReply({
@@ -61,7 +62,7 @@ export default class VolumeCommand extends Command {
         }
 
         if (volume > 1 && player.paused) {
-            await player.resume();
+            await player.setPaused(false);
             await player.setVolume(volume);
 
             return ctx.editOrReply({

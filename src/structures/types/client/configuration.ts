@@ -1,4 +1,4 @@
-import type { LavalinkNodeOptions, SearchPlatform } from "lavalink-client";
+import type { NodeOptions, SearchEngines } from "hoshimi";
 import type { PermissionStrings } from "seyfert";
 import type { LocaleString } from "seyfert/lib/types/index.js";
 
@@ -63,9 +63,9 @@ interface Sessions {
      */
     enabled: boolean;
     /**
-     * The node session resume time.
+     * The node session resume time. (In seconds)
      * @type {number}
-     * @default ms("1min")
+     * @default 60
      */
     resumeTime: number;
     /**
@@ -170,9 +170,9 @@ export interface StelleConfiguration {
     developerIds: string[];
     /**
      * The lavalink nodes list.
-     * @type {LavalinkNodeOptions[]}
+     * @type {NodeOptions[]}
      */
-    nodes: LavalinkNodeOptions[];
+    nodes: NodeOptions[];
     /**
      * The bot invite link.
      * @type {string}
@@ -200,7 +200,7 @@ export interface StelleConfiguration {
      * @type {SearchPlatform}
      * @default "spotify"
      */
-    defaultSearchPlatform: SearchPlatform;
+    defaultSearchEngine: SearchEngines;
     /**
      * The disconnect time in milliseconds. (Use the time formatter)
      * @type {number}

@@ -24,9 +24,9 @@ const options = {
             description: "locales.seek.option.description",
         },
         value: ({ value }, ok: OKFunction<number | string>) => {
-            const time = value.split(/\s*,\s*|\s+/);
-            const milis = time.map((x) => ms(x));
-            const result = milis.reduce((a, b) => a + b, 0);
+            const time: string[] = value.split(/\s*,\s*|\s+/);
+            const milis: number[] = time.map((x): number => ms(x));
+            const result: number = milis.reduce((a, b): number => a + b, 0);
 
             if (Number.isNaN(result)) return ok(value);
 
@@ -79,7 +79,7 @@ export default class SeekCommand extends Command {
                 ],
             });
 
-        if (time > track.info.duration)
+        if (time > track.info.length)
             return ctx.editOrReply({
                 embeds: [
                     {

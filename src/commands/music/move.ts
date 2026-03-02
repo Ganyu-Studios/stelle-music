@@ -1,3 +1,4 @@
+import type { PlayerStructure } from "hoshimi";
 import { Command, createChannelOption, Declare, type GuildCommandContext, LocalesT, Middlewares, Options } from "seyfert";
 import { ChannelType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
@@ -41,18 +42,18 @@ export default class MoveCommand extends Command {
 
         const { messages } = await ctx.locale();
 
-        const player = client.manager.getPlayer(ctx.guildId);
+        const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
         if (text) {
-            player.options.textChannelId = text.id;
-            player.textChannelId = text.id;
+            player.options.textId = text.id;
+            player.textId = text.id;
         }
 
-        player.options.voiceChannelId = voice.id;
-        player.voiceChannelId = voice.id;
+        player.options.voiceId = voice.id;
+        player.voiceId = voice.id;
 
-        const textId = text?.id ?? player.textChannelId ?? player.options.textChannelId ?? ctx.channelId;
+        const textId: string = text?.id ?? player.textId ?? player.options.textId ?? ctx.channelId;
 
         await player.connect();
         await ctx.editOrReply({
