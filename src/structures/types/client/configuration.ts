@@ -1,6 +1,8 @@
 import type { NodeOptions, SearchEngines } from "hoshimi";
 import type { PermissionStrings } from "seyfert";
-import type { LocaleString } from "seyfert/lib/types/index.js";
+import type { Locale, LocaleString, PermissionFlagsBits } from "seyfert/lib/types/index.js";
+
+type PermissionFlagsBit = (typeof PermissionFlagsBits)[keyof typeof PermissionFlagsBits];
 
 /**
  * The colors configuration interface.
@@ -44,12 +46,12 @@ interface Permissions {
      * The voice channel permissions.
      * @default ["ViewChannel", "Connect", "Speak"]
      */
-    voicePermissions: PermissionStrings;
+    voicePermissions: PermissionStrings | PermissionFlagsBit[];
     /**
      * The stage channel permissions.
      * @default ["MuteMembers"]
      */
-    stagePermissions: PermissionStrings;
+    stagePermissions: PermissionStrings | PermissionFlagsBit[];
 }
 
 /**
@@ -115,7 +117,7 @@ interface Deleter {
     onPlayerStop: boolean;
 }
 
-interface TwentyForSeven {
+interface TwentyFourSeven {
     /**
      * Whether the bot should stay 24/7 in the voice channel.
      * @type {boolean}
@@ -139,7 +141,7 @@ export interface StelleConfiguration {
      * @default "en-US"
      * @type {LocaleString}
      */
-    defaultLocale: LocaleString;
+    defaultLocale: LocaleString | Locale;
     /**
      * The default prefix used to use text commands.
      * @type {string}
@@ -242,7 +244,7 @@ export interface StelleConfiguration {
      * @type {boolean}
      * @default false
      */
-    twentyforseven: TwentyForSeven;
+    twentyforseven: TwentyFourSeven;
 }
 
 /**
