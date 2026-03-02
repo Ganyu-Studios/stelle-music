@@ -16,7 +16,7 @@ import {
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { playlistAutocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
-import { omitKeys, requesterFn } from "#stelle/utils/functions/utils.js";
+import { requesterFn } from "#stelle/utils/functions/utils.js";
 
 const options = {
     id: createStringOption({
@@ -100,7 +100,7 @@ export default class LoadSubcommand extends SubCommand {
         if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);
 
         if (!(await player.data.get("localeString"))) await player.data.set("localeString", await ctx.localeString());
-        if (!(await player.data.get("me"))) await player.data.set("me", omitKeys(client.me, ["client"]));
+        if (!(await player.data.get("me"))) await player.data.set("me", requesterFn(client.me));
 
         const tracks: TrackStructure[] = await Promise.all(
             playlist.tracks.map(async (track): Promise<TrackStructure> => {

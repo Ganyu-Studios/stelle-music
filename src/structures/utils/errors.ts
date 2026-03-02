@@ -117,3 +117,15 @@ export class InvalidConfiguration extends Error {
         this.name = "Stelle [InvalidConfiguration]";
     }
 }
+
+/**
+ * Error thrown when an invalid webhook URL is provided.
+ * @class InvalidWebhookURL
+ * @extends {Error}
+ */
+export class InvalidWebhookURL extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "Stelle [InvalidWebhookURL]";
+    }
+}

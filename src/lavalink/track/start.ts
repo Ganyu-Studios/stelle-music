@@ -1,3 +1,4 @@
+import { EventNames } from "hoshimi";
 import { ActionRow, type AllChannels, Button, Embed, type MessageStructure } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 import { Constants } from "#stelle/utils/data/constants.js";
@@ -5,7 +6,7 @@ import { TimeFormat } from "#stelle/utils/functions/time.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 export default createLavalinkEvent({
-    name: "trackStart",
+    name: EventNames.TrackStart,
     async run(client, player, track): Promise<void> {
         if (!(player.textId && player.voiceId)) return;
         if (!track) return;

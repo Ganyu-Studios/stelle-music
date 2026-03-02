@@ -20,7 +20,7 @@ import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { onAutocompleteError } from "#stelle/utils/functions/internal/overrides.js";
 import { TimeFormat } from "#stelle/utils/functions/time.js";
-import { omitKeys, truncate } from "#stelle/utils/functions/utils.js";
+import { requesterFn, truncate } from "#stelle/utils/functions/utils.js";
 
 const options = {
     query: createStringOption({
@@ -124,7 +124,7 @@ export default class PlayCommand extends Command {
         const { loadType, playlist, tracks } = await player.search({ query, engine: searchPlatform, requester: ctx.author });
 
         if (!(await player.data.get("localeString"))) await player.data.set("localeString", await ctx.localeString());
-        if (!(await player.data.get("me"))) await player.data.set("me", omitKeys(client.me, ["client"]));
+        if (!(await player.data.get("me"))) await player.data.set("me", requesterFn(client.me));
 
         const autoplayIndex = (await player.data.get("enabledAutoplay")) ? 0 : undefined;
 

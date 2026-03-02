@@ -16,24 +16,8 @@ import {
 } from "seyfert";
 import { resolvePartialEmoji } from "seyfert/lib/common/index.js";
 import { type APIMessageComponentEmoji, ButtonStyle, ComponentType, type LocaleString } from "seyfert/lib/types/index.js";
-import type { EditButtonOptions, Omit, Plain, Prettify } from "#stelle/types";
+import type { EditButtonOptions, Omit, Plain, Prettify, WebhookMetadata } from "#stelle/types";
 import { InvalidRow } from "#stelle/utils/errors.js";
-
-/**
- * The webhook object is used to parse the webhook url.
- */
-interface WebhookObject {
-    /**
-     * The id of the webhook.
-     * @type {string}
-     */
-    id: string;
-    /**
-     * The token of the webhook.
-     * @type {string}
-     */
-    token: string;
-}
 
 interface CreateIdOptions {
     /**
@@ -106,16 +90,18 @@ export const getCollectionKey = (ctx: AnyContext): string => {
 
 /**
  *
- * Parses a webhook url.
- * @param {string} url The webhook url.
- * @returns {WebhookObject | null} The parsed webhook.
+ * Parse a Discord webhook URL and return its id and token.
+ * @param {string} url The webhook URL to parse.
+ * @returns {WebhookMetadata | null} The parsed webhook metadata, or null if the URL is invalid.
  */
-export const parseWebhook = (url: string): WebhookObject | null => {
-    const webhookRegex = /https?:\/\/(?:ptb\.|canary\.)?discord\.com\/api(?:\/v\d{1,2})?\/webhooks\/(\d{17,19})\/([\w-]{68})/i;
-    const match = webhookRegex.exec(url);
+export function parseDiscordWebhook(url: string): WebhookMetadata | null {
+    const regex = /https?:\/\/(?:ptb\.|canary\.)?discord\.com\/api(?:\/v\d{1,2})?\/webhooks\/(?<id>\d{17,19})\/(?<token>[\w-]{68})/i;
 
-    return match ? { id: match[1], token: match[2] } : null;
-};
+    const match: RegExpExecArray | null = regex.exec(url);
+    if (!match?.groups) return null;
+
+    return { id: match.groups.id, token: match.groups.token };
+}
 
 /**
  *

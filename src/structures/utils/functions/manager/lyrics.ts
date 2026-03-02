@@ -5,6 +5,18 @@ import type { CreateComponentCollectorResult } from "seyfert/lib/components/hand
 import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
 import { ms } from "#stelle/utils/functions/time.js";
 
+async function cleanLyrics(player: PlayerStructure, lyrics: LyricsResult): Promise<LyricsResult> {
+    if (typeof lyrics.provider !== "string") lyrics.provider = "Unknown";
+    if (typeof lyrics.sourceName !== "string") lyrics.sourceName = "Unknown";
+
+    lyrics.provider = lyrics.provider.replace("Source:", "").trim();
+    lyrics.sourceName = lyrics.sourceName.replace("Source:", "").trim();
+
+    await player.data.set("lyrics", lyrics);
+
+    return lyrics;
+}
+
 /**
  *
  * Displays the lyrics of the current track in the guild.
@@ -35,16 +47,7 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | Message | W
             .then(async (lyrics): Promise<LyricsResult | null> => {
                 // If for some reason lyrics is null or undefined, we return null
                 if (!lyrics) return null;
-
-                if (typeof lyrics.provider !== "string") lyrics.provider = "Unknown";
-                if (typeof lyrics.sourceName !== "string") lyrics.sourceName = "Unknown";
-
-                lyrics.provider = lyrics.provider.replace("Source:", "").trim();
-                lyrics.sourceName = lyrics.sourceName.replace("Source:", "").trim();
-
-                await player.data.set("lyrics", lyrics);
-
-                return lyrics;
+                return cleanLyrics(player, lyrics);
             })
             .catch(async (error): Promise<LyricsResult | null> => {
                 // If the lyrics object contains an error or trace property, it means an error occurred
@@ -55,18 +58,10 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | Message | W
                         const lyrics: LyricsResult | null = await player.lyrics.current(true);
                         if (!lyrics) return null;
 
-                        if (typeof lyrics.provider !== "string") lyrics.provider = "Unknown";
-                        if (typeof lyrics.sourceName !== "string") lyrics.sourceName = "Unknown";
-
-                        lyrics.provider = lyrics.provider.replace("Source:", "").trim();
-                        lyrics.sourceName = lyrics.sourceName.replace("Source:", "").trim();
-
-                        await player.data.set("lyrics", lyrics);
-
                         // Since we get the lyrics from a fallback, we should skip the track source when subscribing to the lyrics
                         skipTrackSource = true;
 
-                        return lyrics;
+                        return cleanLyrics(player, lyrics);
                     }
 
                     return null;

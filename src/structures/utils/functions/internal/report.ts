@@ -1,12 +1,9 @@
 import { type AnyContext, AttachmentBuilder, Embed, type Message } from "seyfert";
-// this causes the error "unsettled top-level await"
-// idk why, but it does
-import { client } from "#stelle/client";
+import { WebhookClient } from "#stelle/classes/WebhookClient.js";
 import { Environment } from "#stelle/utils/data/configuration.js";
 import { Constants } from "#stelle/utils/data/constants.js";
-
 import { logger } from "#stelle/utils/functions/internal/logger.js";
-import { parseWebhook, truncate } from "#stelle/utils/functions/utils.js";
+import { truncate } from "#stelle/utils/functions/utils.js";
 
 /**
  * The report options interface.
@@ -39,8 +36,8 @@ export async function sendErrorReport(options: ReportOptions): Promise<Message |
     if (Constants.Dev) return logger.error(options.error);
 
     const date = new Date();
-    const title = ctx?.client.me.username ?? "Stelle";
-    const attachment = new AttachmentBuilder()
+    const title: string = ctx?.client.me.username ?? "Stelle";
+    const attachment: AttachmentBuilder = new AttachmentBuilder()
         .setName(`${title}-Error.log`)
         .setFile(
             "buffer",
@@ -56,6 +53,7 @@ export async function sendErrorReport(options: ReportOptions): Promise<Message |
                     "",
                     `Stack: ${error.stack}`,
                     `Message: ${error.message}`,
+                    `Cause: ${error.cause ?? "None"}`,
                 ].join("\n"),
             ),
         );
@@ -88,10 +86,9 @@ export async function sendErrorReport(options: ReportOptions): Promise<Message |
         }
     }
 
-    const webhook = parseWebhook(Environment.ERRORS_WEBHOOK);
-    if (!webhook) return;
+    const webhook = new WebhookClient(Environment.ERRORS_WEBHOOK);
 
-    await client.webhooks.writeMessage(webhook.id, webhook.token, {
+    await webhook.writeMessage({
         body: {
             embeds: [embed],
             files: [attachment],

@@ -1,8 +1,9 @@
+import { EventNames } from "hoshimi";
 import { Constants } from "#stelle/utils/data/constants.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 export default createLavalinkEvent({
-    name: "trackEnd",
+    name: EventNames.TrackEnd,
     async run(client, player, track): Promise<void> {
         if (!player.textId) return;
 

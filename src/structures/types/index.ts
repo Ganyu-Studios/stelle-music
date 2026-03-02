@@ -184,6 +184,22 @@ export type SessionJson = StellePlayerJson & {
 };
 
 /**
+ * The metadata for the webhook.
+ */
+export interface WebhookMetadata {
+    /**
+     * The id of the webhook.
+     * @type {string}
+     */
+    id: string;
+    /**
+     * The token of the webhook.
+     * @type {string}
+     */
+    token: string;
+}
+
+/**
  * The type to get the plain object without functions.
  */
 export type Plain<T> = {

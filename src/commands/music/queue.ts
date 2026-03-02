@@ -1,8 +1,7 @@
-import type { PlayerStructure } from "hoshimi";
-import { Command, Declare, Embed, type Guild, type GuildCommandContext, LocalesT, Middlewares } from "seyfert";
+import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares } from "seyfert";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
-import { EmbedPaginator } from "#stelle/utils/paginator.js";
+import { displayQueue } from "#stelle/utils/functions/manager/queue.js";
 
 @Declare({
     name: "queue",
@@ -18,46 +17,6 @@ import { EmbedPaginator } from "#stelle/utils/paginator.js";
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
 export default class QueueCommand extends Command {
     public override async run(ctx: GuildCommandContext): Promise<void> {
-        const { client, author } = ctx;
-
-        const { messages } = await ctx.locale();
-
-        const guild: Guild<"cached" | "api"> = await ctx.guild();
-
-        const player: PlayerStructure | undefined = client.manager.getPlayer(guild.id);
-        if (!player) return;
-
-        const tracksPerPage = 20;
-        const tracks: string[] = player.queue.tracks.map(
-            (track, i): string => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${track.requester!.tag}`,
-        );
-
-        if (tracks.length < tracksPerPage) {
-            await ctx.editOrReply({
-                embeds: [
-                    new Embed()
-                        .setDescription(messages.events.playerQueue({ tracks: tracks.slice(0, tracksPerPage).join("\n") }))
-                        .setColor(client.config.color.extra)
-                        .setThumbnail(guild.iconURL())
-                        .setTimestamp()
-                        .setAuthor({ name: author.tag, iconUrl: author.avatarURL() }),
-                ],
-            });
-        } else {
-            const paginator = new EmbedPaginator({ ctx });
-
-            for (let i: number = 0; i < tracks.length; i += tracksPerPage) {
-                paginator.addEmbed(
-                    new Embed()
-                        .setDescription(messages.events.playerQueue({ tracks: tracks.slice(i, i + tracksPerPage).join("\n") }))
-                        .setColor(client.config.color.extra)
-                        .setThumbnail(guild.iconURL())
-                        .setTimestamp()
-                        .setAuthor({ name: author.tag, iconUrl: author.avatarURL() }),
-                );
-
-                await paginator.reply();
-            }
-        }
+        await displayQueue(ctx);
     }
 }
