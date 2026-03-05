@@ -16,6 +16,7 @@ import {
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { playlistAutocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
+import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 import { requesterFn } from "#stelle/utils/functions/utils.js";
 
 const options = {
@@ -91,13 +92,7 @@ export default class LoadSubcommand extends SubCommand {
             selfDeaf: true,
         });
 
-        if (!player.connected) await player.connect();
-
-        let bot: VoiceState | null = await me.voice().catch((): null => null);
-        if (!bot) bot = await me.voice().catch((): null => null);
-
-        if (bot && bot.channelId !== voice.id) return;
-        if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);
+        await joinVoiceChannel(player, voice, me);
 
         if (!(await player.data.get("localeString"))) await player.data.set("localeString", await ctx.localeString());
         if (!(await player.data.get("me"))) await player.data.set("me", requesterFn(client.me));

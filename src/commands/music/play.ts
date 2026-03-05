@@ -19,6 +19,7 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { onAutocompleteError } from "#stelle/utils/functions/internal/overrides.js";
+import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 import { TimeFormat } from "#stelle/utils/functions/time.js";
 import { requesterFn, truncate } from "#stelle/utils/functions/utils.js";
 
@@ -113,13 +114,7 @@ export default class PlayCommand extends Command {
             selfDeaf: true,
         });
 
-        if (!player.connected) await player.connect();
-
-        let bot: VoiceState | null = await me.voice().catch((): null => null);
-        if (!bot) bot = await me.voice().catch((): null => null);
-
-        if (bot && bot.channelId !== voice.id) return;
-        if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);
+        await joinVoiceChannel(player, voice, me);
 
         const { loadType, playlist, tracks } = await player.search({ query, engine: searchPlatform, requester: ctx.author });
 

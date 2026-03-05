@@ -16,6 +16,7 @@ import { EmbedColors } from "seyfert/lib/common/index.js";
 import { ChannelType, MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
+import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 
 const options = {
     voice: createChannelOption({
@@ -78,11 +79,7 @@ export default class JoinCommand extends Command {
             selfDeaf: true,
         });
 
-        if (!player.connected) await player.connect();
-
-        let bot: VoiceState | null = await me.voice().catch((): null => null);
-        if (!bot) bot = await me.voice().catch((): null => null);
-        if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);
+        await joinVoiceChannel(player, voice, me);
 
         await ctx.editOrReply({
             content: "",
