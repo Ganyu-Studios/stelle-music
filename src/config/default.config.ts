@@ -1,10 +1,11 @@
 import { SearchEngines } from "hoshimi";
+import { Locale, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 import { createConfig } from "#stelle/utils/data/configuration.js";
 import { ms } from "#stelle/utils/functions/time.js";
 import { Sessions } from "#stelle/utils/manager/sessions.js";
 
 export default createConfig({
-    defaultLocale: "en-US",
+    defaultLocale: Locale.EnglishUS,
     defaultPrefix: "stelle",
     prefixes: ["st!"],
     defaultSearchEngine: SearchEngines.Spotify,
@@ -47,8 +48,8 @@ export default createConfig({
         errorsId: "the-id-wasn't-here", // <-- Errors logs channel.
     },
     permissions: {
-        stagePermissions: ["MuteMembers"],
-        voicePermissions: ["ViewChannel", "Connect", "Speak"],
+        stagePermissions: [PermissionFlagsBits.MuteMembers],
+        voicePermissions: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect, PermissionFlagsBits.Speak],
     },
     sessions: {
         enabled: true,
@@ -64,7 +65,7 @@ export default createConfig({
         onTrackSkip: false,
         onPlayerStop: false,
     },
-    twentyforseven: {
+    twentyfourseven: {
         autoPause: true,
         is247: false,
     },

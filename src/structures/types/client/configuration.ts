@@ -244,7 +244,7 @@ export interface StelleConfiguration {
      * @type {boolean}
      * @default false
      */
-    twentyforseven: TwentyFourSeven;
+    twentyfourseven: TwentyFourSeven;
 }
 
 /**

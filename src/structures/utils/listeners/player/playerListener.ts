@@ -37,8 +37,8 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
 
     const isChannel: boolean = oldState?.channelId === player.voiceId && newState.channelId !== oldState?.channelId;
 
-    const is247: boolean = (await player.data.get("is247")) || client.config.twentyforseven.is247;
-    const isAutoPause: boolean = (await player.data.get("isAutoPause")) ?? client.config.twentyforseven.autoPause;
+    const is247: boolean = (await player.data.get("is247")) || client.config.twentyfourseven.is247;
+    const isAutoPause: boolean = (await player.data.get("isAutoPause")) ?? client.config.twentyfourseven.autoPause;
 
     if (is247) {
         if (isAutoPause) {
