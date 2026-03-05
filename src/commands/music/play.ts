@@ -1,4 +1,4 @@
-import { LoadType, type QueryResult } from "hoshimi";
+import { LoadType, type QueryResult, type TrackStructure } from "hoshimi";
 import {
     type AllGuildVoiceChannels,
     Command,
@@ -145,11 +145,22 @@ export default class PlayCommand extends Command {
             case LoadType.Track:
             case LoadType.Search:
                 {
-                    const track = tracks[0];
+                    const track: TrackStructure | undefined = tracks.at(0);
+                    if (!track)
+                        return ctx.editOrReply({
+                            flags: MessageFlags.Ephemeral,
+                            content: "",
+                            embeds: [
+                                {
+                                    color: EmbedColors.Red,
+                                    description: messages.commands.play.noResults,
+                                },
+                            ],
+                        });
 
                     await player.queue.add(track, autoplayIndex);
 
-                    const status = track.info.isStream
+                    const status: string = track.info.isStream
                         ? messages.commands.play.live
                         : (TimeFormat.toDotted(track.info.length) ?? messages.commands.play.undetermined);
 
