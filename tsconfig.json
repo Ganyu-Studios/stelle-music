@@ -27,7 +27,6 @@
             "#stelle/controllers/*": ["./src/structures/controllers/*"],
             "#stelle/types": ["./src/structures/types/index.ts"],
             "#stelle/middlewares": ["./src/middlewares/index.ts"],
-            "#stelle/client": ["./src/index.ts"],
             "#stelle/prisma": ["./src/generated/prisma/client.ts"]
         }
     },

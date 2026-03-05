@@ -65,7 +65,7 @@
         "zod": "^4.3.6"
     },
     "devDependencies": {
-        "@biomejs/biome": "^2.4.5",
+        "@biomejs/biome": "^2.4.6",
         "@types/node": "^25.3.3",
         "husky": "^9.1.7",
         "lint-staged": "^16.3.2",
@@ -79,7 +79,6 @@
         "#stelle/controllers/*": "./dist/structures/controllers/*",
         "#stelle/types": "./dist/structures/types/index.js",
         "#stelle/middlewares": "./dist/middlewares/index.js",
-        "#stelle/client": "./dist/index.js",
         "#stelle/prisma": "./dist/generated/prisma/client.js"
     },
     "pnpm": {

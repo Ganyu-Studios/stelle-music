@@ -1,4 +1,4 @@
-import { type HoshimiTrack, type PlayerStructure, type QueryResult, SearchEngines, type TrackStructure } from "hoshimi";
+import { type HoshimiTrack, type PlayerStructure, type QueryResult, SearchEngines, SourceNames, type TrackStructure } from "hoshimi";
 import type { StelleUser } from "#stelle/types";
 
 /**
@@ -12,7 +12,7 @@ const trackLimit: number = 10;
  * Based on:
  * https://github.com/Tomato6966/lavalink-client/blob/main/testBot/Utils/OptionalFunctions.ts#L20
  *
- * A modified by: https://github.com/NoBody-UU/
+ * And also a modified version by: https://github.com/NoBody-UU/
  */
 
 /**
@@ -20,14 +20,14 @@ const trackLimit: number = 10;
  * Filter tracks.
  * @param {Player} player The player instance.
  * @param {Track} lastTrack The last track played.
- * @param {ResolvableTrack[]}  tracks The tracks to filter.
- * @returns {ResolvableTrack[]} The filtered tracks.
+ * @param {HoshimiTrack[]}  tracks The tracks to filter.
+ * @returns {HoshimiTrack[]} The filtered tracks.
  */
 const filter = (player: PlayerStructure, lastTrack: TrackStructure, tracks: HoshimiTrack[]): HoshimiTrack[] =>
     tracks.filter(
         (track): boolean =>
             !(
-                player.queue.history.some((t) => t.info.identifier === track.info.identifier) ||
+                player.queue.history.some((t): boolean => t.info.identifier === track.info.identifier) ||
                 lastTrack.info.identifier === track.info.identifier
             ),
     );
@@ -44,46 +44,61 @@ export async function autoplayFn(player: PlayerStructure, lastTrack: TrackStruct
 
     if (!(await player.data.get("enabledAutoplay"))) return;
 
-    //c'mon dude, this shit seems to work, so
-    if (!player.queue.history.some((t): boolean => t.info.identifier === lastTrack.info.identifier)) {
-        player.queue.history.unshift(lastTrack);
-        await player.queue.utils.save();
-    }
-
     const me: StelleUser | undefined = await player.data.get("me");
     if (!me) return;
 
     switch (lastTrack.info.sourceName) {
-        case "spotify": {
-            const filtered: TrackStructure[] = player.queue.history.filter(({ info }): boolean => info.sourceName === "spotify");
-            const first: TrackStructure | undefined = filtered.at(0);
-            if (!first) return;
-
-            const res: QueryResult = await player.search({
-                query: first.info.identifier,
+        case SourceNames.Spotify: {
+            const search: QueryResult = await player.search({
+                query: lastTrack.info.identifier,
                 engine: SearchEngines.SpotifyTrackMix,
                 requester: me,
             });
 
-            if (res.tracks.length) {
-                const track: HoshimiTrack = filter(player, lastTrack, res.tracks)[Math.floor(Math.random() * res.tracks.length)];
-                await player.queue.add(track);
+            // If we have results, add them to the queue
+            if (search.tracks.length) {
+                const tracks: HoshimiTrack[] = filter(player, lastTrack, search.tracks).slice(0, trackLimit);
+
+                await player.queue.add(tracks);
+                // If we don't have results, search on youtube
+            } else {
+                const search: QueryResult = await player.search({
+                    engine: SearchEngines.Youtube,
+                    query: `${lastTrack.info.title} ${lastTrack.info.author}`,
+                    requester: me,
+                });
+                const tracks: HoshimiTrack[] = filter(player, lastTrack, search.tracks).slice(0, trackLimit);
+
+                await player.queue.add(tracks);
             }
 
             break;
         }
 
-        case "youtube":
-        case "youtubemusic": {
-            const search = `https://www.youtube.com/watch?v=${lastTrack.info.identifier}&list=RD${lastTrack.info.identifier}`;
-            const res: QueryResult = await player.search({ query: search, engine: SearchEngines.YoutubeMusic, requester: me });
+        case SourceNames.Youtube:
+        case SourceNames.YoutubeMusic: {
+            const url = `https://www.youtube.com/watch?v=${lastTrack.info.identifier}&list=RD${lastTrack.info.identifier}`;
+            const search: QueryResult = await player.search({ query: url, engine: SearchEngines.YoutubeMusic, requester: me });
 
-            if (res.tracks.length) {
-                const random: number = Math.floor(Math.random() * res.tracks.length);
-                const tracks: HoshimiTrack[] = filter(player, lastTrack, res.tracks).slice(random, random + trackLimit);
+            if (search.tracks.length) {
+                const random: number = Math.floor(Math.random() * search.tracks.length);
+                const tracks: HoshimiTrack[] = filter(player, lastTrack, search.tracks).slice(random, random + trackLimit);
 
                 await player.queue.add(tracks);
             }
+
+            break;
+        }
+
+        case SourceNames.Deezer: {
+            const search: QueryResult = await player.search({
+                query: lastTrack.info.identifier,
+                engine: SearchEngines.DeezerRecommendations,
+                requester: me,
+            });
+            const tracks: HoshimiTrack[] = filter(player, lastTrack, search.tracks).slice(0, trackLimit);
+
+            await player.queue.add(tracks);
 
             break;
         }
