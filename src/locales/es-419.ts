@@ -105,6 +105,11 @@ export default {
                             value: ({ memory, uptime, version }): string =>
                                 `\`🧠\` Memoria: \`${memory}\`\n\`📜\` Version: \`v${version}\`\n\`🕛\` Tiempo de Encendido: <t:${uptime}:R>`,
                         },
+                        git: {
+                            name: "`📋` Git",
+                            value: ({ branch, commit, time }): string =>
+                                `\`🌳\` Rama: \`${branch}\`\n\`📦\` Commit: \`${commit}\`\n\`⏱️\` Tiempo: \`${time}\``,
+                        },
                     },
                 },
             },

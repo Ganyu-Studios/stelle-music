@@ -1,6 +1,52 @@
 import { LoopMode, State } from "hoshimi";
 import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
-import { type PausedState, type PermissionNames, StelleCategory } from "#stelle/types";
+import {
+    type IAmount,
+    type IAutocompletePlaylist,
+    type IAvailableLocales,
+    type IBotInfo,
+    type IBotInfoGeneralField,
+    type IBotInfoGitField,
+    type IBotInfoSystemField,
+    type IChannel,
+    type IClientName,
+    type ICooldown,
+    type IDefaultPrefix,
+    type IEngine,
+    type IHelp,
+    type IHelpMenu,
+    type IHelpMenuEmbed,
+    type ILocale,
+    type ILyricsEmbedDescription,
+    type ILyricsEmbedFooter,
+    type ILyricsEmbedTitle,
+    type IMention,
+    type IMove,
+    type INodes,
+    type INowPlaying,
+    type IOptions,
+    type IPing,
+    type IPlaylist,
+    type IPlaylistName,
+    type IPlaylistSave,
+    type IPlayPlaylist,
+    type IPlayTrack,
+    type IPrefix,
+    type IPrevious,
+    type ISeek,
+    type IState,
+    type ITrackStart,
+    type ITracks,
+    type ITwentyForSeven,
+    type IType,
+    type ITypeName,
+    type IUser,
+    type IVoiceStatus,
+    type IVolume,
+    type PausedState,
+    type PermissionNames,
+    StelleCategory,
+} from "#stelle/types";
 
 /**
  * The English locale for Stelle.
@@ -50,7 +96,7 @@ export default {
                         info: "Info",
                     },
                     save: {
-                        saved: ({ type, amount }: IPlaylistSave) =>
+                        saved: ({ type, amount }: IPlaylistSave): string =>
                             `\`✅\` Successfully saved **${amount} track(s)** from **${type}** to your playlist.`,
                         noResults: "`❌` No tracks were found from the provided URL.",
                         description: "`📢` Select one of the options below to save tracks to your playlist.",
@@ -109,12 +155,17 @@ export default {
                             value: ({ memory, uptime, version }: IBotInfoSystemField): string =>
                                 `\`🧠\` Memory: \`${memory}\`\n\`📜\` Version: \`v${version}\`\n\`🕛\` Uptime: <t:${uptime}:R>`,
                         },
+                        git: {
+                            name: "`📋` Git",
+                            value: ({ branch, commit, time }: IBotInfoGitField): string =>
+                                `\`🌳\` Branch: \`${branch}\`\n\`📦\` Commit: \`${commit}\`\n\`⏱️\` Time: \`${time}\``,
+                        },
                     },
                 },
             },
             help: {
-                title: ({ clientName }: Pick<IMention, "clientName">): string => `${clientName} - Help Menu`,
-                description: ({ defaultPrefix }: Pick<IHelp, "defaultPrefix">): string =>
+                title: ({ clientName }: IClientName): string => `${clientName} - Help Menu`,
+                description: ({ defaultPrefix }: IDefaultPrefix): string =>
                     `\`📦\` Hello! Here is the information about my commands and stuff.\n\`📜\` Select the command category of your choice.\n\n-# You can search a specific command by typing: \`${defaultPrefix} help <command>\``,
                 noCommand: "`❌` **No command** was found for this search...",
                 selectMenu: {
@@ -139,7 +190,7 @@ export default {
                 volume: ({ volume, clientName }: IVolume): string => `\`✅\` The default volume of ${clientName} is now: **${volume}%**.`,
             },
             setlocale: {
-                invalidLocale: ({ locale, available }: ILocale & { available: string }): string =>
+                invalidLocale: ({ locale, available }: IAvailableLocales): string =>
                     `\`❌\` The locale : \`${locale}\` is invalid.\n\`📢\` **Available locales**: \`${available}\``,
                 newLocale: ({ locale }: ILocale): string => `\`✅\` The locale of **Stelle** is now: \`${locale}\``,
             },
@@ -547,43 +598,3 @@ export default {
         },
     },
 };
-
-type ILyricsEmbedFooter = { userName: string };
-type ILyricsEmbedDescription = { lines: string; provider: string; author: string };
-type ILyricsEmbedTitle = { title: string };
-type IBotInfoGeneralField = { guilds: number; users: number; players: number };
-type IBotInfoSystemField = { memory: string; uptime: number; version: string };
-type IBotInfo = { clientName: string; defaultPrefix: string };
-type IHelpMenuEmbed = { clientName: string; category: string };
-type IVoiceStatus = { title: string; author: string };
-type IClientName = { clientName: string };
-type IHelp = { defaultPrefix: string; options: string };
-type IHelpMenu = { category: string };
-type IMention = { clientName: string; defaultPrefix: string; commandName: string };
-type IEngine = { engine: string; clientName: string };
-type IPrefix = { prefix: string };
-type ISeek = { time: string | number; type: string };
-type IAmount = { amount: number };
-type IMove = { textId: string; voiceId: string };
-type IVolume = { volume: number; clientName: string };
-type IType = { type: string };
-type ITypeName = { type: string; clientName: string };
-type ILocale = { locale: string };
-type IPrevious = { title: string; uri: string };
-type ITracks = { tracks: string };
-type IOptions = { options: string; list: string };
-type INodes = { state: string; uptime: string; players: number; memory: string; cpu: string };
-type ITrackStart = { title: string; url: string; duration: string; volume: number; requester: string; author: string; size: number };
-type IPlayTrack = { title: string; url: string; duration: string; volume: number; requester: string; position: number };
-type IPlayPlaylist = { query: string; playlist: string; volume: number; requester: string; tracks: number };
-type IChannel = { channelId: string };
-type IUser = { userId: string };
-type IPing = { wsPing: number; clientPing: number; shardPing: number; shardId: number };
-type ICooldown = { time: number };
-type IPlaylist = { name: string; state: string };
-type IAutocompletePlaylist = { name: string; visibility: string; author: string };
-type IPlaylistName = { name: string };
-type IState = { state: string };
-type IPlaylistSave = { type: string; amount: number };
-type ITwentyForSeven = { is247: string; autoPause: string };
-type INowPlaying = { userName: string; time: string };

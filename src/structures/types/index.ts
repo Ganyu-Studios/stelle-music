@@ -6,11 +6,11 @@ import type { ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.j
 export type { LoadableStelleConfiguration, StelleConfiguration } from "./client/configuration.js";
 export type { AutoplayState, PausedState, StelleConstants, WorkingDirectory } from "./client/constants.js";
 export type { ImageData } from "./client/image.js";
-
 export type {
     LavalinkEvent,
     LavalinkEventRun,
 } from "./client/lavalink.js";
+export type * from "./client/locales.js";
 
 /**
  * The type of non-unique button styles like link and premium.
