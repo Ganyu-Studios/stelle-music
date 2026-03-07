@@ -92,7 +92,7 @@ export default class PlayCommand extends Command {
 
         if (!member) return;
 
-        const me: GuildMember = await ctx.me();
+        const me: GuildMember | null = await ctx.me().catch((): null => null);
         if (!me) return;
 
         const state: VoiceState | null = await member.voice().catch((): null => null);
@@ -170,7 +170,7 @@ export default class PlayCommand extends Command {
                         .setDescription(
                             messages.commands.play.embed.result({
                                 duration: status,
-                                requester: track.requester!.id,
+                                requester: track.requester.id,
                                 position: player.queue.tracks.findIndex((t) => t.info.identifier === track.info.identifier) + 1,
                                 title: track.info.title,
                                 url: track.info.uri!,
@@ -190,7 +190,18 @@ export default class PlayCommand extends Command {
 
             case LoadType.Playlist:
                 {
-                    const track = tracks[0];
+                    const track: TrackStructure | undefined = tracks.at(0);
+                    if (!track)
+                        return ctx.editOrReply({
+                            flags: MessageFlags.Ephemeral,
+                            content: "",
+                            embeds: [
+                                {
+                                    color: EmbedColors.Red,
+                                    description: messages.commands.play.noResults,
+                                },
+                            ],
+                        });
 
                     await player.queue.add(tracks, autoplayIndex);
 
@@ -201,7 +212,7 @@ export default class PlayCommand extends Command {
                             messages.commands.play.embed.playlist({
                                 query,
                                 playlist: playlist?.info.name ?? track.info.title,
-                                requester: track.requester!.id,
+                                requester: track.requester.id,
                                 tracks: tracks.length,
                                 volume: player.volume,
                             }),

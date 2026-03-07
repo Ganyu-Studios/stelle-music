@@ -23,7 +23,7 @@ export async function displayQueue(ctx: AnyContext): Promise<void> {
 
     const limit = 20;
     const tracks: string[] = player.queue.tracks.map(
-        (track, i): string => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${track.requester!.tag}`,
+        (track, i): string => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${track.requester.tag}`,
     );
 
     if (tracks.length < limit) {

@@ -59,7 +59,7 @@ async function playlistTrackSave(
                 .filter((track) => !playlist.tracks.some((t) => t.encoded === track.encoded))
                 .map((t) => ({
                     encoded: t.encoded!,
-                    requesterId: t.requester!.id,
+                    requesterId: t.requester.id,
                 }));
 
             playlist.tracks.push(...tracks);
@@ -98,7 +98,7 @@ async function playlistTrackSave(
 
             playlist.tracks.push({
                 encoded: track.encoded!,
-                requesterId: track.requester!.id,
+                requesterId: track.requester.id,
             });
 
             await client.database.playlist.set(interaction.user.id, playlist);
@@ -180,7 +180,7 @@ async function playlistTrackSave(
 
                     playlist.tracks.push({
                         encoded: track.encoded!,
-                        requesterId: track.requester!.id,
+                        requesterId: track.requester.id,
                     });
 
                     await client.database.playlist.set(interaction.user.id, playlist);

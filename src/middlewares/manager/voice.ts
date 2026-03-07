@@ -1,6 +1,13 @@
-import { type AnyContext, createMiddleware, type MiddlewareContext } from "seyfert";
-
-import { EmbedColors } from "seyfert/lib/common/index.js";
+import {
+    type AllGuildVoiceChannels,
+    type AnyContext,
+    createMiddleware,
+    type GuildMember,
+    type MiddlewareContext,
+    type VoiceState,
+} from "seyfert";
+import { EmbedColors, type PermissionStrings } from "seyfert/lib/common/index.js";
+import type { PermissionsBitField } from "seyfert/lib/structures/extra/Permissions.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 
 /**
@@ -12,13 +19,13 @@ export const checkBotVoiceChannel: MiddlewareContext<void, AnyContext> = createM
 
     const { messages } = await context.locale();
 
-    const me = await context.me();
+    const me: GuildMember | null | undefined = await context.me().catch((): null => null);
     if (!me) return;
 
-    const state = await context.member.voice();
+    const state: VoiceState = await context.member.voice();
     if (!state) return pass();
 
-    const bot = await me.voice().catch((): null => null);
+    const bot: VoiceState | null = await me.voice().catch((): null => null);
     if (bot && bot.channelId !== state.channelId) {
         await context.editOrReply({
             flags: MessageFlags.Ephemeral,
@@ -45,9 +52,9 @@ export const checkVoiceChannel: MiddlewareContext<void, AnyContext> = createMidd
 
     const { messages } = await context.locale();
 
-    const state = await context.member.voice().catch((): null => null);
+    const state: VoiceState | null = await context.member.voice().catch((): null => null);
 
-    const channel = await state?.channel().catch((): null => null);
+    const channel: AllGuildVoiceChannels | null | undefined = await state?.channel().catch((): null => null);
     if (!channel) {
         await context.editOrReply({
             flags: MessageFlags.Ephemeral,
@@ -72,20 +79,20 @@ export const checkVoiceChannel: MiddlewareContext<void, AnyContext> = createMidd
 export const checkVoicePermissions: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, pass, next }) => {
     if (!context.inGuild()) return next();
 
-    const state = await context.member.voice().catch((): null => null);
+    const state: VoiceState | null = await context.member.voice().catch((): null => null);
     if (!state) return pass();
 
-    const channel = await state.channel().catch((): null => null);
+    const channel: AllGuildVoiceChannels | null | undefined = await state.channel().catch((): null => null);
     if (!channel) return pass();
 
     const { stagePermissions, voicePermissions } = context.client.config.permissions;
     const { messages } = await context.locale();
 
-    const me = await context.me();
+    const me: GuildMember | null | undefined = await context.me().catch((): null => null);
     if (!me) return;
 
-    const permissions = await context.client.channels.memberPermissions(channel.id, me);
-    const missings = permissions.keys(permissions.missings(channel.isStage() ? stagePermissions : voicePermissions));
+    const permissions: PermissionsBitField = await context.client.channels.memberPermissions(channel.id, me);
+    const missings: PermissionStrings = permissions.keys(permissions.missings(channel.isStage() ? stagePermissions : voicePermissions));
 
     if (missings.length) {
         await context.editOrReply({
@@ -100,7 +107,7 @@ export const checkVoicePermissions: MiddlewareContext<void, AnyContext> = create
                     fields: [
                         {
                             name: messages.events.permissions.user.field,
-                            value: missings.map((p) => `- ${messages.events.permissions.list[p]}`).join("\n"),
+                            value: missings.map((p): string => `- ${messages.events.permissions.list[p]}`).join("\n"),
                         },
                     ],
                 },

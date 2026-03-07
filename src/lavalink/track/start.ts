@@ -28,7 +28,7 @@ export default createLavalinkEvent({
             .setDescription(
                 messages.events.trackStart.embed({
                     duration,
-                    requester: track.requester!.id,
+                    requester: track.requester.id,
                     title: track.info.title,
                     url: track.info.uri,
                     volume: player.volume,

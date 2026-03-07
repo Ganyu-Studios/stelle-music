@@ -72,7 +72,7 @@ export default class LoadSubcommand extends SubCommand {
 
         if (!member) return;
 
-        const me: GuildMember = await ctx.me();
+        const me: GuildMember | null = await ctx.me().catch((): null => null);
         if (!me) return;
 
         const state: VoiceState | null = await member.voice().catch((): null => null);
