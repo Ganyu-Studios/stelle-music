@@ -47,6 +47,8 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | Message | W
             .then(async (lyrics): Promise<LyricsResult | null> => {
                 // If for some reason lyrics is null or undefined, we return null
                 if (!lyrics) return null;
+                if (!lyrics.lines.length) return null;
+
                 return cleanLyrics(player, lyrics);
             })
             .catch(async (error): Promise<LyricsResult | null> => {
@@ -57,6 +59,7 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | Message | W
                     if (typeof error.trace === "string" && error.trace.includes("Response code from channel info is 400")) {
                         const lyrics: LyricsResult | null = await player.lyrics.current(true);
                         if (!lyrics) return null;
+                        if (!lyrics.lines.length) return null;
 
                         // Since we get the lyrics from a fallback, we should skip the track source when subscribing to the lyrics
                         skipTrackSource = true;
