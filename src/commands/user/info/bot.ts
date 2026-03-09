@@ -19,6 +19,7 @@ export default class BotSubcommand extends SubCommand {
         const me: ClientUser = await client.me.fetch();
         const guilds: Guild<"cached">[] = client.cache.guilds?.values() ?? [];
         const git: GitInfo | null = await getGitInfo();
+        const inline: boolean = false;
 
         const embed = new Embed()
             .setColor(client.config.color.success)
@@ -31,7 +32,7 @@ export default class BotSubcommand extends SubCommand {
             )
             .addFields(
                 {
-                    inline: true,
+                    inline,
                     name: messages.commands.info.bot.fields.info.name,
                     value: messages.commands.info.bot.fields.info.value({
                         guilds: guilds.length,
@@ -40,7 +41,7 @@ export default class BotSubcommand extends SubCommand {
                     }),
                 },
                 {
-                    inline: true,
+                    inline,
                     name: messages.commands.info.bot.fields.system.name,
                     value: messages.commands.info.bot.fields.system.value({
                         memory: formatMemoryUsage(process.memoryUsage().rss),
@@ -49,7 +50,7 @@ export default class BotSubcommand extends SubCommand {
                     }),
                 },
                 {
-                    inline: true,
+                    inline,
                     name: messages.commands.info.bot.fields.git.name,
                     value: messages.commands.info.bot.fields.git.value({
                         branch: git?.branch ?? "N/A",
