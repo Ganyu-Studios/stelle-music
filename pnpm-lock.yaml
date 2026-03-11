@@ -28,7 +28,7 @@ importers:
         version: 2.2.3
       seyfert:
         specifier: github:tiramisulabs/seyfert
-        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/bef77ca79ae360e38faf126b2b19dd8e6ce03aab
+        version: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/bd68c2ea395e84cd85ac5b4f5d3cc717b533842b
       yunaforseyfert:
         specifier: ^1.1.3
         version: 1.1.3
@@ -46,8 +46,8 @@ importers:
         specifier: ^9.1.7
         version: 9.1.7
       lint-staged:
-        specifier: ^16.3.2
-        version: 16.3.2
+        specifier: ^16.3.3
+        version: 16.3.3
       prisma:
         specifier: ^6.19.2
         version: 6.19.2(typescript@5.9.3)
@@ -469,8 +469,8 @@ packages:
     resolution: {integrity: sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==}
     hasBin: true
 
-  lint-staged@16.3.2:
-    resolution: {integrity: sha512-xKqhC2AeXLwiAHXguxBjuChoTTWFC6Pees0SHPwOpwlvI3BH7ZADFPddAdN3pgo3aiKgPUx/bxE78JfUnxQnlg==}
+  lint-staged@16.3.3:
+    resolution: {integrity: sha512-RLq2koZ5fGWrx7tcqx2tSTMQj4lRkfNJaebO/li/uunhCJbtZqwTuwPHpgIimAHHi/2nZIiGrkCHDCOeR1onxA==}
     engines: {node: '>=20.17'}
     hasBin: true
 
@@ -551,8 +551,8 @@ packages:
   rfdc@1.4.1:
     resolution: {integrity: sha512-q1b3N5QkRUWUl7iyylaaj3kOpIT0N2i9MqIEQXP73GVsN9cw3fdx8X63cEmWhJGi2PPCF23Ijp7ktmd39rawIA==}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/bef77ca79ae360e38faf126b2b19dd8e6ce03aab:
-    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/bef77ca79ae360e38faf126b2b19dd8e6ce03aab}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/bd68c2ea395e84cd85ac5b4f5d3cc717b533842b:
+    resolution: {tarball: https://codeload.github.com/tiramisulabs/seyfert/tar.gz/bd68c2ea395e84cd85ac5b4f5d3cc717b533842b}
     version: 4.2.2
 
   signal-exit@4.1.0:
@@ -946,7 +946,7 @@ snapshots:
 
   jiti@2.6.1: {}
 
-  lint-staged@16.3.2:
+  lint-staged@16.3.3:
     dependencies:
       commander: 14.0.3
       listr2: 9.0.5
@@ -1034,7 +1034,7 @@ snapshots:
 
   rfdc@1.4.1: {}
 
-  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/bef77ca79ae360e38faf126b2b19dd8e6ce03aab: {}
+  seyfert@https://codeload.github.com/tiramisulabs/seyfert/tar.gz/bd68c2ea395e84cd85ac5b4f5d3cc717b533842b: {}
 
   signal-exit@4.1.0: {}
 

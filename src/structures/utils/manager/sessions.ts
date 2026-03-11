@@ -96,6 +96,7 @@ export const Sessions = {
             node.id ??= `${node.host}:${node.port}`;
             node.retryAmount ??= 25;
             node.retryDelay ??= ms("25s");
+            node.restTimeout ??= ms("30s");
 
             return {
                 ...node,
