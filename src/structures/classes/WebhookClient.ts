@@ -30,6 +30,12 @@ import { InvalidWebhookURL } from "#stelle/utils/errors.js";
 import { parseDiscordWebhook } from "#stelle/utils/functions/utils.js";
 
 /**
+ * The bot token for api calls.
+ * @type {string}
+ */
+const token: string = await BaseClient.prototype.getRC().then((rc): string => rc.token);
+
+/**
  *
  * Transform a message body for sending or editing a webhook message.
  * @param {MessageCreateBodyRequest | MessageUpdateBodyRequest} body The message body to transform.
@@ -70,19 +76,6 @@ function transformMessageBody<T>(body: MessageCreateBodyRequest | MessageUpdateB
         );
     }
     return payload as T;
-}
-
-/**
- *
- * Set the proxy for the webhook client.
- * @param {WebhookClient} client The webhook client to set the proxy for.
- * @returns {Promise<void>} A Promise that resolves when the proxy is set.
- */
-async function setProxy(client: WebhookClient): Promise<void> {
-    const token: string = await BaseClient.prototype.getRC().then((rc): string => rc.token);
-    const router: Router = new Router(new ApiHandler({ token }));
-
-    client.proxy = router.createProxy();
 }
 
 /**
@@ -131,7 +124,9 @@ export class WebhookClient {
             this.data = data;
         }
 
-        setProxy(this);
+        const router: Router = new Router(new ApiHandler({ token }));
+
+        this.proxy = router.createProxy();
     }
 
     /**
