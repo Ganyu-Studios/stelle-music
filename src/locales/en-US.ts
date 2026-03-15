@@ -157,8 +157,8 @@ export default {
                         },
                         git: {
                             name: "`📋` Git",
-                            value: ({ branch, commit, time }: IBotInfoGitField): string =>
-                                `\`🌳\` Branch: \`${branch}\`\n\`📦\` Commit: \`${commit}\`\n\`⏱️\` Time: \`${time}\``,
+                            value: ({ branch, commit, time, commitUrl }: IBotInfoGitField): string =>
+                                `\`🌳\` Branch: \`${branch}\`\n\`📦\` Commit: [\`${commit}\`](${commitUrl})\n\`⏱️\` Time: <t:${time}:S>`,
                         },
                     },
                 },

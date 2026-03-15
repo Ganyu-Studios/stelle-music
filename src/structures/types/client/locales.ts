@@ -37,6 +37,6 @@ export type IState = { state: string };
 export type IPlaylistSave = { type: string; amount: number };
 export type ITwentyForSeven = { is247: string; autoPause: string };
 export type INowPlaying = { userName: string; time: string };
-export type IBotInfoGitField = { branch: string; commit: string; time: string };
+export type IBotInfoGitField = { branch: string; commit: string; time: string; commitUrl: string };
 export type IAvailableLocales = { locale: string; available: string };
 export type IDefaultPrefix = { defaultPrefix: string };

@@ -107,8 +107,8 @@ export default {
                         },
                         git: {
                             name: "`📋` Git",
-                            value: ({ branch, commit, time }): string =>
-                                `\`🌳\` Rama: \`${branch}\`\n\`📦\` Commit: \`${commit}\`\n\`⏱️\` Tiempo: \`${time}\``,
+                            value: ({ branch, commit, time, commitUrl }): string =>
+                                `\`🌳\` Rama: \`${branch}\`\n\`📦\` Commit: [\`${commit}\`](${commitUrl})\n\`⏱️\` Tiempo: <t:${time}:S>`,
                         },
                     },
                 },

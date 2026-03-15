@@ -56,6 +56,7 @@ export default class BotSubcommand extends SubCommand {
                         branch: git?.branch ?? "N/A",
                         commit: git?.commit ?? "N/A",
                         time: git?.time ?? "N/A",
+                        commitUrl: git?.commitUrl ?? "N/A",
                     }),
                 },
             );

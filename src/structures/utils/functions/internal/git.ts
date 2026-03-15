@@ -19,13 +19,30 @@ export async function getGitInfo(): Promise<GitInfo | null> {
         const { stdout: branch } = await execAsync("git rev-parse --abbrev-ref HEAD");
         const { stdout: commit } = await execAsync("git rev-parse HEAD");
         const { stdout: time } = await execAsync("git log -1 --format=%cd");
+        const { stdout: remoteUrl } = await execAsync("git config --get remote.origin.url");
 
-        const date = new Date(time.trim());
+        const commitHash: string = commit.trim();
+
+        let commitUrl: string = remoteUrl.trim();
+        if (commitUrl.startsWith("git@")) {
+            commitUrl = commitUrl
+                .replace("git@", "https://")
+                .replace(":", "/")
+                .replace(/\.git$/, "");
+        } else if (commitUrl.startsWith("https://")) {
+            commitUrl = commitUrl.replace(/\.git$/, "");
+        }
+
+        commitUrl = `${commitUrl}/commit/${commitHash}`;
+
+        const date: Date = new Date(time.trim());
+        const timestamp: number = Math.floor(date.getTime() / 1000);
 
         return {
             branch: branch.trim(),
-            commit: commit.trim().slice(0, 7),
-            time: `${date.toLocaleDateString()} : ${date.toLocaleTimeString()}`,
+            commit: commitHash.slice(0, 7),
+            commitUrl: commitUrl.trim(),
+            time: `${timestamp}`,
         };
     } catch {
         return null;
