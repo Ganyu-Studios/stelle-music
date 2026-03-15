@@ -1,6 +1,7 @@
 import { ActionRow, Button, type ClientUser, Declare, Embed, type Guild, type GuildCommandContext, LocalesT, SubCommand } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 import { Shortcut } from "yunaforseyfert";
+import { Configuration } from "#stelle/utils/data/configuration.js";
 import { Constants } from "#stelle/utils/data/constants.js";
 import { type GitInfo, getGitInfo } from "#stelle/utils/functions/internal/git.js";
 import { formatMemoryUsage } from "#stelle/utils/functions/internal/logger.js";
@@ -56,7 +57,7 @@ export default class BotSubcommand extends SubCommand {
                         branch: git?.branch ?? "N/A",
                         commit: git?.commit ?? "N/A",
                         time: git?.time ?? "N/A",
-                        commitUrl: git?.commitUrl ?? "N/A",
+                        commitUrl: git?.commitUrl ?? Configuration.githubLink,
                     }),
                 },
             );
