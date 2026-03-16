@@ -66,7 +66,8 @@ export async function autoPlayFunction(player: Player, lastTrack?: Track): Promi
             const res = await player.search({ query: `mix:track:${first.info.identifier}`, source: "sprec" }, me);
 
             if (res.tracks.length) {
-                const track = filter(player, lastTrack, res.tracks)[Math.floor(Math.random() * res.tracks.length)] as Track;
+                const filtered = filter(player, lastTrack, res.tracks);
+                const track = filtered[Math.floor(Math.random() * filtered.length)] as Track;
                 await player.queue.add(track);
             }
 
