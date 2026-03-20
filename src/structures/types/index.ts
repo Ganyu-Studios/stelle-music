@@ -1,4 +1,4 @@
-import type { PlayerJson } from "hoshimi";
+import type { NodeJson, PlayerJson } from "hoshimi";
 import type { Command, ContextMenuCommand, SubCommand, User } from "seyfert";
 import type { EmojiResolvable } from "seyfert/lib/common/index.js";
 import type { ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
@@ -140,48 +140,61 @@ export type StelleUser = Omit<Plain<User>, "client">;
 /**
  * The type of the player session.
  */
-export type StellePlayerJson = Omit<
-    PlayerJson,
-    "ping" | "createdTimestamp" | "lastPositionUpdate" | "paused" | "playing" | "queue" | "filters"
->;
+export interface StellePlayerJson
+    extends Omit<PlayerJson, "ping" | "createdTimestamp" | "lastPositionUpdate" | "paused" | "playing" | "queue" | "filters" | "node"> {
+    node: NonOptionsNode;
+}
+
+/**
+ * The type of the node without options, since the options are not serializable and not needed in the session.
+ */
+export type NonOptionsNode = Omit<NodeJson, "options">;
 
 /**
  * The type of the session.
  */
-export type SessionJson = StellePlayerJson & {
+export interface SessionJson extends StellePlayerJson {
     /**
      * The message id of the track start message.
+     * @type {string | undefined}
      */
     messageId?: string;
     /**
      * Whatever the autoplay is enabled or not.
+     * @type {boolean | undefined}
      */
     enabledAutoplay?: boolean;
     /**
      * The client user object.
+     * @type {StelleUser | undefined}
      */
     me?: StelleUser;
     /**
      * The locale string of the guild.
+     * @type {string | undefined}
      */
     localeString?: string;
     /**
      * The lyrics message id.
+     * @type {string | undefined}
      */
     lyricsId?: string;
     /**
      * Whatever the lyrics is enabled or not.
+     * @type {boolean | undefined}
      */
     lyricsEnabled?: boolean;
     /**
      * Whatever the 24/7 mode is enabled or not.
+     * @type {boolean | undefined}
      */
     is247?: boolean;
     /**
      * Whatever the auto-pause in 24/7 mode is enabled or not.
+     * @type {boolean | undefined}
      */
     isAutoPause?: boolean;
-};
+}
 
 /**
  * The metadata for the webhook.

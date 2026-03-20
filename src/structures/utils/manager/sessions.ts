@@ -1,4 +1,4 @@
-import type { NodeJson, NodeOptions } from "hoshimi";
+import type { NodeOptions } from "hoshimi";
 import MeowDB from "meowdb";
 import type { MakeRequired, RestOrArray } from "seyfert/lib/common/index.js";
 import type { StellePlayerJson } from "#stelle/types";
@@ -16,7 +16,7 @@ type NonResumableNodeOptions = Omit<NodeOptions, "sessionId">;
 /**
  * The player json with the required properties.
  */
-type RequiredPlayerJson = MakeRequired<NodeJson, "id" | "sessionId"> & StellePlayerJson;
+type RequiredPlayerJson = MakeRequired<StellePlayerJson>;
 
 /**
  * The directory where the cache is stored.
