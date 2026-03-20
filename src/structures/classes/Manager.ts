@@ -1,4 +1,4 @@
-import { Hoshimi, SearchEngines } from "hoshimi";
+import { Hoshimi, SearchSources } from "hoshimi";
 import type { UsingClient } from "seyfert";
 import { autoplayFn } from "#stelle/utils/functions/manager/autoplay.js";
 import { requesterFn } from "#stelle/utils/functions/utils.js";
@@ -34,7 +34,7 @@ export class StelleManager extends Hoshimi {
     constructor(client: UsingClient) {
         super({
             nodes: client.config.nodes,
-            defaultSearchEngine: SearchEngines.Spotify,
+            defaultSearchSource: SearchSources.Spotify,
             sendPayload: (guildId, payload) => {
                 // just in case, but this should never happen
                 if (typeof guildId !== "string" || typeof guildId === "undefined")

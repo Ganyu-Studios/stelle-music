@@ -1,4 +1,4 @@
-import { type HoshimiTrack, type PlayerStructure, type QueryResult, SearchEngines, SourceNames, type TrackStructure } from "hoshimi";
+import { type HoshimiTrack, type PlayerStructure, type QueryResult, SearchSources, SourceNames, type TrackStructure } from "hoshimi";
 import type { StelleUser } from "#stelle/types";
 
 /**
@@ -51,7 +51,7 @@ export async function autoplayFn(player: PlayerStructure, lastTrack: TrackStruct
         case SourceNames.Spotify: {
             const search: QueryResult = await player.search({
                 query: lastTrack.info.identifier,
-                engine: SearchEngines.SpotifyTrackMix,
+                source: SearchSources.SpotifyTrackMix,
                 requester: me,
             });
 
@@ -63,7 +63,7 @@ export async function autoplayFn(player: PlayerStructure, lastTrack: TrackStruct
                 // If we don't have results, search on youtube
             } else {
                 const search: QueryResult = await player.search({
-                    engine: SearchEngines.Youtube,
+                    source: SearchSources.Youtube,
                     query: `${lastTrack.info.title} ${lastTrack.info.author}`,
                     requester: me,
                 });
@@ -78,7 +78,7 @@ export async function autoplayFn(player: PlayerStructure, lastTrack: TrackStruct
         case SourceNames.Youtube:
         case SourceNames.YoutubeMusic: {
             const url = `https://www.youtube.com/watch?v=${lastTrack.info.identifier}&list=RD${lastTrack.info.identifier}`;
-            const search: QueryResult = await player.search({ query: url, engine: SearchEngines.YoutubeMusic, requester: me });
+            const search: QueryResult = await player.search({ query: url, source: SearchSources.YoutubeMusic, requester: me });
 
             if (search.tracks.length) {
                 const random: number = Math.floor(Math.random() * search.tracks.length);
@@ -93,7 +93,7 @@ export async function autoplayFn(player: PlayerStructure, lastTrack: TrackStruct
         case SourceNames.Deezer: {
             const search: QueryResult = await player.search({
                 query: lastTrack.info.identifier,
-                engine: SearchEngines.DeezerRecommendations,
+                source: SearchSources.DeezerRecommendations,
                 requester: me,
             });
             const tracks: HoshimiTrack[] = filter(player, lastTrack, search.tracks).slice(0, trackLimit);

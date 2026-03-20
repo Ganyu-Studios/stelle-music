@@ -26,25 +26,22 @@ export async function resumeListener(client: UsingClient, node: NodeStructure, p
         }
 
         const player = client.manager.createPlayer({
+            ...session.options,
             guildId: data.guildId,
             volume: data.volume,
             node: node.id,
-            voiceId: session.voiceId!,
-            textId: session.textId!,
-            selfDeaf: session.options?.selfDeaf,
-            selfMute: session.options?.selfMute,
         });
 
-        await player.data.set("messageId", session.messageId!);
-        await player.data.set("enabledAutoplay", session.enabledAutoplay!);
-        await player.data.set("me", session.me!);
-        await player.data.set("localeString", session.localeString!);
-        await player.data.set("lyricsId", session.lyricsId!);
-        await player.data.set("lyricsEnabled", session.lyricsEnabled!);
-        await player.data.set("is247", session.is247!);
-        await player.data.set("isAutoPause", session.isAutoPause!);
+        if (session.messageId) await player.data.set("messageId", session.messageId);
+        if (session.enabledAutoplay) await player.data.set("enabledAutoplay", session.enabledAutoplay);
+        if (session.me) await player.data.set("me", session.me);
+        if (session.localeString) await player.data.set("localeString", session.localeString);
+        if (session.lyricsId) await player.data.set("lyricsId", session.lyricsId);
+        if (session.lyricsEnabled) await player.data.set("lyricsEnabled", session.lyricsEnabled);
+        if (session.is247) await player.data.set("is247", session.is247);
+        if (session.isAutoPause) await player.data.set("isAutoPause", session.isAutoPause);
 
-        player.voice = data.voice;
+        player.voice.patch({ ...data.voice });
 
         await player.connect();
 

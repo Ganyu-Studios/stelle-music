@@ -1,4 +1,4 @@
-import { SearchEngines } from "hoshimi";
+import { SearchSources } from "hoshimi";
 import { Locale, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 import { createConfig } from "#stelle/utils/data/configuration.js";
 import { ms } from "#stelle/utils/functions/time.js";
@@ -8,7 +8,7 @@ export default createConfig({
     defaultLocale: Locale.EnglishUS,
     defaultPrefix: "stelle",
     prefixes: ["st!"],
-    defaultSearchEngine: SearchEngines.Spotify,
+    defaultSearchSource: SearchSources.Spotify,
     defaultVolume: 100,
     lyricsLines: 10,
     disconnectTime: ms("30s"),

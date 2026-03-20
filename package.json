@@ -57,7 +57,7 @@
         "@prisma/client": "^6.19.2",
         "@redis/client": "^5.11.0",
         "dotenv": "^17.3.1",
-        "hoshimi": "0.3.10-dev-23119104016.0",
+        "hoshimi": "0.3.10-dev-23339285579.0",
         "imagescript": "^1.3.1",
         "meowdb": "^2.2.3",
         "seyfert": "github:tiramisulabs/seyfert",
@@ -65,7 +65,7 @@
         "zod": "^4.3.6"
     },
     "devDependencies": {
-        "@biomejs/biome": "^2.4.7",
+        "@biomejs/biome": "^2.4.8",
         "@types/node": "^25.5.0",
         "husky": "^9.1.7",
         "lint-staged": "^16.4.0",

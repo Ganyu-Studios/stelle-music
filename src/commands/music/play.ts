@@ -54,7 +54,7 @@ const options = {
                     { name: messages.events.autocomplete.noQuery, value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT" },
                 ]);
 
-            const { tracks }: QueryResult = await client.manager.search({ query, engine: searchPlatform });
+            const { tracks }: QueryResult = await client.manager.search({ query, source: searchPlatform });
 
             if (!tracks.length) return interaction.respond([{ name: messages.events.autocomplete.noTracks, value: "noTracks" }]);
 
@@ -116,7 +116,7 @@ export default class PlayCommand extends Command {
 
         await joinVoiceChannel(player, voice, me);
 
-        const { loadType, playlist, tracks } = await player.search({ query, engine: searchPlatform, requester: ctx.author });
+        const { loadType, playlist, tracks } = await player.search({ query, source: searchPlatform, requester: ctx.author });
 
         if (!(await player.data.get("localeString"))) await player.data.set("localeString", await ctx.localeString());
         if (!(await player.data.get("me"))) await player.data.set("me", requesterFn(client.me));

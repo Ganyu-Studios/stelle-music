@@ -1,4 +1,4 @@
-import type { NodeOptions, SearchEngines } from "hoshimi";
+import type { NodeOptions, SearchSources } from "hoshimi";
 import type { PermissionStrings } from "seyfert";
 import type { Locale, LocaleString, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
@@ -199,10 +199,10 @@ export interface StelleConfiguration {
     defaultVolume: number;
     /**
      * The default player search engine.
-     * @type {SearchPlatform}
+     * @type {SearchSources}
      * @default "spotify"
      */
-    defaultSearchEngine: SearchEngines;
+    defaultSearchSource: SearchSources;
     /**
      * The disconnect time in milliseconds. (Use the time formatter)
      * @type {number}

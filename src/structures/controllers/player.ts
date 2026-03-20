@@ -1,4 +1,4 @@
-import type { SearchEngines } from "hoshimi";
+import type { SearchSources } from "hoshimi";
 import { Controller } from "#stelle/classes/Controller.js";
 import { CacheKeys } from "#stelle/types";
 
@@ -13,9 +13,9 @@ interface StoredPlayer {
     defaultVolume: number;
     /**
      * The search platform of the player.
-     * @type {SearchPlatform}
+     * @type {SearchSources}
      */
-    searchPlatform: SearchEngines;
+    searchPlatform: SearchSources;
 }
 
 /**
@@ -37,19 +37,19 @@ export class PlayerController extends Controller<"guildPlayer"> {
         if (cached)
             return {
                 defaultVolume: cached.defaultVolume,
-                searchPlatform: cached.searchPlatform as SearchEngines,
+                searchPlatform: cached.searchPlatform as SearchSources,
             };
 
         const data = await this.model.findUnique({ where: { guildId: id } });
         if (!data)
             return {
                 defaultVolume: this.client.config.defaultVolume,
-                searchPlatform: this.client.config.defaultSearchEngine,
+                searchPlatform: this.client.config.defaultSearchSource,
             };
 
         return {
             defaultVolume: data.defaultVolume,
-            searchPlatform: data.searchPlatform as SearchEngines,
+            searchPlatform: data.searchPlatform as SearchSources,
         };
     }
 
