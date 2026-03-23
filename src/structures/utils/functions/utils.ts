@@ -14,9 +14,10 @@ import {
     User,
     type UsingClient,
 } from "seyfert";
-import { resolvePartialEmoji } from "seyfert/lib/common/index.js";
+import { type PermissionStrings, resolvePartialEmoji } from "seyfert/lib/common/index.js";
+import { PermissionsBitField } from "seyfert/lib/structures/extra/Permissions.js";
 import { type APIMessageComponentEmoji, ButtonStyle, ComponentType, type LocaleString } from "seyfert/lib/types/index.js";
-import type { EditButtonOptions, Omit, Plain, Prettify, WebhookMetadata } from "#stelle/types";
+import type { EditButtonOptions, Omit, PermissionNames, Plain, Prettify, WebhookMetadata } from "#stelle/types";
 import { InvalidRow } from "#stelle/utils/errors.js";
 
 interface CreateIdOptions {
@@ -208,6 +209,15 @@ export function cleanup(client: UsingClient): void {
 
     process.exit(0);
 }
+
+/**
+ *
+ * A utility function to get the permission keys from the permissions bitfield.
+ * @param {PermissionStrings} permissions The permissions to get the keys from.
+ * @returns {PermissionNames[]} The permission keys.
+ */
+export const getPermissionKeys = (permissions: PermissionStrings): PermissionNames[] =>
+    new PermissionsBitField(permissions.map((p): bigint => PermissionsBitField.resolve(p))).keys();
 
 /**
  *

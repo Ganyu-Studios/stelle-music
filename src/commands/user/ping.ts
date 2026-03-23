@@ -1,12 +1,13 @@
 import { Command, type CommandContext, Declare, Embed, LocalesT } from "seyfert";
+import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
 @Declare({
     name: "ping",
     description: "Get the Stelle ping.",
-    integrationTypes: ["GuildInstall", "UserInstall"],
-    contexts: ["Guild", "BotDM", "PrivateChannel"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall, ApplicationIntegrationType.UserInstall],
+    contexts: [InteractionContextType.Guild, InteractionContextType.BotDM, InteractionContextType.PrivateChannel],
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.User })
 @LocalesT("locales.ping.name", "locales.ping.description")

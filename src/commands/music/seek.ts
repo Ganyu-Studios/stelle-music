@@ -11,6 +11,7 @@ import {
     type WebhookMessage,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
+import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { ms, TimeFormat } from "#stelle/utils/functions/time.js";
@@ -38,8 +39,8 @@ const options = {
 @Declare({
     name: "seek",
     description: "Seek the current track.",
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
     aliases: ["sk"],
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })

@@ -1,6 +1,7 @@
 import { Command, Declare, Embed, type GuildCommandContext, LocalesT, type Message, type WebhookMessage } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import type { APIEmbedField } from "seyfert/lib/types/index.js";
+import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { formatMemoryUsage } from "#stelle/utils/functions/internal/logger.js";
@@ -10,8 +11,8 @@ import { EmbedPaginator } from "#stelle/utils/paginator.js";
 @Declare({
     name: "nodes",
     description: "Get the status of all Stelle nodes.",
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.User })
 @LocalesT("locales.nodes.name", "locales.nodes.description")

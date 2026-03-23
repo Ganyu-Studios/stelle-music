@@ -3,7 +3,7 @@ import { WebhookClient } from "#stelle/classes/WebhookClient.js";
 import { Environment } from "#stelle/utils/data/configuration.js";
 import { Constants } from "#stelle/utils/data/constants.js";
 import { logger } from "#stelle/utils/functions/internal/logger.js";
-import { truncate } from "#stelle/utils/functions/utils.js";
+import { inspect, truncate } from "#stelle/utils/functions/utils.js";
 
 /**
  * The report options interface.
@@ -51,9 +51,7 @@ export async function sendErrorReport(options: ReportOptions): Promise<Message |
                     "",
                     "+------------------------------+",
                     "",
-                    `Stack: ${error.stack}`,
-                    `Message: ${error.message}`,
-                    `Cause: ${error.cause ?? "None"}`,
+                    `Error: ${inspect(error)}`,
                 ].join("\n"),
             ),
         );

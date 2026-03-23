@@ -10,6 +10,7 @@ import {
     Options,
     type WebhookMessage,
 } from "seyfert";
+import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
@@ -29,8 +30,8 @@ const options = {
 @Declare({
     name: "volume",
     description: "Modify the volume.",
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
     aliases: ["v", "vol"],
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })

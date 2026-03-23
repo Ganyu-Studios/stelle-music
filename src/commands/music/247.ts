@@ -1,5 +1,6 @@
 import type { PlayerStructure } from "hoshimi";
 import { Command, createBooleanOption, Declare, type GuildCommandContext, LocalesT, Middlewares, Options } from "seyfert";
+import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { type AutoplayState, StelleCategory } from "#stelle/types";
 import { Constants } from "#stelle/utils/data/constants.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
@@ -19,8 +20,8 @@ const options = {
 @Declare({
     name: "247",
     description: "Toggles the 24/7 mode for the bot.",
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
     aliases: ["twentyfourseven", "alwaysonline", "alwayson"],
 })
 @StelleOptions({ category: StelleCategory.Music, cooldown: 10 })

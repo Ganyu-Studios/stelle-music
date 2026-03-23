@@ -15,7 +15,7 @@ import {
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import type { APIApplicationCommandOption, ApplicationCommandOptionType, LocaleString } from "seyfert/lib/types/index.js";
-import { MessageFlags } from "seyfert/lib/types/index.js";
+import { ApplicationIntegrationType, InteractionContextType, MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js";
@@ -75,8 +75,8 @@ const options = {
 @Declare({
     name: "help",
     description: "The most useful command in the world!",
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
 })
 @LocalesT("locales.help.name", "locales.help.description")
 @StelleOptions({ category: StelleCategory.User, cooldown: 5 })

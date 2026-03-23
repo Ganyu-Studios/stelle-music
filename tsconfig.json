@@ -7,7 +7,6 @@
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
         "rootDir": "./src",
-        "baseUrl": "./",
         "outDir": "./dist",
         "removeComments": true,
         "noEmitOnError": true,

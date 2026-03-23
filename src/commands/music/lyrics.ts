@@ -1,4 +1,5 @@
 import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares } from "seyfert";
+import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { displayLyrics } from "#stelle/utils/functions/manager/lyrics.js";
@@ -6,8 +7,8 @@ import { displayLyrics } from "#stelle/utils/functions/manager/lyrics.js";
 @Declare({
     name: "lyrics",
     description: "Show lyrics for the current track.",
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
     aliases: ["lyric", "ly"],
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })

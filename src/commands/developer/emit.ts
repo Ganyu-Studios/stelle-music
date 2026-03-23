@@ -1,5 +1,5 @@
 import { Command, createStringOption, Declare, type Guild, type GuildCommandContext, Options } from "seyfert";
-import { MessageFlags } from "seyfert/lib/types/index.js";
+import { ApplicationIntegrationType, InteractionContextType, MessageFlags, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
 const options = {
@@ -22,9 +22,9 @@ const options = {
 @Declare({
     name: "emit",
     description: "Emit a event.",
-    defaultMemberPermissions: ["ManageGuild", "Administrator"],
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    defaultMemberPermissions: [PermissionFlagsBits.ManageGuild, PermissionFlagsBits.Administrator],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
 })
 @StelleOptions({ onlyDeveloper: true })
 @Options(options)

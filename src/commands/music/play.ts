@@ -15,7 +15,7 @@ import {
     type WebhookMessage,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
-import { MessageFlags } from "seyfert/lib/types/index.js";
+import { ApplicationIntegrationType, InteractionContextType, MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { onAutocompleteError } from "#stelle/utils/functions/internal/overrides.js";
@@ -78,8 +78,8 @@ const options = {
     name: "play",
     description: "Play music with Stelle.",
     aliases: ["p"],
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })
 @Options(options)

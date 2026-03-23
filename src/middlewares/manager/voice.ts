@@ -9,6 +9,8 @@ import {
 import { EmbedColors, type PermissionStrings } from "seyfert/lib/common/index.js";
 import type { PermissionsBitField } from "seyfert/lib/structures/extra/Permissions.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
+import type { PermissionNames } from "#stelle/types";
+import { getPermissionKeys } from "#stelle/utils/functions/utils.js";
 
 /**
  * Check if the bot is in a voice channel and if is the same as the author.
@@ -95,6 +97,8 @@ export const checkVoicePermissions: MiddlewareContext<void, AnyContext> = create
     const missings: PermissionStrings = permissions.keys(permissions.missings(channel.isStage() ? stagePermissions : voicePermissions));
 
     if (missings.length) {
+        const keys: PermissionNames[] = getPermissionKeys(missings);
+
         await context.editOrReply({
             content: "",
             flags: MessageFlags.Ephemeral,
@@ -107,7 +111,7 @@ export const checkVoicePermissions: MiddlewareContext<void, AnyContext> = create
                     fields: [
                         {
                             name: messages.events.permissions.user.field,
-                            value: missings.map((p): string => `- ${messages.events.permissions.list[p]}`).join("\n"),
+                            value: keys.map((p): string => `- ${messages.events.permissions.list[p]}`).join("\n"),
                         },
                     ],
                 },

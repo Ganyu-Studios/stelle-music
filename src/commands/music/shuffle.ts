@@ -1,12 +1,13 @@
 import { Command, Declare, type GuildCommandContext, Middlewares } from "seyfert";
+import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
 @Declare({
     name: "shuffle",
     description: "Shuffle the queue.",
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
     aliases: ["shu", "sh", "shuf"],
 })
 @StelleOptions({

@@ -16,7 +16,7 @@ import {
     type WebhookMessage,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
-import { MessageFlags } from "seyfert/lib/types/index.js";
+import { ApplicationIntegrationType, InteractionContextType, MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { getAlbumImage, renderImage } from "#stelle/utils/functions/image.js";
@@ -26,8 +26,8 @@ import { truncate } from "#stelle/utils/functions/utils.js";
 @Declare({
     name: "nowplaying",
     description: "Get the current playing track.",
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
     aliases: ["np"],
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })

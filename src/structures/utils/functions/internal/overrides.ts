@@ -1,8 +1,10 @@
 import { type AnyContext, type AutocompleteInteraction, Embed, type Message, type PermissionStrings, type WebhookMessage } from "seyfert";
 import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
+import type { PermissionNames } from "#stelle/types";
 import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js";
 import { sendErrorReport } from "#stelle/utils/functions/internal/report.js";
+import { getPermissionKeys } from "../utils.js";
 
 /**
  *
@@ -59,6 +61,8 @@ export async function onAutocompleteError(interaction: AutocompleteInteraction, 
 export async function onPermissionsFail(ctx: AnyContext, permissions: PermissionStrings): Promise<Message | WebhookMessage | void> {
     const { messages } = await ctx.locale();
 
+    const keys: PermissionNames[] = getPermissionKeys(permissions);
+
     return ctx.editOrReply({
         content: "",
         flags: MessageFlags.Ephemeral,
@@ -69,7 +73,7 @@ export async function onPermissionsFail(ctx: AnyContext, permissions: Permission
                 fields: [
                     {
                         name: messages.events.permissions.user.field,
-                        value: permissions.map((p) => `- ${messages.events.permissions.list[p]}`).join("\n"),
+                        value: keys.map((p): string => `- ${messages.events.permissions.list[p]}`).join("\n"),
                     },
                 ],
             },
@@ -87,6 +91,8 @@ export async function onPermissionsFail(ctx: AnyContext, permissions: Permission
 export async function onBotPermissionsFail(ctx: AnyContext, permissions: PermissionStrings): Promise<Message | WebhookMessage | void> {
     const { messages } = await ctx.locale();
 
+    const keys: PermissionNames[] = getPermissionKeys(permissions);
+
     return ctx.editOrReply({
         content: "",
         flags: MessageFlags.Ephemeral,
@@ -97,7 +103,7 @@ export async function onBotPermissionsFail(ctx: AnyContext, permissions: Permiss
                 fields: [
                     {
                         name: messages.events.permissions.bot.field,
-                        value: permissions.map((p) => `- ${messages.events.permissions.list[p]}`).join("\n"),
+                        value: keys.map((p): string => `- ${messages.events.permissions.list[p]}`).join("\n"),
                     },
                 ],
             },

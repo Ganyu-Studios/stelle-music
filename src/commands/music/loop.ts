@@ -1,5 +1,6 @@
 import { LoopMode, type Player } from "hoshimi";
 import { Command, createNumberOption, Declare, type GuildCommandContext, LocalesT, Middlewares, Options } from "seyfert";
+import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { Constants } from "#stelle/utils/data/constants.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
@@ -37,8 +38,8 @@ const options = {
 @Declare({
     name: "loop",
     description: "Toggle the loop mode.",
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
     aliases: ["l"],
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })

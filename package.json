@@ -71,7 +71,7 @@
         "lint-staged": "^16.4.0",
         "prisma": "^6.19.2",
         "tsx": "^4.21.0",
-        "typescript": "^5.9.3"
+        "typescript": "^6.0.2"
     },
     "imports": {
         "#stelle/classes/*": "./dist/structures/classes/*",

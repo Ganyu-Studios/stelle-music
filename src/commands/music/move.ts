@@ -1,6 +1,6 @@
 import type { PlayerStructure } from "hoshimi";
 import { Command, createChannelOption, Declare, type GuildCommandContext, LocalesT, Middlewares, Options } from "seyfert";
-import { ChannelType } from "seyfert/lib/types/index.js";
+import { ApplicationIntegrationType, ChannelType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
@@ -27,8 +27,8 @@ const options = {
 @Declare({
     name: "move",
     description: "Move the player.",
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
     aliases: ["mov", "m"],
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })
