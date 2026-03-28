@@ -51,7 +51,7 @@ export async function sendErrorReport(options: ReportOptions): Promise<Message |
                     "",
                     "+------------------------------+",
                     "",
-                    `Error: ${inspect(error)}`,
+                    `Error: ${inspect(error, 1)}`,
                 ].join("\n"),
             ),
         );
