@@ -3,7 +3,7 @@ import { mkdir } from "node:fs/promises";
 import { isAbsolute, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { inspect as nodeInspect } from "node:util";
-import type { TrackRequester } from "hoshimi";
+import type { TrackRequester, TrackStructure } from "hoshimi";
 import {
     ActionRow,
     type AnyContext,
@@ -19,6 +19,7 @@ import { PermissionsBitField } from "seyfert/lib/structures/extra/Permissions.js
 import { type APIMessageComponentEmoji, ButtonStyle, ComponentType, type LocaleString } from "seyfert/lib/types/index.js";
 import type { EditButtonOptions, Omit, PermissionNames, Plain, Prettify, WebhookMetadata } from "#stelle/types";
 import { InvalidRow } from "#stelle/utils/errors.js";
+import { TimeFormat } from "./time.js";
 
 interface CreateIdOptions {
     /**
@@ -218,6 +219,15 @@ export function cleanup(client: UsingClient): void {
  */
 export const getPermissionKeys = (permissions: PermissionStrings): PermissionNames[] =>
     new PermissionsBitField(permissions.map((p): bigint => PermissionsBitField.resolve(p))).keys();
+
+/**
+ * Format the track time for display, showing "Live" for streams and a dotted time format for regular tracks.
+ * @param {TrackStructure} track The track to format the time for.
+ * @param {DefaultLocale} messages The locale object for localized messages.
+ * @returns {string} The formatted time string.
+ */
+export const formatDuration = (track: TrackStructure, messages: DefaultLocale["messages"]): string =>
+    track.info.isStream ? messages.commands.play.live : (TimeFormat.toDotted(track.info.length) ?? messages.commands.play.undetermined);
 
 /**
  *

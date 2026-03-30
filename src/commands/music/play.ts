@@ -21,8 +21,7 @@ import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { onAutocompleteError } from "#stelle/utils/functions/internal/overrides.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
-import { TimeFormat } from "#stelle/utils/functions/time.js";
-import { requesterFn, truncate } from "#stelle/utils/functions/utils.js";
+import { formatDuration, requesterFn, truncate } from "#stelle/utils/functions/utils.js";
 
 const options = {
     query: createStringOption({
@@ -63,9 +62,7 @@ const options = {
 
             await interaction.respond(
                 tracks.slice(0, 25).map((track) => {
-                    const duration = track.info.isStream
-                        ? messages.commands.play.live
-                        : (TimeFormat.toDotted(track.info.length) ?? messages.commands.play.undetermined);
+                    const duration: string = formatDuration(track, messages);
 
                     return {
                         name: `${truncate(track.info.title, 45)} (${duration}) - ${truncate(track.info.author, 30)}`,
@@ -163,16 +160,14 @@ export default class PlayCommand extends Command {
 
                     await player.queue.add(track, autoplayIndex);
 
-                    const status: string = track.info.isStream
-                        ? messages.commands.play.live
-                        : (TimeFormat.toDotted(track.info.length) ?? messages.commands.play.undetermined);
+                    const duration: string = formatDuration(track, messages);
 
                     const embed = new Embed()
                         .setThumbnail(track.info.artworkUrl ?? undefined)
                         .setColor(client.config.color.success)
                         .setDescription(
                             messages.commands.play.embed.result({
-                                duration: status,
+                                duration,
                                 requester: track.requester.id,
                                 position: player.queue.tracks.findIndex((t) => t.info.identifier === track.info.identifier) + 1,
                                 title: track.info.title,

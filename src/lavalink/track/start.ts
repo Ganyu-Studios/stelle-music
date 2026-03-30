@@ -2,7 +2,7 @@ import { EventNames } from "hoshimi";
 import { ActionRow, type AllChannels, Button, Embed, type MessageStructure } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 import { Constants } from "#stelle/utils/data/constants.js";
-import { TimeFormat } from "#stelle/utils/functions/time.js";
+import { formatDuration } from "#stelle/utils/functions/utils.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 export default createLavalinkEvent({
@@ -20,9 +20,7 @@ export default createLavalinkEvent({
 
         const { messages } = client.t(locale).get();
 
-        const duration: string = track.info.isStream
-            ? messages.commands.play.live
-            : (TimeFormat.toDotted(track.info.length) ?? messages.commands.play.undetermined);
+        const duration: string = formatDuration(track, messages);
 
         const embed = new Embed()
             .setDescription(
