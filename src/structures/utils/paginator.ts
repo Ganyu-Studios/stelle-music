@@ -139,12 +139,6 @@ function getRows(this: EmbedPaginator): ActionRow<ActionBuilderComponents>[] {
 }
 
 /**
- * (Taken from Stelle, another project of mine)
- * @link https://github.com/Ganyu-Studios/stelle-music/blob/dev/src/structures/utils/Paginator.ts
- * So, is is the same paginator, but with some changes and some new stuff.
- */
-
-/**
  * Class representing a custom button.
  * @extends Button
  */
@@ -316,7 +310,7 @@ export class EmbedPaginator {
                                 this.options.pages = n;
 
                                 // funny thing
-                                if (!(await interaction.replied)) await interaction.deferUpdate();
+                                if (!(await interaction.replied) || !interaction.deferred) await interaction.deferUpdate();
 
                                 await this.update();
                             });
