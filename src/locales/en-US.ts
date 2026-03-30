@@ -287,7 +287,6 @@ export default {
             autocomplete: {
                 loadPlaylist: ({ name, visibility, author }: IAutocompletePlaylist): string =>
                     `Name: ${name} - State: ${visibility} | by ${author}`,
-                loading: "Stelle - Loading...",
                 noPlaylist: "Stelle - No playlists found.",
                 noAnything: "Stelle - Something unexpected happened using this autocomplete.",
                 noNodes: "Stelle - I'm not connected to any of my nodes.",

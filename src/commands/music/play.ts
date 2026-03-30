@@ -38,8 +38,6 @@ const options = {
             const localeString: string = interaction.user.locale ?? client.config.defaultLocale;
             const t: DefaultLocale = client.t(localeString).get();
 
-            await interaction.respond([{ name: t.messages.events.autocomplete.loading, value: "loading" }]);
-
             if (!(guildId && member)) return interaction.respond([{ name: t.messages.events.autocomplete.noGuild, value: "noGuild" }]);
 
             const { searchPlatform } = await client.database.players.get(guildId);
