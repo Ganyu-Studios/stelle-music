@@ -41,7 +41,7 @@ async function playlistTrackSave(
     if (!ctx.inGuild()) return;
 
     const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
-    if ((!player || !player.playing) && ["queue", "current"].includes(type))
+    if (!player?.playing && ["queue", "current"].includes(type))
         return interaction.editOrReply({
             content: "",
             flags: MessageFlags.Ephemeral,
@@ -151,7 +151,7 @@ async function playlistTrackSave(
                         });
 
                     const res: QueryResult | null = await client.manager.search({ query: url, requester: ctx.author });
-                    if (!res || !res.tracks.length)
+                    if (!res?.tracks.length)
                         return modal.editOrReply({
                             content: "",
                             flags: MessageFlags.Ephemeral,

@@ -15,7 +15,7 @@ import {
     type WebhookMessage,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
-import { playlistAutocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
+import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 import { requesterFn } from "#stelle/utils/functions/utils.js";
 
@@ -23,7 +23,7 @@ const options = {
     id: createStringOption({
         description: "The id of the playlist to load.",
         required: true,
-        autocomplete: playlistAutocomplete,
+        autocomplete,
         locales: {
             name: "locales.playlist.commands.load.option.name",
             description: "locales.playlist.commands.load.option.description",

@@ -15,7 +15,7 @@ import {
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
 import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
-import { playlistAutocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
+import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
 import { playlistTrackSaveHandler } from "#stelle/utils/functions/components/playlist.js";
 import { ms } from "#stelle/utils/functions/time.js";
 
@@ -23,7 +23,7 @@ const options = {
     id: createStringOption({
         description: "The id of the playlist to load.",
         required: true,
-        autocomplete: playlistAutocomplete,
+        autocomplete,
         locales: {
             name: "locales.playlist.commands.load.option.name",
             description: "locales.playlist.commands.load.option.description",

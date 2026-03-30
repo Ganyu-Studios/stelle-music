@@ -4,6 +4,7 @@ import {
     Command,
     createStringOption,
     Declare,
+    type DefaultLocale,
     Embed,
     type GuildCommandContext,
     type GuildMember,
@@ -32,13 +33,15 @@ const options = {
             name: "locales.play.option.name",
             description: "locales.play.option.description",
         },
-        autocomplete: async (interaction) => {
+        autocomplete: async (interaction): Promise<void> => {
             const { client, member, guildId } = interaction;
 
-            if (!(guildId && member)) {
-                const { messages } = client.t(interaction.user.locale ?? client.config.defaultLocale).get();
-                return interaction.respond([{ name: messages.events.autocomplete.noGuild, value: "noGuild" }]);
-            }
+            const localeString: string = interaction.user.locale ?? client.config.defaultLocale;
+            const t: DefaultLocale = client.t(localeString).get();
+
+            await interaction.respond([{ name: t.messages.events.autocomplete.loading, value: "loading" }]);
+
+            if (!(guildId && member)) return interaction.respond([{ name: t.messages.events.autocomplete.noGuild, value: "noGuild" }]);
 
             const { searchPlatform } = await client.database.players.get(guildId);
             const { messages } = client.t(await client.database.locales.get(guildId)).get();

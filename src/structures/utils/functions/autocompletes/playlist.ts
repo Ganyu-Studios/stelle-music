@@ -14,7 +14,7 @@ export async function playlistAutocomplete(interaction: AutocompleteInteraction)
     const { messages } = client.t(await client.database.locales.get(interaction.guildId)).get();
 
     const data = await client.database.playlist.all();
-    if (!data || !data.length)
+    if (!data?.length)
         return interaction.respond([
             {
                 name: messages.events.autocomplete.noPlaylist,

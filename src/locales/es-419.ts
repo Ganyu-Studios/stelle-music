@@ -234,6 +234,7 @@ export default {
                 "`❌` Algo inesperado ocurrió durante la ejecución del comando.\n`📢` Si el problema persiste, reporta el problema.",
             autocomplete: {
                 loadPlaylist: ({ name, visibility, author }): string => `Nombre: ${name} - Estado: ${visibility} | por ${author}`,
+                loading: "Stelle - Cargando...",
                 noPlaylist: "Stelle - No se encontraron playlists.",
                 noAnything: "Stelle - Algo ocurrió intentando usar este autocompletado.",
                 noNodes: "Stelle - No estoy conectada a ninguno de mis nodos.",
