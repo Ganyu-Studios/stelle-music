@@ -49,7 +49,7 @@ export async function resumeListener(client: UsingClient, node: NodeStructure, p
 
         await player.queue.utils.sync(true, false);
 
-        if (data.track) player.queue.current = await player.queue.build(data.track, session.me!);
+        if (data.track) player.queue.current = await player.queue.utils.build(data.track, session.me);
 
         Object.assign(player, {
             lastPosition: data.state.position,
