@@ -1,4 +1,11 @@
-import { type HoshimiTrack, type PlayerStructure, type QueryResult, SearchSources, SourceNames, type TrackStructure } from "hoshimi";
+import {
+    type PlayerStructure,
+    type QueryResult,
+    SearchSources,
+    SourceNames,
+    type TrackResolvableStructure,
+    type TrackStructure,
+} from "hoshimi";
 import type { StelleUser } from "#stelle/types";
 
 /**
@@ -20,10 +27,10 @@ const trackLimit: number = 10;
  * Filter tracks.
  * @param {Player} player The player instance.
  * @param {Track} lastTrack The last track played.
- * @param {HoshimiTrack[]}  tracks The tracks to filter.
- * @returns {HoshimiTrack[]} The filtered tracks.
+ * @param {TrackResolvableStructure[]}  tracks The tracks to filter.
+ * @returns {TrackResolvableStructure[]} The filtered tracks.
  */
-const filter = (player: PlayerStructure, lastTrack: TrackStructure, tracks: HoshimiTrack[]): HoshimiTrack[] =>
+const filter = (player: PlayerStructure, lastTrack: TrackStructure, tracks: TrackResolvableStructure[]): TrackResolvableStructure[] =>
     tracks.filter(
         (track): boolean =>
             !(
@@ -57,7 +64,7 @@ export async function autoplayFn(player: PlayerStructure, lastTrack: TrackStruct
 
             // If we have results, add them to the queue
             if (search.tracks.length) {
-                const tracks: HoshimiTrack[] = filter(player, lastTrack, search.tracks).slice(0, trackLimit);
+                const tracks: TrackResolvableStructure[] = filter(player, lastTrack, search.tracks).slice(0, trackLimit);
 
                 await player.queue.add(tracks);
                 // If we don't have results, search on youtube
@@ -67,7 +74,7 @@ export async function autoplayFn(player: PlayerStructure, lastTrack: TrackStruct
                     query: `${lastTrack.info.title} ${lastTrack.info.author}`,
                     requester: me,
                 });
-                const tracks: HoshimiTrack[] = filter(player, lastTrack, search.tracks).slice(0, trackLimit);
+                const tracks: TrackResolvableStructure[] = filter(player, lastTrack, search.tracks).slice(0, trackLimit);
 
                 await player.queue.add(tracks);
             }
@@ -82,7 +89,7 @@ export async function autoplayFn(player: PlayerStructure, lastTrack: TrackStruct
 
             if (search.tracks.length) {
                 const random: number = Math.floor(Math.random() * search.tracks.length);
-                const tracks: HoshimiTrack[] = filter(player, lastTrack, search.tracks).slice(random, random + trackLimit);
+                const tracks: TrackResolvableStructure[] = filter(player, lastTrack, search.tracks).slice(random, random + trackLimit);
 
                 await player.queue.add(tracks);
             }
@@ -96,7 +103,7 @@ export async function autoplayFn(player: PlayerStructure, lastTrack: TrackStruct
                 source: SearchSources.DeezerRecommendations,
                 requester: me,
             });
-            const tracks: HoshimiTrack[] = filter(player, lastTrack, search.tracks).slice(0, trackLimit);
+            const tracks: TrackResolvableStructure[] = filter(player, lastTrack, search.tracks).slice(0, trackLimit);
 
             await player.queue.add(tracks);
 
