@@ -23,6 +23,9 @@ export default createLavalinkEvent({
 
         await player.data.delete("messageId");
 
-        if (Constants.Debug) client.debugger?.info(`[Player ${player.guildId}] Track Ended: ${JSON.stringify(track)}`);
+        if (Constants.Debug)
+            client.debugger?.info(
+                `[Lavalink] Track ended | guild: ${player.guildId} | title: ${track?.info?.title ?? "Unknown"} | author: ${track?.info?.author ?? "Unknown"}`,
+            );
     },
 });

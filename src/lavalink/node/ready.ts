@@ -10,8 +10,12 @@ export default createLavalinkEvent({
         const resuming: boolean = client.config.sessions.enabled;
         const timeout: number = client.config.sessions.resumeTime;
 
-        if (resuming) await node.updateSession({ resuming, timeout });
+        if (resuming) {
+            client.logger.info(`[Lavalink] Node session updated | node: ${node.id} | resuming: ${resuming} | timeout: ${timeout}ms`);
 
-        client.logger.info(`Lavalink - The node ${node.id} is now connected.`);
+            await node.updateSession({ resuming, timeout });
+        }
+
+        client.logger.info(`[Lavalink] Node connected | node: ${node.id}`);
     },
 });

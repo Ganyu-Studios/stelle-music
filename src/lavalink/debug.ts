@@ -5,6 +5,6 @@ import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 export default createLavalinkEvent({
     name: EventNames.Debug,
     run(client, level, message): void {
-        if (Constants.Debug) client.debugger?.info(`[Manager ${DebugLevels[level]}] Debug: ${message}`);
+        if (Constants.Debug) client.debugger?.info(`[Lavalink] Manager debug | level: ${DebugLevels[level]} | message: ${message}`);
     },
 });

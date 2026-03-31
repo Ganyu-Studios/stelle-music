@@ -39,7 +39,7 @@ export const Configuration: LoadableStelleConfiguration = {
         // *cries in cocogoat*
         const { BaseClient } = await import("seyfert/lib/client/base.js");
 
-        const directory: string = await BaseClient.prototype.getRC().then((i) => i.locations.config);
+        const directory: string = await BaseClient.prototype.getRC().then((i): string => i.locations.config);
         const filenames: string[] = ["local.config", "default.config"];
         const extensions: string[] = [".ts", ".js"];
 

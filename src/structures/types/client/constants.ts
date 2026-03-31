@@ -124,5 +124,10 @@ export interface StelleConstants {
      * Get the Redis URL from the environment variables.
      * @returns {string} The Redis URL.
      */
-    RedisUrl(): string;
+    GetRedisUrl(): string;
+    /**
+     * Get the filename to save the commands cache.
+     * @returns {string} The filename to save the commands cache.
+     */
+    GetCachePath(): string;
 }

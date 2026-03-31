@@ -17,7 +17,8 @@ export async function connectListener(client: UsingClient, node: NodeStructure):
             for (const player of players) {
                 try {
                     if (!player.playing && !player.paused && !(player.queue.tracks.length + Number(!!player.queue.current))) {
-                        if (Constants.Debug) client.debugger?.info(`Lavalink - Player destroyed: ${player.guildId} on node ${node.id}.`);
+                        if (Constants.Debug)
+                            client.debugger?.info(`[Lavalink] Destroying inactive player | node: ${node.id} | guild: ${player.guildId}`);
 
                         await player.destroy();
 
@@ -47,9 +48,9 @@ export async function connectListener(client: UsingClient, node: NodeStructure):
                             paused: player.paused,
                         });
 
-                    if (Constants.Debug) client.debugger?.info(`Lavalink - Player resumed: ${player.guildId} on node ${node.id}.`);
+                    if (Constants.Debug) client.debugger?.info(`[Lavalink] Player resumed | node: ${node.id} | guild: ${player.guildId}`);
                 } catch (error) {
-                    client.logger.error(`Lavalink - Error resuming the player: ${player.guildId} ${error}`);
+                    client.logger.error(`[Lavalink] Resume player failed | node: ${node.id} | guild: ${player.guildId} | error: ${error}`);
                 }
             }
         }

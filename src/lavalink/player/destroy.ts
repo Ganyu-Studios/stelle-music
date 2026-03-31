@@ -30,6 +30,7 @@ export default createLavalinkEvent({
             await player.data.delete("lyricsEnabled");
         }
 
-        if (Constants.Debug) client.debugger?.info(`[Player ${player.guildId}] Destroyed Player: ${JSON.stringify(player.toJSON())}`);
+        if (Constants.Debug)
+            client.debugger?.info(`[Lavalink] Player destroyed | guild: ${player.guildId} | voice: ${voiceId} | text: ${textId}`);
     },
 });

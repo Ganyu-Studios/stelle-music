@@ -100,6 +100,9 @@ export default createLavalinkEvent({
             .catch((): null => null);
         if (message) await player.data.set("messageId", message.id);
 
-        if (Constants.Debug) client.debugger?.info(`[Player ${player.guildId}] Track Started: ${JSON.stringify(track)}`);
+        if (Constants.Debug)
+            client.debugger?.info(
+                `[Lavalink] Track started | guild: ${player.guildId} | title: ${track.info.title} | author: ${track.info.author}`,
+            );
     },
 });

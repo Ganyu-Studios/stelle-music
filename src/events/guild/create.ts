@@ -6,7 +6,7 @@ export default createEvent({
     async run(guild, client): Promise<void> {
         if (guild.unavailable) return;
 
-        if (Constants.Debug) return client.debugger?.info(`Guild: ${guild.id} | Created: ${guild.name}`);
+        if (Constants.Debug) return client.debugger?.info(`[Guild] Created | id: ${guild.id} | name: ${guild.name}`);
 
         const owner = await guild.fetchOwner().catch((): null => null);
         const ownerName = owner?.displayName ?? "Unknown";

@@ -1,7 +1,7 @@
-import { join } from "node:path";
 import { createClient, type RedisClientType } from "@redis/client";
 import { Client, LimitedCollection, LimitedMemoryAdapter, type MessageStructure } from "seyfert";
 import { HandleCommand } from "seyfert/lib/commands/handle.js";
+import type { HandleableCommand } from "seyfert/lib/commands/handler.js";
 import { ActivityType, ApplicationCommandType, type GatewayPresenceUpdateData, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
 import { Yuna } from "yunaforseyfert";
 import { StelleMiddlewares } from "#stelle/middlewares";
@@ -39,7 +39,7 @@ export class Stelle extends Client<true> {
      * @type {RedisClientType}
      * @readonly
      */
-    readonly redis: RedisClientType = createClient({ url: Constants.RedisUrl() });
+    readonly redis: RedisClientType = createClient({ url: Constants.GetRedisUrl() });
 
     /**
      * The client database instance.
@@ -113,13 +113,13 @@ export class Stelle extends Client<true> {
      * @returns {Promise<void>} A promise, yay!
      */
     public async run(): Promise<void> {
-        this.commands.onCommand = (file) => {
+        this.commands.onCommand = (file): InstanceType<HandleableCommand> | false => {
             const command = new file();
 
             if (command.type === ApplicationCommandType.PrimaryEntryPoint) return command;
             if (command.onlyDeveloper) (command as NonGlobalCommands).guildId = this.config.guildIds;
             if (command.skipRegister) {
-                this.logger.info(`Command - Skipped loading command: ${command.name}`);
+                this.logger.info(`[Command] Skipped loading | name: ${command.name}`);
                 return false;
             }
 
@@ -156,8 +156,8 @@ export class Stelle extends Client<true> {
                 override resolveCommandFromContent = Yuna.resolver({
                     client: this.client,
                     logResult: Constants.Debug,
-                    afterPrepare: (metadata) => {
-                        if (Constants.Debug) this.client.logger.debug(`Client - Ready to use ${metadata.commands.length} commands!`);
+                    afterPrepare: (metadata): void => {
+                        if (Constants.Debug) this.client.logger.debug(`[Client] Commands prepared | count: ${metadata.commands.length}`);
                     },
                 });
             },
@@ -169,12 +169,12 @@ export class Stelle extends Client<true> {
             },
         });
 
-        if (this.cache.messages) this.cache.messages.filter = (message) => message.author.id === this.botId;
+        if (this.cache.messages) this.cache.messages.filter = (message): boolean => message.author.id === this.botId;
 
         this.events.onFail = (_, error): Promise<MessageStructure | void> => sendErrorReport({ error });
 
-        this.redis.on("connect", (): void => this.logger.info("Redis - Connected to Redis!"));
-        this.redis.on("error", (error): void => this.logger.error(`Redis - Redis client error: ${inspect(error)}`));
+        this.redis.on("connect", (): void => this.logger.info("[Redis] Connected"));
+        this.redis.on("error", (error): void => this.logger.error(`[Redis] Client error | error: ${inspect(error)}`));
 
         await this.redis.connect();
         await this.manager.load();
@@ -187,9 +187,9 @@ export class Stelle extends Client<true> {
      * @returns {Promise<void>} A promise, yeah... that's all.
      */
     public async reload(): Promise<void> {
-        this.logger.warn("Attemping to reload...");
+        this.logger.warn("[Client] Reload started");
 
-        const cachePath = join(Constants.CachePath, Constants.CommandsFile);
+        const cachePath: string = Constants.GetCachePath();
 
         try {
             await this.events.reloadAll();
@@ -199,9 +199,9 @@ export class Stelle extends Client<true> {
 
             await this.uploadCommands({ cachePath });
 
-            this.logger.info("Stelle has been reloaded.");
+            this.logger.info("[Client] Reload completed");
         } catch (error) {
-            this.logger.error(`Error - ${inspect(error)}`);
+            this.logger.error(`[Client] Reload failed | error: ${inspect(error)}`);
             throw error;
         }
     }

@@ -33,7 +33,7 @@ export async function sendErrorReport(options: ReportOptions): Promise<Message |
 
     //as long as I'm with the dev version of Stelle,
     //i don't want the logs to be sent to the server.
-    if (Constants.Dev) return logger.error(options.error);
+    if (Constants.Dev) return logger.error("[Report] Error captured (dev mode)", options.error);
 
     const date = new Date();
     const title: string = ctx?.client.me.username ?? "Stelle";

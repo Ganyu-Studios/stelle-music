@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { resolve } from "node:path";
+import { join, resolve } from "node:path";
 import { LoopMode } from "hoshimi";
 import type { GatewayActivityUpdateData } from "seyfert/lib/types/gateway.js";
 import { ActivityType } from "seyfert/lib/types/index.js";
@@ -98,14 +98,17 @@ export const Constants: StelleConstants = {
 
         return states[mode];
     },
-    RedisUrl(): string {
-        const host = Environment.REDIS_HOST;
-        const port = Environment.REDIS_PORT;
-        const password = Environment.REDIS_PASSWORD;
-        const username = Environment.REDIS_USERNAME;
+    GetRedisUrl(): string {
+        const host: string = Environment.REDIS_HOST;
+        const port: number = Environment.REDIS_PORT;
+        const password: string = Environment.REDIS_PASSWORD;
+        const username: string = Environment.REDIS_USERNAME;
 
-        const protocol = Environment.REDIS_SECURE ? "rediss" : "redis";
+        const protocol: "rediss" | "redis" = Environment.REDIS_SECURE ? "rediss" : "redis";
 
         return `${protocol}://${username}:${password}@${host}:${port}`;
+    },
+    GetCachePath(): string {
+        return join(process.cwd(), this.CachePath, this.CommandsFile);
     },
 };

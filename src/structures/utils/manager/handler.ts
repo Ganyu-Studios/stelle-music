@@ -55,17 +55,17 @@ export class LavalinkHandler extends BaseHandler {
         for (const file of files) {
             const event: Lavalink = file.file.default;
             if (!event) {
-                this.logger.warn(`${file.name} doesn't export by \`export default new Lavaink({ ... })\``);
+                this.logger.warn(`[Handler] Invalid event export | file: ${file.name} | expected: export default new Lavaink({ ... })`);
                 continue;
             }
 
             if (!event.name) {
-                this.logger.warn(`${file.name} doesn't have a \`name\` property`);
+                this.logger.warn(`[Handler] Missing event name | file: ${file.name}`);
                 continue;
             }
 
             if (typeof event.run !== "function") {
-                this.logger.warn(`${file.name} doesn't have a \`run\` function`);
+                this.logger.warn(`[Handler] Missing event run function | file: ${file.name}`);
                 continue;
             }
 

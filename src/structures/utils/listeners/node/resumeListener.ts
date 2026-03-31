@@ -59,6 +59,6 @@ export async function resumeListener(client: UsingClient, node: NodeStructure, p
             loop: session.loop,
         });
 
-        if (Constants.Debug) client.debugger?.info(`Node: ${node.id} | Player: ${player.guildId} | Resumed`);
+        if (Constants.Debug) client.debugger?.info(`[Lavalink] Player resumed | node: ${node.id} | guild: ${player.guildId}`);
     }
 }

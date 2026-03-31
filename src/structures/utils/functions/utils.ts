@@ -203,7 +203,7 @@ export const createId = (options: CreateIdOptions = {}): string => {
  * @returns {void} Aishite, aishite, motto, motto
  */
 export function cleanup(client: UsingClient): void {
-    client.logger.info("Shutting down the client...");
+    client.logger.info("[Client] Shutdown requested");
 
     client.database?.disconnect();
     client.gateway?.disconnectAll();

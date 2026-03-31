@@ -11,8 +11,8 @@ export default createEvent({
         const clientName = `${user.username} v${Constants.Version}`;
         const cachePath = join(Constants.CachePath, Constants.CommandsFile);
 
-        client.logger.info(`API - Logged in as: ${user.username}`);
-        client.logger.info(`Client - ${clientName} is now ready on shard #${shardId}.`);
+        client.logger.info(`[API] Logged in | user: ${user.username}`);
+        client.logger.info(`[Client] Ready | name: ${clientName} | shard: ${shardId}`);
 
         changePresence(client);
 

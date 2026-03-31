@@ -40,9 +40,13 @@ export default createLavalinkEvent({
         const embed = new Embed().setDescription(messages.events.playerEnd).setColor(client.config.color.success).setTimestamp();
 
         await client.messages.write(player.textId, { embeds: [embed] }).catch((): null => null);
-
         await player.data.delete("messageId");
 
-        if (Constants.Debug) client.debugger?.info(`[Player ${player.guildId}] Queue Ended: ${JSON.stringify(player.toJSON())}`);
+        const autoplay: boolean = !!(await player.data.get("enabledAutoplay"));
+
+        if (Constants.Debug)
+            client.debugger?.info(
+                `[Lavalink] Queue ended | guild: ${player.guildId} | remaining: ${player.queue.tracks.length} | autoplay: ${autoplay}`,
+            );
     },
 });

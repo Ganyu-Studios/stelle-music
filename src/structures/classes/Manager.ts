@@ -38,7 +38,7 @@ export class StelleManager extends Hoshimi {
             sendPayload: (guildId, payload) => {
                 // just in case, but this should never happen
                 if (typeof guildId !== "string" || typeof guildId === "undefined")
-                    return client.logger.warn("StelleManager#sendPayload: guildId is not a string.");
+                    return client.logger.warn("[Manager] Invalid payload target | reason: guildId is not a string");
 
                 return client.gateway.send(client.gateway.calculateShardId(guildId), payload);
             },
@@ -74,7 +74,7 @@ export class StelleManager extends Hoshimi {
      * @returns {Promise<void>} A promise.
      */
     public async load(): Promise<void> {
-        this.client.logger.info("LavalinkHandler loaded");
+        this.client.logger.info("[Manager] Lavalink handler loaded");
         await this.handler.load();
     }
 }
