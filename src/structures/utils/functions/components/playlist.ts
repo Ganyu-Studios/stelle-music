@@ -150,8 +150,8 @@ async function playlistTrackSave(
                             ],
                         });
 
-                    const res: QueryResult | null = await client.manager.search({ query: url, requester: ctx.author });
-                    if (!res?.tracks.length)
+                    const search: QueryResult | null = await client.manager.search({ query: url, requester: ctx.author });
+                    if (!search?.tracks.length)
                         return modal.editOrReply({
                             content: "",
                             flags: MessageFlags.Ephemeral,
@@ -163,7 +163,7 @@ async function playlistTrackSave(
                             ],
                         });
 
-                    const track: TrackStructure | undefined = res.tracks
+                    const track: TrackStructure | undefined = search.tracks
                         .filter((track): boolean => !playlist.tracks.some((t): boolean => t.encoded === track.encoded))
                         .at(0);
                     if (!track)
