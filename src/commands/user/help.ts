@@ -23,19 +23,24 @@ import { TimeFormat } from "#stelle/utils/functions/time.js";
 import { truncate } from "#stelle/utils/functions/utils.js";
 import { EmbedPaginator, StelleStringMenu } from "#stelle/utils/paginator.js";
 
+/**
+ * The type for a command that can be resolved to a command or a context menu command.
+ */
+type ResolvableCommand = Command | ContextMenuCommand;
+
 const options = {
     command: createStringOption({
         autocomplete(interaction): Promise<void> {
             const { client } = interaction;
             const { messages } = client.t(interaction.locale).get();
 
-            const commands = client.commands.values.filter((command) => !command.guildId);
-            const input = interaction.getInput();
-            if (!input) {
+            const commands: ResolvableCommand[] = client.commands.values.filter((command): boolean => !command.guildId);
+            const input: string = interaction.getInput();
+            if (!input.length) {
                 return interaction.respond(
                     commands
-                        .map((command) => {
-                            const description = command.description_localizations?.[interaction.locale] ?? command.description;
+                        .map((command): { name: string; value: string } => {
+                            const description: string = command.description_localizations?.[interaction.locale] ?? command.description;
 
                             return {
                                 name: `${command.name} - ${truncate(description, 124)} (${TimeFormat.toHumanize((command.cooldown ?? 3) * 1000)})`,
@@ -46,7 +51,7 @@ const options = {
                 );
             }
 
-            const command = commands.find((command) => command.name === input);
+            const command: ResolvableCommand | undefined = commands.find((command) => command.name === input);
             if (!command)
                 return interaction.respond([
                     {
@@ -55,7 +60,7 @@ const options = {
                     },
                 ]);
 
-            const description = command.description_localizations?.[interaction.locale] ?? command.description;
+            const description: string = command.description_localizations?.[interaction.locale] ?? command.description;
 
             return interaction.respond([
                 {
@@ -97,36 +102,39 @@ export default class HelpCommand extends Command {
                 ],
             });
 
-        const commands = client.commands.values.filter((command) => !command.guildId);
-        const categoryList = commands
-            .map((command) => Number(command.category))
-            .filter((item, index, commands) => commands.indexOf(item) === index);
+        const commands: ResolvableCommand[] = client.commands.values.filter((command): boolean => !command.guildId);
+        const categoryList: number[] = commands
+            .map((command): number => Number(command.category))
+            .filter((item, index, commands): boolean => commands.indexOf(item) === index);
 
         const getAlias = (category: StelleCategory): string => messages.commands.help.aliases[category];
 
         if (!options.command) {
-            const paginator = new EmbedPaginator({ ctx, disabled: true });
-            const row = new ActionRow<StelleStringMenu>().addComponents(
+            const paginator: EmbedPaginator = new EmbedPaginator({ ctx, disabled: true });
+            const row: ActionRow<StelleStringMenu> = new ActionRow<StelleStringMenu>().addComponents(
                 new StelleStringMenu()
                     .setPlaceholder(messages.commands.help.selectMenu.placeholder)
                     .setCustomId("guild-helpMenu")
                     .setOptions(
-                        categoryList.map((category) =>
-                            new StringSelectOption()
-                                .setLabel(getAlias(category))
-                                .setValue(category.toString())
-                                .setDescription(messages.commands.help.selectMenu.description({ category: getAlias(category) }))
-                                .setEmoji("📚"),
+                        categoryList.map(
+                            (category): StringSelectOption =>
+                                new StringSelectOption()
+                                    .setLabel(getAlias(category))
+                                    .setValue(category.toString())
+                                    .setDescription(messages.commands.help.selectMenu.description({ category: getAlias(category) }))
+                                    .setEmoji("📚"),
                         ),
                     )
                     .setRun((interaction, setPage) => {
-                        const category = Number(interaction.values[0]);
-                        const commands = client.commands.values.filter((command) => command.category === Number(category));
+                        const category: number = Number(interaction.values[0]);
+                        const commands: ResolvableCommand[] = client.commands.values.filter(
+                            (command): boolean => command.category === category,
+                        );
 
                         paginator.setEmbeds([]).setDisabled(false);
 
-                        for (let i = 0; i < commands.length; i += 5) {
-                            const commandList = commands.slice(i, i + 5);
+                        for (let i: number = 0; i < commands.length; i += 5) {
+                            const commandList: ResolvableCommand[] = commands.slice(i, i + 5);
 
                             paginator.addEmbed(
                                 new Embed()
@@ -141,7 +149,7 @@ export default class HelpCommand extends Command {
                                     .setDescription(
                                         messages.commands.help.selectMenu.options.description({
                                             options: commandList
-                                                .map((command) =>
+                                                .map((command): string =>
                                                     parseCommand(command, messages.events.optionTypes, ctx.interaction?.locale),
                                                 )
                                                 .join("\n\n"),
@@ -171,7 +179,7 @@ export default class HelpCommand extends Command {
             return;
         }
 
-        const command = commands.find((command) => command.name === options.command);
+        const command: ResolvableCommand | undefined = commands.find((command) => command.name === options.command);
         if (!command)
             return ctx.editOrReply({
                 flags: MessageFlags.Ephemeral,
@@ -183,7 +191,7 @@ export default class HelpCommand extends Command {
                 ],
             });
 
-        const embed = new Embed()
+        const embed: Embed = new Embed()
             .setColor(client.config.color.success)
             .setThumbnail(ctx.author.avatarURL())
             .setTitle(
