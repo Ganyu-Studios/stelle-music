@@ -250,7 +250,7 @@ export async function playlistTrackSaveHandler(ctx: CommandContext, interaction:
                 flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
-                        description: messages.events.noCollector({ userId: ctx.author.id }),
+                        description: messages.events.onlyUser({ userId: ctx.author.id }),
                         color: EmbedColors.Red,
                     },
                 ],

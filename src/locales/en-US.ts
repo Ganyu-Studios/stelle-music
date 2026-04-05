@@ -260,7 +260,7 @@ export default {
             invalidOptions: ({ options, list }: IOptions): string =>
                 `\`❌\` Invalid command options or arguments.\n-# - **Required**: \`<>\`\n-# - **Optional**: \`[]\`\n\n\`📋\` **Usage**:\n ${options}\n\`📢\` **Options Available**:\n${list}`,
             noSameVoice: ({ channelId }: IChannel): string => `\`❌\` You are not in the **same voice channel** as me. (<#${channelId}>)`,
-            noCollector: ({ userId }: IUser): string => `\`❌\` Only the user: <@${userId}> can use this.`,
+            onlyUser: ({ userId }: IUser): string => `\`❌\` Only the user: <@${userId}> can use this.`,
             noMembers: ({ clientName }: IClientName): string =>
                 `\`🎧\` ${clientName} is alone in the **voice channel**... Leaving the channel.`,
             playerQueue: ({ tracks }: ITracks): string => `\`📋\` Here is the full server queue: \n\n${tracks}`,

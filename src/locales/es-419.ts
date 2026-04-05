@@ -207,7 +207,7 @@ export default {
         events: {
             inCooldown: ({ time }): string => `\`❌\` Necesitas esperar: <t:${time}:R> (<t:${time}:t>) para usar esto.`,
             noSameVoice: ({ channelId }): string => `\`❌\` No estás en el **mismo canal de voz** que yo. (<#${channelId}>)`,
-            noCollector: ({ userId }): string => `\`❌\` Solo el usuario: <@${userId}> puede usar esto.`,
+            onlyUser: ({ userId }): string => `\`❌\` Solo el usuario: <@${userId}> puede usar esto.`,
             invalidOptions: ({ options, list }): string =>
                 `\`❌\` Opciones o argumentos del comando inválidos.\n- **Requerido**: \`<>\`\n- **Opcional**: \`[]\`\n\n\`📋\` **Uso**:\n ${options}\n\`📢\` **Opciones Disponibles**:\n${list}`,
             playerQueue: ({ tracks }): string => `\`📋\` Aquí está la cola completa del servidor: \n\n${tracks}`,

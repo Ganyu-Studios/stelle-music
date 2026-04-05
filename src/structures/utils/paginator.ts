@@ -78,6 +78,7 @@ interface PaginatorOptions {
 
 /**
  * The callback function of a component.
+ *
  */
 type ComponentCallback<Interaction> = (interaction: Interaction, setPage: (n: number) => void) => Awaitable<unknown>;
 
@@ -109,31 +110,36 @@ const defaultTime: number = 60e3;
 /**
  *
  * Get the current row of the paginator.
- * @param {EmbedPaginator} this The paginator instance.
+ * @param {EmbedPaginator} self The paginator instance.
  * @returns {ActionRow<ActionBuilderComponents>[]} The current row.
  */
-function getRows(this: EmbedPaginator): ActionRow<ActionBuilderComponents>[] {
+function getRows(self: EmbedPaginator): ActionRow<ActionBuilderComponents>[] {
     const rows: ActionRow<ActionBuilderComponents>[] = [
         new ActionRow<ActionBuilderComponents>().addComponents(
             new Button()
                 .setEmoji("<:forward:1061798317417312306>")
                 .setStyle(ButtonStyle.Secondary)
-                .setCustomId("pagination-pagePrev")
-                .setDisabled(this.options.disabled || this.options.pages === 0),
+                .setCustomId("paginator-pagePrev")
+                .setDisabled(self.options.disabled || self.options.pages === 0),
             new Button()
-                .setLabel(`${this.currentPage}/${this.maxPages}`)
+                .setLabel(`${self.current}/${self.max}`)
                 .setStyle(ButtonStyle.Primary)
                 .setDisabled(true)
-                .setCustomId("pagination-pagePos"),
+                .setCustomId("paginator-pagePos"),
             new Button()
                 .setEmoji("<:next:1061798311671103528>")
                 .setStyle(ButtonStyle.Secondary)
-                .setCustomId("pagination-pageNext")
-                .setDisabled(this.options.disabled || this.options.pages === this.options.embeds.length - 1),
+                .setCustomId("paginator-pageNext")
+                .setDisabled(self.options.disabled || self.options.pages === self.options.embeds.length - 1),
+            new Button()
+                .setEmoji("<:delete:1081644249197596692>")
+                .setStyle(ButtonStyle.Danger)
+                .setCustomId("paginator-delete")
+                .setDisabled(self.options.disabled),
         ),
     ];
 
-    if (this.options.rows.length) rows.unshift(...this.options.rows);
+    if (self.options.rows.length) rows.unshift(...self.options.rows);
 
     return rows;
 }
@@ -238,7 +244,7 @@ export class EmbedPaginator {
             {
                 content: "",
                 embeds: [this.options.embeds[this.options.pages]],
-                components: getRows.call(this),
+                components: getRows(this),
                 flags: ephemeral ? MessageFlags.Ephemeral : undefined,
             },
             true,
@@ -252,7 +258,7 @@ export class EmbedPaginator {
                     flags: MessageFlags.Ephemeral,
                     embeds: [
                         {
-                            description: messages.events.noCollector({ userId: this.options.ctx.author.id }),
+                            description: messages.events.onlyUser({ userId: this.options.ctx.author.id }),
                             color: EmbedColors.Red,
                         },
                     ],
@@ -268,13 +274,15 @@ export class EmbedPaginator {
                             return new ActionRow({
                                 components: row.data.components.map((row): APIMessageActionRowComponent => {
                                     if (row.type === ComponentType.TextInput)
-                                        throw new InvalidComponentType(`The component ${row.type} is not a valid component type`);
+                                        throw new InvalidComponentType(
+                                            `The component ${ComponentType[row.type]} is not a valid component type`,
+                                        );
 
                                     row.disabled = true;
 
                                     // for some reason, the label saves the position it is in when the paginator is sent,
                                     // so, set it to 0/0 is the best option instead of returning the saved one.
-                                    if ("label" in row && "custom_id" in row && row.custom_id === "pagination-pagePos") row.label = "0/0";
+                                    if ("label" in row && "custom_id" in row && row.custom_id === "paginator-pagePos") row.label = "0/0";
 
                                     return row;
                                 }),
@@ -285,16 +293,31 @@ export class EmbedPaginator {
             },
         });
 
-        collector.run<ButtonInteraction>(["pagination-pagePrev", "pagination-pageNext"], async (interaction): Promise<void> => {
-            // just in case, i don't want to handle other interactions.
-            if (!interaction.isButton()) return;
+        collector.run<ButtonInteraction>(
+            ["paginator-pagePrev", "paginator-pageNext", "paginator-delete"],
+            async (interaction): Promise<void> => {
+                // just in case, i don't want to handle other interactions.
+                if (!interaction.isButton()) return;
 
-            if (interaction.customId === "pagination-pagePrev" && this.options.pages > 0) --this.options.pages;
-            if (interaction.customId === "pagination-pageNext" && this.options.pages < this.options.embeds.length - 1) ++this.options.pages;
+                const { customId } = interaction;
 
-            await interaction.deferUpdate();
-            await this.update();
-        });
+                if (customId === "paginator-pagePrev" && this.options.pages > 0) --this.options.pages;
+                if (customId === "paginator-pageNext" && this.options.pages < this.options.embeds.length - 1) ++this.options.pages;
+                if (customId === "paginator-delete") {
+                    await interaction.deferUpdate();
+                    await this.options.message?.delete().catch((): null => null);
+
+                    collector.stop("deleted");
+
+                    return;
+                }
+
+                if (customId !== "paginator-delete") {
+                    await interaction.deferUpdate();
+                    await this.update();
+                }
+            },
+        );
 
         if (this.options.rows.length) {
             collector.run<ComponentInteraction>(anyCustomId, (interaction): unknown => {
@@ -327,7 +350,7 @@ export class EmbedPaginator {
      * Get the max pages of the paginator.
      * @returns {number} The max pages.
      */
-    public get maxPages(): number {
+    public get max(): number {
         return this.options.embeds.length;
     }
 
@@ -335,7 +358,7 @@ export class EmbedPaginator {
      * Get the current page of the paginator.
      * @returns {number} The current page.
      */
-    public get currentPage(): number {
+    public get current(): number {
         return this.options.pages + 1;
     }
 
@@ -456,7 +479,7 @@ export class EmbedPaginator {
         return this.edit({
             content: "",
             embeds: [this.options.embeds[this.options.pages]],
-            components: getRows.call(this),
+            components: getRows(this),
         });
     }
 }

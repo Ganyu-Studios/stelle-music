@@ -123,7 +123,7 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | Message | W
                 embeds: [
                     {
                         color: EmbedColors.Red,
-                        description: messages.events.noCollector({ userId: ctx.author.id }),
+                        description: messages.events.onlyUser({ userId: ctx.author.id }),
                     },
                 ],
             });
