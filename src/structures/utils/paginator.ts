@@ -30,6 +30,24 @@ import type { Omit } from "#stelle/types";
 import { InvalidComponentRun, InvalidComponentType, InvalidEmbedsLength, InvalidMessage, InvalidPageNumber, InvalidRow } from "./errors.js";
 
 /**
+ * The custom ids of the paginator buttons.
+ * @readonly
+ * @enum {string}
+ */
+const ButtonIdentifiers = Object.freeze({
+    Previous: "paginator-pagePrev",
+    Position: "paginator-pagePos",
+    Next: "paginator-pageNext",
+    Delete: "paginator-delete",
+});
+
+/**
+ * The custom ids of the paginator buttons.
+ * @type {string[]}
+ */
+const ButtonCustomIds: string[] = Object.values(ButtonIdentifiers);
+
+/**
  * The options of the paginator.
  */
 interface PaginatorOptions {
@@ -119,22 +137,22 @@ function getRows(self: EmbedPaginator): ActionRow<ActionBuilderComponents>[] {
             new Button()
                 .setEmoji("<:forward:1061798317417312306>")
                 .setStyle(ButtonStyle.Secondary)
-                .setCustomId("paginator-pagePrev")
+                .setCustomId(ButtonIdentifiers.Previous)
                 .setDisabled(self.options.disabled || self.options.pages === 0),
             new Button()
                 .setLabel(`${self.current}/${self.max}`)
                 .setStyle(ButtonStyle.Primary)
                 .setDisabled(true)
-                .setCustomId("paginator-pagePos"),
+                .setCustomId(ButtonIdentifiers.Position),
             new Button()
                 .setEmoji("<:next:1061798311671103528>")
                 .setStyle(ButtonStyle.Secondary)
-                .setCustomId("paginator-pageNext")
+                .setCustomId(ButtonIdentifiers.Next)
                 .setDisabled(self.options.disabled || self.options.pages === self.options.embeds.length - 1),
             new Button()
                 .setEmoji("<:delete:1081644249197596692>")
                 .setStyle(ButtonStyle.Danger)
-                .setCustomId("paginator-delete")
+                .setCustomId(ButtonIdentifiers.Delete)
                 .setDisabled(self.options.disabled),
         ),
     ];
@@ -293,38 +311,31 @@ export class EmbedPaginator {
             },
         });
 
-        collector.run<ButtonInteraction>(
-            ["paginator-pagePrev", "paginator-pageNext", "paginator-delete"],
-            async (interaction): Promise<void> => {
-                // just in case, i don't want to handle other interactions.
-                if (!interaction.isButton()) return;
+        collector.run<ButtonInteraction>(ButtonCustomIds, async (interaction): Promise<void> => {
+            // just in case, i don't want to handle other interactions.
+            if (!interaction.isButton()) return;
 
-                const { customId } = interaction;
+            const { customId } = interaction;
 
-                if (customId === "paginator-pagePrev" && this.options.pages > 0) --this.options.pages;
-                if (customId === "paginator-pageNext" && this.options.pages < this.options.embeds.length - 1) ++this.options.pages;
-                if (customId === "paginator-delete") {
-                    await interaction.deferUpdate();
-                    await this.options.message?.delete().catch((): null => null);
+            if (customId === ButtonIdentifiers.Previous && this.options.pages > 0) --this.options.pages;
+            if (customId === ButtonIdentifiers.Next && this.options.pages < this.options.embeds.length - 1) ++this.options.pages;
+            if (customId === ButtonIdentifiers.Delete) {
+                await interaction.deferUpdate();
+                await this.options.message?.delete().catch((): null => null);
 
-                    collector.stop("deleted");
+                return collector.stop("deleted");
+            }
 
-                    return;
-                }
-
-                if (customId !== "paginator-delete") {
-                    await interaction.deferUpdate();
-                    await this.update();
-                }
-            },
-        );
+            await interaction.deferUpdate();
+            await this.update();
+        });
 
         if (this.options.rows.length) {
             collector.run<ComponentInteraction>(anyCustomId, (interaction): unknown => {
                 for (const row of this.options.rows) {
                     for (const component of row.components) {
                         if ((component.data as { custom_id?: string }).custom_id === interaction.customId) {
-                            if (!("run" in component && component.run))
+                            if (!("run" in component && component.run) || typeof component.run !== "function")
                                 throw new InvalidComponentRun(`The component: "${interaction.customId}" doesn't have a run callback.`);
 
                             return component.run(interaction, async (n): Promise<void> => {
