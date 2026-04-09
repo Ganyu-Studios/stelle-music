@@ -1,8 +1,6 @@
 import type { NodeOptions, SearchSources } from "hoshimi";
 import type { PermissionStrings } from "seyfert";
-import type { Locale, LocaleString, PermissionFlagsBits } from "seyfert/lib/types/index.js";
-
-type PermissionFlagsBit = (typeof PermissionFlagsBits)[keyof typeof PermissionFlagsBits];
+import type { Locale, LocaleString } from "seyfert/lib/types/index.js";
 
 /**
  * The colors configuration interface.
@@ -46,12 +44,12 @@ interface Permissions {
      * The voice channel permissions.
      * @default ["ViewChannel", "Connect", "Speak"]
      */
-    voicePermissions: PermissionStrings | PermissionFlagsBit[];
+    voicePermissions: PermissionStrings;
     /**
      * The stage channel permissions.
      * @default ["MuteMembers"]
      */
-    stagePermissions: PermissionStrings | PermissionFlagsBit[];
+    stagePermissions: PermissionStrings;
 }
 
 /**

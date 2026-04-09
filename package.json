@@ -56,16 +56,16 @@
     "dependencies": {
         "@prisma/client": "^6.19.3",
         "@redis/client": "^5.11.0",
-        "dotenv": "^17.4.0",
+        "dotenv": "^17.4.1",
         "hoshimi": "0.3.10-dev-23878154336.0",
         "imagescript": "^1.3.1",
         "meowdb": "^2.2.3",
-        "seyfert": "4.2.3-dev-23986659103.0",
+        "seyfert": "4.3.1-dev-24104345936.0",
         "yunaforseyfert": "^1.1.3",
         "zod": "^4.3.6"
     },
     "devDependencies": {
-        "@biomejs/biome": "^2.4.10",
+        "@biomejs/biome": "^2.4.11",
         "@types/node": "^25.5.2",
         "husky": "^9.1.7",
         "lint-staged": "^16.4.0",
