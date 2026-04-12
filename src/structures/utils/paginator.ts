@@ -5,10 +5,10 @@ import {
     Button,
     type ButtonInteraction,
     type Embed,
-    type Message,
+    type MessageStructure,
     StringSelectMenu,
     type StringSelectMenuInteraction,
-    type WebhookMessage,
+    type WebhookMessageStructure,
 } from "seyfert";
 import {
     type Awaitable,
@@ -87,10 +87,10 @@ interface PaginatorOptions {
     time: number;
     /**
      * The message reference of the paginator.
-     * @type {Message | WebhookMessage | null}
+     * @type {MessageStructure | WebhookMessageStructure | null}
      * @default null
      */
-    message: Message | WebhookMessage | null;
+    message: MessageStructure | WebhookMessageStructure | null;
 }
 
 /**
