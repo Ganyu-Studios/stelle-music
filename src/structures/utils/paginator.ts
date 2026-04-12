@@ -19,13 +19,7 @@ import {
     type MessageWebhookCreateBodyRequest,
 } from "seyfert/lib/common/index.js";
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
-import {
-    type APIButtonComponentWithCustomId,
-    type APIMessageActionRowComponent,
-    ButtonStyle,
-    ComponentType,
-    MessageFlags,
-} from "seyfert/lib/types/index.js";
+import { type APIMessageActionRowComponent, ButtonStyle, ComponentType, MessageFlags } from "seyfert/lib/types/index.js";
 import type { Omit } from "#stelle/types";
 import { InvalidComponentRun, InvalidComponentType, InvalidEmbedsLength, InvalidMessage, InvalidPageNumber, InvalidRow } from "./errors.js";
 
@@ -42,10 +36,15 @@ const ButtonIdentifiers = Object.freeze({
 });
 
 /**
- * The custom ids of the paginator buttons.
- * @type {string[]}
+ * The type of the custom ids of the paginator buttons.
  */
-const ButtonCustomIds: string[] = Object.values(ButtonIdentifiers);
+type ButtonIdentifiers = (typeof ButtonIdentifiers)[keyof typeof ButtonIdentifiers];
+
+/**
+ * The custom ids of the paginator buttons.
+ * @type {ButtonIdentifiers[]}
+ */
+const ButtonCustomIds: ButtonIdentifiers[] = Object.values(ButtonIdentifiers);
 
 /**
  * The options of the paginator.
@@ -67,7 +66,7 @@ interface PaginatorOptions {
      * The context reference of the paginator.
      * @type {AnyContext}
      */
-    ctx: AnyContext;
+    readonly ctx: AnyContext;
     /**
      * The rows of the paginator.
      * @type {ActionRow<Components>[]}
@@ -96,7 +95,6 @@ interface PaginatorOptions {
 
 /**
  * The callback function of a component.
- *
  */
 type ComponentCallback<Interaction> = (interaction: Interaction, setPage: (n: number) => void) => Awaitable<unknown>;
 
@@ -115,6 +113,11 @@ type ComponentInteraction = ButtonInteraction & StringSelectMenuInteraction;
  */
 type RequiredPaginatorOptions = MakeRequired<Partial<Omit<PaginatorOptions, "message" | "pages">>, "ctx">;
 
+/**
+ * A regex to match any custom id.
+ * @type {RegExp}
+ * @default /./
+ */
 // So, this is a custom id regex, it's not the best but it works.
 const anyCustomId: RegExp = /./;
 
@@ -164,6 +167,7 @@ function createRow(self: EmbedPaginator): ActionRow<ActionBuilderComponents>[] {
 
 /**
  * Class representing a custom button.
+ * @class StelleButton
  * @extends Button
  */
 export class StelleButton extends Button {
@@ -172,12 +176,6 @@ export class StelleButton extends Button {
      * @type {StelleButton["run"]}
      */
     public run?: ComponentCallback<ButtonInteraction>;
-
-    /**
-     * The data of the button.
-     * @type {APIButtonComponentWithCustomId}
-     */
-    declare data: APIButtonComponentWithCustomId;
 
     /**
      *
@@ -193,6 +191,7 @@ export class StelleButton extends Button {
 
 /**
  * Class representing a custom string menu.
+ * @class StelleStringMenu
  * @extends StringSelectMenu
  */
 export class StelleStringMenu extends StringSelectMenu {
@@ -201,12 +200,6 @@ export class StelleStringMenu extends StringSelectMenu {
      * @type {StelleStringMenu["run"]}
      */
     public run?: ComponentCallback<StringSelectMenuInteraction>;
-
-    /**
-     * The data of the string menu.
-     * @type {StringSelectMenu["data"]}
-     */
-    declare data: StringSelectMenu["data"];
 
     /**
      *
@@ -222,6 +215,7 @@ export class StelleStringMenu extends StringSelectMenu {
 
 /**
  * Class representing an embed paginator.
+ * @class EmbedPaginator
  */
 export class EmbedPaginator {
     /**
@@ -300,7 +294,8 @@ export class EmbedPaginator {
 
                                     // for some reason, the label saves the position it is in when the paginator is sent,
                                     // so, set it to 0/0 is the best option instead of returning the saved one.
-                                    if ("label" in row && "custom_id" in row && row.custom_id === "paginator-pagePos") row.label = "0/0";
+                                    if ("label" in row && "custom_id" in row && row.custom_id === ButtonIdentifiers.Position)
+                                        row.label = "0/0";
 
                                     return row;
                                 }),

@@ -55,10 +55,10 @@ export default class NodesCommand extends Command {
                 ],
             });
         } else {
-            const pages = new EmbedPaginator({ ctx });
+            const paginator: EmbedPaginator = new EmbedPaginator({ ctx });
 
             for (let i = 0; i < fields.length; i += limit) {
-                pages.addEmbed(
+                paginator.addEmbed(
                     new Embed()
                         .setDescription(messages.commands.nodes.description)
                         .setColor(client.config.color.success)
@@ -67,7 +67,7 @@ export default class NodesCommand extends Command {
                 );
             }
 
-            await pages.reply();
+            await paginator.reply();
         }
     }
 }
