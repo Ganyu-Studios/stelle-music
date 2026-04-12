@@ -6,11 +6,11 @@ import {
     type GuildCommandContext,
     type GuildMember,
     LocalesT,
-    type Message,
+    type MessageStructure,
     Middlewares,
     Options,
     type VoiceState,
-    type WebhookMessage,
+    type WebhookMessageStructure,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { ApplicationIntegrationType, ChannelType, InteractionContextType, MessageFlags } from "seyfert/lib/types/index.js";
@@ -42,7 +42,7 @@ const options = {
 @LocalesT("locales.join.name", "locales.join.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkVoicePermissions", "checkBotVoiceChannel"])
 export default class JoinCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<MessageStructure | WebhookMessageStructure | void> {
         const { options, client, channelId, member } = ctx;
 
         if (!member) return;

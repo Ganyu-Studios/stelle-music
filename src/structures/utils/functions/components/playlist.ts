@@ -6,11 +6,11 @@ import {
     type CommandContext,
     Embed,
     Label,
-    type Message,
+    type MessageStructure,
     Modal,
     type ModalSubmitInteraction,
     TextInput,
-    type WebhookMessage,
+    type WebhookMessageStructure,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
@@ -19,7 +19,15 @@ import type { userPlaylist } from "#stelle/prisma";
 import { ms } from "#stelle/utils/functions/time.js";
 import { isUrl } from "#stelle/utils/functions/utils.js";
 
-type SaveType = "queue" | "current" | "url";
+/**
+ * Enum representing the type of save operation for playlist tracks.
+ * @enum {string}
+ */
+export enum SaveType {
+    Queue = "queue",
+    Current = "current",
+    URL = "url",
+}
 
 /**
  * Saves tracks to the user's playlist.
@@ -27,14 +35,14 @@ type SaveType = "queue" | "current" | "url";
  * @param {ButtonInteraction} interaction The component button interaction.
  * @param {userPlaylist} playlist The user's playlist.
  * @param {SaveType} type The type of save operation.
- * @returns {Promise<Message | WebhookMessage | void>} The response message.
+ * @returns {Promise<MessageStructure | WebhookMessageStructure | void>} The response message.
  */
 async function playlistTrackSave(
     ctx: CommandContext,
     interaction: ButtonInteraction,
     playlist: userPlaylist,
     type: SaveType,
-): Promise<Message | WebhookMessage | void> {
+): Promise<MessageStructure | WebhookMessageStructure | void> {
     const { messages } = await ctx.locale();
     const { client } = ctx;
 
@@ -54,7 +62,7 @@ async function playlistTrackSave(
         });
 
     switch (type) {
-        case "queue": {
+        case SaveType.Queue: {
             const tracks = player!.queue.tracks
                 .filter((track) => !playlist.tracks.some((t) => t.encoded === track.encoded))
                 .map((t) => ({
@@ -80,7 +88,7 @@ async function playlistTrackSave(
             break;
         }
 
-        case "current": {
+        case SaveType.Current: {
             const track: TrackStructure | null = player!.queue.current;
             if (!track) return;
 
@@ -118,7 +126,7 @@ async function playlistTrackSave(
             break;
         }
 
-        case "url": {
+        case SaveType.URL: {
             const modal: Modal = new Modal()
                 .setTitle(messages.commands.playlist.manage.save.modal.title)
                 .setCustomId("playlist-saveFromURL-modal")
@@ -232,7 +240,7 @@ export async function playlistTrackSaveHandler(ctx: CommandContext, interaction:
             .setStyle(ButtonStyle.Primary),
     );
 
-    const message: WebhookMessage = await interaction.write(
+    const message: WebhookMessageStructure = await interaction.write(
         {
             content: "",
             flags: MessageFlags.Ephemeral,
@@ -262,9 +270,9 @@ export async function playlistTrackSaveHandler(ctx: CommandContext, interaction:
         if (!interaction.isButton()) return;
 
         const saveType: Record<string, SaveType> = {
-            "playlist-saveCurrentTrack": "current",
-            "playlist-saveCurrentQueue": "queue",
-            "playlist-saveFromURL": "url",
+            "playlist-saveCurrentTrack": SaveType.Current,
+            "playlist-saveCurrentQueue": SaveType.Queue,
+            "playlist-saveFromURL": SaveType.URL,
         } as const;
 
         const type: SaveType = saveType[interaction.customId];

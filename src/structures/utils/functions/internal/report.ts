@@ -1,4 +1,4 @@
-import { type AnyContext, AttachmentBuilder, Embed, type Message } from "seyfert";
+import { type AnyContext, AttachmentBuilder, Embed, type MessageStructure } from "seyfert";
 import { WebhookClient } from "#stelle/classes/WebhookClient.js";
 import { Environment } from "#stelle/utils/data/configuration.js";
 import { Constants } from "#stelle/utils/data/constants.js";
@@ -26,7 +26,7 @@ interface ReportOptions {
  * Send a error report.
  * @param options The options.
  */
-export async function sendErrorReport(options: ReportOptions): Promise<Message | void> {
+export async function sendErrorReport(options: ReportOptions): Promise<MessageStructure | void> {
     const { error, ctx } = options;
 
     if (!(error instanceof Error)) return;

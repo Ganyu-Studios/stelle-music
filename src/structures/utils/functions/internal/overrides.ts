@@ -1,4 +1,11 @@
-import { type AnyContext, type AutocompleteInteraction, Embed, type Message, type PermissionStrings, type WebhookMessage } from "seyfert";
+import {
+    type AnyContext,
+    type AutocompleteInteraction,
+    Embed,
+    type MessageStructure,
+    type PermissionStrings,
+    type WebhookMessageStructure,
+} from "seyfert";
 import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 import type { PermissionNames } from "#stelle/types";
@@ -32,8 +39,8 @@ export async function onRunError(ctx: AnyContext, error: unknown): Promise<void>
 /**
  *
  * The default error handler for autocomplete.
- * @param interaction The interaction.
- * @param error The error that was thrown.
+ * @param {AutocompleteInteraction} interaction The interaction.
+ * @param {unknown} error The error that was thrown.
  * @returns {Promise<void>} A promise... and a half.
  */
 export async function onAutocompleteError(interaction: AutocompleteInteraction, error: unknown): Promise<void> {
@@ -54,11 +61,14 @@ export async function onAutocompleteError(interaction: AutocompleteInteraction, 
 /**
  *
  * The default error handler for missing permissions.
- * @param ctx The context of the command.
- * @param permissions The permissions that the user is missing.
- * @returns {Promise<void>} A promise... and a half.
+ * @param {AnyContext} ctx The context of the command.
+ * @param {PermissionStrings} permissions The permissions that the user is missing.
+ * @returns {Promise<MessageStructure | WebhookMessageStructure | void>} A promise... and a half.
  */
-export async function onPermissionsFail(ctx: AnyContext, permissions: PermissionStrings): Promise<Message | WebhookMessage | void> {
+export async function onPermissionsFail(
+    ctx: AnyContext,
+    permissions: PermissionStrings,
+): Promise<MessageStructure | WebhookMessageStructure | void> {
     const { messages } = await ctx.locale();
 
     const keys: PermissionNames[] = getPermissionKeys(permissions);
@@ -84,11 +94,14 @@ export async function onPermissionsFail(ctx: AnyContext, permissions: Permission
 /**
  *
  * The Stelle's default error handler for missing bot permissions.
- * @param ctx The context of the command.
- * @param permissions The permissions that the bot is missing.
- * @returns {Promise<void>} A promise... and a half too.
+ * @param {AnyContext} ctx The context of the command.
+ * @param {PermissionStrings} permissions The permissions that the bot is missing.
+ * @returns {Promise<MessageStructure | WebhookMessageStructure | void>} A promise... and a half too.
  */
-export async function onBotPermissionsFail(ctx: AnyContext, permissions: PermissionStrings): Promise<Message | WebhookMessage | void> {
+export async function onBotPermissionsFail(
+    ctx: AnyContext,
+    permissions: PermissionStrings,
+): Promise<MessageStructure | WebhookMessageStructure | void> {
     const { messages } = await ctx.locale();
 
     const keys: PermissionNames[] = getPermissionKeys(permissions);
@@ -114,10 +127,10 @@ export async function onBotPermissionsFail(ctx: AnyContext, permissions: Permiss
 /**
  *
  * The Stelle's default error handler for invalid options.
- * @param ctx The context of the command.
- * @returns {Promise<void>} A promise... and a half maybe.
+ * @param {AnyContext} ctx The context of the command.
+ * @returns {Promise<MessageStructure | WebhookMessageStructure | void>} A promise... and a half maybe.
  */
-export async function onOptionsError(ctx: AnyContext): Promise<Message | WebhookMessage | void> {
+export async function onOptionsError(ctx: AnyContext): Promise<MessageStructure | WebhookMessageStructure | void> {
     if (!ctx.isChat()) return;
 
     const { messages } = await ctx.locale();
@@ -132,7 +145,9 @@ export async function onOptionsError(ctx: AnyContext): Promise<Message | Webhook
             messages.events.invalidOptions({
                 options: Formatter.codeBlock(options.map(({ option }) => option).join(" "), "js"),
                 list: options
-                    .map(({ option, description, range }) => `* \`${option}\` ${range ? `\`[${range}]\`` : ""}: ${description}`.trim())
+                    .map(({ option, description, range }): string =>
+                        `* \`${option}\` ${range ? `\`[${range}]\`` : ""}: ${description}`.trim(),
+                    )
                     .join("\n"),
             }),
         )

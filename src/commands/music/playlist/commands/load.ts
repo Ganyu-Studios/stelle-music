@@ -6,13 +6,13 @@ import {
     type GuildCommandContext,
     type GuildMember,
     LocalesT,
-    type Message,
+    type MessageStructure,
     Middlewares,
     Options,
     SubCommand,
     type User,
     type VoiceState,
-    type WebhookMessage,
+    type WebhookMessageStructure,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
@@ -39,7 +39,7 @@ const options = {
 @Options(options)
 @Middlewares(["checkVoiceChannel", "checkBotVoiceChannel", "checkVoicePermissions", "checkNodes"])
 export default class LoadSubcommand extends SubCommand {
-    public async run(ctx: GuildCommandContext<typeof options>): Promise<WebhookMessage | Message | void> {
+    public async run(ctx: GuildCommandContext<typeof options>): Promise<WebhookMessageStructure | MessageStructure | void> {
         await ctx.deferReply();
 
         const { client, member, channelId } = ctx;

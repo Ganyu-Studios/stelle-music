@@ -9,11 +9,11 @@ import {
     type GuildCommandContext,
     type GuildMember,
     LocalesT,
-    type Message,
+    type MessageStructure,
     Middlewares,
     Options,
     type VoiceState,
-    type WebhookMessage,
+    type WebhookMessageStructure,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { ApplicationIntegrationType, InteractionContextType, MessageFlags } from "seyfert/lib/types/index.js";
@@ -84,7 +84,7 @@ const options = {
 @LocalesT("locales.play.name", "locales.play.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkVoicePermissions", "checkBotVoiceChannel"])
 export default class PlayCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<MessageStructure | WebhookMessageStructure | void> {
         const { options, client, channelId, member } = ctx;
         const { query } = options;
 

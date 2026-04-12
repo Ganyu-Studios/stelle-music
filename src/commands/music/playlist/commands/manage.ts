@@ -6,11 +6,11 @@ import {
     Embed,
     type GuildCommandContext,
     LocalesT,
-    type Message,
+    type MessageStructure,
     Middlewares,
     Options,
     SubCommand,
-    type WebhookMessage,
+    type WebhookMessageStructure,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
@@ -39,7 +39,7 @@ const options = {
 @Options(options)
 @Middlewares(["checkVoiceChannel", "checkBotVoiceChannel", "checkVoicePermissions", "checkNodes"])
 export default class ManageSubcommand extends SubCommand {
-    public async run(ctx: GuildCommandContext<typeof options>): Promise<WebhookMessage | Message | void> {
+    public async run(ctx: GuildCommandContext<typeof options>): Promise<WebhookMessageStructure | MessageStructure | void> {
         const { client } = ctx;
         const { messages } = await ctx.locale();
 
@@ -95,7 +95,7 @@ export default class ManageSubcommand extends SubCommand {
             new Button().setCustomId("playlist-toggleVisibility").setLabel(label).setStyle(style),
         );
 
-        const message: Message | WebhookMessage = await ctx.editOrReply(
+        const message: MessageStructure | WebhookMessageStructure = await ctx.editOrReply(
             {
                 content: "",
                 flags: MessageFlags.Ephemeral,
@@ -112,7 +112,7 @@ export default class ManageSubcommand extends SubCommand {
 
         collector.run(
             ["playlist-tracksSave", "playlist-tracksDelete", "playlist-info", "playlist-toggleVisibility"],
-            async (interaction) => {
+            async (interaction): Promise<void> => {
                 if (!interaction.isButton()) return;
 
                 switch (interaction.customId) {

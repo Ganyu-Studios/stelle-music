@@ -5,10 +5,10 @@ import {
     Declare,
     type GuildCommandContext,
     LocalesT,
-    type Message,
+    type MessageStructure,
     Middlewares,
     Options,
-    type WebhookMessage,
+    type WebhookMessageStructure,
 } from "seyfert";
 import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
@@ -39,7 +39,7 @@ const options = {
 @LocalesT("locales.volume.name", "locales.volume.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class VolumeCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<MessageStructure | WebhookMessageStructure | void> {
         const { client, options } = ctx;
         const { volume } = options;
 

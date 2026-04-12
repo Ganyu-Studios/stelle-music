@@ -1,4 +1,4 @@
-import { Command, type CommandContext, Declare, type Message, type WebhookMessage } from "seyfert";
+import { Command, type CommandContext, Declare, type MessageStructure, type WebhookMessageStructure } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { ApplicationIntegrationType, InteractionContextType, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
@@ -17,7 +17,7 @@ export default class ReloadCommand extends Command {
         await ctx.client
             .reload()
             .then(
-                (): Promise<Message | WebhookMessage | void> =>
+                (): Promise<MessageStructure | WebhookMessageStructure | void> =>
                     ctx.editOrReply({
                         content: "",
                         embeds: [
@@ -29,7 +29,7 @@ export default class ReloadCommand extends Command {
                     }),
             )
             .catch(
-                (): Promise<Message | WebhookMessage | void> =>
+                (): Promise<MessageStructure | WebhookMessageStructure | void> =>
                     ctx.editOrReply({
                         content: "",
                         embeds: [

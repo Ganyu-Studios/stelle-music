@@ -1,5 +1,5 @@
 import type { LyricsResult, PlayerStructure, TrackStructure } from "hoshimi";
-import { ActionRow, type AnyContext, Button, Embed, type Message, type WebhookMessage } from "seyfert";
+import { ActionRow, type AnyContext, Button, Embed, type MessageStructure, type WebhookMessageStructure } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
 import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
@@ -21,9 +21,9 @@ async function cleanLyrics(player: PlayerStructure, lyrics: LyricsResult): Promi
  *
  * Displays the lyrics of the current track in the guild.
  * @param {AnyContext} ctx The context of the command.
- * @returns {Promise<void | Message | WebhookMessage>} The message with the lyrics.
+ * @returns {Promise<void | MessageStructure | WebhookMessageStructure>} The message with the lyrics.
  */
-export async function displayLyrics(ctx: AnyContext): Promise<void | Message | WebhookMessage> {
+export async function displayLyrics(ctx: AnyContext): Promise<void | MessageStructure | WebhookMessageStructure> {
     if (!ctx.inGuild()) return;
 
     const { client } = ctx;
@@ -112,7 +112,7 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | Message | W
         new Button().setCustomId("player-lyricsDelete").setLabel(messages.commands.lyrics.close).setStyle(ButtonStyle.Secondary),
     );
 
-    const message: WebhookMessage | Message = await ctx.editOrReply({ embeds: [embed], components: [row] }, true);
+    const message: WebhookMessageStructure | MessageStructure = await ctx.editOrReply({ embeds: [embed], components: [row] }, true);
     const collector: CreateComponentCollectorResult = message.createComponentCollector({
         filter: (i): boolean => i.user.id === ctx.author.id,
         idle: ms("1min"),

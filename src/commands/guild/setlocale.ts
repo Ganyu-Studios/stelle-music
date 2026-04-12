@@ -5,9 +5,9 @@ import {
     type DefaultLocale,
     type GuildCommandContext,
     LocalesT,
-    type Message,
+    type MessageStructure,
     Options,
-    type WebhookMessage,
+    type WebhookMessageStructure,
 } from "seyfert";
 import { ApplicationIntegrationType, InteractionContextType, MessageFlags, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
@@ -48,7 +48,7 @@ const options = {
 @LocalesT("locales.setlocale.name", "locales.setlocale.description")
 @Options(options)
 export default class SetLocaleCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<MessageStructure | WebhookMessageStructure | void> {
         const { client, options } = ctx;
         const { locale } = options;
 

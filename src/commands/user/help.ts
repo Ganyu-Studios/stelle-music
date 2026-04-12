@@ -7,11 +7,11 @@ import {
     Embed,
     type GuildCommandContext,
     LocalesT,
-    type Message,
+    type MessageStructure,
     Options,
     StringSelectOption,
     SubCommand,
-    type WebhookMessage,
+    type WebhookMessageStructure,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import type { APIApplicationCommandOption, ApplicationCommandOptionType, LocaleString } from "seyfert/lib/types/index.js";
@@ -87,7 +87,7 @@ const options = {
 @StelleOptions({ category: StelleCategory.User, cooldown: 5 })
 @Options(options)
 export default class HelpCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<MessageStructure | WebhookMessageStructure | void> {
         const { client, options } = ctx;
         const { messages } = await ctx.locale();
 

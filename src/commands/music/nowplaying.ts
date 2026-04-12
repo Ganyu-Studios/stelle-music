@@ -10,10 +10,10 @@ import {
     LocalesT,
     MediaGallery,
     MediaGalleryItem,
-    type Message,
+    type MessageStructure,
     Middlewares,
     TextDisplay,
-    type WebhookMessage,
+    type WebhookMessageStructure,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { ApplicationIntegrationType, InteractionContextType, MessageFlags } from "seyfert/lib/types/index.js";
@@ -34,7 +34,7 @@ import { truncate } from "#stelle/utils/functions/utils.js";
 @LocalesT("locales.nowplaying.name", "locales.nowplaying.description")
 @Middlewares(["checkNodes", "checkPlayer"])
 export default class NowPlayingCommand extends Command {
-    public override async run(ctx: GuildCommandContext): Promise<Message | WebhookMessage | void> {
+    public override async run(ctx: GuildCommandContext): Promise<MessageStructure | WebhookMessageStructure | void> {
         const { client } = ctx;
 
         const { messages } = await ctx.locale();

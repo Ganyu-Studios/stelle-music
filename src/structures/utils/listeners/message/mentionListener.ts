@@ -1,4 +1,4 @@
-import type { Message, UsingClient } from "seyfert";
+import type { MessageStructure, UsingClient } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 
 /**
@@ -6,10 +6,10 @@ import { EmbedColors } from "seyfert/lib/common/index.js";
  * The listener for the `messageCreate` event of the client.
  * This listener is triggered when the bot is mentioned in a message.
  * @param {UsingClient} client The client instance.
- * @param {Message} message The message instance.
+ * @param {MessageStructure} message The message instance.
  * @returns {Promise<void>} The promise, with fun!
  */
-export async function mentionListener(client: UsingClient, message: Message): Promise<void> {
+export async function mentionListener(client: UsingClient, message: MessageStructure): Promise<void> {
     const { guildId, content } = message;
 
     if (!guildId) return;

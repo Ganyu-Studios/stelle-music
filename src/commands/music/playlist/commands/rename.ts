@@ -3,11 +3,11 @@ import {
     Declare,
     type GuildCommandContext,
     LocalesT,
-    type Message,
+    type MessageStructure,
     Middlewares,
     Options,
     SubCommand,
-    type WebhookMessage,
+    type WebhookMessageStructure,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
@@ -42,7 +42,7 @@ const options = {
 @Options(options)
 @Middlewares(["checkVoiceChannel", "checkBotVoiceChannel", "checkVoicePermissions", "checkNodes"])
 export default class RenameSubcommand extends SubCommand {
-    public async run(ctx: GuildCommandContext<typeof options>): Promise<WebhookMessage | Message | void> {
+    public async run(ctx: GuildCommandContext<typeof options>): Promise<WebhookMessageStructure | MessageStructure | void> {
         const { client } = ctx;
         const { messages } = await ctx.locale();
 
