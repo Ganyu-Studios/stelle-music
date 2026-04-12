@@ -127,11 +127,11 @@ const defaultTime: number = 60e3;
 
 /**
  *
- * Get the current row of the paginator.
+ * Create the current row of the paginator.
  * @param {EmbedPaginator} self The paginator instance.
  * @returns {ActionRow<ActionBuilderComponents>[]} The current row.
  */
-function getRows(self: EmbedPaginator): ActionRow<ActionBuilderComponents>[] {
+function createRow(self: EmbedPaginator): ActionRow<ActionBuilderComponents>[] {
     const rows: ActionRow<ActionBuilderComponents>[] = [
         new ActionRow<ActionBuilderComponents>().addComponents(
             new Button()
@@ -262,7 +262,7 @@ export class EmbedPaginator {
             {
                 content: "",
                 embeds: [this.options.embeds[this.options.pages]],
-                components: getRows(this),
+                components: createRow(this),
                 flags: ephemeral ? MessageFlags.Ephemeral : undefined,
             },
             true,
@@ -490,7 +490,7 @@ export class EmbedPaginator {
         return this.edit({
             content: "",
             embeds: [this.options.embeds[this.options.pages]],
-            components: getRows(this),
+            components: createRow(this),
         });
     }
 }
