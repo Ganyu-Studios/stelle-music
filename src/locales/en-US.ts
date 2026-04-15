@@ -82,10 +82,10 @@ export default {
                 created: ({ name, state }: IPlaylist): string =>
                     `\`✅\` The playlist \`${name}\` has been created successfully.\n\`📋\` **Visibility**: \`${state}\``,
                 loaded: ({ name }: IPlaylistName): string => `\`✅\` The playlist \`${name}\` has been loaded successfully.`,
-                renamed: ({ name }: IPlaylistName): string => `\`✅\` The playlist has been renamed to: \`${name}\` successfully.`,
+                renamed: ({ name }: IPlaylistName): string => `\`✅\` The playlist has been renamed to \`${name}\`.`,
                 deleted: ({ name }: IPlaylistName): string => `\`✅\` The playlist \`${name}\` has been deleted successfully.`,
-                noPlaylist: "`❌` **No playlist** was found with this id...",
-                noTracks: "`❌` **No tracks** were found in this playlist...",
+                noPlaylist: "`❌` **No playlist** was found with this ID.",
+                noTracks: "`❌` **No tracks** were found in this playlist.",
                 list: {
                     title: "`📋` Available playlists",
                     noPrivate: "`📭` You don't have private playlists yet.",
@@ -95,7 +95,7 @@ export default {
                 manage: {
                     title: ({ name }: IPlaylistName): string => `\`🎵\` Managing Playlist: \`${name}\``,
                     description:
-                        "`📦` Here is the place to manage your playlist in a *~~at least that's the intention~~* easy and simple way.\n`📜` You can save any track, at any time in whatever you are... and delete them.\n\n`⚠️` __Keep in mind, more tracks you add, maybe can take a little longer to load the playlist.__\n\n-# Select an action to manage your playlist.",
+                        "`📦` Manage your playlist quickly and easily from here.\n`📜` Save tracks anytime, remove them when you want, and keep everything organized.\n\n`⚠️` __The more tracks you add, the longer this playlist may take to load.__\n\n-# Select an action to manage your playlist.",
                     options: {
                         toggle: ({ state }: IState): string => `Make ${state}`,
                         save: "Save",
@@ -104,7 +104,7 @@ export default {
                     },
                     delete: {
                         description:
-                            "`📢` Enter the track numbers you want to delete.\n`📌` Use commas, ranges or wildcard ranges like `1, 3, 5-7, 11-*`.\n`⚠️` Use the Info button if you want to review the full list first.",
+                            "`📢` Enter the track numbers you want to delete.\n`📌` Use commas, ranges, or wildcard ranges like `1, 3, 5-7, 11-*`.\n`⚠️` Use the Info button if you want to review the full list first.",
                         invalidSelection: "`❌` The selection you entered is invalid. Use track numbers or ranges like `1, 3-5, 11-*`.",
                         outOfRange: ({ tracks }: { tracks: number }): string =>
                             `\`❌\` One or more track numbers are outside the current playlist. It only has \`${tracks} tracks\`.`,
@@ -125,12 +125,12 @@ export default {
                         noResults: "`❌` No tracks were found from the provided URL.",
                         description: "`📢` Select one of the options below to save tracks to your playlist.",
                         invalidUrl: "`❌` The URL you entered is not valid.",
-                        alreadyExists: "`❌` The **track(s)** you are trying to save already exist(s) in your playlist.",
+                        alreadyExists: "`❌` The selected track(s) are already in your playlist.",
                         modal: {
                             title: "Save from URL",
                             label: {
                                 label: "Save from URL",
-                                description: "Enter the track or playlist URL to save tracks from it.",
+                                description: "Enter a track or playlist URL to save tracks from it.",
                                 component: "Enter the track or playlist URL here...",
                             },
                         },

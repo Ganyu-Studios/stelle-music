@@ -33,10 +33,10 @@ export default {
                 created: ({ name, state }): string =>
                     `\`✅\` La playlist \`${name}\` ha sido creada correctamente.\n\`📋\` **Visibilidad**: \`${state}\``,
                 loaded: ({ name }): string => `\`✅\` La playlist \`${name}\` ha sido cargada correctamente.`,
-                renamed: ({ name }): string => `\`✅\` La playlist ha sido renombrada a \`${name}\` exitosamente.`,
+                renamed: ({ name }): string => `\`✅\` La playlist fue renombrada a \`${name}\` correctamente.`,
                 deleted: ({ name }): string => `\`✅\` La playlist \`${name}\` ha sido eliminada exitosamente.`,
-                noPlaylist: "`❌` **No se encontró ninguna playlist** con este id...",
-                noTracks: "`❌` **No se encontraron canciones** en esta playlist...",
+                noPlaylist: "`❌` **No se encontró ninguna playlist** con ese ID.",
+                noTracks: "`❌` **No se encontraron canciones** en esta playlist.",
                 list: {
                     title: "`📋` Playlists disponibles",
                     noPrivate: "`📭` Aún no tienes playlists privadas.",
@@ -46,7 +46,7 @@ export default {
                 manage: {
                     title: ({ name }): string => `\`🎵\` Gestionando Playlist: \`${name}\``,
                     description:
-                        "`📦` Aquí es donde puedes gestionar tu playlist de una manera *~~al menos eso es la intención~~* fácil y simple.\n`📜` Puedes guardar cualquier canción, en cualquier momento en lo que estés... y eliminarlas.\n\n`⚠️` __Ten en cuenta, más canciones agregues, quizás tome un poco más tiempo para cargar la playlist.__\n\n-# Selecciona una acción para gestionar tu playlist.",
+                        "`📦` Aquí puedes gestionar tu playlist de forma rápida y sencilla.\n`📜` Guarda canciones cuando quieras, elimínalas cuando lo necesites y mantén todo ordenado.\n\n`⚠️` __Mientras más canciones agregues, más puede tardar en cargar la playlist.__\n\n-# Selecciona una acción para gestionar tu playlist.",
                     options: {
                         toggle: ({ state }): string => `Hacer ${state}`,
                         save: "Guardar",
@@ -74,13 +74,13 @@ export default {
                         saved: ({ type, amount }) => `\`✅\` Guardado exitosamente **${amount} canción(es)** de **${type}** a tu playlist.`,
                         noResults: "`❌` No se encontraron canciones de la URL proporcionada.",
                         invalidUrl: "`❌` La URL que ingresaste no es válida.",
-                        description: "`📢` Selecciona una de las opciones abajo para guardar canciones a tu playlist.",
+                        description: "`📢` Selecciona una de las opciones de abajo para guardar canciones en tu playlist.",
                         alreadyExists: "`❌` Las **canciones** que estás intentando guardar ya existen en tu playlist.",
                         modal: {
                             title: "Guardar desde URL",
                             label: {
                                 label: "Guardar desde URL",
-                                description: "Introduce la URL de la canción o playlist para guardar canciones de ella.",
+                                description: "Introduce la URL de una canción o playlist para guardar canciones desde allí.",
                                 component: "Introduce la URL de la canción o playlist aquí...",
                             },
                         },

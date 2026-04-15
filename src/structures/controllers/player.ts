@@ -47,6 +47,8 @@ export class PlayerController extends Controller<"guildPlayer"> {
                 searchPlatform: this.client.config.defaultSearchSource,
             };
 
+        this.cache.set(CacheKeys.Player, id, data);
+
         return {
             defaultVolume: data.defaultVolume,
             searchPlatform: data.searchPlatform as SearchSources,
