@@ -47,11 +47,16 @@ export default {
                     title: ({ name }): string => `\`🎵\` Gestionando Playlist: \`${name}\``,
                     description:
                         "`📦` Aquí puedes gestionar tu playlist de forma rápida y sencilla.\n`📜` Guarda canciones cuando quieras, elimínalas cuando lo necesites y mantén todo ordenado.\n\n`⚠️` __Mientras más canciones agregues, más puede tardar en cargar la playlist.__\n\n-# Selecciona una acción para gestionar tu playlist.",
+                    loadSection: {
+                        title: "### Carga Rápida",
+                        description: "Inicia la reproducción de esta playlist al instante en tu canal de voz actual.",
+                    },
                     options: {
                         toggle: ({ state }): string => `Hacer ${state}`,
                         save: "Guardar",
                         delete: "Eliminar",
                         info: "Info",
+                        load: "Cargar",
                     },
                     delete: {
                         description:

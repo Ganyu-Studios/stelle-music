@@ -96,11 +96,16 @@ export default {
                     title: ({ name }: IPlaylistName): string => `\`🎵\` Managing Playlist: \`${name}\``,
                     description:
                         "`📦` Manage your playlist quickly and easily from here.\n`📜` Save tracks anytime, remove them when you want, and keep everything organized.\n\n`⚠️` __The more tracks you add, the longer this playlist may take to load.__\n\n-# Select an action to manage your playlist.",
+                    loadSection: {
+                        title: "### Quick Load",
+                        description: "Start playback of this playlist immediately in your current voice channel.",
+                    },
                     options: {
                         toggle: ({ state }: IState): string => `Make ${state}`,
                         save: "Save",
                         delete: "Delete",
                         info: "Info",
+                        load: "Load",
                     },
                     delete: {
                         description:

@@ -8,6 +8,7 @@ import {
     ActionRow,
     type AnyContext,
     type Button,
+    Container,
     type DefaultLocale,
     extendContext,
     type MessageStructure,
@@ -17,7 +18,19 @@ import {
 } from "seyfert";
 import { type PermissionStrings, resolvePartialEmoji } from "seyfert/lib/common/index.js";
 import { PermissionsBitField } from "seyfert/lib/structures/extra/Permissions.js";
-import { type APIMessageComponentEmoji, ButtonStyle, ComponentType, type LocaleString } from "seyfert/lib/types/index.js";
+import {
+    type APIActionRowComponent,
+    type APIActionRowComponentTypes,
+    type APIButtonComponent,
+    type APIContainerComponent,
+    type APIContainerComponents,
+    type APIMessageComponentEmoji,
+    type APISectionComponent,
+    type APITopLevelComponent,
+    ButtonStyle,
+    ComponentType,
+    type LocaleString,
+} from "seyfert/lib/types/index.js";
 import type { EditButtonOptions, Omit, PermissionNames, Plain, Prettify, WebhookMetadata } from "#stelle/types";
 import { InvalidRow } from "#stelle/utils/errors.js";
 import { TimeFormat } from "./time.js";
@@ -153,31 +166,70 @@ export const requesterFn = <T extends TrackRequester = TrackRequester>(requester
 export const updateComponents = (
     message: MessageStructure | WebhookMessageStructure,
     options?: Partial<EditButtonOptions>,
-): ActionRow<Button>[] =>
-    message.components.map((builder): ActionRow<Button> => {
-        const row = builder.toJSON();
+): Array<ActionRow<Button> | Container> =>
+    message.components.map((builder): ActionRow<Button> | Container => {
+        const topLevel: APITopLevelComponent = builder.toJSON() as APITopLevelComponent;
 
-        if (row.type !== ComponentType.ActionRow) throw new InvalidRow("Invalid row type, expected ActionRow.");
+        const updateButton = (component: APIButtonComponent): APIButtonComponent => {
+            if (component.style === ButtonStyle.Link || component.style === ButtonStyle.Premium) return component;
 
-        return new ActionRow<Button>({
-            components: row.components.map((component) => {
+            if (options?.disabled) component.disabled = options.disabled;
+
+            if (options && "custom_id" in component && component.custom_id === options.customId) {
+                options.style ??= component.style;
+
+                if (options.emoji) component.emoji = resolvePartialEmoji(options.emoji) as APIMessageComponentEmoji | undefined;
+
+                component.label = options.label;
+                component.style = options.style;
+            }
+
+            return component;
+        };
+
+        const updateButtons = (components: APIActionRowComponentTypes[]): APIActionRowComponentTypes[] =>
+            components.map((component): APIActionRowComponentTypes => {
                 if (component.type !== ComponentType.Button) return component;
-                if (component.style === ButtonStyle.Link || component.style === ButtonStyle.Premium) return component;
+                return updateButton(component);
+            });
 
-                if (options?.disabled) component.disabled = options.disabled;
+        if (topLevel.type === ComponentType.ActionRow) {
+            const row: APIActionRowComponent<APIActionRowComponentTypes> = {
+                ...topLevel,
+                components: updateButtons(topLevel.components),
+            };
 
-                if (options && component.custom_id === options.customId) {
-                    options.style ??= component.style;
+            return new ActionRow<Button>(row);
+        }
 
-                    if (options.emoji) component.emoji = resolvePartialEmoji(options.emoji) as APIMessageComponentEmoji | undefined;
+        if (topLevel.type === ComponentType.Container) {
+            const container: APIContainerComponent = {
+                ...topLevel,
+                components: topLevel.components.map((nested): APIContainerComponents => {
+                    if (nested.type === ComponentType.ActionRow) {
+                        return {
+                            ...nested,
+                            components: updateButtons(nested.components),
+                        };
+                    }
 
-                    component.label = options.label;
-                    component.style = options.style;
-                }
+                    if (nested.type === ComponentType.Section && nested.accessory?.type === ComponentType.Button) {
+                        const section: APISectionComponent = {
+                            ...nested,
+                            accessory: updateButton(nested.accessory),
+                        };
 
-                return component;
-            }),
-        });
+                        return section;
+                    }
+
+                    return nested;
+                }),
+            };
+
+            return new Container(container);
+        }
+
+        throw new InvalidRow("Invalid component type, expected ActionRow or Container.");
     });
 
 /**
@@ -266,11 +318,11 @@ export const truncate = (text: string, length: number = 240): string => (text.le
 /**
  *
  * Inspect an object with configurable depth.
- * @param {any} object The object to inspect.
+ * @param {unknown} object The object to inspect.
  * @param {number} depth The depth to inspect.
  * @returns {string} The inspected object.
  */
-export const inspect = (object: any, depth: number = 0): string => nodeInspect(object, { depth });
+export const inspect = (object: unknown, depth: number = 0): string => nodeInspect(object, { depth });
 
 /**
  *
@@ -287,11 +339,10 @@ export const isUrl = (input: string): boolean => /^(https?:\/\/)?([\w-]+(\.[\w-]
  * @param {K[]} keys The keys to omit.
  * @returns {Plain<Omit<T, K>>} The object without the keys and without functions.
  */
-export const omitKeys = <T extends Record<string, any>, K extends readonly (keyof T)[]>(
-    obj: T,
-    keys: K,
-): Prettify<Plain<Omit<T, K[number]>>> =>
-    Object.fromEntries(Object.entries(obj).filter(([key]) => !keys.includes(key as any))) as Plain<Omit<T, K[number]>>;
+export const omitKeys = <T extends object, K extends readonly (keyof T)[]>(obj: T, keys: K): Prettify<Plain<Omit<T, K[number]>>> =>
+    Object.fromEntries(Object.entries(obj as Record<string, unknown>).filter(([key]) => !keys.includes(key as keyof T))) as Plain<
+        Omit<T, K[number]>
+    >;
 
 /**
  *

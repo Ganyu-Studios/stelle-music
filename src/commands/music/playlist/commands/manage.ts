@@ -1,14 +1,16 @@
 import {
     ActionRow,
     Button,
+    Container,
     createStringOption,
     Declare,
-    Embed,
     type GuildCommandContext,
     LocalesT,
     type MessageStructure,
     Options,
+    Section,
     SubCommand,
+    TextDisplay,
     type WebhookMessageStructure,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
@@ -18,6 +20,7 @@ import { ManageButtonCustomIds, ManageButtonIdentifiers } from "#stelle/types";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
 import {
     playlistInfoHandler,
+    playlistLoadHandler,
     playlistTrackDeleteHandler,
     playlistTrackSaveHandler,
     playlistVisibilityToggleHandler,
@@ -73,16 +76,32 @@ export default class ManageSubcommand extends SubCommand {
             return messages.commands.playlist.state[type];
         };
 
-        const embed: Embed = new Embed()
-            .setTitle(messages.commands.playlist.manage.title({ name: playlist.playlistName }))
-            .setDescription(messages.commands.playlist.manage.description)
+        const container: Container = new Container()
             .setColor(client.config.color.extra)
-            .setTimestamp();
+            .addComponents(
+                new TextDisplay().setContent(
+                    `${messages.commands.playlist.manage.title({ name: playlist.playlistName })}\n\n${messages.commands.playlist.manage.description}`,
+                ),
+            );
 
         const style: ButtonStyle = playlist.public ? ButtonStyle.Danger : ButtonStyle.Success;
         const label: string = messages.commands.playlist.manage.options.toggle({
             state: getVisibility(!playlist.public),
         });
+
+        const loadSection: Section<Button> = new Section<Button>()
+            .addComponents(
+                new TextDisplay().setContent(
+                    `${messages.commands.playlist.manage.loadSection.title}\n-# ${messages.commands.playlist.manage.loadSection.description}`,
+                ),
+            )
+            .setAccessory(
+                new Button()
+                    .setCustomId(ManageButtonIdentifiers.Load)
+                    .setLabel(messages.commands.playlist.manage.options.load)
+                    .setStyle(ButtonStyle.Success)
+                    .setDisabled(!playlist.tracks.length),
+            );
 
         const row: ActionRow<Button> = new ActionRow<Button>().addComponents(
             new Button()
@@ -101,12 +120,14 @@ export default class ManageSubcommand extends SubCommand {
             new Button().setCustomId(ManageButtonIdentifiers.ToggleVisibility).setLabel(label).setStyle(style),
         );
 
+        container.addComponents(loadSection);
+        container.addComponents(row);
+
         const message: MessageStructure | WebhookMessageStructure = await ctx.editOrReply(
             {
                 content: "",
-                flags: MessageFlags.Ephemeral,
-                embeds: [embed],
-                components: [row],
+                flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+                components: [container],
             },
             true,
         );
@@ -144,6 +165,10 @@ export default class ManageSubcommand extends SubCommand {
 
                 case ManageButtonIdentifiers.Info:
                     await playlistInfoHandler(ctx, interaction, playlist);
+                    break;
+
+                case ManageButtonIdentifiers.Load:
+                    await playlistLoadHandler(ctx, interaction, playlist);
                     break;
 
                 case ManageButtonIdentifiers.ToggleVisibility:

@@ -6,19 +6,24 @@ import {
     type CommandContext,
     Embed,
     type Guild,
+    type GuildMember,
     Label,
     Modal,
     type ModalSubmitInteraction,
     TextInput,
+    type VoiceState,
     type WebhookMessageStructure,
 } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
+import { EmbedColors, type PermissionStrings } from "seyfert/lib/common/index.js";
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
+import type { PermissionsBitField } from "seyfert/lib/structures/extra/Permissions.js";
 import { ButtonStyle, MessageFlags, TextInputStyle } from "seyfert/lib/types/index.js";
 import type { userPlaylist } from "#stelle/prisma";
+import type { PermissionNames } from "#stelle/types";
 import { ManageButtonIdentifiers, SaveButtonCustomIds, SaveButtonIdentifiers, type TrackUser } from "#stelle/types";
+import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 import { ms } from "#stelle/utils/functions/time.js";
-import { requesterFn, updateComponents } from "#stelle/utils/functions/utils.js";
+import { getPermissionKeys, requesterFn, updateComponents } from "#stelle/utils/functions/utils.js";
 import { EmbedPaginator } from "#stelle/utils/paginator.js";
 import { playlistTrackSave, SaveType } from "./playlist/save.js";
 import { parseTrackSelection } from "./playlist/selection.js";
@@ -133,6 +138,156 @@ export async function playlistVisibilityToggleHandler(
             label,
             customId: ManageButtonIdentifiers.ToggleVisibility,
         }),
+    });
+}
+
+/**
+ * Handles the playlist load button interaction.
+ * @param {CommandContext} ctx The command context.
+ * @param {ButtonInteraction} interaction The component button interaction.
+ * @param {userPlaylist} playlist The user's playlist.
+ * @returns {Promise<void>}
+ */
+export async function playlistLoadHandler(ctx: CommandContext, interaction: ButtonInteraction, playlist: userPlaylist): Promise<void> {
+    if (!ctx.inGuild()) return;
+
+    const { messages } = await ctx.locale();
+
+    if (!ctx.client.manager.isUseable())
+        return interaction.editOrReply({
+            content: "",
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                {
+                    description: messages.events.noNodes,
+                    color: EmbedColors.Red,
+                },
+            ],
+        });
+
+    if (!playlist.tracks.length)
+        return interaction.editOrReply({
+            content: "",
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                {
+                    description: messages.commands.playlist.noTracks,
+                    color: EmbedColors.Red,
+                },
+            ],
+        });
+
+    const me: GuildMember | null = await ctx.me().catch((): null => null);
+    if (!me) return;
+
+    const state: VoiceState | null = await ctx.member.voice().catch((): null => null);
+    if (!state)
+        return interaction.editOrReply({
+            content: "",
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                {
+                    description: messages.events.noVoiceChannel,
+                    color: EmbedColors.Red,
+                },
+            ],
+        });
+
+    const voice = await state.channel().catch((): null => null);
+    if (!voice)
+        return interaction.editOrReply({
+            content: "",
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                {
+                    description: messages.events.noVoiceChannel,
+                    color: EmbedColors.Red,
+                },
+            ],
+        });
+
+    const bot: VoiceState | null = await me.voice().catch((): null => null);
+    if (bot && bot.channelId !== state.channelId)
+        return interaction.editOrReply({
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                {
+                    description: messages.events.noSameVoice({ channelId: bot.channelId! }),
+                    color: EmbedColors.Red,
+                },
+            ],
+        });
+
+    const { stagePermissions, voicePermissions } = ctx.client.config.permissions;
+    const permissions: PermissionsBitField = await ctx.client.channels.memberPermissions(voice.id, me);
+    const missings: PermissionStrings = permissions.keys(permissions.missings(voice.isStage() ? stagePermissions : voicePermissions));
+
+    if (missings.length) {
+        const keys: PermissionNames[] = getPermissionKeys(missings);
+
+        return interaction.editOrReply({
+            content: "",
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                {
+                    description: messages.events.permissions.channel.description({
+                        channelId: voice.id,
+                    }),
+                    color: EmbedColors.Red,
+                    fields: [
+                        {
+                            name: messages.events.permissions.user.field,
+                            value: keys.map((p): string => `- ${messages.events.permissions.list[p]}`).join("\n"),
+                        },
+                    ],
+                },
+            ],
+        });
+    }
+
+    await interaction.deferReply(MessageFlags.Ephemeral);
+
+    const { defaultVolume } = await ctx.client.database.players.get(ctx.guildId);
+
+    const player = ctx.client.manager.createPlayer({
+        guildId: ctx.guildId,
+        textId: ctx.channelId,
+        voiceId: voice.id,
+        volume: defaultVolume,
+        selfMute: false,
+        selfDeaf: true,
+    });
+
+    await joinVoiceChannel(player, voice, me);
+
+    if (!(await player.data.get("localeString"))) await player.data.set("localeString", await ctx.localeString());
+    if (!(await player.data.get("me"))) await player.data.set("me", requesterFn(ctx.client.me));
+
+    const tracks: TrackStructure[] = await player.node.decode
+        .multiple(
+            playlist.tracks.map((t): string => t.encoded),
+            {} as TrackUser,
+        )
+        .then((decoded: TrackStructure[]): TrackStructure[] =>
+            decoded.map((track, i): TrackStructure => {
+                track.requester = requesterFn(playlist.tracks[i].requester);
+                return track;
+            }),
+        );
+
+    await player.queue.add(tracks);
+
+    if (!player.playing && !player.paused) await player.play();
+
+    await interaction.editOrReply({
+        content: "",
+        flags: MessageFlags.Ephemeral,
+        embeds: [
+            {
+                description: messages.commands.playlist.loaded({ name: playlist.playlistName }),
+                color: ctx.client.config.color.success,
+            },
+        ],
     });
 }
 

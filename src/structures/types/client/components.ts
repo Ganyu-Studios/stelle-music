@@ -7,6 +7,7 @@ export const ManageButtonIdentifiers = {
     TrackSave: "playlist-tracksSave",
     TrackDelete: "playlist-tracksDelete",
     Info: "playlist-info",
+    Load: "playlist-load",
     ToggleVisibility: "playlist-toggleVisibility",
 } as const;
 
