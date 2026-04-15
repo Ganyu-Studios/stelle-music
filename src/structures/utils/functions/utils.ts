@@ -128,7 +128,7 @@ export function parseDiscordWebhook(url: string): WebhookMetadata | null {
 export const requesterFn = <T extends TrackRequester = TrackRequester>(requester: TrackRequester): T => {
     if (requester instanceof User)
         return {
-            ...omitKeys(requester, [
+            ...omitKeys(requester as User & Record<string, unknown>, [
                 "client",
                 "avatarDecorationData",
                 "banner",
@@ -148,6 +148,9 @@ export const requesterFn = <T extends TrackRequester = TrackRequester>(requester
                 "createdTimestamp",
                 "globalName",
                 "avatar",
+                "displayNameStyles",
+                "collectibles",
+                "clan",
             ]),
             bot: requester.bot ?? false,
             tag: requester.bot ? requester.username : requester.tag,
