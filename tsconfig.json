@@ -7,7 +7,6 @@
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
         "rootDir": "./src",
-        "baseUrl": "./",
         "outDir": "./dist",
         "removeComments": true,
         "noEmitOnError": true,
@@ -27,7 +26,6 @@
             "#stelle/controllers/*": ["./src/structures/controllers/*"],
             "#stelle/types": ["./src/structures/types/index.ts"],
             "#stelle/middlewares": ["./src/middlewares/index.ts"],
-            "#stelle/client": ["./src/index.ts"],
             "#stelle/prisma": ["./src/generated/prisma/client.ts"]
         }
     },

@@ -1,5 +1,5 @@
+import { LoopMode, State } from "hoshimi";
 import type { DefaultLocale } from "seyfert";
-
 import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 
@@ -33,31 +33,59 @@ export default {
                 created: ({ name, state }): string =>
                     `\`✅\` La playlist \`${name}\` ha sido creada correctamente.\n\`📋\` **Visibilidad**: \`${state}\``,
                 loaded: ({ name }): string => `\`✅\` La playlist \`${name}\` ha sido cargada correctamente.`,
-                renamed: ({ name }): string => `\`✅\` La playlist ha sido renombrada a \`${name}\` exitosamente.`,
+                renamed: ({ name }): string => `\`✅\` La playlist fue renombrada a \`${name}\` correctamente.`,
                 deleted: ({ name }): string => `\`✅\` La playlist \`${name}\` ha sido eliminada exitosamente.`,
-                noPlaylist: "`❌` **No se encontró ninguna playlist** con este id...",
-                noTracks: "`❌` **No se encontraron canciones** en esta playlist...",
+                noPlaylist: "`❌` **No se encontró ninguna playlist** con ese ID.",
+                noTracks: "`❌` **No se encontraron canciones** en esta playlist.",
+                list: {
+                    title: "`📋` Playlists disponibles",
+                    noPrivate: "`📭` Aún no tienes playlists privadas.",
+                    noPublic: "`📭` No hay playlists públicas disponibles por ahora.",
+                    andMore: ({ amount }) => `-# Y ${amount} más...`,
+                },
                 manage: {
                     title: ({ name }): string => `\`🎵\` Gestionando Playlist: \`${name}\``,
                     description:
-                        "`📦` Aquí es donde puedes gestionar tu playlist de una manera *~~al menos eso es la intención~~* fácil y simple.\n`📜` Puedes guardar cualquier canción, en cualquier momento en lo que estés... y eliminarlas.\n\n`⚠️` __Ten en cuenta, más canciones agregues, quizás tome un poco más tiempo para cargar la playlist.__\n\n-# Selecciona una acción para gestionar tu playlist.",
+                        "`📦` Aquí puedes gestionar tu playlist de forma rápida y sencilla.\n`📜` Guarda canciones cuando quieras, elimínalas cuando lo necesites y mantén todo ordenado.\n\n`⚠️` __Mientras más canciones agregues, más puede tardar en cargar la playlist.__\n\n-# Selecciona una acción para gestionar tu playlist.",
+                    loadSection: {
+                        title: "### Carga Rápida",
+                        description: "Inicia la reproducción de esta playlist al instante en tu canal de voz actual.",
+                    },
                     options: {
                         toggle: ({ state }): string => `Hacer ${state}`,
                         save: "Guardar",
                         delete: "Eliminar",
                         info: "Info",
+                        load: "Cargar",
+                    },
+                    delete: {
+                        description:
+                            "`📢` Introduce los números de las canciones que quieres eliminar.\n`📌` Usa comas, rangos o rangos con comodín como `1, 3, 5-7, 11-*`.\n`⚠️` Usa el botón de Info si quieres revisar la lista completa primero.",
+                        invalidSelection:
+                            "`❌` La selección que ingresaste no es válida. Usa números de canción o rangos como `1, 3-5, 11-*`.",
+                        outOfRange: ({ tracks }): string =>
+                            `\`❌\` Uno o más números de canción están fuera de la playlist actual. Solo tiene \`${tracks} canciones\`.`,
+                        deleted: ({ amount }): string => `\`✅\` Se eliminaron exitosamente **${amount} canción(es)** de tu playlist.`,
+                        modal: {
+                            title: "Eliminar canciones",
+                            label: {
+                                label: "Eliminar canciones por número",
+                                description: "Introduce uno o más números de canción o rangos. Ejemplo: 1, 3, 5-7, 11-*",
+                                component: "1, 3, 5-7, 11-*",
+                            },
+                        },
                     },
                     save: {
                         saved: ({ type, amount }) => `\`✅\` Guardado exitosamente **${amount} canción(es)** de **${type}** a tu playlist.`,
                         noResults: "`❌` No se encontraron canciones de la URL proporcionada.",
                         invalidUrl: "`❌` La URL que ingresaste no es válida.",
-                        description: "`📢` Selecciona una de las opciones abajo para guardar canciones a tu playlist.",
+                        description: "`📢` Selecciona una de las opciones de abajo para guardar canciones en tu playlist.",
                         alreadyExists: "`❌` Las **canciones** que estás intentando guardar ya existen en tu playlist.",
                         modal: {
                             title: "Guardar desde URL",
                             label: {
                                 label: "Guardar desde URL",
-                                description: "Introduce la URL de la canción o playlist para guardar canciones de ella.",
+                                description: "Introduce la URL de una canción o playlist para guardar canciones desde allí.",
                                 component: "Introduce la URL de la canción o playlist aquí...",
                             },
                         },
@@ -104,6 +132,11 @@ export default {
                             name: "`📋` Sistema",
                             value: ({ memory, uptime, version }): string =>
                                 `\`🧠\` Memoria: \`${memory}\`\n\`📜\` Version: \`v${version}\`\n\`🕛\` Tiempo de Encendido: <t:${uptime}:R>`,
+                        },
+                        git: {
+                            name: "`📋` Git",
+                            value: ({ branch, commit, time, commitUrl }): string =>
+                                `\`🌳\` Rama: \`${branch}\`\n\`📦\` Commit: [\`${commit}\`](${commitUrl})\n\`⏱️\` Tiempo: ${time}`,
                         },
                     },
                 },
@@ -157,9 +190,9 @@ export default {
             loop: {
                 toggled: ({ type }): string => `\`✅\` El **modo de bucle** ahora es: \`${type}\``,
                 loopType: {
-                    off: "Desactivado",
-                    queue: "Cola",
-                    track: "Canción",
+                    [LoopMode.Off]: "Desactivado",
+                    [LoopMode.Queue]: "Cola",
+                    [LoopMode.Track]: "Canción",
                 },
             },
             autoplay: {
@@ -175,8 +208,13 @@ export default {
                 description: "`📋` Lista de los nodos de Stelle.",
                 noNodes: "`❌` No hay nodos disponibles por el momento.",
                 states: {
-                    connected: "🟢 Conectado.",
-                    disconnected: "🔴 Desconectado.",
+                    [State.Connected]: "🟢 Conectado.",
+                    [State.Disconnected]: "🔴 Desconectado.",
+                    [State.Connecting]: "🟡 Conectando...",
+                    [State.Idle]: "⚪ Inactivo.",
+                    [State.Reconnecting]: "🟠 Reconectando...",
+                    [State.Reconnected]: "🟢 Reconectado.",
+                    [State.Destroyed]: "⚫ Destruído.",
                 },
             },
             volume: {
@@ -197,7 +235,7 @@ export default {
         events: {
             inCooldown: ({ time }): string => `\`❌\` Necesitas esperar: <t:${time}:R> (<t:${time}:t>) para usar esto.`,
             noSameVoice: ({ channelId }): string => `\`❌\` No estás en el **mismo canal de voz** que yo. (<#${channelId}>)`,
-            noCollector: ({ userId }): string => `\`❌\` Solo el usuario: <@${userId}> puede usar esto.`,
+            onlyUser: ({ userId }): string => `\`❌\` Solo el usuario: <@${userId}> puede usar esto.`,
             invalidOptions: ({ options, list }): string =>
                 `\`❌\` Opciones o argumentos del comando inválidos.\n- **Requerido**: \`<>\`\n- **Opcional**: \`[]\`\n\n\`📋\` **Uso**:\n ${options}\n\`📢\` **Opciones Disponibles**:\n${list}`,
             playerQueue: ({ tracks }): string => `\`📋\` Aquí está la cola completa del servidor: \n\n${tracks}`,
@@ -504,6 +542,22 @@ export default {
                     option: {
                         name: "id",
                         description: "El id de la playlist a cargar.",
+                    },
+                },
+                list: {
+                    name: "lista",
+                    description: "Muestra las playlists disponibles.",
+                    option: {
+                        name: "usuario",
+                        description: "El usuario del que se mostrarán las playlists públicas.",
+                    },
+                },
+                info: {
+                    name: "info",
+                    description: "Muestra información sobre una playlist de música.",
+                    option: {
+                        name: "id",
+                        description: "El id de la playlist de la que se mostrará información.",
                     },
                 },
                 rename: {

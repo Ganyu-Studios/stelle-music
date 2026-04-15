@@ -1,37 +1,32 @@
-import { ActionRow, Button, Embed } from "seyfert";
+import { EventNames } from "hoshimi";
+import { ActionRow, type AllChannels, Button, Embed, type MessageStructure } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
-import { LavalinkEventTypes } from "#stelle/types";
 import { Constants } from "#stelle/utils/data/constants.js";
-import { TimeFormat } from "#stelle/utils/functions/time.js";
+import { formatDuration } from "#stelle/utils/functions/utils.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 export default createLavalinkEvent({
-    name: "trackStart",
-    type: LavalinkEventTypes.Manager,
+    name: EventNames.TrackStart,
     async run(client, player, track): Promise<void> {
-        if (!(player.textChannelId && player.voiceChannelId)) return;
+        if (!(player.textId && player.voiceId)) return;
         if (!track) return;
 
-        const isAutoplay = player.get<boolean | undefined>("enabledAutoplay") ?? false;
-
-        const locale = player.get<string | undefined>("localeString");
-        console.info(locale);
+        const isAutoplay: boolean = (await player.data.get("enabledAutoplay")) ?? false;
+        const locale: string | undefined = await player.data.get("localeString");
         if (!locale) return;
 
-        const voice = await client.channels.fetch(player.voiceChannelId);
+        const voice: AllChannels = await client.channels.fetch(player.voiceId);
         if (!voice.is(["GuildStageVoice", "GuildVoice"])) return;
 
         const { messages } = client.t(locale).get();
 
-        const duration = track.info.isStream
-            ? messages.commands.play.live
-            : (TimeFormat.toDotted(track.info.duration) ?? messages.commands.play.undetermined);
+        const duration: string = formatDuration(track, messages);
 
         const embed = new Embed()
             .setDescription(
                 messages.events.trackStart.embed({
                     duration,
-                    requester: track.requester!.id,
+                    requester: track.requester.id,
                     title: track.info.title,
                     url: track.info.uri,
                     volume: player.volume,
@@ -80,7 +75,7 @@ export default createLavalinkEvent({
                     .setStyle(ButtonStyle.Secondary)
                     .setLabel(
                         messages.events.trackStart.components.loop({
-                            type: messages.commands.loop.loopType[player.repeatMode],
+                            type: messages.commands.loop.loopType[player.loop],
                         }),
                     ),
                 new Button()
@@ -100,9 +95,14 @@ export default createLavalinkEvent({
                 )
                 .catch((): null => null);
 
-        const message = await client.messages.write(player.textChannelId, { embeds: [embed], components }).catch((): null => null);
-        if (message) player.set("messageId", message.id);
+        const message: MessageStructure | null = await client.messages
+            .write(player.textId, { embeds: [embed], components })
+            .catch((): null => null);
+        if (message) await player.data.set("messageId", message.id);
 
-        if (Constants.Debug) client.debugger?.info(`[Player ${player.guildId}] Track Started: ${JSON.stringify(track)}`);
+        if (Constants.Debug)
+            client.debugger?.info(
+                `[Lavalink] Track started | guild: ${player.guildId} | title: ${track.info.title} | author: ${track.info.author}`,
+            );
     },
 });

@@ -1,4 +1,5 @@
 import { Command, createStringOption, Declare, type GuildCommandContext, LocalesT, Options } from "seyfert";
+import { ApplicationIntegrationType, InteractionContextType, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
@@ -16,9 +17,9 @@ const options = {
 @Declare({
     name: "setprefix",
     description: "Set the prefix of Stelle.",
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
-    defaultMemberPermissions: ["ManageGuild"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
+    defaultMemberPermissions: [PermissionFlagsBits.ManageGuild],
 })
 @StelleOptions({ cooldown: 10, category: StelleCategory.Guild })
 @LocalesT("locales.setprefix.name", "locales.setprefix.description")

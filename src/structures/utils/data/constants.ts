@@ -1,9 +1,10 @@
 import { readFile } from "node:fs/promises";
-import { resolve } from "node:path";
-import type { RepeatMode } from "lavalink-client";
+import { join, resolve } from "node:path";
+import { LoopMode } from "hoshimi";
 import type { GatewayActivityUpdateData } from "seyfert/lib/types/gateway.js";
 import { ActivityType } from "seyfert/lib/types/index.js";
 import type { AutoplayState, PausedState, StelleConstants, WorkingDirectory } from "#stelle/types";
+import { Environment } from "./configuration.js";
 
 // funny thing, it sucks, but it works.
 const packageJson = JSON.parse(await readFile(resolve("package.json"), "utf-8"));
@@ -28,8 +29,8 @@ export const Constants: StelleConstants = {
     WorkingDirectory(): WorkingDirectory {
         return this.Dev ? "src" : "dist";
     },
-    BuildKey(guildId): string {
-        return this.Dev ? `internal:${guildId}` : `stelle:${guildId}`;
+    GetNamespace(): string {
+        return this.Dev ? "internal" : "stellequeue";
     },
     ThinkMessage(): string {
         const messages: string[] = [
@@ -82,19 +83,32 @@ export const Constants: StelleConstants = {
             { name: "with /help 📜", type: ActivityType.Playing },
         ];
     },
-    LoopMode(mode, alt): RepeatMode {
-        const states: Record<RepeatMode, RepeatMode> = {
-            off: "track",
-            track: "queue",
-            queue: "off",
+    LoopMode(mode, alt): LoopMode {
+        const states: Record<LoopMode, LoopMode> = {
+            [LoopMode.Off]: LoopMode.Track,
+            [LoopMode.Track]: LoopMode.Queue,
+            [LoopMode.Queue]: LoopMode.Off,
         };
 
         if (alt) {
-            states.off = "off";
-            states.track = "track";
-            states.queue = "queue";
+            states[LoopMode.Off] = LoopMode.Off;
+            states[LoopMode.Track] = LoopMode.Track;
+            states[LoopMode.Queue] = LoopMode.Queue;
         }
 
         return states[mode];
+    },
+    GetRedisUrl(): string {
+        const host: string = Environment.REDIS_HOST;
+        const port: number = Environment.REDIS_PORT;
+        const password: string = Environment.REDIS_PASSWORD;
+        const username: string = Environment.REDIS_USERNAME;
+
+        const protocol: "rediss" | "redis" = Environment.REDIS_SECURE ? "rediss" : "redis";
+
+        return `${protocol}://${username}:${password}@${host}:${port}`;
+    },
+    GetCachePath(): string {
+        return join(process.cwd(), this.CachePath, this.CommandsFile);
     },
 };

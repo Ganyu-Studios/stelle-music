@@ -1,29 +1,31 @@
-import { LavalinkEventTypes } from "#stelle/types";
+import { EventNames } from "hoshimi";
 import { Constants } from "#stelle/utils/data/constants.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 export default createLavalinkEvent({
-    name: "trackEnd",
-    type: LavalinkEventTypes.Manager,
+    name: EventNames.TrackEnd,
     async run(client, player, track): Promise<void> {
-        if (!player.textChannelId) return;
+        if (!player.textId) return;
 
-        const messageId = player.get<string | undefined>("messageId");
+        const messageId: string | undefined = await player.data.get("messageId");
         if (messageId) {
-            if (client.config.deleter.onTrackEnd) await client.messages.delete(messageId, player.textChannelId).catch((): null => null);
-            else await client.messages.edit(messageId, player.textChannelId, { components: [] }).catch((): null => null);
+            if (client.config.deleter.onTrackEnd) await client.messages.delete(messageId, player.textId).catch((): null => null);
+            else await client.messages.edit(messageId, player.textId, { components: [] }).catch((): null => null);
         }
 
-        const lyricsId = player.get<string | undefined>("lyricsId");
+        const lyricsId: string | undefined = await player.data.get("lyricsId");
         if (lyricsId) {
-            await client.messages.delete(lyricsId, player.textChannelId).catch((): null => null);
+            await client.messages.delete(lyricsId, player.textId).catch((): null => null);
 
-            player.set("lyricsId", undefined);
-            player.set("lyrics", undefined);
+            await player.data.delete("lyricsId");
+            await player.data.delete("lyrics");
         }
 
-        player.set("messageId", undefined);
+        await player.data.delete("messageId");
 
-        if (Constants.Debug) client.debugger?.info(`[Player ${player.guildId}] Track Ended: ${JSON.stringify(track)}`);
+        if (Constants.Debug)
+            client.debugger?.info(
+                `[Lavalink] Track ended | guild: ${player.guildId} | title: ${track?.info?.title ?? "Unknown"} | author: ${track?.info?.author ?? "Unknown"}`,
+            );
     },
 });

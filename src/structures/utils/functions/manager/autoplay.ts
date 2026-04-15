@@ -1,10 +1,12 @@
-import type { Player, Track, UnresolvedTrack } from "lavalink-client";
-import type { StelleUser } from "#stelle/types";
-
-/**
- * The type of the resolvable tracks.
- */
-type ResolvableTrack = UnresolvedTrack | Track;
+import {
+    type PlayerStructure,
+    type QueryResult,
+    SearchSources,
+    SourceNames,
+    type TrackResolvableStructure,
+    type TrackStructure,
+} from "hoshimi";
+import type { TrackUser } from "#stelle/types";
 
 /**
  * The maximum number of tracks to return.
@@ -17,7 +19,7 @@ const trackLimit: number = 10;
  * Based on:
  * https://github.com/Tomato6966/lavalink-client/blob/main/testBot/Utils/OptionalFunctions.ts#L20
  *
- * A modified by: https://github.com/NoBody-UU/
+ * And also a modified version by: https://github.com/NoBody-UU/
  */
 
 /**
@@ -25,14 +27,14 @@ const trackLimit: number = 10;
  * Filter tracks.
  * @param {Player} player The player instance.
  * @param {Track} lastTrack The last track played.
- * @param {ResolvableTrack[]}  tracks The tracks to filter.
- * @returns {ResolvableTrack[]} The filtered tracks.
+ * @param {TrackResolvableStructure[]}  tracks The tracks to filter.
+ * @returns {TrackResolvableStructure[]} The filtered tracks.
  */
-const filter = (player: Player, lastTrack: Track, tracks: ResolvableTrack[]): ResolvableTrack[] =>
+const filter = (player: PlayerStructure, lastTrack: TrackStructure, tracks: TrackResolvableStructure[]): TrackResolvableStructure[] =>
     tracks.filter(
-        (track) =>
+        (track): boolean =>
             !(
-                player.queue.previous.some((t) => t.info.identifier === track.info.identifier) ||
+                player.queue.history.some((t): boolean => t.info.identifier === track.info.identifier) ||
                 lastTrack.info.identifier === track.info.identifier
             ),
     );
@@ -44,45 +46,66 @@ const filter = (player: Player, lastTrack: Track, tracks: ResolvableTrack[]): Re
  * @param lastTrack The last track played.
  * @returns {Promise<void>} A promise... that does nothing.
  */
-export async function autoPlayFunction(player: Player, lastTrack?: Track): Promise<void> {
+export async function autoplayFn(player: PlayerStructure, lastTrack: TrackStructure | null): Promise<void> {
     if (!lastTrack) return;
-    if (!player.get("enabledAutoplay")) return;
 
-    //c'mon dude, this shit seems to work, so
-    if (!player.queue.previous.some((t) => t.info.identifier === lastTrack.info.identifier)) {
-        player.queue.previous.unshift(lastTrack);
-        await player.queue.utils.save();
-    }
+    if (!(await player.data.get("enabledAutoplay"))) return;
 
-    const me = player.get<StelleUser | undefined>("me");
+    const me: TrackUser | undefined = await player.data.get("me");
     if (!me) return;
 
     switch (lastTrack.info.sourceName) {
-        case "spotify": {
-            const filtered = player.queue.previous.filter(({ info }) => info.sourceName === "spotify");
-            const first = filtered.at(0);
-            if (!first) return;
+        case SourceNames.Spotify: {
+            const search: QueryResult = await player.search({
+                query: lastTrack.info.identifier,
+                source: SearchSources.SpotifyTrackMix,
+                requester: me,
+            });
 
-            const res = await player.search({ query: `mix:track:${first.info.identifier}`, source: "sprec" }, me);
+            // If we have results, add them to the queue
+            if (search.tracks.length) {
+                const tracks: TrackResolvableStructure[] = filter(player, lastTrack, search.tracks).slice(0, trackLimit);
 
-            if (res.tracks.length) {
-                const track = filter(player, lastTrack, res.tracks)[Math.floor(Math.random() * res.tracks.length)] as Track;
-                await player.queue.add(track);
+                await player.queue.add(tracks);
+                // If we don't have results, search on youtube
+            } else {
+                const search: QueryResult = await player.search({
+                    source: SearchSources.Youtube,
+                    query: `${lastTrack.info.title} ${lastTrack.info.author}`,
+                    requester: me,
+                });
+                const tracks: TrackResolvableStructure[] = filter(player, lastTrack, search.tracks).slice(0, trackLimit);
+
+                await player.queue.add(tracks);
             }
 
             break;
         }
 
-        case "youtube":
-        case "youtubemusic": {
-            const search = `https://www.youtube.com/watch?v=${lastTrack.info.identifier}&list=RD${lastTrack.info.identifier}`;
-            const res = await player.search({ query: search }, me);
+        case SourceNames.Youtube:
+        case SourceNames.YoutubeMusic: {
+            const url = `https://www.youtube.com/watch?v=${lastTrack.info.identifier}&list=RD${lastTrack.info.identifier}`;
+            const search: QueryResult = await player.search({ query: url, source: SearchSources.YoutubeMusic, requester: me });
 
-            if (res.tracks.length) {
-                const random = Math.floor(Math.random() * res.tracks.length);
-                const tracks = filter(player, lastTrack, res.tracks).slice(random, random + trackLimit) as Track[];
+            if (search.tracks.length) {
+                const random: number = Math.floor(Math.random() * search.tracks.length);
+                const tracks: TrackResolvableStructure[] = filter(player, lastTrack, search.tracks).slice(random, random + trackLimit);
+
                 await player.queue.add(tracks);
             }
+
+            break;
+        }
+
+        case SourceNames.Deezer: {
+            const search: QueryResult = await player.search({
+                query: lastTrack.info.identifier,
+                source: SearchSources.DeezerRecommendations,
+                requester: me,
+            });
+            const tracks: TrackResolvableStructure[] = filter(player, lastTrack, search.tracks).slice(0, trackLimit);
+
+            await player.queue.add(tracks);
 
             break;
         }

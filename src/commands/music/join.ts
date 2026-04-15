@@ -1,18 +1,22 @@
 import {
+    type AllGuildVoiceChannels,
     Command,
     createChannelOption,
     Declare,
     type GuildCommandContext,
+    type GuildMember,
     LocalesT,
-    type Message,
+    type MessageStructure,
     Middlewares,
     Options,
-    type WebhookMessage,
+    type VoiceState,
+    type WebhookMessageStructure,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
-import { ChannelType, MessageFlags } from "seyfert/lib/types/index.js";
+import { ApplicationIntegrationType, ChannelType, InteractionContextType, MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
+import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 
 const options = {
     voice: createChannelOption({
@@ -30,32 +34,32 @@ const options = {
     name: "join",
     description: "Join a voice channel.",
     aliases: ["connect"],
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })
 @Options(options)
 @LocalesT("locales.join.name", "locales.join.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkVoicePermissions", "checkBotVoiceChannel"])
 export default class JoinCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<MessageStructure | WebhookMessageStructure | void> {
         const { options, client, channelId, member } = ctx;
 
         if (!member) return;
 
-        const me = await ctx.me();
+        const me: GuildMember | null = await ctx.me().catch((): null => null);
         if (!me) return;
 
-        const state = await member.voice().catch((): null => null);
+        const state: VoiceState | null = await member.voice().catch((): null => null);
         if (!state) return;
 
-        const voice = await state.channel();
+        const voice: AllGuildVoiceChannels | undefined = await state.channel();
         if (!voice) return;
 
         const { messages } = await ctx.locale();
         const { defaultVolume } = await client.database.players.get(ctx.guildId);
 
-        const channel = options.voice ?? voice;
+        const channel: AllGuildVoiceChannels = options.voice ?? voice;
         if (channel.guildId !== ctx.guildId)
             return ctx.editOrReply({
                 content: "",
@@ -69,17 +73,13 @@ export default class JoinCommand extends Command {
 
         const player = client.manager.createPlayer({
             guildId: ctx.guildId,
-            textChannelId: channelId,
-            voiceChannelId: channel.id,
+            textId: channelId,
+            voiceId: channel.id,
             volume: defaultVolume,
             selfDeaf: true,
         });
 
-        if (!player.connected) await player.connect();
-
-        let bot = await me.voice().catch((): null => null);
-        if (!bot) bot = await me.voice().catch((): null => null);
-        if (voice.isStage() && bot?.suppress) await bot.setSuppress(false);
+        await joinVoiceChannel(player, voice, me);
 
         await ctx.editOrReply({
             content: "",

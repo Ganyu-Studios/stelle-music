@@ -1,47 +1,46 @@
-import type { LyricsResult } from "lavalink-client";
-import { LavalinkEventTypes } from "#stelle/types";
+import { EventNames, type LyricsResult } from "hoshimi";
+import type { Embed, MessageStructure } from "seyfert";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 export default createLavalinkEvent({
-    name: "LyricsLine",
-    type: LavalinkEventTypes.Manager,
+    name: EventNames.LyricsLine,
     async run(client, player, track, payload): Promise<void> {
         if (payload.skipped) return;
 
-        if (!player.get<boolean | undefined>("lyricsEnabled")) return;
-        if (!player.textChannelId) return;
+        if (!(await player.data.get("lyricsEnabled"))) return;
+        if (!player.textId) return;
 
-        const lyricsId = player.get<string | undefined>("lyricsId");
+        const lyricsId: string | undefined = await player.data.get("lyricsId");
         if (!lyricsId) return;
 
-        const message = await client.messages.fetch(lyricsId, player.textChannelId).catch((): null => null);
+        const message: MessageStructure | null = await client.messages.fetch(lyricsId, player.textId).catch((): null => null);
         if (!message) return;
 
-        const lyrics = player.get<LyricsResult | undefined>("lyrics");
+        const lyrics: LyricsResult | undefined = await player.data.get("lyrics");
         if (!lyrics) {
             await message.delete().catch((): null => null);
 
-            player.set("lyricsId", undefined);
-            player.set("lyrics", undefined);
+            await player.data.delete("lyricsId");
+            await player.data.delete("lyrics");
 
             return;
         }
 
-        const embed = message.embeds.at(0)?.toBuilder();
+        const embed: Embed | undefined = message.embeds.at(0)?.toBuilder();
         if (!embed) return;
 
-        const locale = player.get<string | undefined>("localeString");
+        const locale: string | undefined = await player.data.get("localeString");
         if (!locale) return;
 
         const { messages } = client.t(locale).get();
 
-        const totalLines = client.config.lyricsLines + 1;
-        const index = payload.lineIndex;
+        const totalLines: number = client.config.lyricsLines + 1;
+        const index: number = payload.lineIndex;
 
-        let start = Math.max(0, index - Math.floor(totalLines / 2));
+        let start: number = Math.max(0, index - Math.floor(totalLines / 2));
         if (start + totalLines > lyrics.lines.length) start = Math.max(0, lyrics.lines.length - totalLines);
 
-        const end = Math.min(lyrics.lines.length, start + totalLines);
+        const end: number = Math.min(lyrics.lines.length, start + totalLines);
 
         const lines: string = lyrics.lines
             .slice(start, end)

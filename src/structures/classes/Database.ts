@@ -100,9 +100,9 @@ export class StelleDatabase {
             .$connect()
             .then(() => {
                 this.connected = true;
-                this.client.logger.info("Database - The bot is now connected to the database.");
+                this.client.logger.info("[Database] Connected");
             })
-            .catch((error) => this.client.logger.error(`Database - ${error}`));
+            .catch((error) => this.client.logger.error(`[Database] Connection failed | error: ${error}`));
     }
 
     /**
@@ -114,8 +114,8 @@ export class StelleDatabase {
             .$disconnect()
             .then(() => {
                 this.connected = false;
-                this.client.logger.info("Database - The bot is now disconnected from the database.");
+                this.client.logger.info("[Database] Disconnected");
             })
-            .catch((error) => this.client.logger.error(`Database - ${error}`));
+            .catch((error) => this.client.logger.error(`[Database] Disconnection failed | error: ${error}`));
     }
 }

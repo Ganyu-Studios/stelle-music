@@ -5,10 +5,10 @@ import {
     Button,
     type ButtonInteraction,
     type Embed,
-    type Message,
+    type MessageStructure,
     StringSelectMenu,
     type StringSelectMenuInteraction,
-    type WebhookMessage,
+    type WebhookMessageStructure,
 } from "seyfert";
 import {
     type Awaitable,
@@ -19,15 +19,29 @@ import {
     type MessageWebhookCreateBodyRequest,
 } from "seyfert/lib/common/index.js";
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
-import {
-    type APIButtonComponentWithCustomId,
-    type APIMessageActionRowComponent,
-    ButtonStyle,
-    ComponentType,
-    MessageFlags,
-} from "seyfert/lib/types/index.js";
-import type { Omit } from "#stelle/types";
-import { InvalidComponentRun, InvalidComponentType, InvalidEmbedsLength, InvalidMessage, InvalidPageNumber, InvalidRow } from "./errors.js";
+import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
+import { type Omit, PaginatorButtonCustomIds, PaginatorButtonIdentifiers } from "#stelle/types";
+import { InvalidComponentRun, InvalidEmbedsLength, InvalidMessage, InvalidPageNumber } from "./errors.js";
+import { ms } from "./functions/time.js";
+import { updateComponents } from "./functions/utils.js";
+
+/**
+ * The options of the paginator reply.
+ */
+interface PaginatorReplyOptions {
+    /**
+     * Whether the reply should be ephemeral or not.
+     * @type {boolean}
+     * @default false
+     */
+    ephemeral?: boolean;
+    /**
+     * Whether the reply should be followup or not. If true, it will send a followup message instead of editing the original message.
+     * @type {boolean}
+     * @default false
+     */
+    followup?: boolean;
+}
 
 /**
  * The options of the paginator.
@@ -49,7 +63,7 @@ interface PaginatorOptions {
      * The context reference of the paginator.
      * @type {AnyContext}
      */
-    ctx: AnyContext;
+    readonly ctx: AnyContext;
     /**
      * The rows of the paginator.
      * @type {ActionRow<Components>[]}
@@ -65,15 +79,15 @@ interface PaginatorOptions {
     /**
      * The idle time of the paginator.
      * @type {number}
-     * @default 60e3
+     * @default ms("1m")
      */
     time: number;
     /**
      * The message reference of the paginator.
-     * @type {Message | WebhookMessage | null}
+     * @type {MessageStructure | WebhookMessageStructure | null}
      * @default null
      */
-    message: Message | WebhookMessage | null;
+    message: MessageStructure | WebhookMessageStructure | null;
 }
 
 /**
@@ -94,58 +108,63 @@ type ComponentInteraction = ButtonInteraction & StringSelectMenuInteraction;
 /**
  * The required options of the paginator.
  */
-type RequiredPaginatorOptions = MakeRequired<Partial<Omit<PaginatorOptions, "message" | "pages">>, "ctx">;
+type PartialPaginatorOptions = MakeRequired<Partial<Omit<PaginatorOptions, "message" | "pages">>, "ctx">;
 
+/**
+ * A regex to match any custom id.
+ * @type {RegExp}
+ * @default /./
+ */
 // So, this is a custom id regex, it's not the best but it works.
 const anyCustomId: RegExp = /./;
 
 /**
  * The default time of the paginator.
  * @type {number}
- * @default 60e3
+ * @default ms("1m")
  */
-const defaultTime: number = 60e3;
+const defaultTime: number = ms("1m");
 
 /**
  *
- * Get the current row of the paginator.
- * @param {EmbedPaginator} this The paginator instance.
+ * Create the current row of the paginator.
+ * @param {EmbedPaginator} self The paginator instance.
  * @returns {ActionRow<ActionBuilderComponents>[]} The current row.
  */
-function getRows(this: EmbedPaginator): ActionRow<ActionBuilderComponents>[] {
+function createRow(self: EmbedPaginator): ActionRow<ActionBuilderComponents>[] {
     const rows: ActionRow<ActionBuilderComponents>[] = [
         new ActionRow<ActionBuilderComponents>().addComponents(
             new Button()
                 .setEmoji("<:forward:1061798317417312306>")
                 .setStyle(ButtonStyle.Secondary)
-                .setCustomId("pagination-pagePrev")
-                .setDisabled(this.options.disabled || this.options.pages === 0),
+                .setCustomId(PaginatorButtonIdentifiers.Previous)
+                .setDisabled(self.options.disabled || self.options.pages === 0),
             new Button()
-                .setLabel(`${this.currentPage}/${this.maxPages}`)
+                .setLabel(`${self.current}/${self.max}`)
                 .setStyle(ButtonStyle.Primary)
                 .setDisabled(true)
-                .setCustomId("pagination-pagePos"),
+                .setCustomId(PaginatorButtonIdentifiers.Position),
             new Button()
                 .setEmoji("<:next:1061798311671103528>")
                 .setStyle(ButtonStyle.Secondary)
-                .setCustomId("pagination-pageNext")
-                .setDisabled(this.options.disabled || this.options.pages === this.options.embeds.length - 1),
+                .setCustomId(PaginatorButtonIdentifiers.Next)
+                .setDisabled(self.options.disabled || self.options.pages === self.options.embeds.length - 1),
+            new Button()
+                .setEmoji("<:delete:1081644249197596692>")
+                .setStyle(ButtonStyle.Danger)
+                .setCustomId(PaginatorButtonIdentifiers.Delete)
+                .setDisabled(self.options.disabled),
         ),
     ];
 
-    if (this.options.rows.length) rows.unshift(...this.options.rows);
+    if (self.options.rows.length) rows.unshift(...self.options.rows);
 
     return rows;
 }
 
 /**
- * (Taken from Stelle, another project of mine)
- * @link https://github.com/Ganyu-Studios/stelle-music/blob/dev/src/structures/utils/Paginator.ts
- * So, is is the same paginator, but with some changes and some new stuff.
- */
-
-/**
  * Class representing a custom button.
+ * @class StelleButton
  * @extends Button
  */
 export class StelleButton extends Button {
@@ -154,12 +173,6 @@ export class StelleButton extends Button {
      * @type {StelleButton["run"]}
      */
     public run?: ComponentCallback<ButtonInteraction>;
-
-    /**
-     * The data of the button.
-     * @type {APIButtonComponentWithCustomId}
-     */
-    declare data: APIButtonComponentWithCustomId;
 
     /**
      *
@@ -175,6 +188,7 @@ export class StelleButton extends Button {
 
 /**
  * Class representing a custom string menu.
+ * @class StelleStringMenu
  * @extends StringSelectMenu
  */
 export class StelleStringMenu extends StringSelectMenu {
@@ -183,12 +197,6 @@ export class StelleStringMenu extends StringSelectMenu {
      * @type {StelleStringMenu["run"]}
      */
     public run?: ComponentCallback<StringSelectMenuInteraction>;
-
-    /**
-     * The data of the string menu.
-     * @type {StringSelectMenu["data"]}
-     */
-    declare data: StringSelectMenu["data"];
 
     /**
      *
@@ -204,6 +212,7 @@ export class StelleStringMenu extends StringSelectMenu {
 
 /**
  * Class representing an embed paginator.
+ * @class EmbedPaginator
  */
 export class EmbedPaginator {
     /**
@@ -215,9 +224,9 @@ export class EmbedPaginator {
     /**
      *
      * Create a new EmbedPagination instance
-     * @param {RequiredPaginatorOptions} options The options of the paginator.
+     * @param {PartialPaginatorOptions} options The options of the paginator.
      */
-    constructor(options: RequiredPaginatorOptions) {
+    constructor(options: PartialPaginatorOptions) {
         this.options = {
             ctx: options.ctx,
             embeds: options.embeds ?? [],
@@ -232,23 +241,23 @@ export class EmbedPaginator {
     /**
      *
      * Send the embed pagination.
-     * @param {boolean} ephemeral If the message should be ephemeral.
+     * @param {PaginatorReplyOptions} options The options of the reply.
      * @returns {this} The paginator instance.
      */
-    public async reply(ephemeral: boolean = false): Promise<this> {
+    public async reply(options: PaginatorReplyOptions = {}): Promise<this> {
         if (!this.options.embeds.length) throw new InvalidEmbedsLength("I can't send the pagination without embeds.");
 
         const { messages } = await this.options.ctx.locale();
+        const { ephemeral, followup } = options;
 
-        this.options.message = await this.options.ctx.editOrReply(
-            {
-                content: "",
-                embeds: [this.options.embeds[this.options.pages]],
-                components: getRows.call(this),
-                flags: ephemeral ? MessageFlags.Ephemeral : undefined,
-            },
-            true,
-        );
+        const body: MessageWebhookCreateBodyRequest = {
+            content: "",
+            embeds: [this.options.embeds[this.options.pages]],
+            components: createRow(this),
+            flags: ephemeral ? MessageFlags.Ephemeral : undefined,
+        };
+
+        this.options.message = await (followup ? this.options.ctx.followup(body) : this.options.ctx.editOrReply(body, true));
 
         const collector: CreateComponentCollectorResult = this.options.message.createComponentCollector({
             idle: this.options.time,
@@ -258,7 +267,7 @@ export class EmbedPaginator {
                     flags: MessageFlags.Ephemeral,
                     embeds: [
                         {
-                            description: messages.events.noCollector({ userId: this.options.ctx.author.id }),
+                            description: messages.events.onlyUser({ userId: this.options.ctx.author.id }),
                             color: EmbedColors.Red,
                         },
                     ],
@@ -267,36 +276,30 @@ export class EmbedPaginator {
             onStop: async (reason): Promise<void> => {
                 if (this.options.message && reason === "idle") {
                     await this.edit({
-                        components: this.options.message.components.map((row): ActionRow<ActionBuilderComponents> => {
-                            // ignore other components
-                            if (row.data.type !== ComponentType.ActionRow) throw new InvalidRow("Invalid row type, expected ActionRow.");
-
-                            return new ActionRow({
-                                components: row.data.components.map((row): APIMessageActionRowComponent => {
-                                    if (row.type === ComponentType.TextInput)
-                                        throw new InvalidComponentType(`The component ${row.type} is not a valid component type`);
-
-                                    row.disabled = true;
-
-                                    // for some reason, the label saves the position it is in when the paginator is sent,
-                                    // so, set it to 0/0 is the best option instead of returning the saved one.
-                                    if ("label" in row && "custom_id" in row && row.custom_id === "pagination-pagePos") row.label = "0/0";
-
-                                    return row;
-                                }),
-                            });
+                        components: updateComponents(this.options.message, {
+                            disabled: true,
+                            label: "0/0",
+                            customId: PaginatorButtonIdentifiers.Position,
                         }),
                     });
                 }
             },
         });
 
-        collector.run<ButtonInteraction>(["pagination-pagePrev", "pagination-pageNext"], async (interaction): Promise<void> => {
+        collector.run<ButtonInteraction>(PaginatorButtonCustomIds, async (interaction): Promise<void> => {
             // just in case, i don't want to handle other interactions.
             if (!interaction.isButton()) return;
 
-            if (interaction.customId === "pagination-pagePrev" && this.options.pages > 0) --this.options.pages;
-            if (interaction.customId === "pagination-pageNext" && this.options.pages < this.options.embeds.length - 1) ++this.options.pages;
+            const { customId } = interaction;
+
+            if (customId === PaginatorButtonIdentifiers.Previous && this.options.pages > 0) --this.options.pages;
+            if (customId === PaginatorButtonIdentifiers.Next && this.options.pages < this.options.embeds.length - 1) ++this.options.pages;
+            if (customId === PaginatorButtonIdentifiers.Delete) {
+                await interaction.deferUpdate();
+                await this.options.message?.delete().catch((): null => null);
+
+                return collector.stop("deleted");
+            }
 
             await interaction.deferUpdate();
             await this.update();
@@ -307,7 +310,7 @@ export class EmbedPaginator {
                 for (const row of this.options.rows) {
                     for (const component of row.components) {
                         if ((component.data as { custom_id?: string }).custom_id === interaction.customId) {
-                            if (!("run" in component && component.run))
+                            if (!("run" in component && component.run) || typeof component.run !== "function")
                                 throw new InvalidComponentRun(`The component: "${interaction.customId}" doesn't have a run callback.`);
 
                             return component.run(interaction, async (n): Promise<void> => {
@@ -316,7 +319,7 @@ export class EmbedPaginator {
                                 this.options.pages = n;
 
                                 // funny thing
-                                if (!(await interaction.replied)) await interaction.deferUpdate();
+                                if (!(await interaction.replied) || !interaction.deferred) await interaction.deferUpdate();
 
                                 await this.update();
                             });
@@ -333,7 +336,7 @@ export class EmbedPaginator {
      * Get the max pages of the paginator.
      * @returns {number} The max pages.
      */
-    public get maxPages(): number {
+    public get max(): number {
         return this.options.embeds.length;
     }
 
@@ -341,7 +344,7 @@ export class EmbedPaginator {
      * Get the current page of the paginator.
      * @returns {number} The current page.
      */
-    public get currentPage(): number {
+    public get current(): number {
         return this.options.pages + 1;
     }
 
@@ -437,7 +440,7 @@ export class EmbedPaginator {
     public async edit(body: InteractionCreateBodyRequest | InteractionMessageUpdateBodyRequest): Promise<this> {
         if (!this.options.message) throw new InvalidMessage("I can't edit the message to an unknown pagination.");
 
-        await this.options.ctx.editOrReply(body).catch((): null => null);
+        await this.options.message.edit(body).catch((): null => null);
 
         return this;
     }
@@ -449,7 +452,7 @@ export class EmbedPaginator {
      * @returns {Promise<this>} The paginator instance.
      */
     public async followup(body: MessageWebhookCreateBodyRequest): Promise<this> {
-        await this.options.ctx.followup(body);
+        this.options.message = await this.options.ctx.followup(body);
         return this;
     }
 
@@ -462,7 +465,7 @@ export class EmbedPaginator {
         return this.edit({
             content: "",
             embeds: [this.options.embeds[this.options.pages]],
-            components: getRows.call(this),
+            components: createRow(this),
         });
     }
 }

@@ -1,3 +1,4 @@
+import { SearchSources } from "hoshimi";
 import { createStringOption, Declare, type GuildCommandContext, LocalesT, Options, SubCommand } from "seyfert";
 import { Shortcut } from "yunaforseyfert";
 
@@ -19,19 +20,19 @@ const options = {
         choices: [
             {
                 name: "Spotify",
-                value: "spsearch",
+                value: SearchSources.Spotify,
             },
             {
                 name: "Youtube",
-                value: "ytsearch",
+                value: SearchSources.Youtube,
             },
             {
                 name: "Youtube Music",
-                value: "ytmsearch",
+                value: SearchSources.YoutubeMusic,
             },
             {
                 name: "Soundcloud",
-                value: "scsearch",
+                value: SearchSources.SoundCloud,
             },
         ] as const,
     }),

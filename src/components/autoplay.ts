@@ -1,6 +1,7 @@
+import type { PlayerStructure } from "hoshimi";
 import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
 import { Constants } from "#stelle/utils/data/constants.js";
-import { disableButtons } from "#stelle/utils/functions/utils.js";
+import { updateComponents } from "#stelle/utils/functions/utils.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
 export default class AutoplayComponent extends ComponentCommand {
@@ -12,16 +13,16 @@ export default class AutoplayComponent extends ComponentCommand {
 
         const { messages } = await ctx.locale();
 
-        const player = client.manager.getPlayer(ctx.guildId);
+        const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
-        player.set("enabledAutoplay", !player.get("enabledAutoplay"));
+        await player.data.set("enabledAutoplay", !(await player.data.get("enabledAutoplay")));
 
-        const isAutoplay = player.get<boolean>("enabledAutoplay");
+        const isAutoplay = (await player.data.get("enabledAutoplay"))!;
 
         await ctx.interaction.deferUpdate();
         await ctx.interaction.message.edit({
-            components: disableButtons(ctx.interaction.message.components, {
+            components: updateComponents(ctx.interaction.message, {
                 customId: "player-toggleAutoplay",
                 label: messages.events.trackStart.components.autoplay({
                     type: messages.commands.autoplay.autoplayType[Constants.AutoplayState(isAutoplay)],

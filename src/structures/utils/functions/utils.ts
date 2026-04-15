@@ -3,36 +3,36 @@ import { mkdir } from "node:fs/promises";
 import { isAbsolute, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { inspect as nodeInspect } from "node:util";
+import type { TrackRequester, TrackStructure } from "hoshimi";
 import {
     ActionRow,
     type AnyContext,
     type Button,
+    Container,
     type DefaultLocale,
     extendContext,
-    type TopLevelComponents,
+    type MessageStructure,
     User,
     type UsingClient,
+    type WebhookMessageStructure,
 } from "seyfert";
-import { resolvePartialEmoji } from "seyfert/lib/common/index.js";
-import { type APIMessageComponentEmoji, ButtonStyle, ComponentType, type LocaleString } from "seyfert/lib/types/index.js";
-import type { EditButtonOptions, Omit, Plain, StelleUser } from "#stelle/types";
+import { type PermissionStrings, resolvePartialEmoji } from "seyfert/lib/common/index.js";
+import { PermissionsBitField } from "seyfert/lib/structures/extra/Permissions.js";
+import {
+    type APIActionRowComponent,
+    type APIActionRowComponentTypes,
+    type APIButtonComponent,
+    type APIContainerComponent,
+    type APIContainerComponents,
+    type APIMessageComponentEmoji,
+    type APISectionComponent,
+    ButtonStyle,
+    ComponentType,
+    type LocaleString,
+} from "seyfert/lib/types/index.js";
+import type { EditButtonOptions, Omit, PermissionNames, Plain, Prettify, WebhookMetadata } from "#stelle/types";
 import { InvalidRow } from "#stelle/utils/errors.js";
-
-/**
- * The webhook object is used to parse the webhook url.
- */
-interface WebhookObject {
-    /**
-     * The id of the webhook.
-     * @type {string}
-     */
-    id: string;
-    /**
-     * The token of the webhook.
-     * @type {string}
-     */
-    token: string;
-}
+import { TimeFormat } from "./time.js";
 
 interface CreateIdOptions {
     /**
@@ -105,16 +105,18 @@ export const getCollectionKey = (ctx: AnyContext): string => {
 
 /**
  *
- * Parses a webhook url.
- * @param {string} url The webhook url.
- * @returns {WebhookObject | null} The parsed webhook.
+ * Parse a Discord webhook URL and return its id and token.
+ * @param {string} url The webhook URL to parse.
+ * @returns {WebhookMetadata | null} The parsed webhook metadata, or null if the URL is invalid.
  */
-export const parseWebhook = (url: string): WebhookObject | null => {
-    const webhookRegex = /https?:\/\/(?:ptb\.|canary\.)?discord\.com\/api(?:\/v\d{1,2})?\/webhooks\/(\d{17,19})\/([\w-]{68})/i;
-    const match = webhookRegex.exec(url);
+export function parseDiscordWebhook(url: string): WebhookMetadata | null {
+    const regex = /https?:\/\/(?:ptb\.|canary\.)?discord\.com\/api(?:\/v\d{1,2})?\/webhooks\/(?<id>\d{17,19})\/(?<token>[\w-]{68})/i;
 
-    return match ? { id: match[1], token: match[2] } : null;
-};
+    const match: RegExpExecArray | null = regex.exec(url);
+    if (!match?.groups) return null;
+
+    return { id: match.groups.id, token: match.groups.token };
+}
 
 /**
  *
@@ -122,48 +124,114 @@ export const parseWebhook = (url: string): WebhookObject | null => {
  * @param {unknown} requester The requester user.
  * @returns {StelleUser} The transformed user.
  */
-export const requesterTransformer = (requester: unknown): StelleUser => {
+export const requesterFn = <T extends TrackRequester = TrackRequester>(requester: TrackRequester): T => {
     if (requester instanceof User)
         return {
-            ...omitKeys(requester, ["client"]),
+            ...omitKeys(requester as User & Record<string, unknown>, [
+                "client",
+                "avatarDecorationData",
+                "banner",
+                "createdAt",
+                "discriminator",
+                "flags",
+                "publicFlags",
+                "accentColor",
+                "system",
+                "verified",
+                "email",
+                "mfaEnabled",
+                "primaryGuild",
+                "premiumType",
+                "locale",
+                "name",
+                "createdTimestamp",
+                "globalName",
+                "avatar",
+                "displayNameStyles",
+                "collectibles",
+                "clan",
+            ]),
+            bot: requester.bot ?? false,
             tag: requester.bot ? requester.username : requester.tag,
-        };
+        } as T;
 
-    return requester as StelleUser;
+    return requester as T;
 };
 
 /**
  *
- * Edit a non-link or non-premium button rows with specific options.
- * @param {TopLevelComponents[]} rows The rows to edit.
+ * Update buttons in a message, with optional overrides for specific buttons.
+ * @param {MessageStructure | WebhookMessageStructure} message The message to edit the components of.
  * @param {EditButtonOptions} options The options to edit the rows.
- * @returns {ActionRow<Button>[]} The edited rows.
+ * @returns {(ActionRow<Button> | Container)[]} The edited components.
  */
-export const disableButtons = (rows: TopLevelComponents[], options?: Partial<EditButtonOptions>): ActionRow<Button>[] =>
-    rows.map((builder): ActionRow<Button> => {
-        const row = builder.toJSON();
+export const updateComponents = (
+    message: MessageStructure | WebhookMessageStructure,
+    options?: Partial<EditButtonOptions>,
+): Array<ActionRow<Button> | Container> =>
+    message.components.map((builder): ActionRow<Button> | Container => {
+        const topLevel = builder.toJSON();
 
-        if (row.type !== ComponentType.ActionRow) throw new InvalidRow("Invalid row type, expected ActionRow.");
+        const updateButton = (component: APIButtonComponent): APIButtonComponent => {
+            if (component.style === ButtonStyle.Link || component.style === ButtonStyle.Premium) return component;
 
-        return new ActionRow<Button>({
-            components: row.components.map((component) => {
+            if (options?.disabled) component.disabled = options.disabled;
+
+            if (options && "custom_id" in component && component.custom_id === options.customId) {
+                options.style ??= component.style;
+
+                if (options.emoji) component.emoji = resolvePartialEmoji(options.emoji) as APIMessageComponentEmoji | undefined;
+
+                component.label = options.label;
+                component.style = options.style;
+            }
+
+            return component;
+        };
+
+        const updateButtons = (components: APIActionRowComponentTypes[]): APIActionRowComponentTypes[] =>
+            components.map((component): APIActionRowComponentTypes => {
                 if (component.type !== ComponentType.Button) return component;
-                if (component.style === ButtonStyle.Link || component.style === ButtonStyle.Premium) return component;
+                return updateButton(component);
+            });
 
-                if (options?.disabled) component.disabled = options.disabled;
+        if (topLevel.type === ComponentType.ActionRow) {
+            const row: APIActionRowComponent<APIActionRowComponentTypes> = {
+                ...topLevel,
+                components: updateButtons(topLevel.components),
+            };
 
-                if (options && component.custom_id === options.customId) {
-                    options.style ??= component.style;
+            return new ActionRow<Button>(row);
+        }
 
-                    if (options.emoji) component.emoji = resolvePartialEmoji(options.emoji) as APIMessageComponentEmoji | undefined;
+        if (topLevel.type === ComponentType.Container) {
+            const container: APIContainerComponent = {
+                ...topLevel,
+                components: topLevel.components.map((nested): APIContainerComponents => {
+                    if (nested.type === ComponentType.ActionRow) {
+                        return {
+                            ...nested,
+                            components: updateButtons(nested.components),
+                        };
+                    }
 
-                    component.label = options.label;
-                    component.style = options.style;
-                }
+                    if (nested.type === ComponentType.Section && nested.accessory?.type === ComponentType.Button) {
+                        const section: APISectionComponent = {
+                            ...nested,
+                            accessory: updateButton(nested.accessory),
+                        };
 
-                return component;
-            }),
-        });
+                        return section;
+                    }
+
+                    return nested;
+                }),
+            };
+
+            return new Container(container);
+        }
+
+        throw new InvalidRow("Invalid component type, expected ActionRow or Container.");
     });
 
 /**
@@ -214,13 +282,31 @@ export const createId = (options: CreateIdOptions = {}): string => {
  * @returns {void} Aishite, aishite, motto, motto
  */
 export function cleanup(client: UsingClient): void {
-    client.logger.info("Shutting down the client...");
+    client.logger.info("[Client] Shutdown requested");
 
     client.database?.disconnect();
     client.gateway?.disconnectAll();
 
     process.exit(0);
 }
+
+/**
+ *
+ * A utility function to get the permission keys from the permissions bitfield.
+ * @param {PermissionStrings} permissions The permissions to get the keys from.
+ * @returns {PermissionNames[]} The permission keys.
+ */
+export const getPermissionKeys = (permissions: PermissionStrings): PermissionNames[] =>
+    new PermissionsBitField(permissions.map((p): bigint => PermissionsBitField.resolve(p))).keys();
+
+/**
+ * Format the track time for display, showing "Live" for streams and a dotted time format for regular tracks.
+ * @param {TrackStructure} track The track to format the time for.
+ * @param {DefaultLocale} messages The locale object for localized messages.
+ * @returns {string} The formatted time string.
+ */
+export const formatDuration = (track: TrackStructure, messages: DefaultLocale["messages"]): string =>
+    track.info.isStream ? messages.commands.play.live : (TimeFormat.toDotted(track.info.length) ?? messages.commands.play.undetermined);
 
 /**
  *
@@ -234,11 +320,11 @@ export const truncate = (text: string, length: number = 240): string => (text.le
 /**
  *
  * Inspect an object with configurable depth.
- * @param {any} object The object to inspect.
+ * @param {unknown} object The object to inspect.
  * @param {number} depth The depth to inspect.
  * @returns {string} The inspected object.
  */
-export const inspect = (object: any, depth: number = 0): string => nodeInspect(object, { depth });
+export const inspect = (object: unknown, depth: number = 0): string => nodeInspect(object, { depth });
 
 /**
  *
@@ -255,8 +341,10 @@ export const isUrl = (input: string): boolean => /^(https?:\/\/)?([\w-]+(\.[\w-]
  * @param {K[]} keys The keys to omit.
  * @returns {Plain<Omit<T, K>>} The object without the keys and without functions.
  */
-export const omitKeys = <T extends Record<string, any>, K extends readonly (keyof T)[]>(obj: T, keys: K): Plain<Omit<T, K[number]>> =>
-    Object.fromEntries(Object.entries(obj).filter(([key]) => !keys.includes(key as any))) as Plain<Omit<T, K[number]>>;
+export const omitKeys = <T extends object, K extends readonly (keyof T)[]>(obj: T, keys: K): Prettify<Plain<Omit<T, K[number]>>> =>
+    Object.fromEntries(Object.entries(obj as Record<string, unknown>).filter(([key]) => !keys.includes(key as keyof T))) as Plain<
+        Omit<T, K[number]>
+    >;
 
 /**
  *

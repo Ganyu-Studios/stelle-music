@@ -1,10 +1,9 @@
-import { LavalinkEventTypes } from "#stelle/types";
+import { EventNames } from "hoshimi";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 export default createLavalinkEvent({
-    name: "disconnect",
-    type: LavalinkEventTypes.Node,
+    name: EventNames.NodeDisconnect,
     run(client, node): void {
-        client.logger.error(`Lavalink - The node: ${node.id} is disconnected.`);
+        client.logger.error(`[Lavalink] Node disconnected | node: ${node.id}`);
     },
 });

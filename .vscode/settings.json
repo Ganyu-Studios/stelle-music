@@ -1,17 +1,4 @@
 {
-    "typescript.tsdk": "node_modules\\typescript\\lib",
-    "editor.defaultFormatter": "biomejs.biome",
+    "js/ts.tsdk.path": "node_modules\\typescript\\lib",
     "prisma.pinToPrisma6": true,
-    "[prisma]": {
-        "editor.defaultFormatter": "Prisma.prisma"
-    },
-    "[typescript]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
-    },
-    "[javascript]": {
-        "editor.defaultFormatter": "biomejs.biome"
-    },
-    "[dockerfile]": {
-        "editor.defaultFormatter": "ms-azuretools.vscode-containers"
-    }
 }

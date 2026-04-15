@@ -5,11 +5,12 @@ import {
     createStringOption,
     Declare,
     Embed,
-    type Message,
+    type MessageStructure,
     Options,
-    type WebhookMessage,
+    type WebhookMessageStructure,
 } from "seyfert";
 import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
+import { ApplicationIntegrationType, InteractionContextType, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 import { DeclareParserConfig, ParserRecommendedConfig, Watch, Yuna } from "yunaforseyfert";
 import { Environment } from "#stelle/utils/data/configuration.js";
 import { Constants } from "#stelle/utils/data/constants.js";
@@ -42,9 +43,9 @@ const options = {
     name: "eval",
     description: "Eval code with Stelle.",
     aliases: ["code"],
-    defaultMemberPermissions: ["ManageGuild", "Administrator"],
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    defaultMemberPermissions: [PermissionFlagsBits.ManageGuild, PermissionFlagsBits.Administrator],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
 })
 @Options(options)
 @StelleOptions({ onlyDeveloper: true })
@@ -70,7 +71,7 @@ export default class EvalCommand extends Command {
             });
         },
     })
-    public override async run(ctx: CommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
+    public override async run(ctx: CommandContext<typeof options>): Promise<MessageStructure | WebhookMessageStructure | void> {
         const { client, options, author, channelId } = ctx;
 
         const now = Date.now();

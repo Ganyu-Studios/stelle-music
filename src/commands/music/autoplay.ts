@@ -1,4 +1,5 @@
 import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares } from "seyfert";
+import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { Constants } from "#stelle/utils/data/constants.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
@@ -6,8 +7,8 @@ import { StelleOptions } from "#stelle/utils/decorator.js";
 @Declare({
     name: "autoplay",
     description: "Toggle the autoplay.",
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
     aliases: ["auto", "ap"],
 })
 @StelleOptions({
@@ -25,9 +26,9 @@ export default class AutoplayCommand extends Command {
         const player = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
-        player.set("enabledAutoplay", !player.get("enabledAutoplay"));
+        await player.data.set("enabledAutoplay", !(await player.data.get("enabledAutoplay")));
 
-        const isAutoplay = player.get<boolean>("enabledAutoplay");
+        const isAutoplay: boolean = (await player.data.get("enabledAutoplay"))!;
 
         await ctx.editOrReply({
             embeds: [

@@ -1,4 +1,6 @@
+import type { PlayerStructure } from "hoshimi";
 import { Command, createBooleanOption, Declare, type GuildCommandContext, LocalesT, Middlewares, Options } from "seyfert";
+import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { type AutoplayState, StelleCategory } from "#stelle/types";
 import { Constants } from "#stelle/utils/data/constants.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
@@ -18,8 +20,8 @@ const options = {
 @Declare({
     name: "247",
     description: "Toggles the 24/7 mode for the bot.",
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
     aliases: ["twentyfourseven", "alwaysonline", "alwayson"],
 })
 @StelleOptions({ category: StelleCategory.Music, cooldown: 10 })
@@ -31,14 +33,14 @@ export default class TwentyFourSevenCommand extends Command {
         const { client } = ctx;
         const { messages } = await ctx.locale();
 
-        const player = client.manager.getPlayer(ctx.guildId);
+        const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
-        player.set("is247", !player.get("is247"));
-        player.set("isAutoPause", ctx.options.autopause ?? false);
+        await player.data.set("is247", !(await player.data.get("is247")));
+        await player.data.set("isAutoPause", ctx.options.autopause ?? false);
 
-        const is247 = player.get<boolean>("is247");
-        const autoPause = player.get<boolean>("isAutoPause");
+        const is247: boolean = (await player.data.get("is247"))!;
+        const autoPause: boolean = (await player.data.get("isAutoPause"))!;
 
         /**
          *

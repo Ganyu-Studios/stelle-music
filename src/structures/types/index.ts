@@ -1,19 +1,17 @@
-import type { PlayerJson } from "lavalink-client";
+import type { NodeJson, PlayerJson } from "hoshimi";
 import type { Command, ContextMenuCommand, SubCommand, User } from "seyfert";
 import type { EmojiResolvable } from "seyfert/lib/common/index.js";
 import type { ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
+export * from "./client/components.js";
 export type { LoadableStelleConfiguration, StelleConfiguration } from "./client/configuration.js";
 export type { AutoplayState, PausedState, StelleConstants, WorkingDirectory } from "./client/constants.js";
 export type { ImageData } from "./client/image.js";
-
-export {
-    type LavalinkEvent,
-    type LavalinkEventRun,
-    type LavalinkEvents,
-    type LavalinkEventType,
-    LavalinkEventTypes,
+export type {
+    LavalinkEvent,
+    LavalinkEventRun,
 } from "./client/lavalink.js";
+export type * from "./client/locales.js";
 
 /**
  * The type of non-unique button styles like link and premium.
@@ -138,53 +136,103 @@ export interface EditButtonOptions {
 /**
  * The type of the api user.
  */
-export type StelleUser = Omit<Plain<User>, "client">;
+export type TrackUser = Omit<
+    Plain<User>,
+    | "client"
+    | "avatarDecorationData"
+    | "banner"
+    | "createdAt"
+    | "discriminator"
+    | "flags"
+    | "publicFlags"
+    | "accentColor"
+    | "system"
+    | "verified"
+    | "email"
+    | "mfaEnabled"
+    | "primaryGuild"
+    | "premiumType"
+    | "locale"
+    | "name"
+    | "createdTimestamp"
+    | "globalName"
+    | "avatar"
+>;
 
 /**
  * The type of the player session.
  */
-export type StellePlayerJson = Omit<
-    PlayerJson,
-    "ping" | "createdTimeStamp" | "lavalinkVolume" | "equalizer" | "lastPositionChange" | "paused" | "playing" | "queue" | "filters"
->;
+export interface StellePlayerJson
+    extends Omit<PlayerJson, "ping" | "createdTimestamp" | "lastPositionUpdate" | "paused" | "playing" | "queue" | "filters" | "node"> {
+    node: NonOptionsNode;
+}
+
+/**
+ * The type of the node without options, since the options are not serializable and not needed in the session.
+ */
+export type NonOptionsNode = Omit<NodeJson, "options">;
 
 /**
  * The type of the session.
  */
-export type SessionJson = StellePlayerJson & {
+export interface SessionJson extends StellePlayerJson {
     /**
      * The message id of the track start message.
+     * @type {string | undefined}
      */
     messageId?: string;
     /**
      * Whatever the autoplay is enabled or not.
+     * @type {boolean | undefined}
      */
     enabledAutoplay?: boolean;
     /**
      * The client user object.
+     * @type {TrackUser | undefined}
      */
-    me?: StelleUser;
+    me?: TrackUser;
     /**
      * The locale string of the guild.
+     * @type {string | undefined}
      */
     localeString?: string;
     /**
      * The lyrics message id.
+     * @type {string | undefined}
      */
     lyricsId?: string;
     /**
      * Whatever the lyrics is enabled or not.
+     * @type {boolean | undefined}
      */
     lyricsEnabled?: boolean;
     /**
      * Whatever the 24/7 mode is enabled or not.
+     * @type {boolean | undefined}
      */
     is247?: boolean;
     /**
      * Whatever the auto-pause in 24/7 mode is enabled or not.
+     * @type {boolean | undefined}
      */
     isAutoPause?: boolean;
-};
+}
+
+/**
+ * The metadata for the webhook.
+ */
+export interface WebhookMetadata {
+    /**
+     * The id of the webhook.
+     * @type {string}
+     */
+    id: string;
+    /**
+     * The token of the webhook.
+     * @type {string}
+     */
+    token: string;
+}
 
 /**
  * The type to get the plain object without functions.
@@ -193,6 +241,13 @@ export type Plain<T> = {
     // biome-ignore lint/complexity/noBannedTypes: Just want to exclude functions
     [K in keyof T as T[K] extends Function ? never : K]: T[K];
 };
+
+/**
+ * The type to prettify the object.
+ */
+export type Prettify<T> = {
+    [K in keyof T]: T[K];
+} & {};
 
 /**
  * The type of the permission flags.

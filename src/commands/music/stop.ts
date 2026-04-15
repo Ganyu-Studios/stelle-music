@@ -1,12 +1,14 @@
+import type { PlayerStructure } from "hoshimi";
 import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares } from "seyfert";
+import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
 @Declare({
     name: "stop",
     description: "Stop the player.",
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
     aliases: ["destroy", "leave"],
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })
@@ -18,7 +20,7 @@ export default class StopCommand extends Command {
 
         const { messages } = await ctx.locale();
 
-        const player = client.manager.getPlayer(ctx.guildId);
+        const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
         await player.destroy();

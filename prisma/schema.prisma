@@ -39,9 +39,16 @@ model guildPlayer {
   defaultVolume  Int    @default(100)
 }
 
+type RawRequester {
+  id       String
+  username String
+  bot      Boolean
+  tag      String
+}
+
 type RawTrack {
-  encoded     String
-  requesterId String
+  encoded   String
+  requester RawRequester
 }
 
 model userPlaylist {

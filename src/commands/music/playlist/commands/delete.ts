@@ -3,20 +3,19 @@ import {
     Declare,
     type GuildCommandContext,
     LocalesT,
-    type Message,
-    Middlewares,
+    type MessageStructure,
     Options,
     SubCommand,
-    type WebhookMessage,
+    type WebhookMessageStructure,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
-import { playlistAutocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
+import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
 
 const options = {
     id: createStringOption({
         description: "The id of the playlist to load.",
         required: true,
-        autocomplete: playlistAutocomplete,
+        autocomplete,
         locales: {
             name: "locales.playlist.commands.load.option.name",
             description: "locales.playlist.commands.load.option.description",
@@ -30,9 +29,8 @@ const options = {
 })
 @LocalesT("locales.playlist.commands.delete.name", "locales.playlist.commands.delete.description")
 @Options(options)
-@Middlewares(["checkVoiceChannel", "checkBotVoiceChannel", "checkVoicePermissions", "checkNodes"])
 export default class DeleteSubcommand extends SubCommand {
-    public async run(ctx: GuildCommandContext<typeof options>): Promise<WebhookMessage | Message | void> {
+    public async run(ctx: GuildCommandContext<typeof options>): Promise<WebhookMessageStructure | MessageStructure | void> {
         const { client } = ctx;
         const { messages } = await ctx.locale();
 

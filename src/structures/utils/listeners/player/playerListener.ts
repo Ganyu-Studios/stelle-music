@@ -1,6 +1,6 @@
-import type { GuildMember, UsingClient, VoiceState } from "seyfert";
+import type { PlayerStructure } from "hoshimi";
+import type { AllChannels, GuildMember, UsingClient, VoiceState } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
-
 import { TimeFormat } from "#stelle/utils/functions/time.js";
 
 const timeouts: Map<string, NodeJS.Timeout> = new Map();
@@ -19,35 +19,35 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
 
     const { guildId } = newState;
 
-    const player = client.manager.getPlayer(guildId);
+    const player: PlayerStructure | undefined = client.manager.getPlayer(guildId);
     if (!player) return;
 
-    if (!(player.textChannelId && player.voiceChannelId)) return;
+    if (!(player.textId && player.voiceId)) return;
 
-    const locale = player.get<string | undefined>("localeString");
+    const locale: string | undefined = await player.data.get("localeString");
     if (!locale) return;
 
     const { messages } = client.t(locale).get();
 
-    const channel = await client.channels.fetch(player.voiceChannelId);
+    const channel: AllChannels = await client.channels.fetch(player.voiceId);
     if (!channel.is(["GuildStageVoice", "GuildVoice"])) return;
 
-    const members = await Promise.all(channel.states().map((c): Promise<GuildMember> => c.member()));
-    const isEmpty = !members.filter(({ user }) => !user.bot).length;
+    const members: GuildMember[] = await Promise.all(channel.states().map((c): Promise<GuildMember> => c.member()));
+    const isEmpty: boolean = !members.filter(({ user }): boolean => !user.bot).length;
 
-    const isChannel = oldState?.channelId === player.voiceChannelId && newState.channelId !== oldState?.channelId;
+    const isChannel: boolean = oldState?.channelId === player.voiceId && newState.channelId !== oldState?.channelId;
 
-    const is247 = player.get<boolean | undefined>("is247") || client.config.twentyforseven.is247;
-    const isAutoPause = player.get<boolean | undefined>("isAutoPause") ?? client.config.twentyforseven.autoPause;
+    const is247: boolean = (await player.data.get("is247")) || client.config.twentyfourseven.is247;
+    const isAutoPause: boolean = (await player.data.get("isAutoPause")) ?? client.config.twentyfourseven.autoPause;
 
     if (is247) {
         if (isAutoPause) {
-            if (isEmpty && (player.paused || player.playing)) await player.pause();
-            else if (!isEmpty && player.paused) await player.resume();
+            if (isEmpty && (player.paused || player.playing)) await player.setPaused(true);
+            else if (!isEmpty && player.paused) await player.setPaused(false);
         }
 
         if (isEmpty && isChannel) {
-            await client.messages.write(player.textChannelId, {
+            await client.messages.write(player.textId, {
                 embeds: [
                     {
                         color: EmbedColors.Green,
@@ -69,7 +69,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
         player.connected
     ) {
         await player.destroy();
-        await client.messages.write(player.textChannelId, {
+        await client.messages.write(player.textId, {
             embeds: [
                 {
                     color: EmbedColors.Yellow,
@@ -85,7 +85,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
 
     if (isChannel && isEmpty && !player.playing && player.paused && player.queue.current && !player.queue.tracks.length) {
         await player.destroy();
-        await client.messages.write(player.textChannelId, {
+        await client.messages.write(player.textId, {
             embeds: [
                 {
                     color: EmbedColors.Yellow,
@@ -100,8 +100,8 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
     }
 
     if (isChannel && isEmpty && (player.paused || player.playing)) {
-        await player.pause();
-        await client.messages.write(player.textChannelId, {
+        await player.setPaused(true);
+        await client.messages.write(player.textId, {
             embeds: [
                 {
                     color: EmbedColors.Yellow,
@@ -113,9 +113,9 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
             ],
         });
 
-        const timeoutId = setTimeout(async () => {
+        const timeoutId: NodeJS.Timeout = setTimeout(async (): Promise<void> => {
             await player.destroy();
-            await client.messages.write(player.textChannelId!, {
+            await client.messages.write(player.textId!, {
                 embeds: [
                     {
                         color: EmbedColors.Yellow,
@@ -129,8 +129,8 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
 
         timeouts.set(guildId, timeoutId);
     } else if (timeouts.has(guildId) && !isEmpty && player.paused) {
-        await player.resume();
-        await client.messages.write(player.textChannelId, {
+        await player.setPaused(false);
+        await client.messages.write(player.textId, {
             embeds: [
                 {
                     color: EmbedColors.Yellow,

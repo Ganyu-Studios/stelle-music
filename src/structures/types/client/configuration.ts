@@ -1,6 +1,6 @@
-import type { LavalinkNodeOptions, SearchPlatform } from "lavalink-client";
+import type { NodeOptions, SearchSources } from "hoshimi";
 import type { PermissionStrings } from "seyfert";
-import type { LocaleString } from "seyfert/lib/types/index.js";
+import type { Locale, LocaleString } from "seyfert/lib/types/index.js";
 
 /**
  * The colors configuration interface.
@@ -63,9 +63,9 @@ interface Sessions {
      */
     enabled: boolean;
     /**
-     * The node session resume time.
+     * The node session resume time. (In seconds)
      * @type {number}
-     * @default ms("1min")
+     * @default 60
      */
     resumeTime: number;
     /**
@@ -115,7 +115,7 @@ interface Deleter {
     onPlayerStop: boolean;
 }
 
-interface TwentyForSeven {
+interface TwentyFourSeven {
     /**
      * Whether the bot should stay 24/7 in the voice channel.
      * @type {boolean}
@@ -139,7 +139,7 @@ export interface StelleConfiguration {
      * @default "en-US"
      * @type {LocaleString}
      */
-    defaultLocale: LocaleString;
+    defaultLocale: LocaleString | Locale;
     /**
      * The default prefix used to use text commands.
      * @type {string}
@@ -170,9 +170,9 @@ export interface StelleConfiguration {
     developerIds: string[];
     /**
      * The lavalink nodes list.
-     * @type {LavalinkNodeOptions[]}
+     * @type {NodeOptions[]}
      */
-    nodes: LavalinkNodeOptions[];
+    nodes: NodeOptions[];
     /**
      * The bot invite link.
      * @type {string}
@@ -197,10 +197,10 @@ export interface StelleConfiguration {
     defaultVolume: number;
     /**
      * The default player search engine.
-     * @type {SearchPlatform}
+     * @type {SearchSources}
      * @default "spotify"
      */
-    defaultSearchPlatform: SearchPlatform;
+    defaultSearchSource: SearchSources;
     /**
      * The disconnect time in milliseconds. (Use the time formatter)
      * @type {number}
@@ -242,7 +242,7 @@ export interface StelleConfiguration {
      * @type {boolean}
      * @default false
      */
-    twentyforseven: TwentyForSeven;
+    twentyfourseven: TwentyFourSeven;
 }
 
 /**

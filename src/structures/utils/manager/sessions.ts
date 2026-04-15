@@ -1,4 +1,4 @@
-import type { LavalinkNodeOptions } from "lavalink-client";
+import type { NodeOptions } from "hoshimi";
 import MeowDB from "meowdb";
 import type { MakeRequired, RestOrArray } from "seyfert/lib/common/index.js";
 import type { StellePlayerJson } from "#stelle/types";
@@ -11,12 +11,12 @@ import { createDirectory } from "#stelle/utils/functions/utils.js";
  * Lavalink node options without the `sessionId`.
  */
 //i don't know how to name this type, so i just called like this
-type NonResumableNodeOptions = Omit<LavalinkNodeOptions, "sessionId">;
+type NonResumableNodeOptions = Omit<NodeOptions, "sessionId">;
 
 /**
  * The player json with the required properties.
  */
-type RequiredPlayerJson = MakeRequired<StellePlayerJson, "nodeId" | "nodeSessionId">;
+type RequiredPlayerJson = MakeRequired<StellePlayerJson>;
 
 /**
  * The directory where the cache is stored.
@@ -42,8 +42,10 @@ const storage: MeowDB = new MeowDB({ dir, name });
  */
 const ids: Map<string, string> = new Map<string, string>(
     Object.values<StellePlayerJson>(storage.all())
-        .filter((session): session is RequiredPlayerJson => typeof session.nodeId === "string" && typeof session.nodeSessionId === "string")
-        .map((session) => [session.nodeId, session.nodeSessionId]),
+        .filter(
+            (session): session is RequiredPlayerJson => typeof session.node.id === "string" && typeof session.node.sessionId === "string",
+        )
+        .map((session) => [session.node.id, session.node.sessionId!]),
 );
 
 /**
@@ -83,10 +85,10 @@ export const Sessions = {
      * @param {RestOrArray<NonResumableNodeOptions>} nodes The nodes to resolve.
      * @returns {LavalinkNodeOptions[]} The resolved nodes.
      */
-    resolve(...nodes: RestOrArray<NonResumableNodeOptions>): LavalinkNodeOptions[] {
+    resolve(...nodes: RestOrArray<NonResumableNodeOptions>): NodeOptions[] {
         nodes = nodes.flat();
 
-        if (nodes.some((node) => "sessionId" in node && typeof node.sessionId === "string"))
+        if (nodes.some((node): boolean => "sessionId" in node && typeof node.sessionId === "string"))
             throw new InvalidNodeSession("The 'sessionId' property is not allowed in the node options.");
 
         return nodes.map((node) => {
@@ -94,6 +96,7 @@ export const Sessions = {
             node.id ??= `${node.host}:${node.port}`;
             node.retryAmount ??= 25;
             node.retryDelay ??= ms("25s");
+            node.restTimeout ??= ms("30s");
 
             return {
                 ...node,

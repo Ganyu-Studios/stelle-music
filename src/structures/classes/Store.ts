@@ -1,85 +1,67 @@
-import type { QueueStoreManager, StoredQueue } from "lavalink-client";
+import type { RedisClientType } from "@redis/client";
+import { type QueueJson, QueueStorageAdapter, type RestOrArray } from "hoshimi";
 import { Constants } from "#stelle/utils/data/constants.js";
-import type { RedisClient } from "./modules/Redis.js";
 
-/**
- * The stored queue partial type.
- */
-type PartialStoredQueue = Partial<StoredQueue>;
 /**
  * Class representing the Redis queue store.
  * @class RedisQueueStore
  * @implements {QueueStoreManager}
  */
-export class RedisQueueStore implements QueueStoreManager {
+export class RedisQueueStore extends QueueStorageAdapter {
+    override namespace: string = Constants.GetNamespace();
+
     /**
      * The redis client instance.
      * @type {RedisClient}
      * @readonly
      */
-    readonly redis: RedisClient;
+    readonly redis: RedisClientType;
 
     /**
      *
      * Create a new Redis queue store.
      * @param {RedisClient} redis The Redis instance.
      */
-    constructor(redis: RedisClient) {
+    constructor(redis: RedisClientType) {
+        super();
         this.redis = redis;
     }
 
-    /**
-     *
-     * Get the queue of the guild.
-     * @param {string} id The guild id to get the queue.
-     * @returns {Promise<StoredQueue | string>} The queue.
-     */
-    public async get(id: string): Promise<StoredQueue | string> {
-        const data = await this.redis.get<StoredQueue | string>(Constants.BuildKey(id));
-        if (!data) return "";
+    override async get(key: string): Promise<QueueJson | undefined> {
+        const data: string | null = await this.redis.get(this.buildKey(this.namespace, key));
+        if (!data) return undefined;
 
-        return data;
+        return this.parse(data);
+    }
+    override async set(key: string, value: QueueJson): Promise<void> {
+        await this.redis.set(this.buildKey(this.namespace, key), this.stringify(value));
     }
 
-    /**
-     *
-     * Set the queue of the guild.
-     * @param {string} id The guild id to set the queue.
-     * @param {StoredQueue | string} value The value to set.
-     * @returns {Promise<void>} A promise.
-     */
-    public set(id: string, value: StoredQueue | string): Promise<void> {
-        return this.redis.set(Constants.BuildKey(id), value as string);
+    override async delete(key: string): Promise<boolean> {
+        const result: number = await this.redis.del(this.buildKey(this.namespace, key));
+        return result > 0;
     }
 
-    /**
-     *
-     * Delete the queue of the guild.
-     * @param {string} id The guild id to delete the queue.
-     * @returns {Promise<void>} If the queue was deleted.
-     */
-    public delete(id: string): Promise<void> {
-        return this.redis.del(Constants.BuildKey(id));
+    override async clear(): Promise<void> {
+        await this.redis.flushAll();
     }
 
-    /**
-     *
-     * Stringify the value.
-     * @param {StoredQueue | string} value The value to stringify.
-     * @returns {StoredQueue | string} The stringified value.
-     */
-    public stringify(value: StoredQueue | string): StoredQueue | string {
-        return typeof value === "object" ? JSON.stringify(value) : value;
+    override async has(key: string): Promise<boolean> {
+        const result: number = await this.redis.exists(this.buildKey(this.namespace, key));
+        return result > 0;
     }
 
-    /**
-     *
-     * Parse the value.
-     * @param {StoredQueue | string} value The value to parse.
-     * @returns {PartialStoredQueue} The parsed value.
-     */
-    public parse(value: StoredQueue | string): PartialStoredQueue {
-        if ((typeof value === "string" && !value.length) || (typeof value === "object" && !Object.keys(value).length)) return {};
-        return typeof value === "string" ? JSON.parse(value) : value;
+    override parse(value: unknown): QueueJson {
+        if ((typeof value === "string" && !value.length) || (typeof value === "object" && value && !Object.keys(value).length))
+            return {} as QueueJson;
+        return typeof value === "string" ? JSON.parse(value) : (value as QueueJson);
+    }
+
+    override stringify<R = string>(value: unknown): R {
+        return (typeof value === "object" ? JSON.stringify(value) : value) as R;
+    }
+
+    public buildKey(...parts: RestOrArray<string>): string {
+        return parts.flat().join(":");
     }
 }

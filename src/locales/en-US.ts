@@ -1,6 +1,53 @@
-import type { RepeatMode } from "lavalink-client";
+import { LoopMode, State } from "hoshimi";
 import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
-import { type PausedState, type PermissionNames, StelleCategory } from "#stelle/types";
+import {
+    type IAmount,
+    type IAutocompletePlaylist,
+    type IAvailableLocales,
+    type IBotInfo,
+    type IBotInfoGeneralField,
+    type IBotInfoGitField,
+    type IBotInfoSystemField,
+    type IChannel,
+    type IClientName,
+    type ICooldown,
+    type IDefaultPrefix,
+    type IEngine,
+    type IHelp,
+    type IHelpMenu,
+    type IHelpMenuEmbed,
+    type ILocale,
+    type ILyricsEmbedDescription,
+    type ILyricsEmbedFooter,
+    type ILyricsEmbedTitle,
+    type IMention,
+    type IMove,
+    type INodes,
+    type INowPlaying,
+    type IOptions,
+    type IPing,
+    type IPlaylist,
+    type IPlaylistDelete,
+    type IPlaylistName,
+    type IPlaylistSave,
+    type IPlayPlaylist,
+    type IPlayTrack,
+    type IPrefix,
+    type IPrevious,
+    type ISeek,
+    type IState,
+    type ITrackStart,
+    type ITracks,
+    type ITwentyForSeven,
+    type IType,
+    type ITypeName,
+    type IUser,
+    type IVoiceStatus,
+    type IVolume,
+    type PausedState,
+    type PermissionNames,
+    StelleCategory,
+} from "#stelle/types";
 
 /**
  * The English locale for Stelle.
@@ -35,32 +82,60 @@ export default {
                 created: ({ name, state }: IPlaylist): string =>
                     `\`✅\` The playlist \`${name}\` has been created successfully.\n\`📋\` **Visibility**: \`${state}\``,
                 loaded: ({ name }: IPlaylistName): string => `\`✅\` The playlist \`${name}\` has been loaded successfully.`,
-                renamed: ({ name }: IPlaylistName): string => `\`✅\` The playlist has been renamed to: \`${name}\` successfully.`,
+                renamed: ({ name }: IPlaylistName): string => `\`✅\` The playlist has been renamed to \`${name}\`.`,
                 deleted: ({ name }: IPlaylistName): string => `\`✅\` The playlist \`${name}\` has been deleted successfully.`,
-                noPlaylist: "`❌` **No playlist** was found with this id...",
-                noTracks: "`❌` **No tracks** were found in this playlist...",
+                noPlaylist: "`❌` **No playlist** was found with this ID.",
+                noTracks: "`❌` **No tracks** were found in this playlist.",
+                list: {
+                    title: "`📋` Available playlists",
+                    noPrivate: "`📭` You don't have private playlists yet.",
+                    noPublic: "`📭` There are no public playlists available right now.",
+                    andMore: ({ amount }: IAmount): string => `-# And ${amount} more...`,
+                },
                 manage: {
                     title: ({ name }: IPlaylistName): string => `\`🎵\` Managing Playlist: \`${name}\``,
                     description:
-                        "`📦` Here is the place to manage your playlist in a *~~at least that's the intention~~* easy and simple way.\n`📜` You can save any track, at any time in whatever you are... and delete them.\n\n`⚠️` __Keep in mind, more tracks you add, maybe can take a little longer to load the playlist.__\n\n-# Select an action to manage your playlist.",
+                        "`📦` Manage your playlist quickly and easily from here.\n`📜` Save tracks anytime, remove them when you want, and keep everything organized.\n\n`⚠️` __The more tracks you add, the longer this playlist may take to load.__\n\n-# Select an action to manage your playlist.",
+                    loadSection: {
+                        title: "### Quick Load",
+                        description: "Start playback of this playlist immediately in your current voice channel.",
+                    },
                     options: {
                         toggle: ({ state }: IState): string => `Make ${state}`,
                         save: "Save",
                         delete: "Delete",
                         info: "Info",
+                        load: "Load",
+                    },
+                    delete: {
+                        description:
+                            "`📢` Enter the track numbers you want to delete.\n`📌` Use commas, ranges, or wildcard ranges like `1, 3, 5-7, 11-*`.\n`⚠️` Use the Info button if you want to review the full list first.",
+                        invalidSelection: "`❌` The selection you entered is invalid. Use track numbers or ranges like `1, 3-5, 11-*`.",
+                        outOfRange: ({ tracks }: { tracks: number }): string =>
+                            `\`❌\` One or more track numbers are outside the current playlist. It only has \`${tracks} tracks\`.`,
+                        deleted: ({ amount }: IPlaylistDelete): string =>
+                            `\`✅\` Successfully deleted **${amount} track(s)** from your playlist.`,
+                        modal: {
+                            title: "Delete tracks",
+                            label: {
+                                label: "Delete tracks by number",
+                                description: "Enter one or more track numbers or ranges. Example: 1, 3, 5-7, 11-*",
+                                component: "1, 3, 5-7, 11-*",
+                            },
+                        },
                     },
                     save: {
-                        saved: ({ type, amount }: IPlaylistSave) =>
+                        saved: ({ type, amount }: IPlaylistSave): string =>
                             `\`✅\` Successfully saved **${amount} track(s)** from **${type}** to your playlist.`,
                         noResults: "`❌` No tracks were found from the provided URL.",
                         description: "`📢` Select one of the options below to save tracks to your playlist.",
                         invalidUrl: "`❌` The URL you entered is not valid.",
-                        alreadyExists: "`❌` The **track(s)** you are trying to save already exist(s) in your playlist.",
+                        alreadyExists: "`❌` The selected track(s) are already in your playlist.",
                         modal: {
                             title: "Save from URL",
                             label: {
                                 label: "Save from URL",
-                                description: "Enter the track or playlist URL to save tracks from it.",
+                                description: "Enter a track or playlist URL to save tracks from it.",
                                 component: "Enter the track or playlist URL here...",
                             },
                         },
@@ -109,12 +184,17 @@ export default {
                             value: ({ memory, uptime, version }: IBotInfoSystemField): string =>
                                 `\`🧠\` Memory: \`${memory}\`\n\`📜\` Version: \`v${version}\`\n\`🕛\` Uptime: <t:${uptime}:R>`,
                         },
+                        git: {
+                            name: "`📋` Git",
+                            value: ({ branch, commit, time, commitUrl }: IBotInfoGitField): string =>
+                                `\`🌳\` Branch: \`${branch}\`\n\`📦\` Commit: [\`${commit}\`](${commitUrl})\n\`⏱️\` Time: ${time}`,
+                        },
                     },
                 },
             },
             help: {
-                title: ({ clientName }: Pick<IMention, "clientName">): string => `${clientName} - Help Menu`,
-                description: ({ defaultPrefix }: Pick<IHelp, "defaultPrefix">): string =>
+                title: ({ clientName }: IClientName): string => `${clientName} - Help Menu`,
+                description: ({ defaultPrefix }: IDefaultPrefix): string =>
                     `\`📦\` Hello! Here is the information about my commands and stuff.\n\`📜\` Select the command category of your choice.\n\n-# You can search a specific command by typing: \`${defaultPrefix} help <command>\``,
                 noCommand: "`❌` **No command** was found for this search...",
                 selectMenu: {
@@ -139,7 +219,7 @@ export default {
                 volume: ({ volume, clientName }: IVolume): string => `\`✅\` The default volume of ${clientName} is now: **${volume}%**.`,
             },
             setlocale: {
-                invalidLocale: ({ locale, available }: ILocale & { available: string }): string =>
+                invalidLocale: ({ locale, available }: IAvailableLocales): string =>
                     `\`❌\` The locale : \`${locale}\` is invalid.\n\`📢\` **Available locales**: \`${available}\``,
                 newLocale: ({ locale }: ILocale): string => `\`✅\` The locale of **Stelle** is now: \`${locale}\``,
             },
@@ -162,10 +242,10 @@ export default {
             loop: {
                 toggled: ({ type }: IType): string => `\`✅\` The **loop mode** is now: \`${type}\``,
                 loopType: {
-                    off: "Off",
-                    queue: "Queue",
-                    track: "Track",
-                } satisfies Record<RepeatMode, string>,
+                    [LoopMode.Off]: "Off",
+                    [LoopMode.Queue]: "Queue",
+                    [LoopMode.Track]: "Track",
+                } satisfies Record<LoopMode, string>,
             },
             autoplay: {
                 toggled: ({ type }: IType): string => `\`✅\` The **autoplay mode** is now: \`${type}\``,
@@ -180,9 +260,14 @@ export default {
                 description: "`📋` List of all Stelle nodes.",
                 noNodes: "`❌` No nodes available at the moment.",
                 states: {
-                    connected: "🟢 Connected.",
-                    disconnected: "🔴 Disconnected.",
-                },
+                    [State.Connected]: "🟢 Connected.",
+                    [State.Disconnected]: "🔴 Disconnected.",
+                    [State.Connecting]: "🟡 Connecting.",
+                    [State.Idle]: "⚪ Idle.",
+                    [State.Reconnecting]: "🟠 Reconnecting.",
+                    [State.Reconnected]: "🟢 Reconnected.",
+                    [State.Destroyed]: "⚫ Destroyed.",
+                } satisfies Record<State, string>,
             },
             volume: {
                 changed: ({ volume }: IVolume): string => `\`✅\` The volume has been set to: **${volume}%**.`,
@@ -204,7 +289,7 @@ export default {
             invalidOptions: ({ options, list }: IOptions): string =>
                 `\`❌\` Invalid command options or arguments.\n-# - **Required**: \`<>\`\n-# - **Optional**: \`[]\`\n\n\`📋\` **Usage**:\n ${options}\n\`📢\` **Options Available**:\n${list}`,
             noSameVoice: ({ channelId }: IChannel): string => `\`❌\` You are not in the **same voice channel** as me. (<#${channelId}>)`,
-            noCollector: ({ userId }: IUser): string => `\`❌\` Only the user: <@${userId}> can use this.`,
+            onlyUser: ({ userId }: IUser): string => `\`❌\` Only the user: <@${userId}> can use this.`,
             noMembers: ({ clientName }: IClientName): string =>
                 `\`🎧\` ${clientName} is alone in the **voice channel**... Leaving the channel.`,
             playerQueue: ({ tracks }: ITracks): string => `\`📋\` Here is the full server queue: \n\n${tracks}`,
@@ -514,6 +599,22 @@ export default {
                         description: "The id of the playlist to load.",
                     },
                 },
+                list: {
+                    name: "list",
+                    description: "Display available playlists.",
+                    option: {
+                        name: "user",
+                        description: "The user to display public playlists from.",
+                    },
+                },
+                info: {
+                    name: "info",
+                    description: "Show information about a music playlist.",
+                    option: {
+                        name: "id",
+                        description: "The id of the playlist to show information from.",
+                    },
+                },
                 rename: {
                     name: "rename",
                     description: "Rename a music playlist.",
@@ -542,43 +643,3 @@ export default {
         },
     },
 };
-
-type ILyricsEmbedFooter = { userName: string };
-type ILyricsEmbedDescription = { lines: string; provider: string; author: string };
-type ILyricsEmbedTitle = { title: string };
-type IBotInfoGeneralField = { guilds: number; users: number; players: number };
-type IBotInfoSystemField = { memory: string; uptime: number; version: string };
-type IBotInfo = { clientName: string; defaultPrefix: string };
-type IHelpMenuEmbed = { clientName: string; category: string };
-type IVoiceStatus = { title: string; author: string };
-type IClientName = { clientName: string };
-type IHelp = { defaultPrefix: string; options: string };
-type IHelpMenu = { category: string };
-type IMention = { clientName: string; defaultPrefix: string; commandName: string };
-type IEngine = { engine: string; clientName: string };
-type IPrefix = { prefix: string };
-type ISeek = { time: string | number; type: string };
-type IAmount = { amount: number };
-type IMove = { textId: string; voiceId: string };
-type IVolume = { volume: number; clientName: string };
-type IType = { type: string };
-type ITypeName = { type: string; clientName: string };
-type ILocale = { locale: string };
-type IPrevious = { title: string; uri: string };
-type ITracks = { tracks: string };
-type IOptions = { options: string; list: string };
-type INodes = { state: string; uptime: string; players: number; memory: string; cpu: string };
-type ITrackStart = { title: string; url: string; duration: string; volume: number; requester: string; author: string; size: number };
-type IPlayTrack = { title: string; url: string; duration: string; volume: number; requester: string; position: number };
-type IPlayPlaylist = { query: string; playlist: string; volume: number; requester: string; tracks: number };
-type IChannel = { channelId: string };
-type IUser = { userId: string };
-type IPing = { wsPing: number; clientPing: number; shardPing: number; shardId: number };
-type ICooldown = { time: number };
-type IPlaylist = { name: string; state: string };
-type IAutocompletePlaylist = { name: string; visibility: string; author: string };
-type IPlaylistName = { name: string };
-type IState = { state: string };
-type IPlaylistSave = { type: string; amount: number };
-type ITwentyForSeven = { is247: string; autoPause: string };
-type INowPlaying = { userName: string; time: string };

@@ -4,13 +4,14 @@ import {
     Declare,
     type GuildCommandContext,
     LocalesT,
-    type Message,
+    type MessageStructure,
     Middlewares,
     type OKFunction,
     Options,
-    type WebhookMessage,
+    type WebhookMessageStructure,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
+import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { ms, TimeFormat } from "#stelle/utils/functions/time.js";
@@ -24,9 +25,9 @@ const options = {
             description: "locales.seek.option.description",
         },
         value: ({ value }, ok: OKFunction<number | string>) => {
-            const time = value.split(/\s*,\s*|\s+/);
-            const milis = time.map((x) => ms(x));
-            const result = milis.reduce((a, b) => a + b, 0);
+            const time: string[] = value.split(/\s*,\s*|\s+/);
+            const milis: number[] = time.map((x): number => ms(x));
+            const result: number = milis.reduce((a, b): number => a + b, 0);
 
             if (Number.isNaN(result)) return ok(value);
 
@@ -38,8 +39,8 @@ const options = {
 @Declare({
     name: "seek",
     description: "Seek the current track.",
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
     aliases: ["sk"],
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })
@@ -47,7 +48,7 @@ const options = {
 @LocalesT("locales.seek.name", "locales.seek.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class SeekCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<MessageStructure | WebhookMessageStructure | void> {
         const { client, options } = ctx;
         const { time } = options;
 
@@ -79,7 +80,7 @@ export default class SeekCommand extends Command {
                 ],
             });
 
-        if (time > track.info.duration)
+        if (time > track.info.length)
             return ctx.editOrReply({
                 embeds: [
                     {

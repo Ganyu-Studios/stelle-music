@@ -1,12 +1,9 @@
-import { type AnyContext, AttachmentBuilder, Embed, type Message } from "seyfert";
-// this causes the error "unsettled top-level await"
-// idk why, but it does
-import { client } from "#stelle/client";
+import { type AnyContext, AttachmentBuilder, Embed, type MessageStructure } from "seyfert";
+import { WebhookClient } from "#stelle/classes/WebhookClient.js";
 import { Environment } from "#stelle/utils/data/configuration.js";
 import { Constants } from "#stelle/utils/data/constants.js";
-
 import { logger } from "#stelle/utils/functions/internal/logger.js";
-import { parseWebhook, truncate } from "#stelle/utils/functions/utils.js";
+import { inspect, truncate } from "#stelle/utils/functions/utils.js";
 
 /**
  * The report options interface.
@@ -29,18 +26,18 @@ interface ReportOptions {
  * Send a error report.
  * @param options The options.
  */
-export async function sendErrorReport(options: ReportOptions): Promise<Message | void> {
+export async function sendErrorReport(options: ReportOptions): Promise<MessageStructure | void> {
     const { error, ctx } = options;
 
     if (!(error instanceof Error)) return;
 
     //as long as I'm with the dev version of Stelle,
     //i don't want the logs to be sent to the server.
-    if (Constants.Dev) return logger.error(options.error);
+    if (Constants.Dev) return logger.error("[Report] Error captured (dev mode)", options.error);
 
     const date = new Date();
-    const title = ctx?.client.me.username ?? "Stelle";
-    const attachment = new AttachmentBuilder()
+    const title: string = ctx?.client.me.username ?? "Stelle";
+    const attachment: AttachmentBuilder = new AttachmentBuilder()
         .setName(`${title}-Error.log`)
         .setFile(
             "buffer",
@@ -54,8 +51,7 @@ export async function sendErrorReport(options: ReportOptions): Promise<Message |
                     "",
                     "+------------------------------+",
                     "",
-                    `Stack: ${error.stack}`,
-                    `Message: ${error.message}`,
+                    `Error: ${inspect(error, 1)}`,
                 ].join("\n"),
             ),
         );
@@ -88,10 +84,9 @@ export async function sendErrorReport(options: ReportOptions): Promise<Message |
         }
     }
 
-    const webhook = parseWebhook(Environment.ERRORS_WEBHOOK);
-    if (!webhook) return;
+    const webhook = new WebhookClient(Environment.ERRORS_WEBHOOK);
 
-    await client.webhooks.writeMessage(webhook.id, webhook.token, {
+    await webhook.writeMessage({
         body: {
             embeds: [embed],
             files: [attachment],

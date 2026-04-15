@@ -1,14 +1,16 @@
+import type { PlayerStructure } from "hoshimi";
 import {
     Command,
     createIntegerOption,
     Declare,
     type GuildCommandContext,
     LocalesT,
-    type Message,
+    type MessageStructure,
     Middlewares,
     Options,
-    type WebhookMessage,
+    type WebhookMessageStructure,
 } from "seyfert";
+import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
@@ -28,8 +30,8 @@ const options = {
 @Declare({
     name: "volume",
     description: "Modify the volume.",
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
     aliases: ["v", "vol"],
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })
@@ -37,17 +39,17 @@ const options = {
 @LocalesT("locales.volume.name", "locales.volume.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class VolumeCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>): Promise<Message | WebhookMessage | void> {
+    public override async run(ctx: GuildCommandContext<typeof options>): Promise<MessageStructure | WebhookMessageStructure | void> {
         const { client, options } = ctx;
         const { volume } = options;
 
         const { messages } = await ctx.locale();
 
-        const player = client.manager.getPlayer(ctx.guildId);
+        const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
         if (volume === 1) {
-            await player.pause();
+            await player.setPaused(true);
             await player.setVolume(volume);
 
             return ctx.editOrReply({
@@ -61,7 +63,7 @@ export default class VolumeCommand extends Command {
         }
 
         if (volume > 1 && player.paused) {
-            await player.resume();
+            await player.setPaused(false);
             await player.setVolume(volume);
 
             return ctx.editOrReply({

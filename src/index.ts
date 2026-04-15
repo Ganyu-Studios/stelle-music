@@ -19,8 +19,6 @@ Logger.dirname = "logs";
 
 const client = new Stelle();
 
-export { client };
-
 // "Warning: Detected unsettled top-level await" my ass
 (async (): Promise<void> => await client.run())();
 

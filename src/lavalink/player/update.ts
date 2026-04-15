@@ -1,59 +1,67 @@
-import type { PlayerJson } from "lavalink-client";
-import { LavalinkEventTypes, type SessionJson, type StelleUser } from "#stelle/types";
+import type { PlayerJson } from "hoshimi";
+import { EventNames } from "hoshimi";
+import type { NonOptionsNode, SessionJson, TrackUser } from "#stelle/types";
 import { Constants } from "#stelle/utils/data/constants.js";
 import { omitKeys } from "#stelle/utils/functions/utils.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 import { Sessions } from "#stelle/utils/manager/sessions.js";
 
 export default createLavalinkEvent({
-    name: "playerUpdate",
-    type: LavalinkEventTypes.Manager,
-    run(client, oldPlayer, newPlayer): void {
+    name: EventNames.PlayerUpdate,
+    async run(client, newPlayer, oldPlayer): Promise<void> {
         if (!client.config.sessions.enabled) return;
 
         const newPlayerJson: PlayerJson = newPlayer.toJSON();
 
         if (
             !oldPlayer ||
-            oldPlayer.voiceChannelId !== newPlayerJson.voiceChannelId ||
-            oldPlayer.textChannelId !== newPlayerJson.textChannelId ||
+            oldPlayer.voiceId !== newPlayerJson.voiceId ||
+            oldPlayer.textId !== newPlayerJson.textId ||
             oldPlayer.options.selfDeaf !== newPlayerJson.options.selfDeaf ||
             oldPlayer.options.selfMute !== newPlayerJson.options.selfDeaf ||
-            oldPlayer.nodeId !== newPlayerJson.nodeId ||
-            oldPlayer.nodeSessionId !== newPlayerJson.nodeSessionId ||
-            oldPlayer.options.applyVolumeAsFilter !== newPlayerJson.options.applyVolumeAsFilter ||
-            oldPlayer.options.instaUpdateFiltersFix !== newPlayerJson.options.instaUpdateFiltersFix ||
-            oldPlayer.options.vcRegion !== newPlayerJson.options.vcRegion
+            oldPlayer.node.id !== newPlayerJson.node.id ||
+            oldPlayer.node.sessionId !== newPlayerJson.node.sessionId
         ) {
             if (newPlayerJson.queue?.current) newPlayerJson.queue.current.userData = {};
 
             const newJson = omitKeys(newPlayerJson, [
                 "ping",
-                "createdTimeStamp",
-                "lavalinkVolume",
-                "equalizer",
-                "lastPositionChange",
+                "createdTimestamp",
+                "lastPositionUpdate",
                 "paused",
                 "playing",
                 "queue",
                 "filters",
+                "node",
             ]);
+
+            const node: NonOptionsNode = omitKeys(newPlayerJson.node, ["options"]);
+
+            const messageId: string | undefined = await newPlayer.data.get("messageId");
+            const enabledAutoplay: boolean | undefined = await newPlayer.data.get("enabledAutoplay");
+            const localeString: string | undefined = await newPlayer.data.get("localeString");
+            const me: TrackUser | undefined = await newPlayer.data.get("me");
+            const lyricsId: string | undefined = await newPlayer.data.get("lyricsId");
+            const lyricsEnabled: boolean | undefined = await newPlayer.data.get("lyricsEnabled");
+            const is247: boolean | undefined = await newPlayer.data.get("is247");
+            const isAutoPause: boolean | undefined = await newPlayer.data.get("isAutoPause");
 
             Sessions.set<SessionJson>(newPlayer.guildId, {
                 ...newJson,
-                messageId: newPlayer.get("messageId"),
-                enabledAutoplay: newPlayer.get("enabledAutoplay"),
-                localeString: newPlayer.get<string | undefined>("localeString"),
-                me: newPlayer.get<StelleUser | undefined>("me"),
-                lyricsId: newPlayer.get<string | undefined>("lyricsId"),
-                lyricsEnabled: newPlayer.get<boolean | undefined>("lyricsEnabled"),
-                is247: newPlayer.get<boolean | undefined>("is247"),
-                isAutoPause: newPlayer.get<boolean | undefined>("isAutoPause"),
+                messageId,
+                enabledAutoplay,
+                localeString,
+                me,
+                lyricsId,
+                lyricsEnabled,
+                is247,
+                isAutoPause,
+                node,
             });
 
             if (Constants.Debug)
                 client.debugger?.info(
-                    `[Session ${newPlayer.guildId}] Updated Session: ${JSON.stringify(Sessions.get<SessionJson>(newPlayer.guildId))}`,
+                    `[Lavalink] Session updated | guild: ${newPlayer.guildId} | node: ${node.id} | voice: ${newJson.voiceId} | text: ${newJson.textId}`,
                 );
         }
     },

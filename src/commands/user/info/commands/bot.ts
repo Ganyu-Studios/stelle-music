@@ -1,8 +1,9 @@
 import { ActionRow, Button, type ClientUser, Declare, Embed, type Guild, type GuildCommandContext, LocalesT, SubCommand } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
-
 import { Shortcut } from "yunaforseyfert";
+import { Configuration } from "#stelle/utils/data/configuration.js";
 import { Constants } from "#stelle/utils/data/constants.js";
+import { type GitInfo, getGitInfo } from "#stelle/utils/functions/internal/git.js";
 import { formatMemoryUsage } from "#stelle/utils/functions/internal/logger.js";
 
 @Declare({
@@ -18,6 +19,8 @@ export default class BotSubcommand extends SubCommand {
 
         const me: ClientUser = await client.me.fetch();
         const guilds: Guild<"cached">[] = client.cache.guilds?.values() ?? [];
+        const git: GitInfo | null = await getGitInfo();
+        const inline: boolean = false;
 
         const embed = new Embed()
             .setColor(client.config.color.success)
@@ -30,7 +33,7 @@ export default class BotSubcommand extends SubCommand {
             )
             .addFields(
                 {
-                    inline: true,
+                    inline,
                     name: messages.commands.info.bot.fields.info.name,
                     value: messages.commands.info.bot.fields.info.value({
                         guilds: guilds.length,
@@ -39,12 +42,22 @@ export default class BotSubcommand extends SubCommand {
                     }),
                 },
                 {
-                    inline: true,
+                    inline,
                     name: messages.commands.info.bot.fields.system.name,
                     value: messages.commands.info.bot.fields.system.value({
                         memory: formatMemoryUsage(process.memoryUsage().rss),
                         uptime: Math.floor(client.readyTimestamp / 1000),
                         version: Constants.Version,
+                    }),
+                },
+                {
+                    inline,
+                    name: messages.commands.info.bot.fields.git.name,
+                    value: messages.commands.info.bot.fields.git.value({
+                        branch: git?.branch ?? "N/A",
+                        commit: git?.commit ?? "N/A",
+                        time: git?.time ?? "N/A",
+                        commitUrl: git?.commitUrl ?? Configuration.githubLink,
                     }),
                 },
             );

@@ -1,5 +1,5 @@
+import type { PlayerStructure, TrackStructure } from "hoshimi";
 import type { Image } from "imagescript";
-import type { Player, Track } from "lavalink-client";
 import {
     AttachmentBuilder,
     Command,
@@ -10,13 +10,13 @@ import {
     LocalesT,
     MediaGallery,
     MediaGalleryItem,
-    type Message,
+    type MessageStructure,
     Middlewares,
     TextDisplay,
-    type WebhookMessage,
+    type WebhookMessageStructure,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
-import { MessageFlags } from "seyfert/lib/types/index.js";
+import { ApplicationIntegrationType, InteractionContextType, MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { getAlbumImage, renderImage } from "#stelle/utils/functions/image.js";
@@ -26,23 +26,23 @@ import { truncate } from "#stelle/utils/functions/utils.js";
 @Declare({
     name: "nowplaying",
     description: "Get the current playing track.",
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
     aliases: ["np"],
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })
 @LocalesT("locales.nowplaying.name", "locales.nowplaying.description")
 @Middlewares(["checkNodes", "checkPlayer"])
 export default class NowPlayingCommand extends Command {
-    public override async run(ctx: GuildCommandContext): Promise<Message | WebhookMessage | void> {
+    public override async run(ctx: GuildCommandContext): Promise<MessageStructure | WebhookMessageStructure | void> {
         const { client } = ctx;
 
         const { messages } = await ctx.locale();
 
-        const player: Player | undefined = client.manager.getPlayer(ctx.guildId);
+        const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
         if (!player) return;
 
-        const track: Track | null = player.queue.current;
+        const track: TrackStructure | null = player.queue.current;
         if (!track)
             return ctx.editOrReply({
                 embeds: [
@@ -65,9 +65,9 @@ export default class NowPlayingCommand extends Command {
             guildName: guild.name,
             timestamp: {
                 progress: player.position,
-                end: track.info.duration,
+                end: track.info.length,
                 progressStart: TimeFormat.toDotted(player.position),
-                progressEnd: TimeFormat.toDotted(track.info.duration),
+                progressEnd: TimeFormat.toDotted(track.info.length),
             },
             queue: {
                 current: 1,

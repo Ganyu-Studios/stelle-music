@@ -27,11 +27,37 @@ export class PlaylistController extends Controller<"userPlaylist"> {
      * @param {string} playlistId The playlist id to get.
      * @returns {Promise<userPlaylist | null>} The playlist of the user.
      */
-    public get(playlistId: string, userId: string): Promise<userPlaylist | null> {
+    public async get(playlistId: string, userId: string): Promise<userPlaylist | null> {
         const cached = this.cache.get(CacheKeys.Playlist, playlistId);
-        if (cached) return Promise.resolve(cached);
+        if (cached) return cached;
 
-        return this.model.findUnique({ where: { playlistId, userId } });
+        const data = await this.model.findUnique({ where: { playlistId, userId } });
+        if (data) this.cache.set(CacheKeys.Playlist, playlistId, data);
+
+        return data;
+    }
+
+    /**
+     *
+     * Get a playlist that can be loaded by a user.
+     * A playlist is loadable when it belongs to the user or when it is public.
+     * @param {string} playlistId The playlist id to get.
+     * @param {string} userId The user id requesting the playlist.
+     * @returns {Promise<userPlaylist | null>} The loadable playlist.
+     */
+    public async getLoadable(playlistId: string, userId: string): Promise<userPlaylist | null> {
+        const cached = this.cache.get(CacheKeys.Playlist, playlistId);
+        if (cached && (cached.userId === userId || cached.public)) return cached;
+
+        const data = await this.model.findFirst({
+            where: {
+                playlistId,
+                OR: [{ userId }, { public: true }],
+            },
+        });
+        if (data) this.cache.set(CacheKeys.Playlist, playlistId, data);
+
+        return data;
     }
 
     /**

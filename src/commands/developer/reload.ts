@@ -1,13 +1,14 @@
-import { Command, type CommandContext, Declare, type Message, type WebhookMessage } from "seyfert";
+import { Command, type CommandContext, Declare, type MessageStructure, type WebhookMessageStructure } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
+import { ApplicationIntegrationType, InteractionContextType, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
 @Declare({
     name: "reload",
     description: "Reload Stelle.",
-    defaultMemberPermissions: ["ManageGuild", "Administrator"],
-    integrationTypes: ["GuildInstall"],
-    contexts: ["Guild"],
+    defaultMemberPermissions: [PermissionFlagsBits.ManageGuild, PermissionFlagsBits.Administrator],
+    integrationTypes: [ApplicationIntegrationType.GuildInstall],
+    contexts: [InteractionContextType.Guild],
 })
 @StelleOptions({ onlyDeveloper: true })
 export default class ReloadCommand extends Command {
@@ -16,7 +17,7 @@ export default class ReloadCommand extends Command {
         await ctx.client
             .reload()
             .then(
-                (): Promise<Message | WebhookMessage | void> =>
+                (): Promise<MessageStructure | WebhookMessageStructure | void> =>
                     ctx.editOrReply({
                         content: "",
                         embeds: [
@@ -28,7 +29,7 @@ export default class ReloadCommand extends Command {
                     }),
             )
             .catch(
-                (): Promise<Message | WebhookMessage | void> =>
+                (): Promise<MessageStructure | WebhookMessageStructure | void> =>
                     ctx.editOrReply({
                         content: "",
                         embeds: [

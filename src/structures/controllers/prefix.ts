@@ -21,6 +21,8 @@ export class PrefixController extends Controller<"guildPrefix"> {
         const data = await this.model.findUnique({ where: { guildId } });
         if (!data?.prefix) return this.client.config.defaultPrefix;
 
+        this.cache.set(CacheKeys.Prefix, guildId, data);
+
         return data.prefix;
     }
 
