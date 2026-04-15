@@ -26,7 +26,6 @@ import {
     type APIContainerComponents,
     type APIMessageComponentEmoji,
     type APISectionComponent,
-    type APITopLevelComponent,
     ButtonStyle,
     ComponentType,
     type LocaleString,
@@ -164,14 +163,14 @@ export const requesterFn = <T extends TrackRequester = TrackRequester>(requester
  * Update buttons in a message, with optional overrides for specific buttons.
  * @param {MessageStructure | WebhookMessageStructure} message The message to edit the components of.
  * @param {EditButtonOptions} options The options to edit the rows.
- * @returns {ActionRow<Button>[]} The edited rows.
+ * @returns {(ActionRow<Button> | Container)[]} The edited components.
  */
 export const updateComponents = (
     message: MessageStructure | WebhookMessageStructure,
     options?: Partial<EditButtonOptions>,
 ): Array<ActionRow<Button> | Container> =>
     message.components.map((builder): ActionRow<Button> | Container => {
-        const topLevel: APITopLevelComponent = builder.toJSON() as APITopLevelComponent;
+        const topLevel = builder.toJSON();
 
         const updateButton = (component: APIButtonComponent): APIButtonComponent => {
             if (component.style === ButtonStyle.Link || component.style === ButtonStyle.Premium) return component;
