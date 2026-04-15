@@ -42,7 +42,6 @@ model guildPlayer {
 type RawRequester {
   id       String
   username String
-  bot      Boolean
   tag      String
 }
 

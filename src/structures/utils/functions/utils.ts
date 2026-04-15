@@ -150,8 +150,8 @@ export const requesterFn = <T extends TrackRequester = TrackRequester>(requester
                 "displayNameStyles",
                 "collectibles",
                 "clan",
+                "bot",
             ]),
-            bot: requester.bot ?? false,
             tag: requester.bot ? requester.username : requester.tag,
         } as T;
 

@@ -157,6 +157,7 @@ export type TrackUser = Omit<
     | "createdTimestamp"
     | "globalName"
     | "avatar"
+    | "bot"
 >;
 
 /**

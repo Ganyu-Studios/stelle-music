@@ -62,10 +62,7 @@ export async function playlistTrackSave(
                 .filter((track) => !playlist.tracks.some((t) => t.encoded === track.encoded))
                 .map((t) => ({
                     encoded: t.encoded!,
-                    requester: {
-                        ...t.requester,
-                        bot: t.requester.bot ?? false,
-                    },
+                    requester: t.requester,
                 }));
 
             playlist.tracks.push(...tracks);
@@ -105,10 +102,7 @@ export async function playlistTrackSave(
 
             playlist.tracks.push({
                 encoded: track.encoded!,
-                requester: {
-                    ...track.requester,
-                    bot: track.requester.bot ?? false,
-                },
+                requester: track.requester,
             });
 
             await client.database.playlist.set(interaction.user.id, playlist);
@@ -196,20 +190,14 @@ export async function playlistTrackSave(
 
                         playlist.tracks.push({
                             encoded: track.encoded!,
-                            requester: {
-                                ...track.requester,
-                                bot: track.requester.bot ?? false,
-                            },
+                            requester: track.requester,
                         });
                     } else if (search.loadType === LoadType.Playlist) {
                         const tracks = search.tracks
                             .filter((track) => !playlist.tracks.some((t) => t.encoded === track.encoded))
                             .map((t) => ({
                                 encoded: t.encoded!,
-                                requester: {
-                                    ...t.requester,
-                                    bot: t.requester.bot ?? false,
-                                },
+                                requester: t.requester,
                             }));
 
                         if (!tracks.length)
