@@ -37,6 +37,12 @@ export default {
                 deleted: ({ name }): string => `\`✅\` La playlist \`${name}\` ha sido eliminada exitosamente.`,
                 noPlaylist: "`❌` **No se encontró ninguna playlist** con este id...",
                 noTracks: "`❌` **No se encontraron canciones** en esta playlist...",
+                list: {
+                    title: "`📋` Playlists disponibles",
+                    noPrivate: "`📭` Aún no tienes playlists privadas.",
+                    noPublic: "`📭` No hay playlists públicas disponibles por ahora.",
+                    andMore: ({ amount }) => `-# Y ${amount} más...`,
+                },
                 manage: {
                     title: ({ name }): string => `\`🎵\` Gestionando Playlist: \`${name}\``,
                     description:
@@ -46,6 +52,23 @@ export default {
                         save: "Guardar",
                         delete: "Eliminar",
                         info: "Info",
+                    },
+                    delete: {
+                        description:
+                            "`📢` Introduce los números de las canciones que quieres eliminar.\n`📌` Usa comas, rangos o rangos con comodín como `1, 3, 5-7, 11-*`.\n`⚠️` Usa el botón de Info si quieres revisar la lista completa primero.",
+                        invalidSelection:
+                            "`❌` La selección que ingresaste no es válida. Usa números de canción o rangos como `1, 3-5, 11-*`.",
+                        outOfRange: ({ tracks }): string =>
+                            `\`❌\` Uno o más números de canción están fuera de la playlist actual. Solo tiene \`${tracks} canciones\`.`,
+                        deleted: ({ amount }): string => `\`✅\` Se eliminaron exitosamente **${amount} canción(es)** de tu playlist.`,
+                        modal: {
+                            title: "Eliminar canciones",
+                            label: {
+                                label: "Eliminar canciones por número",
+                                description: "Introduce uno o más números de canción o rangos. Ejemplo: 1, 3, 5-7, 11-*",
+                                component: "1, 3, 5-7, 11-*",
+                            },
+                        },
                     },
                     save: {
                         saved: ({ type, amount }) => `\`✅\` Guardado exitosamente **${amount} canción(es)** de **${type}** a tu playlist.`,
@@ -514,6 +537,22 @@ export default {
                     option: {
                         name: "id",
                         description: "El id de la playlist a cargar.",
+                    },
+                },
+                list: {
+                    name: "lista",
+                    description: "Muestra las playlists disponibles.",
+                    option: {
+                        name: "usuario",
+                        description: "El usuario del que se mostrarán las playlists públicas.",
+                    },
+                },
+                info: {
+                    name: "info",
+                    description: "Muestra información sobre una playlist de música.",
+                    option: {
+                        name: "id",
+                        description: "El id de la playlist de la que se mostrará información.",
                     },
                 },
                 rename: {

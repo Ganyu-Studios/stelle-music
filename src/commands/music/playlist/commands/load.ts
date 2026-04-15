@@ -10,11 +10,11 @@ import {
     Middlewares,
     Options,
     SubCommand,
-    type User,
     type VoiceState,
     type WebhookMessageStructure,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
+import type { TrackUser } from "#stelle/types";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 import { requesterFn } from "#stelle/utils/functions/utils.js";
@@ -47,7 +47,7 @@ export default class LoadSubcommand extends SubCommand {
 
         const { messages } = await ctx.locale();
 
-        const playlist = await client.database.playlist.get(id, ctx.author.id);
+        const playlist = await client.database.playlist.getLoadable(id, ctx.author.id);
         if (!playlist)
             return ctx.editOrReply({
                 content: "",
@@ -97,12 +97,17 @@ export default class LoadSubcommand extends SubCommand {
         if (!(await player.data.get("localeString"))) await player.data.set("localeString", await ctx.localeString());
         if (!(await player.data.get("me"))) await player.data.set("me", requesterFn(client.me));
 
-        const tracks: TrackStructure[] = await Promise.all(
-            playlist.tracks.map(async (track): Promise<TrackStructure> => {
-                const requester: User = await client.users.fetch(track.requesterId);
-                return player.node.decode.single(track.encoded, requesterFn(requester));
-            }),
-        );
+        const tracks: TrackStructure[] = await player.node.decode
+            .multiple(
+                playlist.tracks.map((t): string => t.encoded),
+                {} as TrackUser,
+            )
+            .then((decoded: TrackStructure[]): TrackStructure[] =>
+                decoded.map((track, i): TrackStructure => {
+                    track.requester = requesterFn(playlist.tracks[i].requester);
+                    return track;
+                }),
+            );
 
         await player.queue.add(tracks);
 

@@ -10,9 +10,10 @@ import {
     type Button,
     type DefaultLocale,
     extendContext,
-    type TopLevelComponents,
+    type MessageStructure,
     User,
     type UsingClient,
+    type WebhookMessageStructure,
 } from "seyfert";
 import { type PermissionStrings, resolvePartialEmoji } from "seyfert/lib/common/index.js";
 import { PermissionsBitField } from "seyfert/lib/structures/extra/Permissions.js";
@@ -114,7 +115,28 @@ export function parseDiscordWebhook(url: string): WebhookMetadata | null {
 export const requesterFn = <T extends TrackRequester = TrackRequester>(requester: TrackRequester): T => {
     if (requester instanceof User)
         return {
-            ...omitKeys(requester, ["client"]),
+            ...omitKeys(requester, [
+                "client",
+                "avatarDecorationData",
+                "banner",
+                "createdAt",
+                "discriminator",
+                "flags",
+                "publicFlags",
+                "accentColor",
+                "system",
+                "verified",
+                "email",
+                "mfaEnabled",
+                "primaryGuild",
+                "premiumType",
+                "locale",
+                "name",
+                "createdTimestamp",
+                "globalName",
+                "avatar",
+            ]),
+            bot: requester.bot ?? false,
             tag: requester.bot ? requester.username : requester.tag,
         } as T;
 
@@ -123,13 +145,16 @@ export const requesterFn = <T extends TrackRequester = TrackRequester>(requester
 
 /**
  *
- * Edit a non-link or non-premium button rows with specific options.
- * @param {TopLevelComponents[]} rows The rows to edit.
+ * Update buttons in a message, with optional overrides for specific buttons.
+ * @param {MessageStructure | WebhookMessageStructure} message The message to edit the components of.
  * @param {EditButtonOptions} options The options to edit the rows.
  * @returns {ActionRow<Button>[]} The edited rows.
  */
-export const disableButtons = (rows: TopLevelComponents[], options?: Partial<EditButtonOptions>): ActionRow<Button>[] =>
-    rows.map((builder): ActionRow<Button> => {
+export const updateComponents = (
+    message: MessageStructure | WebhookMessageStructure,
+    options?: Partial<EditButtonOptions>,
+): ActionRow<Button>[] =>
+    message.components.map((builder): ActionRow<Button> => {
         const row = builder.toJSON();
 
         if (row.type !== ComponentType.ActionRow) throw new InvalidRow("Invalid row type, expected ActionRow.");

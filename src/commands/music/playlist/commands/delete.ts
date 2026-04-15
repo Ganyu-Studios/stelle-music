@@ -4,7 +4,6 @@ import {
     type GuildCommandContext,
     LocalesT,
     type MessageStructure,
-    Middlewares,
     Options,
     SubCommand,
     type WebhookMessageStructure,
@@ -30,7 +29,6 @@ const options = {
 })
 @LocalesT("locales.playlist.commands.delete.name", "locales.playlist.commands.delete.description")
 @Options(options)
-@Middlewares(["checkVoiceChannel", "checkBotVoiceChannel", "checkVoicePermissions", "checkNodes"])
 export default class DeleteSubcommand extends SubCommand {
     public async run(ctx: GuildCommandContext<typeof options>): Promise<WebhookMessageStructure | MessageStructure | void> {
         const { client } = ctx;

@@ -27,6 +27,7 @@ import {
     type IOptions,
     type IPing,
     type IPlaylist,
+    type IPlaylistDelete,
     type IPlaylistName,
     type IPlaylistSave,
     type IPlayPlaylist,
@@ -85,6 +86,12 @@ export default {
                 deleted: ({ name }: IPlaylistName): string => `\`✅\` The playlist \`${name}\` has been deleted successfully.`,
                 noPlaylist: "`❌` **No playlist** was found with this id...",
                 noTracks: "`❌` **No tracks** were found in this playlist...",
+                list: {
+                    title: "`📋` Available playlists",
+                    noPrivate: "`📭` You don't have private playlists yet.",
+                    noPublic: "`📭` There are no public playlists available right now.",
+                    andMore: ({ amount }: IAmount): string => `-# And ${amount} more...`,
+                },
                 manage: {
                     title: ({ name }: IPlaylistName): string => `\`🎵\` Managing Playlist: \`${name}\``,
                     description:
@@ -94,6 +101,23 @@ export default {
                         save: "Save",
                         delete: "Delete",
                         info: "Info",
+                    },
+                    delete: {
+                        description:
+                            "`📢` Enter the track numbers you want to delete.\n`📌` Use commas, ranges or wildcard ranges like `1, 3, 5-7, 11-*`.\n`⚠️` Use the Info button if you want to review the full list first.",
+                        invalidSelection: "`❌` The selection you entered is invalid. Use track numbers or ranges like `1, 3-5, 11-*`.",
+                        outOfRange: ({ tracks }: { tracks: number }): string =>
+                            `\`❌\` One or more track numbers are outside the current playlist. It only has \`${tracks} tracks\`.`,
+                        deleted: ({ amount }: IPlaylistDelete): string =>
+                            `\`✅\` Successfully deleted **${amount} track(s)** from your playlist.`,
+                        modal: {
+                            title: "Delete tracks",
+                            label: {
+                                label: "Delete tracks by number",
+                                description: "Enter one or more track numbers or ranges. Example: 1, 3, 5-7, 11-*",
+                                component: "1, 3, 5-7, 11-*",
+                            },
+                        },
                     },
                     save: {
                         saved: ({ type, amount }: IPlaylistSave): string =>
@@ -568,6 +592,22 @@ export default {
                     option: {
                         name: "id",
                         description: "The id of the playlist to load.",
+                    },
+                },
+                list: {
+                    name: "list",
+                    description: "Display available playlists.",
+                    option: {
+                        name: "user",
+                        description: "The user to display public playlists from.",
+                    },
+                },
+                info: {
+                    name: "info",
+                    description: "Show information about a music playlist.",
+                    option: {
+                        name: "id",
+                        description: "The id of the playlist to show information from.",
                     },
                 },
                 rename: {

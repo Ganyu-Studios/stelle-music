@@ -7,7 +7,6 @@ import {
     type GuildCommandContext,
     LocalesT,
     type MessageStructure,
-    Middlewares,
     Options,
     SubCommand,
     type WebhookMessageStructure,
@@ -15,9 +14,16 @@ import {
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
 import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
+import { ManageButtonCustomIds, ManageButtonIdentifiers } from "#stelle/types";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
-import { playlistTrackSaveHandler } from "#stelle/utils/functions/components/playlist.js";
+import {
+    playlistInfoHandler,
+    playlistTrackDeleteHandler,
+    playlistTrackSaveHandler,
+    playlistVisibilityToggleHandler,
+} from "#stelle/utils/functions/components/playlist.js";
 import { ms } from "#stelle/utils/functions/time.js";
+import { updateComponents } from "#stelle/utils/functions/utils.js";
 
 const options = {
     id: createStringOption({
@@ -37,7 +43,6 @@ const options = {
 })
 @LocalesT("locales.playlist.commands.manage.name", "locales.playlist.commands.manage.description")
 @Options(options)
-@Middlewares(["checkVoiceChannel", "checkBotVoiceChannel", "checkVoicePermissions", "checkNodes"])
 export default class ManageSubcommand extends SubCommand {
     public async run(ctx: GuildCommandContext<typeof options>): Promise<WebhookMessageStructure | MessageStructure | void> {
         const { client } = ctx;
@@ -81,18 +86,19 @@ export default class ManageSubcommand extends SubCommand {
 
         const row: ActionRow<Button> = new ActionRow<Button>().addComponents(
             new Button()
-                .setCustomId("playlist-tracksSave")
+                .setCustomId(ManageButtonIdentifiers.TrackSave)
                 .setLabel(messages.commands.playlist.manage.options.save)
                 .setStyle(ButtonStyle.Primary),
             new Button()
-                .setCustomId("playlist-tracksDelete")
+                .setCustomId(ManageButtonIdentifiers.TrackDelete)
                 .setLabel(messages.commands.playlist.manage.options.delete)
-                .setStyle(ButtonStyle.Danger),
+                .setStyle(ButtonStyle.Danger)
+                .setDisabled(!playlist.tracks.length),
             new Button()
-                .setCustomId("playlist-info")
+                .setCustomId(ManageButtonIdentifiers.Info)
                 .setLabel(messages.commands.playlist.manage.options.info)
                 .setStyle(ButtonStyle.Secondary),
-            new Button().setCustomId("playlist-toggleVisibility").setLabel(label).setStyle(style),
+            new Button().setCustomId(ManageButtonIdentifiers.ToggleVisibility).setLabel(label).setStyle(style),
         );
 
         const message: MessageStructure | WebhookMessageStructure = await ctx.editOrReply(
@@ -108,28 +114,42 @@ export default class ManageSubcommand extends SubCommand {
         const collector: CreateComponentCollectorResult = message.createComponentCollector({
             idle: ms("1min"),
             filter: (i): boolean => i.user.id === ctx.author.id,
+            onPass: async (interaction): Promise<void> => {
+                await interaction.editOrReply({
+                    flags: MessageFlags.Ephemeral,
+                    embeds: [
+                        {
+                            description: messages.events.onlyUser({ userId: ctx.author.id }),
+                            color: EmbedColors.Red,
+                        },
+                    ],
+                });
+            },
+            onStop: async (reason): Promise<void> => {
+                if (reason === "idle") await message.edit({ components: updateComponents(message, { disabled: true }) });
+            },
         });
 
-        collector.run(
-            ["playlist-tracksSave", "playlist-tracksDelete", "playlist-info", "playlist-toggleVisibility"],
-            async (interaction): Promise<void> => {
-                if (!interaction.isButton()) return;
+        collector.run(ManageButtonCustomIds, async (interaction): Promise<void> => {
+            if (!interaction.isButton()) return;
 
-                switch (interaction.customId) {
-                    case "playlist-tracksSave":
-                        await playlistTrackSaveHandler(ctx, interaction, playlist);
-                        break;
+            switch (interaction.customId) {
+                case ManageButtonIdentifiers.TrackSave:
+                    await playlistTrackSaveHandler(ctx, interaction, playlist);
+                    break;
 
-                    case "playlist-tracksDelete":
-                        break;
+                case ManageButtonIdentifiers.TrackDelete:
+                    await playlistTrackDeleteHandler(ctx, interaction, playlist);
+                    break;
 
-                    case "playlist-info":
-                        break;
+                case ManageButtonIdentifiers.Info:
+                    await playlistInfoHandler(ctx, interaction, playlist);
+                    break;
 
-                    case "playlist-toggleVisibility":
-                        break;
-                }
-            },
-        );
+                case ManageButtonIdentifiers.ToggleVisibility:
+                    await playlistVisibilityToggleHandler(ctx, interaction, playlist);
+                    break;
+            }
+        });
     }
 }

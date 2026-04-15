@@ -2,7 +2,7 @@ import type { PlayerStructure } from "hoshimi";
 import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 import { Constants } from "#stelle/utils/data/constants.js";
-import { disableButtons } from "#stelle/utils/functions/utils.js";
+import { updateComponents } from "#stelle/utils/functions/utils.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class PauseTrackComponent extends ComponentCommand {
@@ -21,7 +21,7 @@ export default class PauseTrackComponent extends ComponentCommand {
 
         await ctx.interaction.deferUpdate();
         await ctx.interaction.message.edit({
-            components: disableButtons(ctx.interaction.message.components, {
+            components: updateComponents(ctx.interaction.message, {
                 customId: "player-pauseTrack",
                 label: messages.events.trackStart.components.states[Constants.PauseState(player.paused)],
                 style: player.paused ? ButtonStyle.Secondary : ButtonStyle.Primary,

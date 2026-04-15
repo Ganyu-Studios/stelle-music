@@ -52,7 +52,7 @@ export async function displayQueue(ctx: AnyContext): Promise<void> {
                     .setAuthor({ name: author.tag, iconUrl: author.avatarURL() }),
             );
 
-            await paginator.reply(true);
+            await paginator.reply({ ephemeral: true });
         }
     }
 }

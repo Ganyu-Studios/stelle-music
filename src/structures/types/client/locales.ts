@@ -35,6 +35,7 @@ export type IAutocompletePlaylist = { name: string; visibility: string; author: 
 export type IPlaylistName = { name: string };
 export type IState = { state: string };
 export type IPlaylistSave = { type: string; amount: number };
+export type IPlaylistDelete = { amount: number };
 export type ITwentyForSeven = { is247: string; autoPause: string };
 export type INowPlaying = { userName: string; time: string };
 export type IBotInfoGitField = { branch: string; commit: string; time: string; commitUrl: string };

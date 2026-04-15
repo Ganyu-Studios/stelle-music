@@ -6,7 +6,7 @@ import {
     type TrackResolvableStructure,
     type TrackStructure,
 } from "hoshimi";
-import type { StelleUser } from "#stelle/types";
+import type { TrackUser } from "#stelle/types";
 
 /**
  * The maximum number of tracks to return.
@@ -51,7 +51,7 @@ export async function autoplayFn(player: PlayerStructure, lastTrack: TrackStruct
 
     if (!(await player.data.get("enabledAutoplay"))) return;
 
-    const me: StelleUser | undefined = await player.data.get("me");
+    const me: TrackUser | undefined = await player.data.get("me");
     if (!me) return;
 
     switch (lastTrack.info.sourceName) {

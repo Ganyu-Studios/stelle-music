@@ -1,6 +1,6 @@
 import type { PlayerJson } from "hoshimi";
 import { EventNames } from "hoshimi";
-import type { NonOptionsNode, SessionJson, StelleUser } from "#stelle/types";
+import type { NonOptionsNode, SessionJson, TrackUser } from "#stelle/types";
 import { Constants } from "#stelle/utils/data/constants.js";
 import { omitKeys } from "#stelle/utils/functions/utils.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
@@ -40,7 +40,7 @@ export default createLavalinkEvent({
             const messageId: string | undefined = await newPlayer.data.get("messageId");
             const enabledAutoplay: boolean | undefined = await newPlayer.data.get("enabledAutoplay");
             const localeString: string | undefined = await newPlayer.data.get("localeString");
-            const me: StelleUser | undefined = await newPlayer.data.get("me");
+            const me: TrackUser | undefined = await newPlayer.data.get("me");
             const lyricsId: string | undefined = await newPlayer.data.get("lyricsId");
             const lyricsEnabled: boolean | undefined = await newPlayer.data.get("lyricsEnabled");
             const is247: boolean | undefined = await newPlayer.data.get("is247");

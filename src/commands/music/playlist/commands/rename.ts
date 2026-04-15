@@ -4,7 +4,6 @@ import {
     type GuildCommandContext,
     LocalesT,
     type MessageStructure,
-    Middlewares,
     Options,
     SubCommand,
     type WebhookMessageStructure,
@@ -40,7 +39,6 @@ const options = {
 })
 @LocalesT("locales.playlist.commands.rename.name", "locales.playlist.commands.rename.description")
 @Options(options)
-@Middlewares(["checkVoiceChannel", "checkBotVoiceChannel", "checkVoicePermissions", "checkNodes"])
 export default class RenameSubcommand extends SubCommand {
     public async run(ctx: GuildCommandContext<typeof options>): Promise<WebhookMessageStructure | MessageStructure | void> {
         const { client } = ctx;

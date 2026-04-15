@@ -36,6 +36,26 @@ export class PlaylistController extends Controller<"userPlaylist"> {
 
     /**
      *
+     * Get a playlist that can be loaded by a user.
+     * A playlist is loadable when it belongs to the user or when it is public.
+     * @param {string} playlistId The playlist id to get.
+     * @param {string} userId The user id requesting the playlist.
+     * @returns {Promise<userPlaylist | null>} The loadable playlist.
+     */
+    public async getLoadable(playlistId: string, userId: string): Promise<userPlaylist | null> {
+        const cached = this.cache.get(CacheKeys.Playlist, playlistId);
+        if (cached && (cached.userId === userId || cached.public)) return cached;
+
+        return this.model.findFirst({
+            where: {
+                playlistId,
+                OR: [{ userId }, { public: true }],
+            },
+        });
+    }
+
+    /**
+     *
      * Set the playlist of a user to the database.
      * @param {string} userId The user id to set the playlist for.
      * @param {PlaylistData} data The playlist data to set.

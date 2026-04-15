@@ -1,12 +1,12 @@
-import type { PlayerStructure, QueryResult, TrackStructure } from "hoshimi";
+import type { PlayerStructure, TrackStructure } from "hoshimi";
 import {
     ActionRow,
     Button,
     type ButtonInteraction,
     type CommandContext,
     Embed,
+    type Guild,
     Label,
-    type MessageStructure,
     Modal,
     type ModalSubmitInteraction,
     TextInput,
@@ -16,202 +16,14 @@ import { EmbedColors } from "seyfert/lib/common/index.js";
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
 import { ButtonStyle, MessageFlags, TextInputStyle } from "seyfert/lib/types/index.js";
 import type { userPlaylist } from "#stelle/prisma";
+import { ManageButtonIdentifiers, SaveButtonCustomIds, SaveButtonIdentifiers, type TrackUser } from "#stelle/types";
 import { ms } from "#stelle/utils/functions/time.js";
-import { isUrl } from "#stelle/utils/functions/utils.js";
+import { requesterFn, updateComponents } from "#stelle/utils/functions/utils.js";
+import { EmbedPaginator } from "#stelle/utils/paginator.js";
+import { playlistTrackSave, SaveType } from "./playlist/save.js";
+import { parseTrackSelection } from "./playlist/selection.js";
 
-/**
- * Enum representing the type of save operation for playlist tracks.
- * @enum {string}
- */
-export enum SaveType {
-    Queue = "queue",
-    Current = "current",
-    URL = "url",
-}
-
-/**
- * Saves tracks to the user's playlist.
- * @param {CommandContext} ctx The command context.
- * @param {ButtonInteraction} interaction The component button interaction.
- * @param {userPlaylist} playlist The user's playlist.
- * @param {SaveType} type The type of save operation.
- * @returns {Promise<MessageStructure | WebhookMessageStructure | void>} The response message.
- */
-async function playlistTrackSave(
-    ctx: CommandContext,
-    interaction: ButtonInteraction,
-    playlist: userPlaylist,
-    type: SaveType,
-): Promise<MessageStructure | WebhookMessageStructure | void> {
-    const { messages } = await ctx.locale();
-    const { client } = ctx;
-
-    if (!ctx.inGuild()) return;
-
-    const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
-    if (!player?.playing && ["queue", "current"].includes(type))
-        return interaction.editOrReply({
-            content: "",
-            flags: MessageFlags.Ephemeral,
-            embeds: [
-                {
-                    description: messages.events.noPlayer,
-                    color: EmbedColors.Red,
-                },
-            ],
-        });
-
-    switch (type) {
-        case SaveType.Queue: {
-            const tracks = player!.queue.tracks
-                .filter((track) => !playlist.tracks.some((t) => t.encoded === track.encoded))
-                .map((t) => ({
-                    encoded: t.encoded!,
-                    requesterId: t.requester.id,
-                }));
-
-            playlist.tracks.push(...tracks);
-
-            await client.database.playlist.set(interaction.user.id, playlist);
-            await interaction.editOrReply({
-                content: "",
-                embeds: [
-                    {
-                        description: messages.commands.playlist.manage.save.saved({
-                            type: messages.commands.playlist.manage.save.saveType[type],
-                            amount: tracks.length,
-                        }),
-                    },
-                ],
-            });
-
-            break;
-        }
-
-        case SaveType.Current: {
-            const track: TrackStructure | null = player!.queue.current;
-            if (!track) return;
-
-            if (playlist.tracks.some((t) => t.encoded === track.encoded))
-                return interaction.editOrReply({
-                    content: "",
-                    flags: MessageFlags.Ephemeral,
-                    embeds: [
-                        {
-                            description: messages.commands.playlist.manage.save.alreadyExists,
-                            color: EmbedColors.Red,
-                        },
-                    ],
-                });
-
-            playlist.tracks.push({
-                encoded: track.encoded!,
-                requesterId: track.requester.id,
-            });
-
-            await client.database.playlist.set(interaction.user.id, playlist);
-            await interaction.editOrReply({
-                content: "",
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        description: messages.commands.playlist.manage.save.saved({
-                            type: messages.commands.playlist.manage.save.saveType[type],
-                            amount: 1,
-                        }),
-                    },
-                ],
-            });
-
-            break;
-        }
-
-        case SaveType.URL: {
-            const modal: Modal = new Modal()
-                .setTitle(messages.commands.playlist.manage.save.modal.title)
-                .setCustomId("playlist-saveFromURL-modal")
-                .addComponents(
-                    new Label()
-                        .setLabel(messages.commands.playlist.manage.save.modal.label.label)
-                        .setDescription(messages.commands.playlist.manage.save.modal.label.description)
-                        .setComponent(
-                            new TextInput()
-                                .setCustomId("playlist-saveFromURL-input")
-                                .setPlaceholder(messages.commands.playlist.manage.save.modal.label.component)
-                                .setStyle(TextInputStyle.Short)
-                                .setRequired(true),
-                        ),
-                )
-                .run(async (modal: ModalSubmitInteraction): Promise<void> => {
-                    await modal.deferReply(MessageFlags.Ephemeral);
-
-                    const url: string = modal.getInputValue("playlist-saveFromURL-input", true) as string;
-                    if (!isUrl(url))
-                        return modal.editOrReply({
-                            content: "",
-                            flags: MessageFlags.Ephemeral,
-                            embeds: [
-                                {
-                                    description: messages.commands.playlist.manage.save.invalidUrl,
-                                    color: EmbedColors.Red,
-                                },
-                            ],
-                        });
-
-                    const search: QueryResult | null = await client.manager.search({ query: url, requester: ctx.author });
-                    if (!search?.tracks.length)
-                        return modal.editOrReply({
-                            content: "",
-                            flags: MessageFlags.Ephemeral,
-                            embeds: [
-                                {
-                                    description: messages.commands.playlist.manage.save.noResults,
-                                    color: EmbedColors.Red,
-                                },
-                            ],
-                        });
-
-                    const track: TrackStructure | undefined = search.tracks
-                        .filter((track): boolean => !playlist.tracks.some((t): boolean => t.encoded === track.encoded))
-                        .at(0);
-                    if (!track)
-                        return modal.editOrReply({
-                            content: "",
-                            flags: MessageFlags.Ephemeral,
-                            embeds: [
-                                {
-                                    description: messages.commands.playlist.manage.save.alreadyExists,
-                                    color: EmbedColors.Red,
-                                },
-                            ],
-                        });
-
-                    playlist.tracks.push({
-                        encoded: track.encoded!,
-                        requesterId: track.requester.id,
-                    });
-
-                    await client.database.playlist.set(interaction.user.id, playlist);
-                    await modal.editOrReply({
-                        content: "",
-                        flags: MessageFlags.Ephemeral,
-                        embeds: [
-                            {
-                                description: messages.commands.playlist.manage.save.saved({
-                                    type: messages.commands.playlist.manage.save.saveType[type],
-                                    amount: 1,
-                                }),
-                            },
-                        ],
-                    });
-                });
-
-            await interaction.modal(modal);
-
-            break;
-        }
-    }
-}
+export { SaveType } from "./playlist/save.js";
 
 /**
  *
@@ -227,15 +39,15 @@ export async function playlistTrackSaveHandler(ctx: CommandContext, interaction:
 
     const row: ActionRow<Button> = new ActionRow<Button>().addComponents(
         new Button()
-            .setCustomId("playlist-saveCurrentTrack")
+            .setCustomId(SaveButtonIdentifiers.CurrentTrack)
             .setLabel(messages.commands.playlist.manage.save.options.current)
             .setStyle(ButtonStyle.Secondary),
         new Button()
-            .setCustomId("playlist-saveCurrentQueue")
+            .setCustomId(SaveButtonIdentifiers.CurrentQueue)
             .setLabel(messages.commands.playlist.manage.save.options.queue)
             .setStyle(ButtonStyle.Secondary),
         new Button()
-            .setCustomId("playlist-saveFromURL")
+            .setCustomId(SaveButtonIdentifiers.FromURL)
             .setLabel(messages.commands.playlist.manage.save.options.url)
             .setStyle(ButtonStyle.Primary),
     );
@@ -266,17 +78,227 @@ export async function playlistTrackSaveHandler(ctx: CommandContext, interaction:
         },
     });
 
-    collector.run(["playlist-saveCurrentTrack", "playlist-saveCurrentQueue", "playlist-saveFromURL"], async (interaction) => {
+    collector.run(SaveButtonCustomIds, async (interaction): Promise<void> => {
         if (!interaction.isButton()) return;
 
-        const saveType: Record<string, SaveType> = {
-            "playlist-saveCurrentTrack": SaveType.Current,
-            "playlist-saveCurrentQueue": SaveType.Queue,
-            "playlist-saveFromURL": SaveType.URL,
+        const saveType: Record<SaveButtonIdentifiers, SaveType> = {
+            [SaveButtonIdentifiers.CurrentTrack]: SaveType.Current,
+            [SaveButtonIdentifiers.CurrentQueue]: SaveType.Queue,
+            [SaveButtonIdentifiers.FromURL]: SaveType.URL,
         } as const;
 
-        const type: SaveType = saveType[interaction.customId];
+        const type: SaveType = saveType[interaction.customId as SaveButtonIdentifiers];
 
         await playlistTrackSave(ctx, interaction, playlist, type);
     });
+}
+
+/**
+ *
+ * Handles the track visibility toggle button interaction for a playlist.
+ * @param {CommandContext} ctx The command context.
+ * @param {ButtonInteraction} interaction The component button interaction.
+ * @param {userPlaylist} playlist The user's playlist.
+ * @return {Promise<void>}
+ */
+export async function playlistVisibilityToggleHandler(
+    ctx: CommandContext,
+    interaction: ButtonInteraction,
+    playlist: userPlaylist,
+): Promise<void> {
+    const { messages } = await ctx.locale();
+
+    playlist.public = !playlist.public;
+
+    /**
+     *
+     * Get the visibility of the playlist.
+     * @param {boolean} isPublic True if the playlist is public, false otherwise.
+     * @returns {string} The visibility of the playlist.
+     */
+    const getVisibility = (isPublic: boolean): string => {
+        const type = isPublic ? "public" : "private";
+        return messages.commands.playlist.state[type];
+    };
+
+    const style: ButtonStyle = playlist.public ? ButtonStyle.Danger : ButtonStyle.Success;
+    const label: string = messages.commands.playlist.manage.options.toggle({
+        state: getVisibility(!playlist.public),
+    });
+
+    await ctx.client.database.playlist.set(interaction.user.id, playlist);
+    await interaction.update({
+        components: updateComponents(interaction.message, {
+            style,
+            label,
+            customId: ManageButtonIdentifiers.ToggleVisibility,
+        }),
+    });
+}
+
+/**
+ * Handles the track delete button interaction for a playlist.
+ * @param {CommandContext} ctx The command context.
+ * @param {ButtonInteraction} interaction The component button interaction.
+ * @param {userPlaylist} playlist The user's playlist.
+ * @returns {Promise<void>}
+ */
+export async function playlistTrackDeleteHandler(
+    ctx: CommandContext,
+    interaction: ButtonInteraction,
+    playlist: userPlaylist,
+): Promise<void> {
+    const { messages } = await ctx.locale();
+
+    if (!playlist.tracks.length)
+        return interaction.editOrReply({
+            content: "",
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                {
+                    description: messages.commands.playlist.noTracks,
+                    color: EmbedColors.Red,
+                },
+            ],
+        });
+
+    const modal: Modal = new Modal()
+        .setTitle(messages.commands.playlist.manage.delete.modal.title)
+        .setCustomId("playlist-deleteTracks-modal")
+        .addComponents(
+            new Label()
+                .setLabel(messages.commands.playlist.manage.delete.modal.label.label)
+                .setDescription(messages.commands.playlist.manage.delete.modal.label.description)
+                .setComponent(
+                    new TextInput()
+                        .setCustomId("playlist-deleteTracks-input")
+                        .setPlaceholder(messages.commands.playlist.manage.delete.modal.label.component)
+                        .setStyle(TextInputStyle.Short)
+                        .setRequired(true),
+                ),
+        )
+        .run(async (modal: ModalSubmitInteraction): Promise<void> => {
+            await modal.deferReply(MessageFlags.Ephemeral);
+
+            const value: string = modal.getInputValue("playlist-deleteTracks-input", true) as string;
+
+            let selection: number[];
+
+            try {
+                selection = parseTrackSelection(value, playlist.tracks.length);
+            } catch (error) {
+                const description: string =
+                    error instanceof RangeError
+                        ? messages.commands.playlist.manage.delete.outOfRange({ tracks: playlist.tracks.length })
+                        : messages.commands.playlist.manage.delete.invalidSelection;
+
+                return modal.editOrReply({
+                    content: "",
+                    flags: MessageFlags.Ephemeral,
+                    embeds: [
+                        {
+                            description,
+                            color: EmbedColors.Red,
+                        },
+                    ],
+                });
+            }
+
+            let deletedAmount = 0;
+
+            for (const index of selection.slice().reverse()) {
+                const [track] = playlist.tracks.splice(index - 1, 1);
+                if (track) deletedAmount += 1;
+            }
+
+            await ctx.client.database.playlist.set(ctx.author.id, playlist);
+
+            await modal.editOrReply({
+                content: "",
+                flags: MessageFlags.Ephemeral,
+                embeds: [
+                    {
+                        description: messages.commands.playlist.manage.delete.deleted({ amount: deletedAmount }),
+                        color: EmbedColors.Green,
+                    },
+                ],
+            });
+        });
+
+    await interaction.modal(modal);
+}
+
+/**
+ *
+ * Handles the playlist information button interaction.
+ * @param {CommandContext} ctx The command context.
+ * @param {ButtonInteraction} interaction The component button interaction.
+ * @param {userPlaylist} playlist The user's playlist.
+ * @returns {Promise<void>}
+ */
+export async function playlistInfoHandler(ctx: CommandContext, interaction: ButtonInteraction, playlist: userPlaylist): Promise<void> {
+    if (!ctx.inGuild()) return;
+
+    const { messages } = await ctx.locale();
+
+    const guild: Guild<"cached" | "api"> = await ctx.guild();
+
+    const player: PlayerStructure | undefined = ctx.client.manager.getPlayer(guild.id);
+    if (!player)
+        return interaction.editOrReply({
+            content: "",
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                {
+                    description: messages.events.noPlayer,
+                    color: EmbedColors.Red,
+                },
+            ],
+        });
+
+    const limit = 20;
+    const tracks: string[] = await player.node.decode
+        .multiple(
+            playlist.tracks.map((t): string => t.encoded),
+            {} as TrackUser,
+        )
+        .then((decoded: TrackStructure[]): string[] =>
+            decoded.map((track, i): string => {
+                const requester: TrackUser = requesterFn(playlist.tracks[i].requester);
+
+                return `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${requester.tag}`;
+            }),
+        );
+
+    if (!(await interaction.replied) && !interaction.deferred) await interaction.deferUpdate();
+
+    if (tracks.length <= limit) {
+        await interaction.followup({
+            content: "",
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                new Embed()
+                    .setDescription(messages.events.playerQueue({ tracks: tracks.slice(0, limit).join("\n") }))
+                    .setColor(ctx.client.config.color.extra)
+                    .setThumbnail(guild.iconURL())
+                    .setTimestamp()
+                    .setAuthor({ name: ctx.author.tag, iconUrl: ctx.author.avatarURL() }),
+            ],
+        });
+    } else {
+        const paginator: EmbedPaginator = new EmbedPaginator({ ctx });
+
+        for (let i: number = 0; i < tracks.length; i += limit) {
+            paginator.addEmbed(
+                new Embed()
+                    .setDescription(messages.events.playerQueue({ tracks: tracks.slice(i, i + limit).join("\n") }))
+                    .setColor(ctx.client.config.color.extra)
+                    .setThumbnail(guild.iconURL())
+                    .setTimestamp()
+                    .setAuthor({ name: ctx.author.tag, iconUrl: ctx.author.avatarURL() }),
+            );
+        }
+
+        await paginator.reply({ ephemeral: true, followup: true });
+    }
 }
