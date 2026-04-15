@@ -84,6 +84,8 @@ export default {
                 loaded: ({ name }: IPlaylistName): string => `\`✅\` The playlist \`${name}\` has been loaded successfully.`,
                 renamed: ({ name }: IPlaylistName): string => `\`✅\` The playlist has been renamed to \`${name}\`.`,
                 deleted: ({ name }: IPlaylistName): string => `\`✅\` The playlist \`${name}\` has been deleted successfully.`,
+                limitReached: ({ amount }: IAmount): string =>
+                    `\`❌\` You already reached the playlist limit for your account. Maximum allowed: \`${amount}\`.`,
                 noPlaylist: "`❌` **No playlist** was found with this ID.",
                 noTracks: "`❌` **No tracks** were found in this playlist.",
                 list: {

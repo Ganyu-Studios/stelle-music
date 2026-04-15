@@ -190,6 +190,12 @@ export interface StelleConfiguration {
      */
     lyricsLines: number;
     /**
+     * The maximum amount of playlists each user can create.
+     * @type {number}
+     * @default 25
+     */
+    playlistLimit: number;
+    /**
      * The default player volume.
      * @type {number}
      * @default 60

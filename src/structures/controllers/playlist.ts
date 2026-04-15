@@ -107,4 +107,14 @@ export class PlaylistController extends Controller<"userPlaylist"> {
 
         return playlists;
     }
+
+    /**
+     *
+     * Count all playlists owned by a user.
+     * @param {string} userId The user id to count playlists from.
+     * @returns {Promise<number>} The amount of playlists for the user.
+     */
+    public async countByUser(userId: string): Promise<number> {
+        return this.model.count({ where: { userId } });
+    }
 }

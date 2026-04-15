@@ -35,6 +35,8 @@ export default {
                 loaded: ({ name }): string => `\`✅\` La playlist \`${name}\` ha sido cargada correctamente.`,
                 renamed: ({ name }): string => `\`✅\` La playlist fue renombrada a \`${name}\` correctamente.`,
                 deleted: ({ name }): string => `\`✅\` La playlist \`${name}\` ha sido eliminada exitosamente.`,
+                limitReached: ({ amount }): string =>
+                    `\`❌\` Ya alcanzaste el límite de playlists para tu cuenta. Máximo permitido: \`${amount}\`.`,
                 noPlaylist: "`❌` **No se encontró ninguna playlist** con ese ID.",
                 noTracks: "`❌` **No se encontraron canciones** en esta playlist.",
                 list: {
