@@ -29,7 +29,7 @@ export class PlaylistController extends Controller<"userPlaylist"> {
      */
     public async get(playlistId: string, userId: string): Promise<userPlaylist | null> {
         const cached = this.cache.get(CacheKeys.Playlist, playlistId);
-        if (cached) return cached;
+        if (cached && cached.userId === userId) return cached;
 
         const data = await this.model.findUnique({ where: { playlistId, userId } });
         if (data) this.cache.set(CacheKeys.Playlist, playlistId, data);
@@ -77,7 +77,7 @@ export class PlaylistController extends Controller<"userPlaylist"> {
                 create: { userId, ...data },
                 update: data,
             })
-            .then((created) => this.cache.set(CacheKeys.Playlist, created.playlistId, created));
+            .then((created): void => this.cache.set(CacheKeys.Playlist, created.playlistId, created));
     }
 
     /**

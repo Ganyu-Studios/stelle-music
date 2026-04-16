@@ -50,7 +50,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
             await client.messages.write(player.textId, {
                 embeds: [
                     {
-                        color: EmbedColors.Green,
+                        color: client.config.color.success,
                         description: messages.events.is247Enabled,
                     },
                 ],

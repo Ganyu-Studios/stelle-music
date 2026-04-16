@@ -360,11 +360,11 @@ export async function playlistTrackDeleteHandler(
                 });
             }
 
-            let deletedAmount = 0;
+            let amount: number = 0;
 
             for (const index of selection.slice().reverse()) {
                 const [track] = playlist.tracks.splice(index - 1, 1);
-                if (track) deletedAmount += 1;
+                if (track) amount += 1;
             }
 
             await ctx.client.database.playlist.set(ctx.author.id, playlist);
@@ -374,8 +374,8 @@ export async function playlistTrackDeleteHandler(
                 flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
-                        description: messages.commands.playlist.manage.delete.deleted({ amount: deletedAmount }),
-                        color: EmbedColors.Green,
+                        description: messages.commands.playlist.manage.delete.deleted({ amount: amount }),
+                        color: ctx.client.config.color.success,
                     },
                 ],
             });

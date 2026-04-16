@@ -1,4 +1,5 @@
 import type { AutocompleteInteraction, User } from "seyfert";
+import type { userPlaylist } from "#stelle/prisma";
 
 /**
  *
@@ -13,7 +14,21 @@ export async function playlistAutocomplete(interaction: AutocompleteInteraction)
 
     const { messages } = client.t(await client.database.locales.get(interaction.guildId)).get();
 
-    const data = await client.database.playlist.all((playlist) => playlist.userId === user.id || playlist.public);
+    const subCommand: string | null = interaction.options.getSubCommand();
+    const data: userPlaylist[] = [];
+
+    if (subCommand && ["manage", "delete", "rename"].includes(subCommand)) {
+        const array = await client.database.playlist.all(
+            (playlist): boolean => playlist.userId === user.id || (playlist.public && playlist.userId === interaction.user.id),
+        );
+
+        data.push(...array);
+    } else {
+        const array = await client.database.playlist.all((playlist): boolean => playlist.userId === user.id || playlist.public);
+
+        data.push(...array);
+    }
+
     if (!data.length)
         return interaction.respond([
             {

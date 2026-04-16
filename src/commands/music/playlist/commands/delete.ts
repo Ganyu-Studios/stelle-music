@@ -9,6 +9,7 @@ import {
     type WebhookMessageStructure,
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
+import { MessageFlags } from "seyfert/lib/types/index.js";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
 
 const options = {
@@ -40,6 +41,7 @@ export default class DeleteSubcommand extends SubCommand {
         if (!playlist)
             return ctx.editOrReply({
                 content: "",
+                flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
                         description: messages.commands.playlist.noPlaylist,
@@ -54,7 +56,7 @@ export default class DeleteSubcommand extends SubCommand {
             embeds: [
                 {
                     description: messages.commands.playlist.deleted({ name: playlist.playlistName }),
-                    color: EmbedColors.Green,
+                    color: client.config.color.success,
                 },
             ],
         });

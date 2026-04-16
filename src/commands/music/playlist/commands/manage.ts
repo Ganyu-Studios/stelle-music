@@ -57,6 +57,7 @@ export default class ManageSubcommand extends SubCommand {
         if (!playlist)
             return ctx.editOrReply({
                 content: "",
+                flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
                         description: messages.commands.playlist.noPlaylist,

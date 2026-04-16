@@ -40,16 +40,17 @@ export default class ListSubcommand extends SubCommand {
         const isSelf: boolean = !!target && target.id === author.id;
         const isApplicable: boolean = !target || isSelf;
 
-        const playlists = (await client.database.playlist.all())
-            .filter((playlist): boolean => {
+        const playlists = (
+            await client.database.playlist.all((playlist): boolean => {
                 if (isApplicable) return playlist.userId === author.id || playlist.public;
                 return playlist.userId === target?.id && playlist.public;
             })
-            .sort((a, b): number => Number(b.public) - Number(a.public) || b.createdAt.getTime() - a.createdAt.getTime());
+        ).sort((a, b): number => Number(b.public) - Number(a.public) || b.createdAt.getTime() - a.createdAt.getTime());
 
         if (!playlists.length)
             return ctx.editOrReply({
                 content: "",
+                flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
                         description: messages.commands.playlist.noPlaylist,
@@ -93,7 +94,7 @@ export default class ListSubcommand extends SubCommand {
         if (isApplicable)
             return ctx.editOrReply({
                 content: "",
-                flags: isSelf ? MessageFlags.Ephemeral : undefined,
+                flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
                         title: messages.commands.playlist.list.title,
@@ -114,6 +115,7 @@ export default class ListSubcommand extends SubCommand {
 
         return ctx.editOrReply({
             content: "",
+            flags: MessageFlags.Ephemeral,
             embeds: [
                 {
                     title: messages.commands.playlist.list.title,

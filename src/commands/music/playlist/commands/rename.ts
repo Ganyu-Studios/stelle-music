@@ -50,6 +50,7 @@ export default class RenameSubcommand extends SubCommand {
         if (!playlist)
             return ctx.editOrReply({
                 content: "",
+                flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
                         description: messages.commands.playlist.noPlaylist,
@@ -78,7 +79,7 @@ export default class RenameSubcommand extends SubCommand {
             embeds: [
                 {
                     description: messages.commands.playlist.renamed({ name }),
-                    color: EmbedColors.Green,
+                    color: client.config.color.success,
                 },
             ],
         });

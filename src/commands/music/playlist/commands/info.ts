@@ -49,6 +49,7 @@ export default class InfoSubcommand extends SubCommand {
         if (!playlist)
             return ctx.editOrReply({
                 content: "",
+                flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
                         description: messages.commands.playlist.noPlaylist,
@@ -60,6 +61,7 @@ export default class InfoSubcommand extends SubCommand {
         if (!playlist.tracks.length)
             return ctx.editOrReply({
                 content: "",
+                flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
                         description: messages.commands.playlist.noTracks,
