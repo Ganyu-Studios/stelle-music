@@ -53,6 +53,7 @@ export default class DeleteSubcommand extends SubCommand {
         await client.database.playlist.delete(ctx.author.id, id);
         await ctx.editOrReply({
             content: "",
+            flags: MessageFlags.Ephemeral,
             embeds: [
                 {
                     description: messages.commands.playlist.deleted({ name: playlist.playlistName }),

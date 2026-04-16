@@ -1,7 +1,5 @@
 import { exec } from "node:child_process";
 import { promisify } from "node:util";
-import { Formatter } from "seyfert";
-import { TimestampStyle } from "seyfert/lib/common/index.js";
 import type { IBotInfoGitField, Prettify } from "#stelle/types";
 
 /**
@@ -38,12 +36,13 @@ export async function getGitInfo(): Promise<GitInfo | null> {
         commitUrl = `${commitUrl}/commit/${commitHash}`;
 
         const date: Date = new Date(time.trim());
+        const divided: number = Math.floor(date.getTime() / 1e3);
 
         return {
             branch: branch.trim(),
             commit: commitHash.slice(0, 7),
             commitUrl: commitUrl.trim(),
-            time: Formatter.timestamp(date, TimestampStyle.ShortDateMediumTime),
+            time: `<t:${divided}:S>`,
         };
     } catch {
         return null;

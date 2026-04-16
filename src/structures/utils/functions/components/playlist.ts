@@ -374,7 +374,7 @@ export async function playlistTrackDeleteHandler(
                 flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
-                        description: messages.commands.playlist.manage.delete.deleted({ amount: amount }),
+                        description: messages.commands.playlist.manage.delete.deleted({ amount }),
                         color: ctx.client.config.color.success,
                     },
                 ],

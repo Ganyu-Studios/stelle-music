@@ -86,13 +86,18 @@ export default {
                 deleted: ({ name }: IPlaylistName): string => `\`✅\` The playlist \`${name}\` has been deleted successfully.`,
                 limitReached: ({ amount }: IAmount): string =>
                     `\`❌\` You already reached the playlist limit for your account. Maximum allowed: \`${amount}\`.`,
-                noPlaylist: "`❌` **No playlist** was found with this ID.",
+                noPlaylist: "`❌` **No playlists** was found with this ID.",
                 noTracks: "`❌` **No tracks** were found in this playlist.",
                 list: {
                     title: "`📋` Available playlists",
                     noPrivate: "`📭` You don't have private playlists yet.",
                     noPublic: "`📭` There are no public playlists available right now.",
-                    andMore: ({ amount }: IAmount): string => `-# And ${amount} more...`,
+                    embed: {
+                        titles: {
+                            private: "`📚` Private Playlists",
+                            public: "`📚` Public Playlists",
+                        },
+                    },
                 },
                 manage: {
                     title: ({ name }: IPlaylistName): string => `\`🎵\` Managing Playlist: \`${name}\``,

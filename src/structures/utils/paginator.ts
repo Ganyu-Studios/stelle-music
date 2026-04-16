@@ -274,7 +274,7 @@ export class EmbedPaginator {
                 });
             },
             onStop: async (reason): Promise<void> => {
-                const message = this.options.message;
+                const message: MessageStructure | WebhookMessageStructure | null = this.options.message;
                 if (message && reason === "idle" && !hasFlags(message.flags, [MessageFlags.Ephemeral])) {
                     await this.edit({
                         components: updateComponents(message, {
@@ -296,8 +296,10 @@ export class EmbedPaginator {
             if (customId === PaginatorButtonIdentifiers.Previous && this.options.pages > 0) --this.options.pages;
             if (customId === PaginatorButtonIdentifiers.Next && this.options.pages < this.options.embeds.length - 1) ++this.options.pages;
             if (customId === PaginatorButtonIdentifiers.Delete) {
+                const message: MessageStructure | WebhookMessageStructure | null = this.options.message;
+                if (message && !hasFlags(message.flags, [MessageFlags.Ephemeral])) await message.delete().catch((): null => null);
+
                 await interaction.deferUpdate();
-                await this.options.message?.delete().catch((): null => null);
 
                 return collector.stop("deleted");
             }

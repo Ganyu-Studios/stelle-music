@@ -1,6 +1,7 @@
 import {
     createUserOption,
     Declare,
+    Embed,
     type GuildCommandContext,
     type InteractionGuildMember,
     LocalesT,
@@ -12,7 +13,8 @@ import {
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
-import { truncate } from "#stelle/utils/functions/utils.js";
+import { chunk, truncate } from "#stelle/utils/functions/utils.js";
+import { EmbedPaginator } from "#stelle/utils/paginator.js";
 
 const options = {
     user: createUserOption({
@@ -59,75 +61,56 @@ export default class ListSubcommand extends SubCommand {
                 ],
             });
 
-        const limit = 10;
-
-        const privatePlaylists = isApplicable
-            ? playlists.filter((playlist): boolean => playlist.userId === author.id && !playlist.public)
-            : [];
-
-        const publicPlaylists = isApplicable
-            ? playlists.filter((playlist): boolean => playlist.public)
-            : playlists.filter((playlist): boolean => playlist.userId === target?.id && playlist.public);
+        const limit: number = 20;
+        const privatePlaylists = playlists.filter((playlist): boolean => isApplicable && playlist.userId === author.id && !playlist.public);
+        const publicPlaylists = playlists.filter((playlist): boolean => playlist.public);
 
         const timestamp = (date: Date): number => Math.floor(date.getTime() / 1e3);
 
-        const privateLines: string[] = privatePlaylists
-            .slice(0, limit)
-            .map(
-                (playlist): string =>
-                    `• \`${playlist.playlistId}\` - **${truncate(playlist.playlistName, 33)}** | \`${playlist.tracks.length}\` tracks | <t:${timestamp(playlist.createdAt)}:R>`,
-            );
+        const formatPrivatePlaylist = (playlist: (typeof privatePlaylists)[number]): string =>
+            `• \`${playlist.playlistId}\` - **${truncate(playlist.playlistName, 28)}** | \`${playlist.tracks.length}\` tracks | <t:${timestamp(playlist.createdAt)}:R>`;
 
-        if (privatePlaylists.length > limit)
-            privateLines.push(messages.commands.playlist.list.andMore({ amount: privatePlaylists.length - limit }));
+        const formatPublicPlaylist = (playlist: (typeof publicPlaylists)[number]): string =>
+            `• \`${playlist.playlistId}\` - **${truncate(playlist.playlistName, 28)}** | <@${playlist.userId}> | \`${playlist.tracks.length}\` tracks | <t:${timestamp(playlist.createdAt)}:R>`;
 
-        const publicLines: string[] = publicPlaylists
-            .slice(0, limit)
-            .map(
-                (playlist): string =>
-                    `• \`${playlist.playlistId}\` - **${truncate(playlist.playlistName, 33)}** | <@${playlist.userId}> | \`${playlist.tracks.length}\` tracks | <t:${timestamp(playlist.createdAt)}:R>`,
-            );
+        const privatePages: string[][] = chunk(privatePlaylists.map(formatPrivatePlaylist), limit);
+        const publicPages: string[][] = chunk(publicPlaylists.map(formatPublicPlaylist), limit);
+        const length: number = Math.max(privatePages.length, publicPages.length);
 
-        if (publicPlaylists.length > limit)
-            publicLines.push(messages.commands.playlist.list.andMore({ amount: publicPlaylists.length - limit }));
+        const embeds: Embed[] = Array.from({ length }, (_, page: number): Embed => {
+            const sections: string[] = [];
 
-        if (isApplicable)
+            if (isApplicable) {
+                const privatePage: string[] = privatePages[page] ?? [];
+                if (privatePage.length)
+                    sections.push(
+                        `### ${messages.commands.playlist.list.embed.titles.private} (${privatePlaylists.length})`,
+                        privatePage.join("\n"),
+                    );
+            }
+
+            const publicPage: string[] = publicPages[page] ?? [];
+            if (publicPage.length)
+                sections.push(
+                    `### ${messages.commands.playlist.list.embed.titles.public} (${publicPlaylists.length})`,
+                    publicPage.join("\n"),
+                );
+
+            return new Embed()
+                .setTitle(messages.commands.playlist.list.title)
+                .setColor(client.config.color.extra)
+                .setDescription(sections.join("\n\n"));
+        });
+
+        if (!embeds.length || embeds.length === 1)
             return ctx.editOrReply({
                 content: "",
                 flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        title: messages.commands.playlist.list.title,
-                        color: client.config.color.extra,
-                        fields: [
-                            {
-                                name: `${messages.commands.playlist.state.private} (${privatePlaylists.length})`,
-                                value: privateLines.join("\n") || messages.commands.playlist.list.noPrivate,
-                            },
-                            {
-                                name: `${messages.commands.playlist.state.public} (${publicPlaylists.length})`,
-                                value: publicLines.join("\n") || messages.commands.playlist.list.noPublic,
-                            },
-                        ],
-                    },
-                ],
+                embeds: [embeds[0]],
             });
 
-        return ctx.editOrReply({
-            content: "",
-            flags: MessageFlags.Ephemeral,
-            embeds: [
-                {
-                    title: messages.commands.playlist.list.title,
-                    color: client.config.color.extra,
-                    fields: [
-                        {
-                            name: `${messages.commands.playlist.state.public} (${publicPlaylists.length})`,
-                            value: publicLines.join("\n") || messages.commands.playlist.list.noPublic,
-                        },
-                    ],
-                },
-            ],
-        });
+        const paginator: EmbedPaginator = new EmbedPaginator({ ctx, embeds });
+
+        await paginator.reply({ ephemeral: true });
     }
 }

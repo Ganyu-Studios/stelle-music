@@ -37,13 +37,18 @@ export default {
                 deleted: ({ name }): string => `\`✅\` La playlist \`${name}\` ha sido eliminada exitosamente.`,
                 limitReached: ({ amount }): string =>
                     `\`❌\` Ya alcanzaste el límite de playlists para tu cuenta. Máximo permitido: \`${amount}\`.`,
-                noPlaylist: "`❌` **No se encontró ninguna playlist** con ese ID.",
+                noPlaylist: "`❌` **No se encontraron playlists** con ese ID.",
                 noTracks: "`❌` **No se encontraron canciones** en esta playlist.",
                 list: {
                     title: "`📋` Playlists disponibles",
                     noPrivate: "`📭` Aún no tienes playlists privadas.",
                     noPublic: "`📭` No hay playlists públicas disponibles por ahora.",
-                    andMore: ({ amount }) => `-# Y ${amount} más...`,
+                    embed: {
+                        titles: {
+                            private: "`📚` Playlists Privadas",
+                            public: "`📚` Playlists Públicas",
+                        },
+                    },
                 },
                 manage: {
                     title: ({ name }): string => `\`🎵\` Gestionando Playlist: \`${name}\``,

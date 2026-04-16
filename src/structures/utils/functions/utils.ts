@@ -277,6 +277,16 @@ export const createId = (options: CreateIdOptions = {}): string => {
 };
 
 /**
+ *
+ * Split an array into chunks of a specified size.
+ * @param {T[]} items The array of items to split into chunks.
+ * @param {number} size The size of each chunk.
+ * @returns {T[][]} An array of chunks, where each chunk is an array of items.
+ */
+export const chunk = <T>(items: T[], size: number): T[][] =>
+    Array.from({ length: Math.ceil(items.length / size) }, (_, i): T[] => items.slice(i * size, i * size + size));
+
+/**
  * Cleanup function to gracefully shut down the client.
  * @param client {UsingClient} The client instance.
  * @returns {void} Aishite, aishite, motto, motto

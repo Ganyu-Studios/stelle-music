@@ -15,19 +15,12 @@ export async function playlistAutocomplete(interaction: AutocompleteInteraction)
     const { messages } = client.t(await client.database.locales.get(interaction.guildId)).get();
 
     const subCommand: string | null = interaction.options.getSubCommand();
-    const data: userPlaylist[] = [];
+    const isManageable: boolean = !!(subCommand && ["manage", "delete", "rename"].includes(subCommand));
 
-    if (subCommand && ["manage", "delete", "rename"].includes(subCommand)) {
-        const array = await client.database.playlist.all(
-            (playlist): boolean => playlist.userId === user.id || (playlist.public && playlist.userId === interaction.user.id),
-        );
-
-        data.push(...array);
-    } else {
-        const array = await client.database.playlist.all((playlist): boolean => playlist.userId === user.id || playlist.public);
-
-        data.push(...array);
-    }
+    const data: userPlaylist[] = await client.database.playlist.all(
+        (playlist): boolean =>
+            playlist.userId === user.id || (playlist.public && (!isManageable || playlist.userId === interaction.user.id)),
+    );
 
     if (!data.length)
         return interaction.respond([
