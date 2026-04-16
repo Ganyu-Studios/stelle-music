@@ -1,4 +1,4 @@
-import type { PlayerStructure, TrackStructure } from "hoshimi";
+import type { NodeStructure, TrackStructure } from "hoshimi";
 import {
     createStringOption,
     Declare,
@@ -68,22 +68,11 @@ export default class InfoSubcommand extends SubCommand {
                 ],
             });
 
+        const limit: number = 20;
+
         const guild: Guild<"cached" | "api"> = await ctx.guild();
-
-        const player: PlayerStructure | undefined = client.manager.getPlayer(guild.id);
-        if (!player)
-            return ctx.editOrReply({
-                content: "",
-                embeds: [
-                    {
-                        description: messages.events.noPlayer,
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
-
-        const limit = 20;
-        const tracks: string[] = await player.node.decode
+        const node: NodeStructure = client.manager.nodeManager.getLeastUsed();
+        const tracks: string[] = await node.decode
             .multiple(
                 playlist.tracks.map((t): string => t.encoded),
                 {} as TrackUser,
