@@ -87,7 +87,9 @@ export class Cache {
      * @returns {CacheMap[T][]} An array of all cached data for the key.
      */
     public all<T extends CacheKeys = CacheKeys>(key: T, filter?: FilterMap<T>): CacheMap[T][] {
-        const values = [...this.internal.values()].map((collection): unknown => collection.value.get(key)) as CacheMap[T][];
+        const values = [...this.internal.values()]
+            .map((collection): unknown => collection.value.get(key))
+            .filter((v): v is CacheMap[T] => !!v);
 
         if (filter) return values.filter(filter);
 

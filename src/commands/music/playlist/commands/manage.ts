@@ -26,7 +26,7 @@ import {
     playlistVisibilityToggleHandler,
 } from "#stelle/utils/functions/components/playlist.js";
 import { ms } from "#stelle/utils/functions/time.js";
-import { updateComponents } from "#stelle/utils/functions/utils.js";
+import { hasFlags, updateComponents } from "#stelle/utils/functions/utils.js";
 
 const options = {
     id: createStringOption({
@@ -72,7 +72,7 @@ export default class ManageSubcommand extends SubCommand {
          * @returns {string} The visibility of the playlist.
          */
         const getVisibility = (isPublic: boolean): string => {
-            const type = isPublic ? "public" : "private";
+            const type: "public" | "private" = isPublic ? "public" : "private";
             return messages.commands.playlist.state[type];
         };
 
@@ -147,7 +147,9 @@ export default class ManageSubcommand extends SubCommand {
                 });
             },
             onStop: async (reason): Promise<void> => {
-                if (reason === "idle") await message.edit({ components: updateComponents(message, { disabled: true }) });
+                if (reason === "idle" && !hasFlags(message.flags, [MessageFlags.Ephemeral])) {
+                    await message.edit({ components: updateComponents(message, { disabled: true }) });
+                }
             },
         });
 

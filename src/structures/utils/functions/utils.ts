@@ -362,3 +362,12 @@ export const customImport = <T>(path: string): Promise<T> =>
  * @returns {Promise<void>} A promise that resolves after the specified time.
  */
 export const wait = (ms: number): Promise<void> => new Promise((resolve): NodeJS.Timeout => setTimeout(resolve, ms));
+
+/**
+ *
+ * Check if the flags include the check flags.
+ * @param {number} flags The flags to check.
+ * @param {number} check The flags to check for.
+ * @returns {boolean} True if the flags include the checkFlags.
+ */
+export const hasFlags = (flags: number = 0, check: number[]): boolean => check.every((flag) => (flags & flag) === flag);

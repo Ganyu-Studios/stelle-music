@@ -13,8 +13,8 @@ export async function playlistAutocomplete(interaction: AutocompleteInteraction)
 
     const { messages } = client.t(await client.database.locales.get(interaction.guildId)).get();
 
-    const data = await client.database.playlist.all();
-    if (!data?.length)
+    const data = await client.database.playlist.all((playlist) => playlist.userId === user.id || playlist.public);
+    if (!data.length)
         return interaction.respond([
             {
                 name: messages.events.autocomplete.noPlaylist,
@@ -35,7 +35,6 @@ export async function playlistAutocomplete(interaction: AutocompleteInteraction)
 
     const playlists = await Promise.all(
         data
-            .filter((playlist) => playlist.userId === user.id || playlist.public)
             .sort((a, b) => (a.public === b.public ? 0 : a.public ? -1 : 1))
             .map(async (playlist) => {
                 const author: User = await client.users.fetch(playlist.userId);
