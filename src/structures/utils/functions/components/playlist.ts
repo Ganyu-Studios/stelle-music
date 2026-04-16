@@ -1,4 +1,4 @@
-import type { PlayerStructure, TrackStructure } from "hoshimi";
+import type { NodeStructure, TrackStructure } from "hoshimi";
 import {
     ActionRow,
     Button,
@@ -396,23 +396,11 @@ export async function playlistInfoHandler(ctx: CommandContext, interaction: Butt
 
     const { messages } = await ctx.locale();
 
+    const limit: number = 20;
+
     const guild: Guild<"cached" | "api"> = await ctx.guild();
-
-    const player: PlayerStructure | undefined = ctx.client.manager.getPlayer(guild.id);
-    if (!player)
-        return interaction.editOrReply({
-            content: "",
-            flags: MessageFlags.Ephemeral,
-            embeds: [
-                {
-                    description: messages.events.noPlayer,
-                    color: EmbedColors.Red,
-                },
-            ],
-        });
-
-    const limit = 20;
-    const tracks: string[] = await player.node.decode
+    const node: NodeStructure = ctx.client.manager.nodeManager.getLeastUsed();
+    const tracks: string[] = await node.decode
         .multiple(
             playlist.tracks.map((t): string => t.encoded),
             {} as TrackUser,
