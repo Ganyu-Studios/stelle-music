@@ -1,6 +1,7 @@
 import type { NodeStructure, TrackStructure } from "hoshimi";
 import {
     ActionRow,
+    type AllGuildVoiceChannels,
     Button,
     type ButtonInteraction,
     type CommandContext,
@@ -193,7 +194,7 @@ export async function playlistLoadHandler(ctx: CommandContext, interaction: Butt
             ],
         });
 
-    const voice = await state.channel().catch((): null => null);
+    const voice: AllGuildVoiceChannels | null | undefined = await state.channel().catch((): null => null);
     if (!voice)
         return interaction.editOrReply({
             content: "",
