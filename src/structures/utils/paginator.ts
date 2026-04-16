@@ -297,7 +297,7 @@ export class EmbedPaginator {
             if (customId === PaginatorButtonIdentifiers.Delete) {
                 await interaction.deferUpdate();
 
-                return collector.stop("deleted");
+                return collector.stop();
             }
 
             await interaction.deferUpdate();
