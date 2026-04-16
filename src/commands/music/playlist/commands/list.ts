@@ -83,21 +83,15 @@ export default class ListSubcommand extends SubCommand {
             if (isApplicable) {
                 const privatePage: string[] = privatePages[page] ?? [];
                 if (privatePage.length)
-                    sections.push(
-                        `### ${messages.commands.playlist.list.embed.titles.private} (${privatePlaylists.length})`,
-                        privatePage.join("\n"),
-                    );
+                    sections.push(`### ${messages.commands.playlist.list.private} (${privatePlaylists.length})`, privatePage.join("\n"));
             }
 
             const publicPage: string[] = publicPages[page] ?? [];
             if (publicPage.length)
-                sections.push(
-                    `### ${messages.commands.playlist.list.embed.titles.public} (${publicPlaylists.length})`,
-                    publicPage.join("\n"),
-                );
+                sections.push(`### ${messages.commands.playlist.list.public} (${publicPlaylists.length})`, publicPage.join("\n"));
 
             return new Embed()
-                .setTitle(messages.commands.playlist.list.title)
+                .setTitle(messages.commands.playlist.list.available)
                 .setColor(client.config.color.extra)
                 .setDescription(sections.join("\n\n"));
         });

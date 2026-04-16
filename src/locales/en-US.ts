@@ -86,18 +86,12 @@ export default {
                 deleted: ({ name }: IPlaylistName): string => `\`✅\` The playlist \`${name}\` has been deleted successfully.`,
                 limitReached: ({ amount }: IAmount): string =>
                     `\`❌\` You already reached the playlist limit for your account. Maximum allowed: \`${amount}\`.`,
-                noPlaylist: "`❌` **No playlists** was found with this ID.",
+                noPlaylist: "`❌` **No playlists** were found with this query.",
                 noTracks: "`❌` **No tracks** were found in this playlist.",
                 list: {
-                    title: "`📋` Available playlists",
-                    noPrivate: "`📭` You don't have private playlists yet.",
-                    noPublic: "`📭` There are no public playlists available right now.",
-                    embed: {
-                        titles: {
-                            private: "`📚` Private Playlists",
-                            public: "`📚` Public Playlists",
-                        },
-                    },
+                    available: "`📋` Available playlists",
+                    private: "`📚` Private Playlists",
+                    public: "`📚` Public Playlists",
                 },
                 manage: {
                     title: ({ name }: IPlaylistName): string => `\`🎵\` Managing Playlist: \`${name}\``,
@@ -115,13 +109,13 @@ export default {
                         load: "Load",
                     },
                     delete: {
-                        description:
-                            "`📢` Enter the track numbers you want to delete.\n`📌` Use commas, ranges, or wildcard ranges like `1, 3, 5-7, 11-*`.\n`⚠️` Use the Info button if you want to review the full list first.",
-                        invalidSelection: "`❌` The selection you entered is invalid. Use track numbers or ranges like `1, 3-5, 11-*`.",
                         outOfRange: ({ tracks }: { tracks: number }): string =>
                             `\`❌\` One or more track numbers are outside the current playlist. It only has \`${tracks} tracks\`.`,
                         deleted: ({ amount }: IPlaylistDelete): string =>
                             `\`✅\` Successfully deleted **${amount} track(s)** from your playlist.`,
+                        description:
+                            "`📢` Enter the track numbers you want to delete.\n`📌` Use commas, ranges, or wildcard ranges like `1, 3, 5-7, 11-*`.\n`⚠️` Use the Info button if you want to review the full list first.",
+                        invalidSelection: "`❌` The selection you entered is invalid. Use track numbers or ranges like `1, 3-5, 11-*`.",
                         modal: {
                             title: "Delete tracks",
                             label: {
@@ -182,19 +176,19 @@ export default {
                     repository: "Github Repository",
                     fields: {
                         info: {
-                            name: "`📋` Info",
                             value: ({ guilds, users, players }: IBotInfoGeneralField): string =>
                                 `\`📦\` Guilds: \`${guilds}\`\n\`👤\` Users: \`${users}\`\n\`🎤\` Players: \`${players}\``,
+                            name: "`📋` Info",
                         },
                         system: {
-                            name: "`📋` System",
                             value: ({ memory, uptime, version }: IBotInfoSystemField): string =>
                                 `\`🧠\` Memory: \`${memory}\`\n\`📜\` Version: \`v${version}\`\n\`🕛\` Uptime: <t:${uptime}:R>`,
+                            name: "`📋` System",
                         },
                         git: {
-                            name: "`📋` Git",
                             value: ({ branch, commit, time, commitUrl }: IBotInfoGitField): string =>
                                 `\`🌳\` Branch: \`${branch}\`\n\`📦\` Commit: [\`${commit}\`](${commitUrl})\n\`⏱️\` Time: ${time}`,
+                            name: "`📋` Git",
                         },
                     },
                 },
@@ -421,17 +415,10 @@ export default {
                     BypassSlowmode: "Bypass Slowmode",
                     PinMessages: "Pin Messages",
                 } satisfies Record<PermissionNames, string>,
-                user: {
-                    description: "`📢` Hey! You are missing some permissions to use this.",
-                    field: "`📋` Missing Permissions",
-                },
-                bot: {
-                    description: "`📢` Hey! I'm missing some permissions to do this.",
-                    field: "`📋` Missing Permissions",
-                },
-                channel: {
-                    description: ({ channelId }: IChannel): string =>
+                embed: {
+                    channel: ({ channelId }: IChannel): string =>
                         `\`📢\` Hey! I'm missing some permissions in the channel. <#${channelId}>`,
+                    description: "`📢` Hey! You are missing some permissions to use this.",
                     field: "`📋` Missing Permissions",
                 },
             },

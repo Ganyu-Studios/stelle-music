@@ -78,11 +78,11 @@ export async function onPermissionsFail(
         flags: MessageFlags.Ephemeral,
         embeds: [
             {
-                description: messages.events.permissions.user.description,
+                description: messages.events.permissions.embed.description,
                 color: EmbedColors.Red,
                 fields: [
                     {
-                        name: messages.events.permissions.user.field,
+                        name: messages.events.permissions.embed.field,
                         value: keys.map((p): string => `- ${messages.events.permissions.list[p]}`).join("\n"),
                     },
                 ],
@@ -111,11 +111,11 @@ export async function onBotPermissionsFail(
         flags: MessageFlags.Ephemeral,
         embeds: [
             {
-                description: messages.events.permissions.bot.description,
+                description: messages.events.permissions.embed.description,
                 color: EmbedColors.Red,
                 fields: [
                     {
-                        name: messages.events.permissions.bot.field,
+                        name: messages.events.permissions.embed.field,
                         value: keys.map((p): string => `- ${messages.events.permissions.list[p]}`).join("\n"),
                     },
                 ],

@@ -37,18 +37,12 @@ export default {
                 deleted: ({ name }): string => `\`✅\` La playlist \`${name}\` ha sido eliminada exitosamente.`,
                 limitReached: ({ amount }): string =>
                     `\`❌\` Ya alcanzaste el límite de playlists para tu cuenta. Máximo permitido: \`${amount}\`.`,
-                noPlaylist: "`❌` **No se encontraron playlists** con ese ID.",
+                noPlaylist: "`❌` **No se encontraron playlists** con ese query.",
                 noTracks: "`❌` **No se encontraron canciones** en esta playlist.",
                 list: {
-                    title: "`📋` Playlists disponibles",
-                    noPrivate: "`📭` Aún no tienes playlists privadas.",
-                    noPublic: "`📭` No hay playlists públicas disponibles por ahora.",
-                    embed: {
-                        titles: {
-                            private: "`📚` Playlists Privadas",
-                            public: "`📚` Playlists Públicas",
-                        },
-                    },
+                    available: "`📋` Playlists disponibles",
+                    private: "`📚` Playlists Privadas",
+                    public: "`📚` Playlists Públicas",
                 },
                 manage: {
                     title: ({ name }): string => `\`🎵\` Gestionando Playlist: \`${name}\``,
@@ -66,13 +60,13 @@ export default {
                         load: "Cargar",
                     },
                     delete: {
+                        outOfRange: ({ tracks }): string =>
+                            `\`❌\` Uno o más números de canción están fuera de la playlist actual. Solo tiene \`${tracks} canciones\`.`,
+                        deleted: ({ amount }): string => `\`✅\` Se eliminaron exitosamente **${amount} canción(es)** de tu playlist.`,
                         description:
                             "`📢` Introduce los números de las canciones que quieres eliminar.\n`📌` Usa comas, rangos o rangos con comodín como `1, 3, 5-7, 11-*`.\n`⚠️` Usa el botón de Info si quieres revisar la lista completa primero.",
                         invalidSelection:
                             "`❌` La selección que ingresaste no es válida. Usa números de canción o rangos como `1, 3-5, 11-*`.",
-                        outOfRange: ({ tracks }): string =>
-                            `\`❌\` Uno o más números de canción están fuera de la playlist actual. Solo tiene \`${tracks} canciones\`.`,
-                        deleted: ({ amount }): string => `\`✅\` Se eliminaron exitosamente **${amount} canción(es)** de tu playlist.`,
                         modal: {
                             title: "Eliminar canciones",
                             label: {
@@ -131,28 +125,28 @@ export default {
                     repository: "Repositorio de Github",
                     fields: {
                         info: {
-                            name: "`📋` Info",
                             value: ({ guilds, users, players }): string =>
                                 `\`📦\` Servidores: \`${guilds}\`\n\`👤\` Usuarios: \`${users}\`\n\`🎤\` Reproductores: \`${players}\``,
+                            name: "`📋` Info",
                         },
                         system: {
-                            name: "`📋` Sistema",
                             value: ({ memory, uptime, version }): string =>
                                 `\`🧠\` Memoria: \`${memory}\`\n\`📜\` Version: \`v${version}\`\n\`🕛\` Tiempo de Encendido: <t:${uptime}:R>`,
+                            name: "`📋` Sistema",
                         },
                         git: {
-                            name: "`📋` Git",
                             value: ({ branch, commit, time, commitUrl }): string =>
                                 `\`🌳\` Rama: \`${branch}\`\n\`📦\` Commit: [\`${commit}\`](${commitUrl})\n\`⏱️\` Tiempo: ${time}`,
+                            name: "`📋` Git",
                         },
                     },
                 },
             },
             help: {
-                noCommand: "`❌` **No se encontró** ningún comando para esta búsqueda...",
                 title: ({ clientName }): string => `${clientName} - Menú de Ayuda`,
                 description: ({ defaultPrefix }): string =>
                     `\`📦\` ¡Hola! Aquí está la información sobre mis comandos y cosas.\n\`📜\` Selecciona la categoría de comando de tu elección.\n\n-# Puedes buscar un comando específico escribiendo: \`${defaultPrefix} help <comando>\``,
+                noCommand: "`❌` **No se encontró** ningún comando para esta búsqueda...",
                 selectMenu: {
                     description: ({ category }): string => `Selecciona la categoría ${category}.`,
                     placeholder: "Selecciona una categoría de comando.",
@@ -179,9 +173,9 @@ export default {
                 newLocale: ({ locale }): string => `\`✅\` El idioma de **Stelle** ahora es: \`${locale}\``,
             },
             ping: {
-                message: "`🪶` Calculando...",
                 response: ({ wsPing, clientPing, shardPing, shardId }): string =>
                     `\`🌐\` Pong! (**Cliente**: \`${wsPing}ms\` - **API**: \`${clientPing}ms\` - **Fragmento (${shardId})**: \`${shardPing}ms\`)`,
+                message: "`🪶` Calculando...",
             },
             play: {
                 undetermined: "Indeterminado",
@@ -367,16 +361,9 @@ export default {
                     BypassSlowmode: "Omitir Modo Lento",
                     PinMessages: "Fijar Mensajes",
                 },
-                user: {
+                embed: {
+                    channel: ({ channelId }): string => `\`📢\` ¡Oye! Me faltan algunos permisos en el canal: <#${channelId}>`,
                     description: "`📢` ¡Oye! Te faltan algunos permisos para hacer esto.",
-                    field: "`📋` Permisos Faltantes",
-                },
-                bot: {
-                    description: "`📢` ¡Oye! Me faltan algunos permisos para hacer esto.",
-                    field: "`📋` Permisos Faltantes",
-                },
-                channel: {
-                    description: ({ channelId }): string => `\`📢\` ¡Oye! Me faltan algunos permisos en el canal: <#${channelId}>`,
                     field: "`📋` Permisos Faltantes",
                 },
             },

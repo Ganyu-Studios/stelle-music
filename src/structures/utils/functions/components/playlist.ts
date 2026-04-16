@@ -231,13 +231,13 @@ export async function playlistLoadHandler(ctx: CommandContext, interaction: Butt
             flags: MessageFlags.Ephemeral,
             embeds: [
                 {
-                    description: messages.events.permissions.channel.description({
+                    description: messages.events.permissions.embed.channel({
                         channelId: voice.id,
                     }),
                     color: EmbedColors.Red,
                     fields: [
                         {
-                            name: messages.events.permissions.user.field,
+                            name: messages.events.permissions.embed.field,
                             value: keys.map((p): string => `- ${messages.events.permissions.list[p]}`).join("\n"),
                         },
                     ],
