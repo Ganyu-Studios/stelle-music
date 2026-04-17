@@ -40,7 +40,7 @@ const options = {
 
             if (!(guildId && member)) return interaction.respond([{ name: t.messages.events.autocomplete.noGuild, value: "noGuild" }]);
 
-            const { searchPlatform } = await client.database.players.get(guildId);
+            const { searchPlatform: source } = await client.database.players.get(guildId);
             const { messages } = client.t(await client.database.locales.get(guildId)).get();
 
             if (!client.manager.isUseable()) return interaction.respond([{ name: messages.events.autocomplete.noNodes, value: "noNodes" }]);
@@ -54,7 +54,7 @@ const options = {
                     { name: messages.events.autocomplete.noQuery, value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT" },
                 ]);
 
-            const { tracks }: QueryResult = await client.manager.search({ query, source: searchPlatform });
+            const { tracks }: QueryResult = await client.manager.search({ query, source, requester: null });
 
             if (!tracks.length) return interaction.respond([{ name: messages.events.autocomplete.noTracks, value: "noTracks" }]);
 
