@@ -124,7 +124,7 @@ export function parseDiscordWebhook(url: string): WebhookMetadata | null {
  * @param {unknown} requester The requester user.
  * @returns {StelleUser} The transformed user.
  */
-export const requesterFn = <T extends TrackRequester = TrackRequester>(requester: TrackRequester): T => {
+export const requesterFn = <T = TrackRequester>(requester: TrackRequester): T => {
     if (requester instanceof User)
         return {
             ...omitKeys(requester as User & Record<string, unknown>, [

@@ -38,7 +38,7 @@ export async function connectListener(client: UsingClient, node: NodeStructure):
                     });
 
                     await player.connect();
-                    await player.queue.utils.sync(false, true);
+                    await player.queue.utils.sync({ override: false, syncCurrent: true });
 
                     if (track)
                         await player.play({

@@ -1,4 +1,4 @@
-import type { NodeJson, PlayerJson } from "hoshimi";
+import type { NodeJSON, PlayerJSON } from "hoshimi";
 import type { Command, ContextMenuCommand, SubCommand, User } from "seyfert";
 import type { EmojiResolvable } from "seyfert/lib/common/index.js";
 import type { ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
@@ -164,14 +164,14 @@ export type TrackUser = Omit<
  * The type of the player session.
  */
 export interface StellePlayerJson
-    extends Omit<PlayerJson, "ping" | "createdTimestamp" | "lastPositionUpdate" | "paused" | "playing" | "queue" | "filters" | "node"> {
+    extends Omit<PlayerJSON, "ping" | "createdTimestamp" | "lastPositionUpdate" | "paused" | "playing" | "queue" | "filters" | "node"> {
     node: NonOptionsNode;
 }
 
 /**
  * The type of the node without options, since the options are not serializable and not needed in the session.
  */
-export type NonOptionsNode = Omit<NodeJson, "options">;
+export type NonOptionsNode = Omit<NodeJSON, "options">;
 
 /**
  * The type of the session.

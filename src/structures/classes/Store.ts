@@ -1,5 +1,5 @@
 import type { RedisClientType } from "@redis/client";
-import { type QueueJson, QueueStorageAdapter, type RestOrArray } from "hoshimi";
+import { type QueueJSON, QueueStorageAdapter, type RestOrArray } from "hoshimi";
 import { Constants } from "#stelle/utils/data/constants.js";
 
 /**
@@ -27,13 +27,13 @@ export class RedisQueueStore extends QueueStorageAdapter {
         this.redis = redis;
     }
 
-    override async get(key: string): Promise<QueueJson | undefined> {
+    override async get(key: string): Promise<QueueJSON | undefined> {
         const data: string | null = await this.redis.get(this.buildKey(this.namespace, key));
         if (!data) return undefined;
 
         return this.parse(data);
     }
-    override async set(key: string, value: QueueJson): Promise<void> {
+    override async set(key: string, value: QueueJSON): Promise<void> {
         await this.redis.set(this.buildKey(this.namespace, key), this.stringify(value));
     }
 
@@ -51,10 +51,10 @@ export class RedisQueueStore extends QueueStorageAdapter {
         return result > 0;
     }
 
-    override parse(value: unknown): QueueJson {
+    override parse(value: unknown): QueueJSON {
         if ((typeof value === "string" && !value.length) || (typeof value === "object" && value && !Object.keys(value).length))
-            return {} as QueueJson;
-        return typeof value === "string" ? JSON.parse(value) : (value as QueueJson);
+            return {} as QueueJSON;
+        return typeof value === "string" ? JSON.parse(value) : (value as QueueJSON);
     }
 
     override stringify<R = string>(value: unknown): R {

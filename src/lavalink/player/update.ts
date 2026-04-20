@@ -1,4 +1,4 @@
-import type { PlayerJson } from "hoshimi";
+import type { PlayerJSON } from "hoshimi";
 import { EventNames } from "hoshimi";
 import type { NonOptionsNode, SessionJson, TrackUser } from "#stelle/types";
 import { Constants } from "#stelle/utils/data/constants.js";
@@ -11,7 +11,7 @@ export default createLavalinkEvent({
     async run(client, newPlayer, oldPlayer): Promise<void> {
         if (!client.config.sessions.enabled) return;
 
-        const newPlayerJson: PlayerJson = newPlayer.toJSON();
+        const newPlayerJson: PlayerJSON = newPlayer.toJSON();
 
         if (
             !oldPlayer ||
