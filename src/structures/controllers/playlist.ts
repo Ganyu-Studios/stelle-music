@@ -100,7 +100,7 @@ export class PlaylistController extends Controller<"userPlaylist"> {
      */
     public async all(filter?: PlaylistFilter): Promise<userPlaylist[]> {
         const cached = this.cache.all(CacheKeys.Playlist, filter);
-        if (cached.length) return Promise.resolve(cached);
+        if (cached.length) return cached;
 
         const playlists = await this.model.findMany();
         if (filter) return playlists.filter(filter);
@@ -115,6 +115,9 @@ export class PlaylistController extends Controller<"userPlaylist"> {
      * @returns {Promise<number>} The amount of playlists for the user.
      */
     public async countByUser(userId: string): Promise<number> {
+        const cached = this.cache.all(CacheKeys.Playlist, (p) => p.userId === userId);
+        if (cached.length) return cached.length;
+
         return this.model.count({ where: { userId } });
     }
 }

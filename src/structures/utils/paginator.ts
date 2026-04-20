@@ -296,6 +296,9 @@ export class EmbedPaginator {
             if (customId === PaginatorButtonIdentifiers.Next && this.options.pages < this.options.embeds.length - 1) ++this.options.pages;
             if (customId === PaginatorButtonIdentifiers.Delete) {
                 await interaction.deferUpdate();
+                await this.options.message?.delete().catch((): null => null);
+
+                this.options.message = null;
 
                 return collector.stop();
             }

@@ -51,7 +51,7 @@ export default class CreateSubCommand extends SubCommand {
             });
 
         const userPlaylistAmount: number = await client.database.playlist.countByUser(author.id);
-        const playlistLimit: number = client.config.playlistLimit;
+        const playlistLimit: number = client.config.playlists.limit;
 
         if (userPlaylistAmount >= playlistLimit)
             return ctx.editOrReply({

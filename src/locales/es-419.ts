@@ -37,6 +37,8 @@ export default {
                 deleted: ({ name }): string => `\`✅\` La playlist \`${name}\` ha sido eliminada exitosamente.`,
                 limitReached: ({ amount }): string =>
                     `\`❌\` Ya alcanzaste el límite de playlists para tu cuenta. Máximo permitido: \`${amount}\`.`,
+                trackLimit: ({ amount }): string =>
+                    `\`❌\` No puedes agregar más canciones a esta playlist. Máximo de canciones permitidas: \`${amount}\`.`,
                 noPlaylist: "`❌` **No se encontraron playlists** con ese query.",
                 noTracks: "`❌` **No se encontraron canciones** en esta playlist.",
                 list: {

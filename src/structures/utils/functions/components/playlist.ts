@@ -41,6 +41,21 @@ export { SaveType } from "./playlist/save.js";
 export async function playlistTrackSaveHandler(ctx: CommandContext, interaction: ButtonInteraction, playlist: userPlaylist): Promise<void> {
     const { messages } = await ctx.locale();
 
+    const userTrackAmount: number = playlist.tracks.length;
+    const trackLimit: number = ctx.client.config.playlists.trackLimit;
+
+    if (userTrackAmount >= trackLimit)
+        return interaction.editOrReply({
+            content: "",
+            flags: MessageFlags.Ephemeral,
+            embeds: [
+                {
+                    description: messages.commands.playlist.trackLimit({ amount: trackLimit }),
+                    color: EmbedColors.Red,
+                },
+            ],
+        });
+
     const embed = new Embed().setColor(EmbedColors.White).setDescription(messages.commands.playlist.manage.save.description).setTimestamp();
 
     const row: ActionRow<Button> = new ActionRow<Button>().addComponents(

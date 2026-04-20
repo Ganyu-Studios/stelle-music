@@ -11,7 +11,6 @@ export default createConfig({
     defaultSearchSource: SearchSources.Spotify,
     defaultVolume: 60,
     lyricsLines: 10,
-    playlistLimit: 25,
     disconnectTime: ms("30s"),
     inviteLink:
         "https://discord.com/oauth2/authorize?client_id=1241085977544359968&permissions=36793408&integration_type=0&scope=bot+applications.commands",
@@ -69,5 +68,9 @@ export default createConfig({
     twentyfourseven: {
         autoPause: true,
         is247: false,
+    },
+    playlists: {
+        limit: 25,
+        trackLimit: 100,
     },
 });

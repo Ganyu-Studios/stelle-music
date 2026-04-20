@@ -130,6 +130,21 @@ interface TwentyFourSeven {
     autoPause: boolean;
 }
 
+interface Playlists {
+    /**
+     * The maximum amount of playlists each user can create.
+     * @type {number}
+     * @default 25
+     */
+    limit: number;
+    /**
+     * The maximum amount of tracks in a playlist.
+     * @type {number}
+     * @default 100
+     */
+    trackLimit: number;
+}
+
 /**
  * The configuration interface.
  */
@@ -190,12 +205,6 @@ export interface StelleConfiguration {
      */
     lyricsLines: number;
     /**
-     * The maximum amount of playlists each user can create.
-     * @type {number}
-     * @default 25
-     */
-    playlistLimit: number;
-    /**
      * The default player volume.
      * @type {number}
      * @default 60
@@ -249,6 +258,11 @@ export interface StelleConfiguration {
      * @default false
      */
     twentyfourseven: TwentyFourSeven;
+    /**
+     * The playlists configuration.
+     * @type {Playlists}
+     */
+    playlists: Playlists;
 }
 
 /**

@@ -157,27 +157,15 @@ export default class ManageSubcommand extends SubCommand {
         collector.run(ManageButtonCustomIds, async (interaction): Promise<void> => {
             if (!interaction.isButton()) return;
 
-            switch (interaction.customId) {
-                case ManageButtonIdentifiers.TrackSave:
-                    await playlistTrackSaveHandler(ctx, interaction, playlist);
-                    break;
+            const playlistHandlers = {
+                [ManageButtonIdentifiers.TrackSave]: playlistTrackSaveHandler,
+                [ManageButtonIdentifiers.TrackDelete]: playlistTrackDeleteHandler,
+                [ManageButtonIdentifiers.Info]: playlistInfoHandler,
+                [ManageButtonIdentifiers.Load]: playlistLoadHandler,
+                [ManageButtonIdentifiers.ToggleVisibility]: playlistVisibilityToggleHandler,
+            };
 
-                case ManageButtonIdentifiers.TrackDelete:
-                    await playlistTrackDeleteHandler(ctx, interaction, playlist);
-                    break;
-
-                case ManageButtonIdentifiers.Info:
-                    await playlistInfoHandler(ctx, interaction, playlist);
-                    break;
-
-                case ManageButtonIdentifiers.Load:
-                    await playlistLoadHandler(ctx, interaction, playlist);
-                    break;
-
-                case ManageButtonIdentifiers.ToggleVisibility:
-                    await playlistVisibilityToggleHandler(ctx, interaction, playlist);
-                    break;
-            }
+            await playlistHandlers[interaction.customId as ManageButtonIdentifiers](ctx, interaction, playlist);
         });
     }
 }

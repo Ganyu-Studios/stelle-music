@@ -86,6 +86,8 @@ export default {
                 deleted: ({ name }: IPlaylistName): string => `\`✅\` The playlist \`${name}\` has been deleted successfully.`,
                 limitReached: ({ amount }: IAmount): string =>
                     `\`❌\` You already reached the playlist limit for your account. Maximum allowed: \`${amount}\`.`,
+                trackLimit: ({ amount }: IAmount): string =>
+                    `\`❌\` You cannot add more tracks to this playlist. Maximum allowed tracks: \`${amount}\`.`,
                 noPlaylist: "`❌` **No playlists** were found with this query.",
                 noTracks: "`❌` **No tracks** were found in this playlist.",
                 list: {
