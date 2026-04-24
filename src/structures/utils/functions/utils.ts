@@ -151,6 +151,9 @@ export const requesterFn = <T = TrackRequester>(requester: TrackRequester): T =>
                 "collectibles",
                 "clan",
                 "bot",
+                "application",
+                "bannerColor",
+                "bio",
             ]),
             tag: requester.bot ? requester.username : requester.tag,
         } as T;
