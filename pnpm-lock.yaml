@@ -33,8 +33,8 @@ importers:
         specifier: ^1.1.3
         version: 1.1.3
       zod:
-        specifier: ^4.3.6
-        version: 4.3.6
+        specifier: ^4.4.1
+        version: 4.4.1
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.4.13
@@ -610,8 +610,8 @@ packages:
   yunaforseyfert@1.1.3:
     resolution: {integrity: sha512-VY66b45nbxHMkXln72kwaOd/8ozfukg7ySV6k0ww3s+xWGAt9WUZK16k7gHrj5DdG+jF+otPc2A1HnVbKlNJjA==}
 
-  zod@4.3.6:
-    resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
+  zod@4.4.1:
+    resolution: {integrity: sha512-a6ENMBBGZBsnlSebQ/eKCguSBeGKSf4O7BPnqVPmYGtpBYI7VSqoVqw+QcB7kPRjbqPwhYTpFbVj/RqNz/CT0Q==}
 
 snapshots:
 
@@ -1057,4 +1057,4 @@ snapshots:
 
   yunaforseyfert@1.1.3: {}
 
-  zod@4.3.6: {}
+  zod@4.4.1: {}
