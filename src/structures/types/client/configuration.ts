@@ -136,7 +136,7 @@ interface Playlists {
      * @type {number}
      * @default 25
      */
-    limit: number;
+    userLimit: number;
     /**
      * The maximum amount of tracks in a playlist.
      * @type {number}
@@ -148,7 +148,7 @@ interface Playlists {
 /**
  * The configuration interface.
  */
-export interface StelleConfiguration {
+export interface InternalStelleConfiguration {
     /**
      * The default locale.
      * @default "en-US"
@@ -268,10 +268,15 @@ export interface StelleConfiguration {
 /**
  * The loadable configuration interface.
  */
-export interface LoadableStelleConfiguration extends StelleConfiguration {
+export interface StelleConfiguration extends InternalStelleConfiguration {
     /**
      * Loads the configuration.
      * @returns {Promise<void>} A promise that resolves when the configuration is loaded.
      */
     load(): Promise<void>;
+    /**
+     * Reloads the configuration.
+     * @returns {Promise<void>} A promise that resolves when the configuration is reloaded.
+     */
+    reload(): Promise<void>;
 }

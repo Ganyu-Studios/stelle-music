@@ -4,7 +4,7 @@ import type { EmojiResolvable } from "seyfert/lib/common/index.js";
 import type { ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
 export * from "./client/components.js";
-export type { LoadableStelleConfiguration, StelleConfiguration } from "./client/configuration.js";
+export type { InternalStelleConfiguration, StelleConfiguration } from "./client/configuration.js";
 export type { AutoplayState, PausedState, StelleConstants, WorkingDirectory } from "./client/constants.js";
 export type { ImageData } from "./client/image.js";
 export type {

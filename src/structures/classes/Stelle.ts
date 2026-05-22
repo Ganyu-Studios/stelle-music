@@ -196,6 +196,7 @@ export class Stelle extends Client<true> {
             await this.commands.reloadAll();
             await this.langs.reloadAll();
             await this.manager.reloadAll();
+            await this.config.reload();
 
             await this.uploadCommands({ cachePath });
 

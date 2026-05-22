@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { z } from "zod";
-import type { LoadableStelleConfiguration, StelleConfiguration } from "#stelle/types";
+import type { InternalStelleConfiguration, StelleConfiguration } from "#stelle/types";
 import { InvalidConfiguration } from "#stelle/utils/errors.js";
 import { customImport } from "../functions/utils.js";
 
@@ -32,7 +32,7 @@ let isInitialized: boolean = false;
  * @type {StelleConfiguration}
  */
 //@ts-expect-error The configuration is dynamically loaded.
-export const Configuration: LoadableStelleConfiguration = {
+export const Configuration: StelleConfiguration = {
     async load(): Promise<void> {
         if (isInitialized) return;
 
@@ -62,14 +62,21 @@ export const Configuration: LoadableStelleConfiguration = {
 
         throw new InvalidConfiguration(`No config file found in '/config/' with any of the filenames: \n- ${filenames.join("\n- ")}`);
     },
+    async reload(): Promise<void> {
+        if (!isInitialized) return;
+
+        isInitialized = false;
+
+        await this.load();
+    },
 };
 
 /**
  * Creates a new configuration object.
- * @param {StelleConfiguration} data The configuration data.
- * @returns {StelleConfiguration} The new configuration object.
+ * @param {InternalStelleConfiguration} data The configuration data.
+ * @returns {InternalStelleConfiguration} The new configuration object.
  */
-export const createConfig = (data: StelleConfiguration): StelleConfiguration => data;
+export const createConfig = (data: InternalStelleConfiguration): InternalStelleConfiguration => data;
 
 /**
  * The environment variables.

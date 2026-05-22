@@ -70,7 +70,7 @@ export default createConfig({
         is247: false,
     },
     playlists: {
-        limit: 25,
+        userLimit: 25,
         trackLimit: 100,
     },
 });
