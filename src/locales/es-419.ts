@@ -362,6 +362,7 @@ export default {
                     UseExternalApps: "Usar Aplicaciones Externas",
                     BypassSlowmode: "Omitir Modo Lento",
                     PinMessages: "Fijar Mensajes",
+                    SetVoiceChannelStatus: "Establecer Estado del Canal de Voz",
                 },
                 embed: {
                     channel: ({ channelId }): string => `\`📢\` ¡Oye! Me faltan algunos permisos en el canal: <#${channelId}>`,

@@ -416,6 +416,7 @@ export default {
                     UseExternalApps: "Use External Apps",
                     BypassSlowmode: "Bypass Slowmode",
                     PinMessages: "Pin Messages",
+                    SetVoiceChannelStatus: "Set Voice Channel Status",
                 } satisfies Record<PermissionNames, string>,
                 embed: {
                     channel: ({ channelId }: IChannel): string =>
