@@ -13,10 +13,10 @@ export default createConfig({
     lyricsLines: 10,
     disconnectTime: ms("30s"),
     inviteLink:
-        "https://discord.com/oauth2/authorize?client_id=1241085977544359968&permissions=36793408&integration_type=0&scope=bot+applications.commands",
+        "https://discord.com/oauth2/authorize?client_id=1241085977544359968&permissions=36793408&integration_type=0&scope=bot+applications.commands", // <-- Replace with your bot invite
     githubLink: "https://github.com/Ganyu-Studios/stelle-music",
-    developerIds: [],
-    guildIds: [],
+    developerIds: [], // <-- Replace with an array of user ids
+    guildIds: [], // <-- Same here, replace with an array of guild ids
     presenceInterval: ms("25s"),
     nodes: Sessions.resolve(
         {
