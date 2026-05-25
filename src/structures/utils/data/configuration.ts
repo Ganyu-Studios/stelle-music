@@ -11,8 +11,8 @@ const envSchema = z.object({
     REDIS_HOST: z.string(),
     REDIS_PORT: z.coerce.number(),
     REDIS_PASSWORD: z.string(),
-    REDIS_USERNAME: z.string(),
-    REDIS_SECURE: z.coerce.boolean(),
+    REDIS_USERNAME: z.string().default("default"),
+    REDIS_SECURE: z.coerce.boolean().default(true),
 });
 
 /**
