@@ -1,5 +1,5 @@
 import type { RedisClientType } from "@redis/client";
-import { type QueueJSON, QueueStorageAdapter, type RestOrArray } from "hoshimi";
+import { type QueueJSON, QueueStorageAdapter } from "hoshimi";
 import { Constants } from "#stelle/utils/data/constants.js";
 
 /**
@@ -59,9 +59,5 @@ export class RedisQueueStore extends QueueStorageAdapter {
 
     override stringify<R = string>(value: unknown): R {
         return (typeof value === "object" ? JSON.stringify(value) : value) as R;
-    }
-
-    public buildKey(...parts: RestOrArray<string>): string {
-        return parts.flat().join(":");
     }
 }
