@@ -42,6 +42,11 @@ export class StelleManager extends Hoshimi {
 
                 return client.gateway.send(client.gateway.calculateShardId(guildId), payload);
             },
+            nodeOptions: {
+                moveOptions: {
+                    move: true,
+                },
+            },
             queueOptions: {
                 autoplayFn,
                 storage: new RedisQueueStore(client.redis),
