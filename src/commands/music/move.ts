@@ -54,7 +54,8 @@ export default class MoveCommand extends Command {
         player.voiceId = voice.id;
 
         const textId: string = text?.id ?? player.textId ?? player.options.textId ?? ctx.channelId;
-
+        
+        await player.setVoice({ voiceId: voice.id })
         await player.connect();
         await ctx.editOrReply({
             embeds: [
