@@ -22,6 +22,14 @@ export default {
             nowplaying: ({ userName, time }): string => `-# Pedido por: ${userName} con ${time}`,
             stop: "`👋` Deteniendo y abandonando el canal...",
             shuffle: "`✅` La cola ha sido mezclada.",
+            pause: {
+                success: "`✅` El reproductor ha sido pausado.",
+                alreadyPaused: "`❌` El reproductor ya está pausado.",
+            },
+            resume: {
+                success: "`✅` El reproductor ha sido reanudado.",
+                alreadyPlaying: "`❌` El reproductor ya está reproduciendo.",
+            },
             is247: {
                 enabled: ({ is247, autoPause }): string => `\`✅\` El modo 24/7 ahora está \`${is247}\` con auto-pausa \`${autoPause}\``,
                 enabledType: {
@@ -582,6 +590,14 @@ export default {
                 name: "autopause",
                 description: "Si se debe auto-pausar el reproductor cuando todos salen del canal de voz.",
             },
+        },
+        pause: {
+            name: "pausar",
+            description: "Pausa el reproductor.",
+        },
+        resume: {
+            name: "reanudar",
+            description: "Reanuda el reproductor.",
         },
     },
 } satisfies DefaultLocale;

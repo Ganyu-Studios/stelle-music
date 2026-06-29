@@ -70,6 +70,14 @@ export default {
             nowplaying: ({ userName, time }: INowPlaying): string => `-# Requested by ${userName} with ${time}`,
             stop: "`👋` Stopping and leaving...",
             shuffle: "`✅` The queue has been shuffled.",
+            pause: {
+                success: "`✅` The player has been paused.",
+                alreadyPaused: "`❌` The player is already paused.",
+            },
+            resume: {
+                success: "`✅` The player has been resumed.",
+                alreadyPlaying: "`❌` The player is already playing.",
+            },
             is247: {
                 enabled: ({ is247, autoPause }: ITwentyForSeven): string =>
                     `\`✅\` The 24/7 mode is now \`${is247}\` with auto-pause \`${autoPause}\``,
@@ -637,6 +645,14 @@ export default {
                 name: "autopause",
                 description: "Whether to auto-pause the player when everyone leaves the voice channel.",
             },
+        },
+        pause: {
+            name: "pause",
+            description: "Pause the player.",
+        },
+        resume: {
+            name: "resume",
+            description: "Resume the player.",
         },
     },
 };
