@@ -26,10 +26,10 @@ export class Cache {
     /**
      *
      * The internal cache.
-     * @type {LimitedCollection<string, LimitedCollection<CacheKeys, unknown>>}
+     * @type {LimitedCollection<string, LimitedCollection<CacheKeys, CacheMap[CacheKeys]>>}
      * @readonly
      */
-    readonly internal: LimitedCollection<string, LimitedCollection<CacheKeys, unknown>> = new LimitedCollection({
+    readonly internal: LimitedCollection<string, LimitedCollection<CacheKeys, CacheMap[CacheKeys]>> = new LimitedCollection({
         limit: Configuration.cache.size,
     });
 
@@ -74,7 +74,7 @@ export class Cache {
      * @returns {void} Nothing... just sets the data to the cache.
      */
     public set<T extends CacheKeys = CacheKeys>(key: T, id: string, data: CacheMap[T]): void {
-        const existing = this.internal.get(id) ?? new LimitedCollection<CacheKeys, unknown>();
+        const existing = this.internal.get(id) ?? new LimitedCollection<CacheKeys, CacheMap[CacheKeys]>();
         existing.set(key, data);
         this.internal.set(id, existing);
     }
@@ -87,9 +87,7 @@ export class Cache {
      * @returns {CacheMap[T][]} An array of all cached data for the key.
      */
     public all<T extends CacheKeys = CacheKeys>(key: T, filter?: FilterMap<T>): CacheMap[T][] {
-        const values = [...this.internal.values()]
-            .map((collection): unknown => collection.value.get(key))
-            .filter((v): v is CacheMap[T] => !!v);
+        const values = [...this.internal.values()].map((collection): unknown => collection.get(key)).filter((v): v is CacheMap[T] => !!v);
 
         if (filter) return values.filter(filter);
 

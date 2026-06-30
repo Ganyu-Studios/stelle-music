@@ -16,7 +16,7 @@ import { getPermissionKeys } from "#stelle/utils/functions/utils.js";
  * Check if the bot is in a voice channel and if is the same as the author.
  * @type {MiddlewareContext<void, AnyContext>}
  */
-export const checkBotVoiceChannel: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, pass, next }) => {
+export const checkBotVoiceChannel: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, stop, next }) => {
     if (!context.inGuild()) return next();
 
     const { messages } = await context.locale();
@@ -25,7 +25,7 @@ export const checkBotVoiceChannel: MiddlewareContext<void, AnyContext> = createM
     if (!me) return;
 
     const state: VoiceState = await context.member.voice();
-    if (!state) return pass();
+    if (!state) return stop();
 
     const bot: VoiceState | null = await me.voice().catch((): null => null);
     if (bot && bot.channelId !== state.channelId) {
@@ -39,7 +39,7 @@ export const checkBotVoiceChannel: MiddlewareContext<void, AnyContext> = createM
             ],
         });
 
-        return pass();
+        return stop();
     }
 
     return next();
@@ -49,7 +49,7 @@ export const checkBotVoiceChannel: MiddlewareContext<void, AnyContext> = createM
  * Check if the author is in a voice channel.
  * @type {MiddlewareContext<void, AnyContext>}
  */
-export const checkVoiceChannel: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, pass, next }) => {
+export const checkVoiceChannel: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, stop, next }) => {
     if (!context.inGuild()) return next();
 
     const { messages } = await context.locale();
@@ -68,7 +68,7 @@ export const checkVoiceChannel: MiddlewareContext<void, AnyContext> = createMidd
             ],
         });
 
-        return pass();
+        return stop();
     }
 
     return next();
@@ -78,14 +78,14 @@ export const checkVoiceChannel: MiddlewareContext<void, AnyContext> = createMidd
  * Check if the bot has permissions to join the voice channel.
  * @type {MiddlewareContext<void, AnyContext>}
  */
-export const checkVoicePermissions: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, pass, next }) => {
+export const checkVoicePermissions: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, stop, next }) => {
     if (!context.inGuild()) return next();
 
     const state: VoiceState | null = await context.member.voice().catch((): null => null);
-    if (!state) return pass();
+    if (!state) return stop();
 
     const channel: AllGuildVoiceChannels | null | undefined = await state.channel().catch((): null => null);
-    if (!channel) return pass();
+    if (!channel) return stop();
 
     const { stagePermissions, voicePermissions } = context.client.config.permissions;
     const { messages } = await context.locale();
@@ -118,7 +118,7 @@ export const checkVoicePermissions: MiddlewareContext<void, AnyContext> = create
             ],
         });
 
-        return pass();
+        return stop();
     }
 
     return next();

@@ -6,5 +6,6 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - 'hoshimi'
+  - seyfert
 
 packages: []

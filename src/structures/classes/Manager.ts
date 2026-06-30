@@ -35,12 +35,12 @@ export class StelleManager extends Hoshimi {
         super({
             nodes: client.config.nodes,
             defaultSearchSource: SearchSources.Spotify,
-            sendPayload: (guildId, payload) => {
+            sendPayload: async (guildId, payload) => {
                 // just in case, but this should never happen
                 if (typeof guildId !== "string" || typeof guildId === "undefined")
                     return client.logger.warn("[Manager] Invalid payload target | reason: guildId is not a string");
 
-                return client.gateway.send(client.gateway.calculateShardId(guildId), payload);
+                await client.gateway.send(client.gateway.calculateShardId(guildId), payload);
             },
             nodeOptions: {
                 moveOptions: {

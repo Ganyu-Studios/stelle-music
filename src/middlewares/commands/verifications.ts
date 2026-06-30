@@ -7,7 +7,7 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
  * Check if the command is only for developers or guild owner.
  * @type {MiddlewareContext<void, AnyContext>}
  */
-export const checkVerifications: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, next, pass }) => {
+export const checkVerifications: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, next, stop }) => {
     const { client, author, command } = context;
     const { developerIds } = client.config;
 
@@ -24,7 +24,7 @@ export const checkVerifications: MiddlewareContext<void, AnyContext> = createMid
             ],
         });
 
-        return pass();
+        return stop();
     }
 
     if (context.inGuild()) {
@@ -42,7 +42,7 @@ export const checkVerifications: MiddlewareContext<void, AnyContext> = createMid
                 ],
             });
 
-            return pass();
+            return stop();
         }
 
         return next();
