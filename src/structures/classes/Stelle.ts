@@ -1,5 +1,14 @@
 import { createClient, type RedisClientType } from "@redis/client";
-import { Client, LimitedCollection, LimitedMemoryAdapter, type MessageStructure } from "seyfert";
+import {
+    Client,
+    Command,
+    ContextMenuCommand,
+    EntryPointCommand,
+    LimitedCollection,
+    LimitedMemoryAdapter,
+    type MessageStructure,
+    SubCommand,
+} from "seyfert";
 import { HandleCommand } from "seyfert/lib/commands/handle.js";
 import type { HandleableCommand } from "seyfert/lib/commands/handler.js";
 import { ActivityType, ApplicationCommandType, type GatewayPresenceUpdateData, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
@@ -114,7 +123,13 @@ export class Stelle extends Client<true> {
      */
     public async run(): Promise<void> {
         this.commands.onCommand = (file): InstanceType<HandleableCommand> | false => {
-            const command = new file();
+            const command =
+                file instanceof Command ||
+                file instanceof SubCommand ||
+                file instanceof ContextMenuCommand ||
+                file instanceof EntryPointCommand
+                    ? file
+                    : new file();
 
             if (command.type === ApplicationCommandType.PrimaryEntryPoint) return command;
             if (command.onlyDeveloper) (command as NonGlobalCommands).guildId = this.config.guildIds;

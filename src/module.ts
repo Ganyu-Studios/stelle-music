@@ -1,5 +1,5 @@
 import type { LyricsResult } from "hoshimi";
-import type { ParseClient, ParseLocales, ParseMiddlewares } from "seyfert";
+import type { ParseClient, ParseGlobalMiddlewares, ParseLocales } from "seyfert";
 import type { Stelle } from "#stelle/classes/Stelle.js";
 import type { Options, TrackUser } from "#stelle/types";
 import type { StelleContext } from "#stelle/utils/functions/utils.js";
@@ -7,11 +7,13 @@ import type English from "./locales/en-US.js";
 import type { GlobalMiddlewares, StelleMiddlewares } from "./middlewares/index.js";
 
 declare module "seyfert" {
-    interface UsingClient extends ParseClient<Stelle> {}
+    interface SeyfertRegistry {
+        client: ParseClient<Stelle>;
+        langs: ParseLocales<typeof English>;
+        middlewares: typeof StelleMiddlewares;
+    }
     interface ExtendContext extends ReturnType<typeof StelleContext> {}
-    interface DefaultLocale extends ParseLocales<typeof English> {}
-    interface RegisteredMiddlewares extends ParseMiddlewares<typeof StelleMiddlewares> {}
-    interface GlobalMetadata extends ParseMiddlewares<typeof GlobalMiddlewares> {}
+    interface GlobalMetadata extends ParseGlobalMiddlewares<typeof GlobalMiddlewares> {}
 
     interface Command extends Options {}
     interface SubCommand extends Options {}

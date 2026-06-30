@@ -8,7 +8,7 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
  * Check if the bot is connected to any lavalink node.
  * @type {MiddlewareContext<void, AnyContext>}
  */
-export const checkNodes: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, pass, next }) => {
+export const checkNodes: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, stop, next }) => {
     if (!context.inGuild()) return next();
 
     const { messages } = await context.locale();
@@ -25,7 +25,7 @@ export const checkNodes: MiddlewareContext<void, AnyContext> = createMiddleware<
             ],
         });
 
-        return pass();
+        return stop();
     }
 
     return next();
@@ -35,7 +35,7 @@ export const checkNodes: MiddlewareContext<void, AnyContext> = createMiddleware<
  * Check if the player exists.
  * @type {MiddlewareContext<void, AnyContext>}
  */
-export const checkPlayer: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, pass, next }) => {
+export const checkPlayer: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, stop, next }) => {
     if (!context.inGuild()) return next();
 
     const { client } = context;
@@ -53,7 +53,7 @@ export const checkPlayer: MiddlewareContext<void, AnyContext> = createMiddleware
             ],
         });
 
-        return pass();
+        return stop();
     }
 
     return next();
@@ -63,14 +63,14 @@ export const checkPlayer: MiddlewareContext<void, AnyContext> = createMiddleware
  * Check if the queue has tracks.
  * @type {MiddlewareContext<void, AnyContext>}
  */
-export const checkQueue: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, pass, next }) => {
+export const checkQueue: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, stop, next }) => {
     if (!context.inGuild()) return next();
 
     const { client } = context;
     const { messages } = await context.locale();
 
     const player: PlayerStructure | undefined = client.manager.getPlayer(context.guildId);
-    if (!player) return pass();
+    if (!player) return stop();
 
     const isAutoplay: boolean = !!(await player.data.get("enabledAutoplay"));
     if (!(isAutoplay || player.queue.tracks.length)) {
@@ -84,7 +84,7 @@ export const checkQueue: MiddlewareContext<void, AnyContext> = createMiddleware<
             ],
         });
 
-        return pass();
+        return stop();
     }
 
     return next();
@@ -94,14 +94,14 @@ export const checkQueue: MiddlewareContext<void, AnyContext> = createMiddleware<
  * Check if the queue has more than one track.
  * @type {MiddlewareContext<void, AnyContext>}
  */
-export const checkTracks: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, pass, next }) => {
+export const checkTracks: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, stop, next }) => {
     if (!context.inGuild()) return next();
 
     const { client } = context;
     const { messages } = await context.locale();
 
     const player: PlayerStructure | undefined = client.manager.getPlayer(context.guildId);
-    if (!player) return pass();
+    if (!player) return stop();
 
     if (!(player.queue.tracks.length + Number(!!player.queue.current) >= 1)) {
         await context.editOrReply({
@@ -114,7 +114,7 @@ export const checkTracks: MiddlewareContext<void, AnyContext> = createMiddleware
             ],
         });
 
-        return pass();
+        return stop();
     }
 
     return next();

@@ -9,7 +9,7 @@ import { getCollectionKey } from "#stelle/utils/functions/utils.js";
  * The middleware to handle cooldowns.
  * @type {MiddlewareContext<void, AnyContext>}
  */
-export const checkCooldown: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, next, pass }) => {
+export const checkCooldown: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, next, stop }) => {
     // avoid components for now
     // this will make someone happy
     if (context.isComponent()) return next();
@@ -35,7 +35,7 @@ export const checkCooldown: MiddlewareContext<void, AnyContext> = createMiddlewa
             ],
         });
 
-        return pass();
+        return stop();
     }
 
     collection.set(key, now + cooldown, cooldown);
