@@ -169,6 +169,7 @@ export default {
             },
             lyrics: {
                 noLyrics: "`❌` **No lyrics** was found for this track...",
+                synced: "`✅` The lyrics have been synced with the current track.",
                 close: "Close",
                 sync: "Sync",
                 embed: {

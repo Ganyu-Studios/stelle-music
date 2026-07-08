@@ -119,6 +119,7 @@ export default {
             },
             lyrics: {
                 noLyrics: "`❌` **No se encontraron letras** para esta canción...",
+                synced: "`✅` Las letras han sido sincronizadas con la canción actual.",
                 close: "Cerrar",
                 sync: "Sincronizar",
                 embed: {

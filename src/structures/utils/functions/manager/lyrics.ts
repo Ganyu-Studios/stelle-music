@@ -131,8 +131,23 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | MessageStru
     });
 
     collector.run("player-syncLyrics", async (interaction): Promise<void> => {
+        await interaction.deferReply(MessageFlags.Ephemeral);
+
         const isEnabled: boolean = !!(await player.data.get("lyricsEnabled"));
-        if (!isEnabled) await player.lyrics.subscribe(skipTrackSource).catch((): null => null);
+        if (!isEnabled)
+            await player.lyrics
+                .subscribe(skipTrackSource)
+                .then(async () => {
+                    await interaction.followup({
+                        embeds: [
+                            {
+                                color: client.config.color.success,
+                                description: messages.commands.lyrics.synced,
+                            },
+                        ],
+                    });
+                })
+                .catch((): null => null);
 
         const lines: string = lyrics.lines
             .map((line): string => `-# ${line.line}`)
@@ -156,6 +171,6 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | MessageStru
 
         await interaction.update({ embeds: [embed], components: [row] }).catch((): null => null);
 
-        collector.stop();
+        return collector.stop();
     });
 }
