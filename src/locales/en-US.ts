@@ -170,8 +170,11 @@ export default {
             lyrics: {
                 noLyrics: "`❌` **No lyrics** was found for this track...",
                 synced: "`✅` The lyrics have been synced with the current track.",
-                close: "Close",
-                sync: "Sync",
+                error: "`❌` Something unexpected occurred while trying to fetch the lyrics for this track, please try again in a moment.",
+                components: {
+                    close: "Close",
+                    sync: "Sync",
+                },
                 embed: {
                     title: ({ title }: ILyricsEmbedTitle): string => `\`📜\` Lyrics for: ${title}`,
                     description: ({ provider, lines, author }: ILyricsEmbedDescription): string =>

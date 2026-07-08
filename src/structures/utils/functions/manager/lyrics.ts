@@ -56,7 +56,7 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | MessageStru
                 if ("error" in error && "trace" in error) {
                     // Fallback in case the response from the lyrics provider is a 400
                     // which means that the lyrics were not found
-                    if (typeof error.trace === "string" && error.trace.includes("Response code from channel info is 400")) {
+                    if (typeof error.trace === "string" && error.trace.toLowerCase().includes("response code from channel info is 400")) {
                         const lyrics: LyricsResult | null = await player.lyrics.current(true);
                         if (!lyrics) return null;
                         if (!lyrics.lines.length) return null;
@@ -108,8 +108,8 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | MessageStru
         );
 
     const row: ActionRow<Button> = new ActionRow<Button>().addComponents(
-        new Button().setCustomId("player-syncLyrics").setLabel(messages.commands.lyrics.sync).setStyle(ButtonStyle.Primary),
-        new Button().setCustomId("player-lyricsDelete").setLabel(messages.commands.lyrics.close).setStyle(ButtonStyle.Secondary),
+        new Button().setCustomId("player-syncLyrics").setLabel(messages.commands.lyrics.components.sync).setStyle(ButtonStyle.Primary),
+        new Button().setCustomId("player-lyricsDelete").setLabel(messages.commands.lyrics.components.close).setStyle(ButtonStyle.Secondary),
     );
 
     const message: WebhookMessageStructure | MessageStructure = await ctx.editOrReply({ embeds: [embed], components: [row] }, true);
@@ -134,43 +134,58 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | MessageStru
         await interaction.deferReply(MessageFlags.Ephemeral);
 
         const isEnabled: boolean = !!(await player.data.get("lyricsEnabled"));
-        if (!isEnabled)
-            await player.lyrics
-                .subscribe(skipTrackSource)
-                .then(async () => {
-                    await interaction.followup({
-                        embeds: [
-                            {
-                                color: client.config.color.success,
-                                description: messages.commands.lyrics.synced,
-                            },
-                        ],
-                    });
-                })
-                .catch((): null => null);
+        if (isEnabled) return;
 
-        const lines: string = lyrics.lines
-            .map((line): string => `-# ${line.line}`)
-            .slice(0, client.config.lyricsLines)
-            .join("\n");
+        try {
+            await player.lyrics.subscribe(skipTrackSource);
 
-        embed.setDescription(
-            messages.commands.lyrics.embed.description({
-                lines,
-                author: track.info.author,
-                provider: lyrics.provider,
-            }),
-        );
+            // The subscribe resolved: edit the embed with the synced lyrics and keep only the close button.
+            const syncedLines: string = lyrics.lines
+                .map((line): string => `-# ${line.line}`)
+                .slice(0, client.config.lyricsLines)
+                .join("\n");
 
-        await player.data.set("lyricsId", message.id);
-        await player.data.set("lyricsEnabled", true);
+            embed.setDescription(
+                messages.commands.lyrics.embed.description({
+                    lines: syncedLines,
+                    author: track.info.author,
+                    provider: lyrics.provider,
+                }),
+            );
 
-        const row: ActionRow<Button> = new ActionRow<Button>().addComponents(
-            new Button().setCustomId("player-lyricsDelete").setLabel(messages.commands.lyrics.close).setStyle(ButtonStyle.Secondary),
-        );
+            const row: ActionRow<Button> = new ActionRow<Button>().addComponents(
+                new Button()
+                    .setCustomId("player-lyricsDelete")
+                    .setLabel(messages.commands.lyrics.components.close)
+                    .setStyle(ButtonStyle.Secondary),
+            );
 
-        await interaction.update({ embeds: [embed], components: [row] }).catch((): null => null);
+            await interaction.update({ embeds: [embed], components: [row] }).catch((): null => null);
+            /* await interaction.followup({
+                embeds: [
+                    {
+                        color: client.config.color.success,
+                        description: messages.commands.lyrics.synced,
+                    },
+                ],
+            }); */
 
-        return collector.stop();
+            await player.data.set("lyricsId", message.id);
+            await player.data.set("lyricsEnabled", true);
+        } catch {
+            // The subscribe rejected: warn the user, then delete the message.
+            await interaction.followup({
+                embeds: [
+                    {
+                        color: EmbedColors.Red,
+                        description: messages.commands.lyrics.error,
+                    },
+                ],
+            });
+
+            await message.delete().catch((): null => null);
+        } finally {
+            collector.stop();
+        }
     });
 }

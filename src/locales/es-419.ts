@@ -120,8 +120,11 @@ export default {
             lyrics: {
                 noLyrics: "`❌` **No se encontraron letras** para esta canción...",
                 synced: "`✅` Las letras han sido sincronizadas con la canción actual.",
-                close: "Cerrar",
-                sync: "Sincronizar",
+                error: "`❌` Algo inesperado ocurrió mientras se intentaba obtener las letras de esta canción, por favor intenta de nuevo en un momento.",
+                components: {
+                    close: "Cerrar",
+                    sync: "Sincronizar",
+                },
                 embed: {
                     title: ({ title }): string => `\`📜\` Letras para: ${title}`,
                     description: ({ lines, provider, author }): string => `-# Provisto por: ${provider}\nPor: ${author}\n\n${lines}`,
