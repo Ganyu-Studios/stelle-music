@@ -161,14 +161,14 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | MessageStru
             );
 
             await interaction.update({ embeds: [embed], components: [row] }).catch((): null => null);
-            /* await interaction.followup({
+            await interaction.followup({
                 embeds: [
                     {
                         color: client.config.color.success,
                         description: messages.commands.lyrics.synced,
                     },
                 ],
-            }); */
+            });
 
             await player.data.set("lyricsId", message.id);
             await player.data.set("lyricsEnabled", true);
