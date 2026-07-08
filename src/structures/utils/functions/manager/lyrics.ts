@@ -131,7 +131,7 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | MessageStru
     });
 
     collector.run("player-syncLyrics", async (interaction): Promise<void> => {
-        await interaction.deferReply(MessageFlags.Ephemeral);
+        await interaction.deferUpdate();
 
         const isEnabled: boolean = !!(await player.data.get("lyricsEnabled"));
         if (isEnabled) return;
@@ -160,8 +160,9 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | MessageStru
                     .setStyle(ButtonStyle.Secondary),
             );
 
-            await interaction.update({ embeds: [embed], components: [row] }).catch((): null => null);
+            await interaction.editResponse({ embeds: [embed], components: [row] });
             await interaction.followup({
+                flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
                         color: client.config.color.success,
