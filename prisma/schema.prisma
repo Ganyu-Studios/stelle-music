@@ -39,15 +39,15 @@ model guildPlayer {
   defaultVolume  Int    @default(100)
 }
 
-type RawRequester {
+type PlaylistTrackRequester {
   id       String
   username String
   tag      String
 }
 
-type RawTrack {
+type PlaylistTrack {
   encoded   String
-  requester RawRequester
+  requester PlaylistTrackRequester
 }
 
 model userPlaylist {
@@ -57,5 +57,5 @@ model userPlaylist {
   playlistName String
   createdAt    DateTime   @default(now())
   public       Boolean    @default(false)
-  tracks       RawTrack[]
+  tracks       PlaylistTrack[]
 }
