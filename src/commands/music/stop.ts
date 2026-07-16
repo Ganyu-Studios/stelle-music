@@ -1,4 +1,3 @@
-import type { PlayerStructure } from "hoshimi";
 import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares } from "seyfert";
 import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
@@ -15,22 +14,12 @@ import { StelleOptions } from "#stelle/utils/decorator.js";
 @LocalesT("locales.stop.name", "locales.stop.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class StopCommand extends Command {
-    public override async run(ctx: GuildCommandContext): Promise<void> {
-        const { client } = ctx;
-
+    public override async run(ctx: GuildCommandContext<{}, "checkPlayer">): Promise<void> {
         const { messages } = await ctx.locale();
 
-        const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
-        if (!player) return;
+        const { player } = ctx.metadata.checkPlayer;
 
         await player.destroy();
-        await ctx.editOrReply({
-            embeds: [
-                {
-                    description: messages.commands.stop,
-                    color: client.config.color.success,
-                },
-            ],
-        });
+        await ctx.successReply(messages.commands.stop);
     }
 }

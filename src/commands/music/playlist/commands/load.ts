@@ -13,7 +13,6 @@ import {
     type VoiceState,
     type WebhookMessageStructure,
 } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
 import type { TrackUser } from "#stelle/types";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
@@ -48,27 +47,9 @@ export default class LoadSubcommand extends SubCommand {
         const { messages } = await ctx.locale();
 
         const playlist = await client.database.playlist.getLoadable(id, ctx.author.id);
-        if (!playlist)
-            return ctx.editOrReply({
-                content: "",
-                embeds: [
-                    {
-                        description: messages.commands.playlist.noPlaylist,
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
+        if (!playlist) return ctx.errorReply(messages.commands.playlist.noPlaylist, { content: "" });
 
-        if (!playlist.tracks.length)
-            return ctx.editOrReply({
-                content: "",
-                embeds: [
-                    {
-                        description: messages.commands.playlist.noTracks,
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
+        if (!playlist.tracks.length) return ctx.errorReply(messages.commands.playlist.noTracks, { content: "" });
 
         if (!member) return;
 
@@ -113,14 +94,6 @@ export default class LoadSubcommand extends SubCommand {
 
         if (!player.playing && !player.paused) await player.play();
 
-        await ctx.editOrReply({
-            content: "",
-            embeds: [
-                {
-                    description: messages.commands.playlist.loaded({ name: playlist.playlistName }),
-                    color: client.config.color.success,
-                },
-            ],
-        });
+        await ctx.successReply(messages.commands.playlist.loaded({ name: playlist.playlistName }), { content: "" });
     }
 }

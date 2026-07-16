@@ -1,4 +1,3 @@
-import type { PlayerStructure } from "hoshimi";
 import { Command, createIntegerOption, Declare, type GuildCommandContext, LocalesT, Middlewares, Options } from "seyfert";
 import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
@@ -29,26 +28,18 @@ const options = {
 @LocalesT("locales.skip.name", "locales.skip.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
 export default class SkipCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>): Promise<void> {
-        const { client, options } = ctx;
+    public override async run(ctx: GuildCommandContext<typeof options, "checkPlayer">): Promise<void> {
+        const { options } = ctx;
         const { to } = options;
 
         const { messages } = await ctx.locale();
 
-        const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
-        if (!player) return;
+        const { player } = ctx.metadata.checkPlayer;
 
         const isAutoplay: boolean | undefined = await player.data.get("enabledAutoplay");
 
         await player.skip({ to, throwError: !isAutoplay });
 
-        await ctx.editOrReply({
-            embeds: [
-                {
-                    description: messages.commands.skip({ amount: to ?? 1 }),
-                    color: client.config.color.success,
-                },
-            ],
-        });
+        await ctx.successReply(messages.commands.skip({ amount: to ?? 1 }));
     }
 }

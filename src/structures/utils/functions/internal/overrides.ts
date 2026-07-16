@@ -24,16 +24,7 @@ export async function onRunError(ctx: AnyContext, error: unknown): Promise<void>
     const { messages } = await ctx.locale();
 
     await sendErrorReport({ error, ctx });
-    await ctx.editOrReply({
-        content: "",
-        flags: MessageFlags.Ephemeral,
-        embeds: [
-            {
-                description: messages.events.commandError,
-                color: EmbedColors.Red,
-            },
-        ],
-    });
+    await ctx.errorReply(messages.events.commandError, { ephemeral: true, content: "" });
 }
 
 /**

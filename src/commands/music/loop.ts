@@ -1,4 +1,4 @@
-import { LoopMode, type Player } from "hoshimi";
+import { LoopMode } from "hoshimi";
 import { Command, createNumberOption, Declare, type GuildCommandContext, LocalesT, Middlewares, Options } from "seyfert";
 import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
@@ -47,26 +47,20 @@ const options = {
 @LocalesT("locales.loop.name", "locales.loop.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class LoopCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>): Promise<void> {
-        const { client, options } = ctx;
+    public override async run(ctx: GuildCommandContext<typeof options, "checkPlayer">): Promise<void> {
+        const { options } = ctx;
 
         const { messages } = await ctx.locale();
 
-        const player: Player | undefined = client.manager.getPlayer(ctx.guildId);
-        if (!player) return;
+        const { player } = ctx.metadata.checkPlayer;
 
         const mode: LoopMode = options.mode ?? loopModes[player.loop];
 
         await player.setLoop(mode);
-        await ctx.editOrReply({
-            embeds: [
-                {
-                    color: client.config.color.success,
-                    description: messages.commands.loop.toggled({
-                        type: messages.commands.loop.loopType[Constants.LoopMode(player.loop, true)],
-                    }),
-                },
-            ],
-        });
+        await ctx.successReply(
+            messages.commands.loop.toggled({
+                type: messages.commands.loop.loopType[Constants.LoopMode(player.loop, true)],
+            }),
+        );
     }
 }

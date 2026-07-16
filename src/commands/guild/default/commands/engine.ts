@@ -53,16 +53,11 @@ export default class EngineSubcommand extends SubCommand {
         const { messages } = await ctx.locale();
 
         await client.database.players.set(ctx.guildId, { searchPlatform: engine });
-        await ctx.editOrReply({
-            embeds: [
-                {
-                    color: client.config.color.success,
-                    description: messages.commands.default.engine({
-                        engine: engines[engine],
-                        clientName: client.me.username,
-                    }),
-                },
-            ],
-        });
+        await ctx.successReply(
+            messages.commands.default.engine({
+                engine: engines[engine],
+                clientName: client.me.username,
+            }),
+        );
     }
 }

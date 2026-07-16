@@ -1,8 +1,5 @@
 import { type AnyContext, createMiddleware, type LimitedCollection, type MiddlewareContext } from "seyfert";
 
-import { EmbedColors } from "seyfert/lib/common/index.js";
-import { MessageFlags } from "seyfert/lib/types/index.js";
-
 import { getCollectionKey } from "#stelle/utils/functions/utils.js";
 
 /**
@@ -25,15 +22,7 @@ export const checkCooldown: MiddlewareContext<void, AnyContext> = createMiddlewa
 
     const time: number | undefined = collection.get(key);
     if (time && now < time) {
-        context.editOrReply({
-            flags: MessageFlags.Ephemeral,
-            embeds: [
-                {
-                    description: messages.events.inCooldown({ time: Math.floor(time / 1000) }),
-                    color: EmbedColors.Red,
-                },
-            ],
-        });
+        context.errorReply(messages.events.inCooldown({ time: Math.floor(time / 1000) }), { ephemeral: true });
 
         return stop();
     }

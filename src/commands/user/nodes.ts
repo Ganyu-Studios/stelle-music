@@ -1,5 +1,4 @@
 import { Command, Declare, Embed, type GuildCommandContext, LocalesT, type MessageStructure, type WebhookMessageStructure } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
 import type { APIEmbedField } from "seyfert/lib/types/index.js";
 import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
@@ -34,15 +33,7 @@ export default class NodesCommand extends Command {
             }),
         }));
 
-        if (!fields.length)
-            return ctx.editOrReply({
-                embeds: [
-                    {
-                        description: messages.commands.nodes.noNodes,
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
+        if (!fields.length) return ctx.errorReply(messages.commands.nodes.noNodes);
 
         if (fields.length < limit) {
             await ctx.editOrReply({

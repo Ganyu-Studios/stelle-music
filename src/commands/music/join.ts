@@ -12,8 +12,7 @@ import {
     type VoiceState,
     type WebhookMessageStructure,
 } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
-import { ApplicationIntegrationType, ChannelType, InteractionContextType, MessageFlags } from "seyfert/lib/types/index.js";
+import { ApplicationIntegrationType, ChannelType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
@@ -60,16 +59,7 @@ export default class JoinCommand extends Command {
         const { defaultVolume } = await client.database.players.get(ctx.guildId);
 
         const channel: AllGuildVoiceChannels = options.voice ?? voice;
-        if (channel.guildId !== ctx.guildId)
-            return ctx.editOrReply({
-                content: "",
-                embeds: [
-                    {
-                        description: messages.events.noSameGuild,
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
+        if (channel.guildId !== ctx.guildId) return ctx.errorReply(messages.events.noSameGuild, { content: "" });
 
         const player = client.manager.createPlayer({
             guildId: ctx.guildId,
@@ -81,15 +71,6 @@ export default class JoinCommand extends Command {
 
         await joinVoiceChannel(player, voice, me);
 
-        await ctx.editOrReply({
-            content: "",
-            flags: MessageFlags.Ephemeral,
-            embeds: [
-                {
-                    description: messages.commands.join({ channelId: channel.id }),
-                    color: client.config.color.success,
-                },
-            ],
-        });
+        await ctx.successReply(messages.commands.join({ channelId: channel.id }), { ephemeral: true, content: "" });
     }
 }

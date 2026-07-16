@@ -1,4 +1,3 @@
-import type { PlayerStructure } from "hoshimi";
 import {
     Command,
     Declare,
@@ -8,7 +7,6 @@ import {
     Middlewares,
     type WebhookMessageStructure,
 } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
 import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
@@ -24,32 +22,14 @@ import { StelleOptions } from "#stelle/utils/decorator.js";
 @LocalesT("locales.resume.name", "locales.resume.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class ResumeCommand extends Command {
-    public override async run(ctx: GuildCommandContext): Promise<WebhookMessageStructure | MessageStructure | void> {
-        const { client } = ctx;
-
+    public override async run(ctx: GuildCommandContext<{}, "checkPlayer">): Promise<WebhookMessageStructure | MessageStructure | void> {
         const { messages } = await ctx.locale();
 
-        const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
-        if (!player) return;
+        const { player } = ctx.metadata.checkPlayer;
 
-        if (!player.paused)
-            return ctx.editOrReply({
-                embeds: [
-                    {
-                        description: messages.commands.resume.alreadyPlaying,
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
+        if (!player.paused) return ctx.errorReply(messages.commands.resume.alreadyPlaying);
 
         await player.setPaused(false);
-        await ctx.editOrReply({
-            embeds: [
-                {
-                    description: messages.commands.resume.success,
-                    color: client.config.color.success,
-                },
-            ],
-        });
+        await ctx.successReply(messages.commands.resume.success);
     }
 }

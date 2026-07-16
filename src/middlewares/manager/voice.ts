@@ -29,15 +29,7 @@ export const checkBotVoiceChannel: MiddlewareContext<void, AnyContext> = createM
 
     const bot: VoiceState | null = await me.voice().catch((): null => null);
     if (bot && bot.channelId !== state.channelId) {
-        await context.editOrReply({
-            flags: MessageFlags.Ephemeral,
-            embeds: [
-                {
-                    description: messages.events.noSameVoice({ channelId: bot.channelId! }),
-                    color: EmbedColors.Red,
-                },
-            ],
-        });
+        await context.errorReply(messages.events.noSameVoice({ channelId: bot.channelId! }), { ephemeral: true });
 
         return stop();
     }
@@ -58,15 +50,7 @@ export const checkVoiceChannel: MiddlewareContext<void, AnyContext> = createMidd
 
     const channel: AllGuildVoiceChannels | null | undefined = await state?.channel().catch((): null => null);
     if (!channel) {
-        await context.editOrReply({
-            flags: MessageFlags.Ephemeral,
-            embeds: [
-                {
-                    description: messages.events.noVoiceChannel,
-                    color: EmbedColors.Red,
-                },
-            ],
-        });
+        await context.errorReply(messages.events.noVoiceChannel, { ephemeral: true });
 
         return stop();
     }

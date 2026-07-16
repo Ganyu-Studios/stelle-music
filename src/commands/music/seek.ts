@@ -10,7 +10,6 @@ import {
     Options,
     type WebhookMessageStructure,
 } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
 import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
@@ -48,59 +47,32 @@ const options = {
 @LocalesT("locales.seek.name", "locales.seek.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class SeekCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>): Promise<MessageStructure | WebhookMessageStructure | void> {
-        const { client, options } = ctx;
+    public override async run(
+        ctx: GuildCommandContext<typeof options, "checkPlayer">,
+    ): Promise<MessageStructure | WebhookMessageStructure | void> {
+        const { options } = ctx;
         const { time } = options;
 
         const { messages } = await ctx.locale();
 
-        const player = client.manager.getPlayer(ctx.guildId);
-        if (!player) return;
+        const { player } = ctx.metadata.checkPlayer;
 
         const position = player.position;
         const track = player.queue.current;
 
         if (typeof time === "string" || Number.isNaN(time) || !Number.isFinite(time))
-            return ctx.editOrReply({
-                embeds: [
-                    {
-                        description: messages.commands.seek.invalidTime({ time }),
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
+            return ctx.errorReply(messages.commands.seek.invalidTime({ time }));
 
-        if (!track?.info.isSeekable)
-            return ctx.editOrReply({
-                embeds: [
-                    {
-                        description: messages.commands.seek.noSeekable,
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
+        if (!track?.info.isSeekable) return ctx.errorReply(messages.commands.seek.noSeekable);
 
-        if (time > track.info.length)
-            return ctx.editOrReply({
-                embeds: [
-                    {
-                        description: messages.commands.seek.exeedsTime({ time: TimeFormat.toHumanize(time) }),
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
+        if (time > track.info.length) return ctx.errorReply(messages.commands.seek.exeedsTime({ time: TimeFormat.toHumanize(time) }));
 
         await player.seek(time);
-        await ctx.editOrReply({
-            embeds: [
-                {
-                    color: client.config.color.success,
-                    description: messages.commands.seek.seeked({
-                        time: TimeFormat.toHumanize(time),
-                        type: messages.commands.seek.type[time < position ? "rewond" : "seeked"],
-                    }),
-                },
-            ],
-        });
+        await ctx.successReply(
+            messages.commands.seek.seeked({
+                time: TimeFormat.toHumanize(time),
+                type: messages.commands.seek.type[time < position ? "rewond" : "seeked"],
+            }),
+        );
     }
 }

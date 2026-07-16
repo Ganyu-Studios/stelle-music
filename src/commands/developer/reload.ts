@@ -1,5 +1,4 @@
-import { Command, type CommandContext, Declare, type MessageStructure, type WebhookMessageStructure } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
+import { Command, type CommandContext, Declare } from "seyfert";
 import { ApplicationIntegrationType, InteractionContextType, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
@@ -16,29 +15,7 @@ export default class ReloadCommand extends Command {
         await ctx.deferReply(true);
         await ctx.client
             .reload()
-            .then(
-                (): Promise<MessageStructure | WebhookMessageStructure | void> =>
-                    ctx.editOrReply({
-                        content: "",
-                        embeds: [
-                            {
-                                description: `\`✅\` ${ctx.client.me.username} has been reloaded.`,
-                                color: ctx.client.config.color.success,
-                            },
-                        ],
-                    }),
-            )
-            .catch(
-                (): Promise<MessageStructure | WebhookMessageStructure | void> =>
-                    ctx.editOrReply({
-                        content: "",
-                        embeds: [
-                            {
-                                description: "`❌` Something failed during the reload.",
-                                color: EmbedColors.Red,
-                            },
-                        ],
-                    }),
-            );
+            .then((): Promise<void> => ctx.successReply(`\`✅\` ${ctx.client.me.username} has been reloaded.`, { content: "" }))
+            .catch((): Promise<void> => ctx.errorReply("`❌` Something failed during the reload.", { content: "" }));
     }
 }

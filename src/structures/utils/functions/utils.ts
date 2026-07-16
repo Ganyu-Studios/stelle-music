@@ -3,7 +3,7 @@ import { mkdir } from "node:fs/promises";
 import { isAbsolute, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { inspect as nodeInspect } from "node:util";
-import type { TrackRequester, TrackStructure } from "hoshimi";
+import type { PlayerStructure, TrackRequester, TrackStructure } from "hoshimi";
 import {
     ActionRow,
     type AnyContext,
@@ -11,12 +11,13 @@ import {
     Container,
     type DefaultLocale,
     extendContext,
+    type GuildComponentContext,
     type MessageStructure,
     User,
     type UsingClient,
     type WebhookMessageStructure,
 } from "seyfert";
-import { type PermissionStrings, resolvePartialEmoji } from "seyfert/lib/common/index.js";
+import { EmbedColors, type PermissionStrings, resolvePartialEmoji } from "seyfert/lib/common/index.js";
 import { PermissionsBitField } from "seyfert/lib/structures/extra/Permissions.js";
 import {
     type APIActionRowComponent,
@@ -29,10 +30,28 @@ import {
     ButtonStyle,
     ComponentType,
     type LocaleString,
+    MessageFlags,
 } from "seyfert/lib/types/index.js";
-import type { EditButtonOptions, Omit, PermissionNames, Plain, Prettify, WebhookMetadata } from "#stelle/types";
+import type { EditButtonOptions, Omit, PermissionNames, Plain, Prettify, StelleConfiguration, WebhookMetadata } from "#stelle/types";
 import { InvalidRow } from "#stelle/utils/errors.js";
 import { TimeFormat } from "./time.js";
+
+/**
+ * The options for the quick reply helpers (`errorReply` / `successReply`).
+ */
+interface QuickReplyOptions {
+    /**
+     * Whether the reply should be ephemeral.
+     * @type {boolean}
+     * @default false
+     */
+    ephemeral?: boolean;
+    /**
+     * The message content to set alongside the embed (e.g. `""` to clear a previous deferred content).
+     * @type {string}
+     */
+    content?: string;
+}
 
 interface CreateIdOptions {
     /**
@@ -83,6 +102,42 @@ export const StelleContext = extendContext((i) => ({
         // so, the function is a promise itself, y'know?
         if (!i.guildId) return Promise.resolve((i.user.locale as LocaleString | undefined) ?? i.client.config.defaultLocale);
         return i.client.database.locales.get(i.guildId);
+    },
+    /**
+     * Reply with a simple error embed (red colored).
+     * @param {string} description The embed description.
+     * @param {QuickReplyOptions} [options] Optional reply options.
+     * @returns {Promise<void>} A promise that resolves when the reply is sent.
+     */
+    errorReply(this: AnyContext, description: string, options: QuickReplyOptions = {}): Promise<void> {
+        // Extensions are `Object.assign`ed onto the context, so `this` is the real context
+        // (which always has `editOrReply`), unlike `i` which may be a raw `Message` for prefix commands.
+        return this.editOrReply({
+            ...(options.content !== undefined && { content: options.content }),
+            ...(options.ephemeral && { flags: MessageFlags.Ephemeral }),
+            embeds: [{ description, color: EmbedColors.Red }],
+        });
+    },
+    /**
+     * Reply with a simple success embed (using the configured success color).
+     * @param {string} description The embed description.
+     * @param {QuickReplyOptions} [options] Optional reply options.
+     * @returns {Promise<void>} A promise that resolves when the reply is sent.
+     */
+    successReply(this: AnyContext, description: string, options: QuickReplyOptions = {}): Promise<void> {
+        return this.editOrReply({
+            ...(options.content !== undefined && { content: options.content }),
+            ...(options.ephemeral && { flags: MessageFlags.Ephemeral }),
+            embeds: [{ description, color: this.client.config.color.success }],
+        });
+    },
+    /**
+     * Get the lavalink player of the current guild, if any.
+     * @returns {PlayerStructure | undefined} The guild player, or `undefined` if there is none.
+     */
+    getPlayer(this: AnyContext): PlayerStructure | undefined {
+        if (!this.guildId) return undefined;
+        return this.client.manager.getPlayer(this.guildId);
     },
 }));
 
@@ -302,6 +357,20 @@ export function cleanup(client: UsingClient): void {
 
     process.exit(0);
 }
+
+/**
+ *
+ * Apply the deleter configuration to a component interaction, either deleting the message or clearing its components based on the specified key.
+ * @param {GuildComponentContext<"Button">} ctx The component interaction context.
+ * @param {keyof StelleConfiguration["deleter"]} kind The deleter configuration key to check.
+ * @returns {Promise<void>} A promise that resolves when the action is complete.
+ */
+export const applyDeleter = async (ctx: GuildComponentContext<"Button">, kind: keyof StelleConfiguration["deleter"]): Promise<void> => {
+    await ctx.interaction.deferUpdate();
+
+    if (ctx.client.config.deleter[kind]) await ctx.interaction.message.delete().catch((): null => null);
+    else await ctx.interaction.message.edit({ components: [] });
+};
 
 /**
  *

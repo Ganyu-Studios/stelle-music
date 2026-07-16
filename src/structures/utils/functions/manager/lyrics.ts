@@ -28,7 +28,7 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | MessageStru
 
     const { client } = ctx;
 
-    const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
+    const player: PlayerStructure | undefined = ctx.getPlayer();
     if (!player) return;
 
     const track: TrackStructure | null = player.queue.current;
@@ -73,16 +73,7 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | MessageStru
                 return null;
             }));
 
-    if (!lyrics)
-        return ctx.editOrReply({
-            flags: MessageFlags.Ephemeral,
-            embeds: [
-                {
-                    color: EmbedColors.Red,
-                    description: messages.commands.lyrics.noLyrics,
-                },
-            ],
-        });
+    if (!lyrics) return ctx.errorReply(messages.commands.lyrics.noLyrics, { ephemeral: true });
 
     const lines: string = lyrics.lines
         .map((line): string => {

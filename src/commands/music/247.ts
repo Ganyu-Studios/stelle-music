@@ -1,4 +1,3 @@
-import type { PlayerStructure } from "hoshimi";
 import { Command, createBooleanOption, Declare, type GuildCommandContext, LocalesT, Middlewares, Options } from "seyfert";
 import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { type AutoplayState, StelleCategory } from "#stelle/types";
@@ -29,12 +28,10 @@ const options = {
 @LocalesT("locales.twentyforseven.name", "locales.twentyforseven.description")
 @Options(options)
 export default class TwentyFourSevenCommand extends Command {
-    override async run(ctx: GuildCommandContext<typeof options>) {
-        const { client } = ctx;
+    override async run(ctx: GuildCommandContext<typeof options, "checkPlayer">) {
         const { messages } = await ctx.locale();
 
-        const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
-        if (!player) return;
+        const { player } = ctx.metadata.checkPlayer;
 
         await player.data.set("is247", !(await player.data.get("is247")));
         await player.data.set("isAutoPause", ctx.options.autopause ?? false);
@@ -50,16 +47,11 @@ export default class TwentyFourSevenCommand extends Command {
          */
         const enabledState = (state: AutoplayState): string => messages.commands.is247.enabledType[state];
 
-        await ctx.editOrReply({
-            embeds: [
-                {
-                    color: client.config.color.success,
-                    description: messages.commands.is247.enabled({
-                        is247: enabledState(Constants.AutoplayState(is247)),
-                        autoPause: enabledState(Constants.AutoplayState(autoPause)),
-                    }),
-                },
-            ],
-        });
+        await ctx.successReply(
+            messages.commands.is247.enabled({
+                is247: enabledState(Constants.AutoplayState(is247)),
+                autoPause: enabledState(Constants.AutoplayState(autoPause)),
+            }),
+        );
     }
 }

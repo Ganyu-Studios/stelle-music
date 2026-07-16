@@ -1,4 +1,3 @@
-import type { PlayerStructure } from "hoshimi";
 import {
     Command,
     createIntegerOption,
@@ -39,14 +38,15 @@ const options = {
 @LocalesT("locales.volume.name", "locales.volume.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class VolumeCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>): Promise<MessageStructure | WebhookMessageStructure | void> {
+    public override async run(
+        ctx: GuildCommandContext<typeof options, "checkPlayer">,
+    ): Promise<MessageStructure | WebhookMessageStructure | void> {
         const { client, options } = ctx;
         const { volume } = options;
 
         const { messages } = await ctx.locale();
 
-        const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
-        if (!player) return;
+        const { player } = ctx.metadata.checkPlayer;
 
         if (volume === 1) {
             await player.setPaused(true);
@@ -66,30 +66,20 @@ export default class VolumeCommand extends Command {
             await player.setPaused(false);
             await player.setVolume(volume);
 
-            return ctx.editOrReply({
-                embeds: [
-                    {
-                        color: client.config.color.success,
-                        description: messages.commands.volume.changed({
-                            volume,
-                            clientName: client.me.username,
-                        }),
-                    },
-                ],
-            });
+            return ctx.successReply(
+                messages.commands.volume.changed({
+                    volume,
+                    clientName: client.me.username,
+                }),
+            );
         }
 
         await player.setVolume(volume);
-        await ctx.editOrReply({
-            embeds: [
-                {
-                    color: client.config.color.success,
-                    description: messages.commands.volume.changed({
-                        volume,
-                        clientName: client.me.username,
-                    }),
-                },
-            ],
-        });
+        await ctx.successReply(
+            messages.commands.volume.changed({
+                volume,
+                clientName: client.me.username,
+            }),
+        );
     }
 }

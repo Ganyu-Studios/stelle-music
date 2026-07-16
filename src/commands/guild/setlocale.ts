@@ -9,7 +9,7 @@ import {
     Options,
     type WebhookMessageStructure,
 } from "seyfert";
-import { ApplicationIntegrationType, InteractionContextType, MessageFlags, PermissionFlagsBits } from "seyfert/lib/types/index.js";
+import { ApplicationIntegrationType, InteractionContextType, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
@@ -56,25 +56,11 @@ export default class SetLocaleCommand extends Command {
 
         const locales = Object.keys(client.langs.values);
         if (!locales.includes(locale))
-            return ctx.editOrReply({
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        description: messages.commands.setlocale.invalidLocale({ locale, available: locales.join(", ") }),
-                        color: client.config.color.success,
-                    },
-                ],
+            return ctx.errorReply(messages.commands.setlocale.invalidLocale({ locale, available: locales.join(", ") }), {
+                ephemeral: true,
             });
 
         await client.database.locales.update(ctx.guildId, locale);
-        await ctx.editOrReply({
-            flags: MessageFlags.Ephemeral,
-            embeds: [
-                {
-                    description: ctx.t.get(locale).messages.commands.setlocale.newLocale({ locale }),
-                    color: client.config.color.success,
-                },
-            ],
-        });
+        await ctx.successReply(ctx.t.get(locale).messages.commands.setlocale.newLocale({ locale }), { ephemeral: true });
     }
 }

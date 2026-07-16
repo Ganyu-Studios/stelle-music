@@ -239,7 +239,6 @@ export interface WebhookMetadata {
  * The type to get the plain object without functions.
  */
 export type Plain<T> = {
-    // biome-ignore lint/complexity/noBannedTypes: Just want to exclude functions
     [K in keyof T as T[K] extends Function ? never : K]: T[K];
 };
 

@@ -1,6 +1,4 @@
 import { createBooleanOption, createStringOption, Declare, type GuildCommandContext, LocalesT, Options, SubCommand } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
-import { MessageFlags } from "seyfert/lib/types/index.js";
 import { createId, isUrl } from "#stelle/utils/functions/utils.js";
 
 const options = {
@@ -38,32 +36,13 @@ export default class CreateSubCommand extends SubCommand {
         const { client, author } = ctx;
         const { messages } = await ctx.locale();
 
-        if (isUrl(playlistName))
-            return ctx.editOrReply({
-                content: "",
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        description: messages.events.invalidInput,
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
+        if (isUrl(playlistName)) return ctx.errorReply(messages.events.invalidInput, { ephemeral: true, content: "" });
 
         const userPlaylistAmount: number = await client.database.playlist.countByUser(author.id);
         const playlistLimit: number = client.config.playlists.userLimit;
 
         if (userPlaylistAmount >= playlistLimit)
-            return ctx.editOrReply({
-                content: "",
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        description: messages.commands.playlist.limitReached({ amount: playlistLimit }),
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
+            return ctx.errorReply(messages.commands.playlist.limitReached({ amount: playlistLimit }), { ephemeral: true, content: "" });
 
         await client.database.playlist.set(author.id, {
             playlistName,
@@ -73,18 +52,12 @@ export default class CreateSubCommand extends SubCommand {
             tracks: [],
         });
 
-        await ctx.editOrReply({
-            content: "",
-            flags: MessageFlags.Ephemeral,
-            embeds: [
-                {
-                    description: messages.commands.playlist.created({
-                        name: playlistName,
-                        state: messages.commands.playlist.state[type],
-                    }),
-                    color: client.config.color.success,
-                },
-            ],
-        });
+        await ctx.successReply(
+            messages.commands.playlist.created({
+                name: playlistName,
+                state: messages.commands.playlist.state[type],
+            }),
+            { ephemeral: true, content: "" },
+        );
     }
 }

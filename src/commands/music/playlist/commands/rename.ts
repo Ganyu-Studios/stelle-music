@@ -8,8 +8,6 @@ import {
     SubCommand,
     type WebhookMessageStructure,
 } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
-import { MessageFlags } from "seyfert/lib/types/index.js";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
 import { isUrl } from "#stelle/utils/functions/utils.js";
 
@@ -47,41 +45,13 @@ export default class RenameSubcommand extends SubCommand {
         const { id, name } = ctx.options;
 
         const playlist = await client.database.playlist.get(id, ctx.author.id);
-        if (!playlist)
-            return ctx.editOrReply({
-                content: "",
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        description: messages.commands.playlist.noPlaylist,
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
+        if (!playlist) return ctx.errorReply(messages.commands.playlist.noPlaylist, { ephemeral: true, content: "" });
 
-        if (isUrl(name))
-            return ctx.editOrReply({
-                content: "",
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        description: messages.events.invalidInput,
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
+        if (isUrl(name)) return ctx.errorReply(messages.events.invalidInput, { ephemeral: true, content: "" });
 
         playlist.playlistName = name;
 
         await client.database.playlist.set(ctx.author.id, playlist);
-        await ctx.editOrReply({
-            content: "",
-            embeds: [
-                {
-                    description: messages.commands.playlist.renamed({ name }),
-                    color: client.config.color.success,
-                },
-            ],
-        });
+        await ctx.successReply(messages.commands.playlist.renamed({ name }), { content: "" });
     }
 }

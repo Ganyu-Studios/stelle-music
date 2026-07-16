@@ -18,27 +18,19 @@ import { StelleOptions } from "#stelle/utils/decorator.js";
 @LocalesT("locales.autoplay.name", "locales.autoplay.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
 export default class AutoplayCommand extends Command {
-    public override async run(ctx: GuildCommandContext): Promise<void> {
-        const { client } = ctx;
-
+    public override async run(ctx: GuildCommandContext<{}, "checkPlayer">): Promise<void> {
         const { messages } = await ctx.locale();
 
-        const player = client.manager.getPlayer(ctx.guildId);
-        if (!player) return;
+        const { player } = ctx.metadata.checkPlayer;
 
         await player.data.set("enabledAutoplay", !(await player.data.get("enabledAutoplay")));
 
         const isAutoplay: boolean = (await player.data.get("enabledAutoplay"))!;
 
-        await ctx.editOrReply({
-            embeds: [
-                {
-                    color: client.config.color.success,
-                    description: messages.commands.autoplay.toggled({
-                        type: messages.commands.autoplay.autoplayType[Constants.AutoplayState(isAutoplay)],
-                    }),
-                },
-            ],
-        });
+        await ctx.successReply(
+            messages.commands.autoplay.toggled({
+                type: messages.commands.autoplay.autoplayType[Constants.AutoplayState(isAutoplay)],
+            }),
+        );
     }
 }

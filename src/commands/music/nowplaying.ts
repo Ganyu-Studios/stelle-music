@@ -1,4 +1,4 @@
-import type { PlayerStructure, TrackStructure } from "hoshimi";
+import type { TrackStructure } from "hoshimi";
 import type { Image } from "imagescript";
 import {
     AttachmentBuilder,
@@ -15,7 +15,6 @@ import {
     TextDisplay,
     type WebhookMessageStructure,
 } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
 import { ApplicationIntegrationType, InteractionContextType, MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
@@ -34,24 +33,13 @@ import { truncate } from "#stelle/utils/functions/utils.js";
 @LocalesT("locales.nowplaying.name", "locales.nowplaying.description")
 @Middlewares(["checkNodes", "checkPlayer"])
 export default class NowPlayingCommand extends Command {
-    public override async run(ctx: GuildCommandContext): Promise<MessageStructure | WebhookMessageStructure | void> {
-        const { client } = ctx;
-
+    public override async run(ctx: GuildCommandContext<{}, "checkPlayer">): Promise<MessageStructure | WebhookMessageStructure | void> {
         const { messages } = await ctx.locale();
 
-        const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
-        if (!player) return;
+        const { player } = ctx.metadata.checkPlayer;
 
         const track: TrackStructure | null = player.queue.current;
-        if (!track)
-            return ctx.editOrReply({
-                embeds: [
-                    {
-                        description: messages.events.noPlayer,
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
+        if (!track) return ctx.errorReply(messages.events.noPlayer);
 
         await ctx.deferReply();
 

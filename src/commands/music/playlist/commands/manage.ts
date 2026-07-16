@@ -54,17 +54,7 @@ export default class ManageSubcommand extends SubCommand {
         const { id } = ctx.options;
 
         const playlist = await client.database.playlist.get(id, ctx.author.id);
-        if (!playlist)
-            return ctx.editOrReply({
-                content: "",
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        description: messages.commands.playlist.noPlaylist,
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
+        if (!playlist) return ctx.errorReply(messages.commands.playlist.noPlaylist, { ephemeral: true, content: "" });
 
         /**
          *

@@ -82,15 +82,7 @@ export default class EvalCommand extends Command {
 
         if (ctx.message) await client.channels.typing(channelId);
 
-        if (!code.length)
-            return ctx.editOrReply({
-                embeds: [
-                    {
-                        description: "`❌` Hey! Try typing some code to be evaluated...",
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
+        if (!code.length) return ctx.errorReply("`❌` Hey! Try typing some code to be evaluated...");
 
         try {
             if (secretsRegex.test(code.toLowerCase()) || concatRegex.test(code.toLowerCase())) output = Constants.SecretMessage();

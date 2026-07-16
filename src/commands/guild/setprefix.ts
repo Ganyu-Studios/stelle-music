@@ -32,13 +32,6 @@ export default class SetPrefixCommand extends Command {
         const { messages } = await ctx.locale();
 
         await client.database.prefixes.set(ctx.guildId, prefix);
-        await ctx.editOrReply({
-            embeds: [
-                {
-                    description: messages.commands.setprefix({ prefix }),
-                    color: client.config.color.success,
-                },
-            ],
-        });
+        await ctx.successReply(messages.commands.setprefix({ prefix }));
     }
 }

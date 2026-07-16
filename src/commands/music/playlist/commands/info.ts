@@ -11,7 +11,6 @@ import {
     SubCommand,
     type WebhookMessageStructure,
 } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 import type { TrackUser } from "#stelle/types";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
@@ -46,29 +45,9 @@ export default class InfoSubcommand extends SubCommand {
         const { id } = ctx.options;
 
         const playlist = await client.database.playlist.get(id, ctx.author.id);
-        if (!playlist)
-            return ctx.editOrReply({
-                content: "",
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        description: messages.commands.playlist.noPlaylist,
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
+        if (!playlist) return ctx.errorReply(messages.commands.playlist.noPlaylist, { ephemeral: true, content: "" });
 
-        if (!playlist.tracks.length)
-            return ctx.editOrReply({
-                content: "",
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        description: messages.commands.playlist.noTracks,
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
+        if (!playlist.tracks.length) return ctx.errorReply(messages.commands.playlist.noTracks, { ephemeral: true, content: "" });
 
         const limit: number = 20;
 

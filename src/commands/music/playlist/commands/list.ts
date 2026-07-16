@@ -11,7 +11,6 @@ import {
     type User,
     type WebhookMessageStructure,
 } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 import { chunk, truncate } from "#stelle/utils/functions/utils.js";
 import { EmbedPaginator } from "#stelle/utils/paginator.js";
@@ -49,17 +48,7 @@ export default class ListSubcommand extends SubCommand {
             })
         ).sort((a, b): number => Number(b.public) - Number(a.public) || b.createdAt.getTime() - a.createdAt.getTime());
 
-        if (!playlists.length)
-            return ctx.editOrReply({
-                content: "",
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        description: messages.commands.playlist.noPlaylist,
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
+        if (!playlists.length) return ctx.errorReply(messages.commands.playlist.noPlaylist, { ephemeral: true, content: "" });
 
         const limit: number = 20;
         const privatePlaylists = playlists.filter((playlist): boolean => isApplicable && playlist.userId === author.id && !playlist.public);

@@ -1,4 +1,3 @@
-import type { PlayerStructure } from "hoshimi";
 import { Command, createChannelOption, Declare, type GuildCommandContext, LocalesT, Middlewares, Options } from "seyfert";
 import { ApplicationIntegrationType, ChannelType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
@@ -36,14 +35,13 @@ const options = {
 @LocalesT("locales.move.name", "locales.move.description")
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class MoveCommand extends Command {
-    public override async run(ctx: GuildCommandContext<typeof options>): Promise<void> {
-        const { client, options } = ctx;
+    public override async run(ctx: GuildCommandContext<typeof options, "checkPlayer">): Promise<void> {
+        const { options } = ctx;
         const { voice, text } = options;
 
         const { messages } = await ctx.locale();
 
-        const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
-        if (!player) return;
+        const { player } = ctx.metadata.checkPlayer;
 
         if (text) {
             player.options.textId = text.id;
@@ -57,16 +55,11 @@ export default class MoveCommand extends Command {
 
         await player.setVoice({ voiceId: voice.id });
         await player.connect();
-        await ctx.editOrReply({
-            embeds: [
-                {
-                    color: client.config.color.success,
-                    description: messages.commands.move({
-                        textId,
-                        voiceId: voice.id,
-                    }),
-                },
-            ],
-        });
+        await ctx.successReply(
+            messages.commands.move({
+                textId,
+                voiceId: voice.id,
+            }),
+        );
     }
 }

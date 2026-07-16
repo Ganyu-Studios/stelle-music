@@ -43,7 +43,7 @@ export async function playlistTrackSave(
 
     if (!ctx.inGuild()) return;
 
-    const player: PlayerStructure | undefined = client.manager.getPlayer(ctx.guildId);
+    const player: PlayerStructure | undefined = ctx.getPlayer();
     if (!player?.playing && [SaveType.Queue, SaveType.Current].includes(type))
         return interaction.editOrReply({
             content: "",

@@ -13,9 +13,8 @@ import {
     SubCommand,
     type WebhookMessageStructure,
 } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
 import type { APIApplicationCommandOption, ApplicationCommandOptionType, LocaleString } from "seyfert/lib/types/index.js";
-import { ApplicationIntegrationType, InteractionContextType, MessageFlags } from "seyfert/lib/types/index.js";
+import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js";
@@ -91,16 +90,7 @@ export default class HelpCommand extends Command {
         const { client, options } = ctx;
         const { messages } = await ctx.locale();
 
-        if (options.command === "noCommand")
-            return ctx.editOrReply({
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        color: EmbedColors.Red,
-                        description: messages.commands.help.noCommand,
-                    },
-                ],
-            });
+        if (options.command === "noCommand") return ctx.errorReply(messages.commands.help.noCommand, { ephemeral: true });
 
         const commands: ResolvableCommand[] = client.commands.values.filter((command): boolean => !command.guildId);
         const categoryList: number[] = commands
@@ -180,16 +170,7 @@ export default class HelpCommand extends Command {
         }
 
         const command: ResolvableCommand | undefined = commands.find((command) => command.name === options.command);
-        if (!command)
-            return ctx.editOrReply({
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        color: EmbedColors.Red,
-                        description: messages.commands.help.noCommand,
-                    },
-                ],
-            });
+        if (!command) return ctx.errorReply(messages.commands.help.noCommand, { ephemeral: true });
 
         const embed: Embed = new Embed()
             .setColor(client.config.color.success)
