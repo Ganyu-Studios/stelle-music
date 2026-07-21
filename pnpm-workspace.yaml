@@ -7,15 +7,15 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - 'hoshimi'
   - seyfert
-  - '@biomejs/biome@2.5.4'
-  - '@biomejs/cli-darwin-arm64@2.5.4'
-  - '@biomejs/cli-darwin-x64@2.5.4'
-  - '@biomejs/cli-linux-arm64-musl@2.5.4'
-  - '@biomejs/cli-linux-arm64@2.5.4'
-  - '@biomejs/cli-linux-x64-musl@2.5.4'
-  - '@biomejs/cli-linux-x64@2.5.4'
-  - '@biomejs/cli-win32-arm64@2.5.4'
-  - '@biomejs/cli-win32-x64@2.5.4'
+  - '@biomejs/biome@2.5.4 || 2.5.5'
+  - '@biomejs/cli-darwin-arm64@2.5.4 || 2.5.5'
+  - '@biomejs/cli-darwin-x64@2.5.4 || 2.5.5'
+  - '@biomejs/cli-linux-arm64-musl@2.5.4 || 2.5.5'
+  - '@biomejs/cli-linux-arm64@2.5.4 || 2.5.5'
+  - '@biomejs/cli-linux-x64-musl@2.5.4 || 2.5.5'
+  - '@biomejs/cli-linux-x64@2.5.4 || 2.5.5'
+  - '@biomejs/cli-win32-arm64@2.5.4 || 2.5.5'
+  - '@biomejs/cli-win32-x64@2.5.4 || 2.5.5'
   - yunaforseyfert@1.2.3
 
 packages: []
