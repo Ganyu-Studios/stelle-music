@@ -11,7 +11,7 @@ getWatermark();
 import { Logger } from "seyfert";
 import { Stelle } from "#stelle/classes/Stelle.js";
 import { customLogger } from "#stelle/utils/functions/internal/logger.js";
-import { cleanup } from "#stelle/utils/functions/utils.js";
+import { cleanup } from "#stelle/utils/functions/internal/utils.js";
 
 Logger.customize(customLogger);
 Logger.saveOnFile = "all";

@@ -18,8 +18,8 @@ import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js";
-import { TimeFormat } from "#stelle/utils/functions/time.js";
-import { truncate } from "#stelle/utils/functions/utils.js";
+import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
+import { truncate } from "#stelle/utils/functions/internal/utils.js";
 import { EmbedPaginator, StelleStringMenu } from "#stelle/utils/paginator.js";
 
 /**

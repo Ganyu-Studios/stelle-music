@@ -20,7 +20,7 @@ import { StelleMeta, StellePaths, StelleRedis, StelleText } from "#stelle/utils/
 import { StelleContext } from "#stelle/utils/functions/internal/context.js";
 import { onBotPermissionsFail, onOptionsError, onPermissionsFail, onRunError } from "#stelle/utils/functions/internal/overrides.js";
 import { sendErrorReport } from "#stelle/utils/functions/internal/report.js";
-import { inspect } from "#stelle/utils/functions/utils.js";
+import { inspect } from "#stelle/utils/functions/internal/utils.js";
 import { StelleDatabase } from "./Database.js";
 import { StelleManager } from "./Manager.js";
 

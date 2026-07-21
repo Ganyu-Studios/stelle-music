@@ -4,8 +4,8 @@ import type { MakeRequired, RestOrArray } from "seyfert/lib/common/index.js";
 import type { StellePlayerJson } from "#stelle/types";
 import { StellePaths } from "#stelle/utils/data/constants.js";
 import { InvalidNodeSession } from "#stelle/utils/errors.js";
-import { ms } from "#stelle/utils/functions/time.js";
-import { createDirectory } from "#stelle/utils/functions/utils.js";
+import { ms } from "#stelle/utils/functions/internal/time.js";
+import { createDirectory } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  * Lavalink node options without the `sessionId`.

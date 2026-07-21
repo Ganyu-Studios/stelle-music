@@ -2,7 +2,7 @@ import { join } from "node:path";
 import { z } from "zod";
 import type { InternalStelleConfiguration, StelleConfiguration } from "#stelle/types";
 import { InvalidConfiguration } from "#stelle/utils/errors.js";
-import { customImport } from "../functions/utils.js";
+import { customImport } from "../functions/internal/utils.js";
 
 const envSchema = z.object({
     TOKEN: z.string(),

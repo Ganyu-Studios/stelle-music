@@ -1,7 +1,7 @@
 import type { PlayerStructure } from "hoshimi";
 import type { AllChannels, GuildMember, UsingClient, VoiceState } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
-import { TimeFormat } from "#stelle/utils/functions/time.js";
+import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
 
 const timeouts: Map<string, NodeJS.Timeout> = new Map();
 

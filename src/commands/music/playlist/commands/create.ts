@@ -1,5 +1,5 @@
 import { createBooleanOption, createStringOption, Declare, type GuildCommandContext, LocalesT, Options, SubCommand } from "seyfert";
-import { createId, isUrl } from "#stelle/utils/functions/utils.js";
+import { createId, isUrl } from "#stelle/utils/functions/internal/utils.js";
 
 const options = {
     name: createStringOption({

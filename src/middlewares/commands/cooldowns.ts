@@ -1,6 +1,6 @@
 import { type AnyContext, createMiddleware, type LimitedCollection, type MiddlewareContext } from "seyfert";
 
-import { getCollectionKey } from "#stelle/utils/functions/utils.js";
+import { getCollectionKey } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  * The middleware to handle cooldowns.

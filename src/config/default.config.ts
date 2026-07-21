@@ -1,7 +1,7 @@
 import { SearchSources } from "hoshimi";
 import { Locale, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 import { createConfig } from "#stelle/utils/data/configuration.js";
-import { ms } from "#stelle/utils/functions/time.js";
+import { ms } from "#stelle/utils/functions/internal/time.js";
 import { Sessions } from "#stelle/utils/manager/sessions.js";
 
 export default createConfig({

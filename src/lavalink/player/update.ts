@@ -2,7 +2,7 @@ import type { PlayerJSON } from "hoshimi";
 import { EventNames } from "hoshimi";
 import type { NonOptionsNode, SessionJson, TrackUser } from "#stelle/types";
 import { StelleMeta } from "#stelle/utils/data/constants.js";
-import { omitKeys } from "#stelle/utils/functions/utils.js";
+import { omitKeys } from "#stelle/utils/functions/internal/utils.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 import { Sessions } from "#stelle/utils/manager/sessions.js";
 

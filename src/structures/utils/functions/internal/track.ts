@@ -1,7 +1,7 @@
 import type { TrackRequester, TrackStructure } from "hoshimi";
 import { type DefaultLocale, User } from "seyfert";
-import { TimeFormat } from "../time.js";
-import { omitKeys } from "../utils.js";
+import { TimeFormat } from "./time.js";
+import { omitKeys } from "./utils.js";
 
 /**
  *

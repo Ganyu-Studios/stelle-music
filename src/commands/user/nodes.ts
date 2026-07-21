@@ -4,7 +4,7 @@ import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { formatMemoryUsage } from "#stelle/utils/functions/internal/logger.js";
-import { TimeFormat } from "#stelle/utils/functions/time.js";
+import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
 import { EmbedPaginator } from "#stelle/utils/paginator.js";
 
 @Declare({

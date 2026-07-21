@@ -23,8 +23,8 @@ import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
 import { type Omit, PaginatorButtonCustomIds, PaginatorButtonIdentifiers } from "#stelle/types";
 import { InvalidComponentRun, InvalidEmbedsLength, InvalidMessage, InvalidPageNumber } from "./errors.js";
 import { updateComponents } from "./functions/internal/components.js";
-import { ms } from "./functions/time.js";
-import { hasFlags } from "./functions/utils.js";
+import { ms } from "./functions/internal/time.js";
+import { hasFlags } from "./functions/internal/utils.js";
 
 /**
  * The options of the paginator reply.

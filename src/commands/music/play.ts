@@ -22,8 +22,8 @@ import { StelleOptions } from "#stelle/utils/decorator.js";
 import { resolveLocale } from "#stelle/utils/functions/internal/context.js";
 import { onAutocompleteError } from "#stelle/utils/functions/internal/overrides.js";
 import { formatDuration, requesterFn } from "#stelle/utils/functions/internal/track.js";
+import { truncate } from "#stelle/utils/functions/internal/utils.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
-import { truncate } from "#stelle/utils/functions/utils.js";
 
 const options = {
     query: createStringOption({

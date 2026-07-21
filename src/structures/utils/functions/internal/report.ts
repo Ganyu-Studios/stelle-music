@@ -3,7 +3,7 @@ import { WebhookClient } from "#stelle/classes/WebhookClient.js";
 import { Environment } from "#stelle/utils/data/configuration.js";
 import { StelleMeta } from "#stelle/utils/data/constants.js";
 import { logger } from "#stelle/utils/functions/internal/logger.js";
-import { inspect, truncate } from "#stelle/utils/functions/utils.js";
+import { inspect, truncate } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  * The report options interface.

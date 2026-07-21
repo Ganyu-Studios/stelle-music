@@ -15,8 +15,8 @@ import { DeclareParserConfig, ParserRecommendedConfig, Watch, Yuna } from "yunaf
 import { Environment } from "#stelle/utils/data/configuration.js";
 import { StelleText } from "#stelle/utils/data/constants.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
-import { ms } from "#stelle/utils/functions/time.js";
-import { inspect, truncate } from "#stelle/utils/functions/utils.js";
+import { ms } from "#stelle/utils/functions/internal/time.js";
+import { inspect, truncate } from "#stelle/utils/functions/internal/utils.js";
 
 const secretsRegex = /\b(?:client\.(?:config)|config|env|process\.(?:env|exit)|eval|atob|btoa)\b/;
 const concatRegex = /".*?"\s*\+\s*".*?"(?:\s*\+\s*".*?")*/;

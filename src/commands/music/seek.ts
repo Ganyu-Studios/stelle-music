@@ -13,7 +13,7 @@ import {
 import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
-import { ms, TimeFormat } from "#stelle/utils/functions/time.js";
+import { ms, TimeFormat } from "#stelle/utils/functions/internal/time.js";
 
 const options = {
     time: createStringOption({

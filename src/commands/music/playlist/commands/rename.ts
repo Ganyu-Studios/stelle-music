@@ -9,7 +9,7 @@ import {
     type WebhookMessageStructure,
 } from "seyfert";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
-import { isUrl } from "#stelle/utils/functions/utils.js";
+import { isUrl } from "#stelle/utils/functions/internal/utils.js";
 
 const options = {
     id: createStringOption({

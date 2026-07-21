@@ -1,5 +1,5 @@
 import { EventNames } from "hoshimi";
-import { ms } from "#stelle/utils/functions/time.js";
+import { ms } from "#stelle/utils/functions/internal/time.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 export default createLavalinkEvent({

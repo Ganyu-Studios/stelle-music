@@ -1,7 +1,7 @@
 import { Controller } from "#stelle/classes/Controller.js";
 import type { userPlaylist } from "#stelle/prisma";
 import type { Omit } from "#stelle/types";
-import { omitKeys } from "#stelle/utils/functions/utils.js";
+import { omitKeys } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  * The type of the playlist data without the id and userId.

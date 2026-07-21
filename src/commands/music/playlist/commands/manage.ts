@@ -26,8 +26,8 @@ import {
     playlistVisibilityToggleHandler,
 } from "#stelle/utils/functions/components/playlist.js";
 import { updateComponents } from "#stelle/utils/functions/internal/components.js";
-import { ms } from "#stelle/utils/functions/time.js";
-import { hasFlags } from "#stelle/utils/functions/utils.js";
+import { ms } from "#stelle/utils/functions/internal/time.js";
+import { hasFlags } from "#stelle/utils/functions/internal/utils.js";
 
 const options = {
     id: createStringOption({

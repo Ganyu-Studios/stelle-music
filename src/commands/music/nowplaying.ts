@@ -18,9 +18,9 @@ import {
 import { ApplicationIntegrationType, InteractionContextType, MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
-import { getAlbumImage, renderImage } from "#stelle/utils/functions/image.js";
-import { ms, TimeFormat } from "#stelle/utils/functions/time.js";
-import { truncate } from "#stelle/utils/functions/utils.js";
+import { getAlbumImage, renderImage } from "#stelle/utils/functions/internal/image.js";
+import { ms, TimeFormat } from "#stelle/utils/functions/internal/time.js";
+import { truncate } from "#stelle/utils/functions/internal/utils.js";
 
 @Declare({
     name: "nowplaying",

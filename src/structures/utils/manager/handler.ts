@@ -1,7 +1,7 @@
 import type { HoshimiEvents } from "hoshimi";
 import type { UsingClient } from "seyfert";
 import { BaseHandler } from "seyfert/lib/common/index.js";
-import { customImport } from "../functions/utils.js";
+import { customImport } from "../functions/internal/utils.js";
 import type { Lavalink } from "./events.js";
 
 /**
