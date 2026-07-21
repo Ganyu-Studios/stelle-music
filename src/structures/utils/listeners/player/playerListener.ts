@@ -1,7 +1,8 @@
 import type { PlayerStructure } from "hoshimi";
-import type { AllChannels, GuildMember, UsingClient, VoiceState } from "seyfert";
+import type { GuildMember, UsingClient, VoiceState } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
+import { fetchPlayerVoice, getPlayerMessages } from "#stelle/utils/functions/manager/player.js";
 
 const timeouts: Map<string, NodeJS.Timeout> = new Map();
 
@@ -24,13 +25,11 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
 
     if (!(player.textId && player.voiceId)) return;
 
-    const locale: string | undefined = await player.data.get("localeString");
-    if (!locale) return;
+    const messages = await getPlayerMessages(client, player);
+    if (!messages) return;
 
-    const { messages } = client.t(locale).get();
-
-    const channel: AllChannels = await client.channels.fetch(player.voiceId);
-    if (!channel.is(["GuildStageVoice", "GuildVoice"])) return;
+    const channel = await fetchPlayerVoice(client, player);
+    if (!channel) return;
 
     const members: GuildMember[] = await Promise.all(channel.states().map((c): Promise<GuildMember> => c.member()));
     const isEmpty: boolean = !members.filter(({ user }): boolean => !user.bot).length;

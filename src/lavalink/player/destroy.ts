@@ -1,6 +1,7 @@
 import { EventNames } from "hoshimi";
 import type { AllChannels } from "seyfert";
 import { StelleMeta } from "#stelle/utils/data/constants.js";
+import { clearPlayerLyrics } from "#stelle/utils/functions/manager/player.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 import { Sessions } from "#stelle/utils/manager/sessions.js";
 
@@ -21,14 +22,7 @@ export default createLavalinkEvent({
         const messageId: string | undefined = await player.data.get("messageId");
         if (messageId) await client.messages.edit(messageId, textId, { components: [] }).catch((): null => null);
 
-        const lyricsId: string | undefined = await player.data.get("lyricsId");
-        if (lyricsId) {
-            await client.messages.delete(lyricsId, textId).catch((): null => null);
-
-            await player.data.delete("lyricsId");
-            await player.data.delete("lyrics");
-            await player.data.delete("lyricsEnabled");
-        }
+        await clearPlayerLyrics(client, player, textId, { clearEnabled: true });
 
         if (StelleMeta.Debug)
             client.debugger?.info(`[Lavalink] Player destroyed | guild: ${player.guildId} | voice: ${voiceId} | text: ${textId}`);

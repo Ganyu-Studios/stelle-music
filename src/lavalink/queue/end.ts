@@ -1,6 +1,7 @@
 import { EventNames } from "hoshimi";
-import { type AllChannels, Embed } from "seyfert";
+import { Embed } from "seyfert";
 import { StelleMeta } from "#stelle/utils/data/constants.js";
+import { clearNowPlaying, clearPlayerLyrics, fetchPlayerVoice, getPlayerMessages } from "#stelle/utils/functions/manager/player.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 export default createLavalinkEvent({
@@ -9,31 +10,14 @@ export default createLavalinkEvent({
         if (!(player.textId && player.voiceId)) return;
 
         // only unsubscribe if the queue is ended.
-        const lyricsId: string | undefined = await player.data.get("lyricsId");
-        if (lyricsId) {
-            await client.messages.delete(lyricsId, player.textId).catch((): null => null);
+        await clearPlayerLyrics(client, player, player.textId, { unsubscribe: true, clearEnabled: true });
+        await clearNowPlaying(client, player, player.textId);
 
-            const isEnabled = !!(await player.data.get("lyricsEnabled"));
-            if (isEnabled) await player.lyrics.unsubscribe();
+        const messages = await getPlayerMessages(client, player);
+        if (!messages) return;
 
-            await player.data.delete("lyricsId");
-            await player.data.delete("lyrics");
-            await player.data.delete("lyricsEnabled");
-        }
-
-        const messageId: string | undefined = await player.data.get("messageId");
-        if (messageId) {
-            if (client.config.deleter.onTrackEnd) await client.messages.delete(messageId, player.textId).catch((): null => null);
-            else await client.messages.edit(messageId, player.textId, { components: [] }).catch((): null => null);
-        }
-
-        const locale: string | undefined = await player.data.get("localeString");
-        if (!locale) return;
-
-        const voice: AllChannels = await client.channels.fetch(player.voiceId);
-        if (!voice.is(["GuildStageVoice", "GuildVoice"])) return;
-
-        const { messages } = client.t(locale).get();
+        const voice = await fetchPlayerVoice(client, player);
+        if (!voice) return;
 
         if (voice.isVoice()) await voice.setVoiceStatus(messages.events.voiceStatus.queueEnd).catch((): null => null);
 

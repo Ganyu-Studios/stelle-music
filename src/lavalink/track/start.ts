@@ -1,8 +1,9 @@
 import { EventNames } from "hoshimi";
-import { ActionRow, type AllChannels, Button, Embed, type MessageStructure } from "seyfert";
+import { ActionRow, Button, Embed, type MessageStructure } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 import { StelleMeta, StelleMusic } from "#stelle/utils/data/constants.js";
 import { formatDuration } from "#stelle/utils/functions/internal/track.js";
+import { fetchPlayerVoice, getPlayerMessages } from "#stelle/utils/functions/manager/player.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 export default createLavalinkEvent({
@@ -12,13 +13,12 @@ export default createLavalinkEvent({
         if (!track) return;
 
         const isAutoplay: boolean = (await player.data.get("enabledAutoplay")) ?? false;
-        const locale: string | undefined = await player.data.get("localeString");
-        if (!locale) return;
 
-        const voice: AllChannels = await client.channels.fetch(player.voiceId);
-        if (!voice.is(["GuildStageVoice", "GuildVoice"])) return;
+        const messages = await getPlayerMessages(client, player);
+        if (!messages) return;
 
-        const { messages } = client.t(locale).get();
+        const voice = await fetchPlayerVoice(client, player);
+        if (!voice) return;
 
         const duration: string = formatDuration(track, messages);
 
