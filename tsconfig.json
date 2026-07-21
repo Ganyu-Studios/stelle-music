@@ -6,8 +6,7 @@
         "emitDecoratorMetadata": true,
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
-        "rootDir": "./src",
-        "outDir": "./dist",
+        "noEmit": true,
         "removeComments": true,
         "noEmitOnError": true,
         "allowSyntheticDefaultImports": true,
@@ -29,6 +28,6 @@
             "#stelle/prisma": ["./src/generated/prisma/client.ts"]
         }
     },
-    "include": ["./src/**/*"],
+    "include": ["./src/**/*", "./tests/**/*"],
     "exclude": ["node_modules", "dist", "generated"]
 }
