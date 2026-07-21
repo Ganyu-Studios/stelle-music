@@ -15,12 +15,12 @@ import {
 } from "seyfert";
 import type { APIApplicationCommandOption, ApplicationCommandOptionType, LocaleString } from "seyfert/lib/types/index.js";
 import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
+import { EmbedPaginator, StelleStringMenu } from "#stelle/classes/EmbedPaginator.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js";
 import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
 import { truncate } from "#stelle/utils/functions/internal/utils.js";
-import { EmbedPaginator, StelleStringMenu } from "#stelle/utils/paginator.js";
 
 /**
  * The type for a command that can be resolved to a command or a context menu command.

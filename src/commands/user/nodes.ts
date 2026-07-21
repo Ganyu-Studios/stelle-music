@@ -1,11 +1,11 @@
 import { Command, Declare, Embed, type GuildCommandContext, LocalesT, type MessageStructure, type WebhookMessageStructure } from "seyfert";
 import type { APIEmbedField } from "seyfert/lib/types/index.js";
 import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
+import { EmbedPaginator } from "#stelle/classes/EmbedPaginator.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { formatMemoryUsage } from "#stelle/utils/functions/internal/logger.js";
 import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
-import { EmbedPaginator } from "#stelle/utils/paginator.js";
 
 @Declare({
     name: "nodes",

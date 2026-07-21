@@ -19,6 +19,7 @@ import { EmbedColors, type PermissionStrings } from "seyfert/lib/common/index.js
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
 import type { PermissionsBitField } from "seyfert/lib/structures/extra/Permissions.js";
 import { ButtonStyle, MessageFlags, TextInputStyle } from "seyfert/lib/types/index.js";
+import { EmbedPaginator } from "#stelle/classes/EmbedPaginator.js";
 import type { userPlaylist } from "#stelle/prisma";
 import type { PermissionNames } from "#stelle/types";
 import { ManageButtonIdentifiers, SaveButtonCustomIds, SaveButtonIdentifiers, type TrackUser } from "#stelle/types";
@@ -27,7 +28,6 @@ import { getPermissionKeys } from "#stelle/utils/functions/internal/discord.js";
 import { ms } from "#stelle/utils/functions/internal/time.js";
 import { requesterFn } from "#stelle/utils/functions/internal/track.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
-import { EmbedPaginator } from "#stelle/utils/paginator.js";
 import { playlistTrackSave, SaveType } from "./playlist/save.js";
 import { parseTrackSelection } from "./playlist/selection.js";
 
