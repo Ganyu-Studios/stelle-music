@@ -12,7 +12,7 @@ import { LoggerOps } from "#stelle/utils/functions/internal/logger.js";
 })
 @LocalesT("locales.info.subcommands.bot.name", "locales.info.subcommands.bot.description")
 @Shortcut()
-export default class BotSubcommand extends SubCommand {
+export default class InfoBotSubcommand extends SubCommand {
     public override async run(ctx: GuildCommandContext): Promise<void> {
         const { messages } = await ctx.locale();
         const { client } = ctx;

@@ -1,21 +1,25 @@
-import { Command, Declare, Embed, type GuildCommandContext, LocalesT, type MessageStructure, type WebhookMessageStructure } from "seyfert";
+import {
+    Declare,
+    Embed,
+    type GuildCommandContext,
+    LocalesT,
+    type MessageStructure,
+    SubCommand,
+    type WebhookMessageStructure,
+} from "seyfert";
 import type { APIEmbedField } from "seyfert/lib/types/index.js";
-import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
+import { Shortcut } from "yunaforseyfert";
 import { EmbedPaginator } from "#stelle/classes/EmbedPaginator.js";
-import { StelleCategory } from "#stelle/types";
-import { StelleOptions } from "#stelle/utils/decorator.js";
 import { LoggerOps } from "#stelle/utils/functions/internal/logger.js";
 import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
 
 @Declare({
     name: "nodes",
     description: "Get the status of all Stelle nodes.",
-    integrationTypes: [ApplicationIntegrationType.GuildInstall],
-    contexts: [InteractionContextType.Guild],
 })
-@StelleOptions({ cooldown: 5, category: StelleCategory.User })
-@LocalesT("locales.nodes.name", "locales.nodes.description")
-export default class NodesCommand extends Command {
+@LocalesT("locales.info.subcommands.nodes.name", "locales.info.subcommands.nodes.description")
+@Shortcut()
+export default class InfoNodesSubcommand extends SubCommand {
     public override async run(ctx: GuildCommandContext): Promise<MessageStructure | WebhookMessageStructure | void> {
         const { client } = ctx;
         const { messages } = await ctx.locale();
@@ -24,8 +28,8 @@ export default class NodesCommand extends Command {
         const fields: APIEmbedField[] = client.manager.nodeManager.nodes.map((node) => ({
             name: `\`🔰\` ${node.id}`,
             inline: true,
-            value: messages.commands.nodes.value({
-                state: messages.commands.nodes.states[node.state],
+            value: messages.commands.info.nodes.value({
+                state: messages.commands.info.nodes.states[node.state],
                 players: node.stats?.players ?? 0,
                 uptime: TimeFormat.toHumanize(node.stats?.uptime ?? 0),
                 memory: `${LoggerOps.memoryUsage(node.stats?.memory?.used ?? 0)} / ${LoggerOps.memoryUsage(node.stats?.memory?.allocated ?? 0)}`,
@@ -33,13 +37,13 @@ export default class NodesCommand extends Command {
             }),
         }));
 
-        if (!fields.length) return ctx.errorReply(messages.commands.nodes.noNodes);
+        if (!fields.length) return ctx.errorReply(messages.commands.info.nodes.noNodes);
 
         if (fields.length < limit) {
             await ctx.editOrReply({
                 embeds: [
                     new Embed()
-                        .setDescription(messages.commands.nodes.description)
+                        .setDescription(messages.commands.info.nodes.description)
                         .setColor(client.config.color.success)
                         .addFields(fields.slice(0, limit))
                         .setTimestamp(),
@@ -51,7 +55,7 @@ export default class NodesCommand extends Command {
             for (let i = 0; i < fields.length; i += limit) {
                 paginator.addEmbed(
                     new Embed()
-                        .setDescription(messages.commands.nodes.description)
+                        .setDescription(messages.commands.info.nodes.description)
                         .setColor(client.config.color.success)
                         .addFields(fields.slice(i, i + limit))
                         .setTimestamp(),

@@ -206,6 +206,21 @@ export default {
                         },
                     },
                 },
+                nodes: {
+                    value: ({ state, uptime, players, memory, cpu }: INodes): string =>
+                        `\`📘\` State: \`${state}\`\n\`🕛\` Uptime: \`${uptime}\`\n\`🎤\` Players: \`${players}\`\n\`🪭\` Usage: \`${memory}\`\n\`📦\` CPU: \`${cpu}\``,
+                    description: "`📋` List of all Stelle nodes.",
+                    noNodes: "`❌` No nodes available at the moment.",
+                    states: {
+                        [State.Connected]: "🟢 Connected.",
+                        [State.Disconnected]: "🔴 Disconnected.",
+                        [State.Connecting]: "🟡 Connecting.",
+                        [State.Idle]: "⚪ Idle.",
+                        [State.Reconnecting]: "🟠 Reconnecting.",
+                        [State.Reconnected]: "🟢 Reconnected.",
+                        [State.Destroyed]: "⚫ Destroyed.",
+                    } satisfies Record<State, string>,
+                },
             },
             help: {
                 title: ({ clientName }: IClientName): string => `${clientName} - Help Menu`,
@@ -268,21 +283,6 @@ export default {
                     enabled: "On",
                     disabled: "Off",
                 },
-            },
-            nodes: {
-                value: ({ state, uptime, players, memory, cpu }: INodes): string =>
-                    `\`📘\` State: \`${state}\`\n\`🕛\` Uptime: \`${uptime}\`\n\`🎤\` Players: \`${players}\`\n\`🪭\` Usage: \`${memory}\`\n\`📦\` CPU: \`${cpu}\``,
-                description: "`📋` List of all Stelle nodes.",
-                noNodes: "`❌` No nodes available at the moment.",
-                states: {
-                    [State.Connected]: "🟢 Connected.",
-                    [State.Disconnected]: "🔴 Disconnected.",
-                    [State.Connecting]: "🟡 Connecting.",
-                    [State.Idle]: "⚪ Idle.",
-                    [State.Reconnecting]: "🟠 Reconnecting.",
-                    [State.Reconnected]: "🟢 Reconnected.",
-                    [State.Destroyed]: "⚫ Destroyed.",
-                } satisfies Record<State, string>,
             },
             volume: {
                 changed: ({ volume }: IVolume): string => `\`✅\` The volume has been set to: **${volume}%**.`,
@@ -452,10 +452,6 @@ export default {
             name: "ping",
             description: "Get the Stelle ping.",
         },
-        nodes: {
-            name: "nodes",
-            description: "Get the status of all Stelle nodes.",
-        },
         setlocale: {
             name: "setlocale",
             description: "Set the locale of Stelle.",
@@ -571,6 +567,10 @@ export default {
                 bot: {
                     name: "bot",
                     description: "Get the bot info.",
+                },
+                nodes: {
+                    name: "nodes",
+                    description: "Get the status of all Stelle nodes.",
                 },
             },
         },

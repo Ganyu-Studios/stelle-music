@@ -155,6 +155,21 @@ export default {
                         },
                     },
                 },
+                nodes: {
+                    value: ({ state, uptime, players, memory, cpu }): string =>
+                        `\`📘\` Estado: \`${state}\`\n\`🕛\` Tiempo de actividad: \`${uptime}\`\n\`🎤\` Reproductores: \`${players}\`\n\`🪭\` Uso: \`${memory}\`\n\`📦\` CPU: \`${cpu}\``,
+                    description: "`📋` Lista de los nodos de Stelle.",
+                    noNodes: "`❌` No hay nodos disponibles por el momento.",
+                    states: {
+                        [State.Connected]: "🟢 Conectado.",
+                        [State.Disconnected]: "🔴 Desconectado.",
+                        [State.Connecting]: "🟡 Conectando...",
+                        [State.Idle]: "⚪ Inactivo.",
+                        [State.Reconnecting]: "🟠 Reconectando...",
+                        [State.Reconnected]: "🟢 Reconectado.",
+                        [State.Destroyed]: "⚫ Destruído.",
+                    },
+                },
             },
             help: {
                 title: ({ clientName }): string => `${clientName} - Menú de Ayuda`,
@@ -215,21 +230,6 @@ export default {
                 autoplayType: {
                     enabled: "Activado",
                     disabled: "Desactivado",
-                },
-            },
-            nodes: {
-                value: ({ state, uptime, players, memory, cpu }): string =>
-                    `\`📘\` Estado: \`${state}\`\n\`🕛\` Tiempo de actividad: \`${uptime}\`\n\`🎤\` Reproductores: \`${players}\`\n\`🪭\` Uso: \`${memory}\`\n\`📦\` CPU: \`${cpu}\``,
-                description: "`📋` Lista de los nodos de Stelle.",
-                noNodes: "`❌` No hay nodos disponibles por el momento.",
-                states: {
-                    [State.Connected]: "🟢 Conectado.",
-                    [State.Disconnected]: "🔴 Desconectado.",
-                    [State.Connecting]: "🟡 Conectando...",
-                    [State.Idle]: "⚪ Inactivo.",
-                    [State.Reconnecting]: "🟠 Reconectando...",
-                    [State.Reconnected]: "🟢 Reconectado.",
-                    [State.Destroyed]: "⚫ Destruído.",
                 },
             },
             volume: {
@@ -397,10 +397,6 @@ export default {
             name: "latencia",
             description: "Obten la latencia de Stelle.",
         },
-        nodes: {
-            name: "nodos",
-            description: "Obten el estado de todos los nodos de Stelle.",
-        },
         setlocale: {
             name: "idioma",
             description: "Establece el idioma de Stelle.",
@@ -516,6 +512,10 @@ export default {
                 bot: {
                     name: "bot",
                     description: "Obtén la información de la bot.",
+                },
+                nodes: {
+                    name: "nodos",
+                    description: "Obten el estado de todos los nodos de Stelle.",
                 },
             },
         },
