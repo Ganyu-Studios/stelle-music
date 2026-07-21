@@ -64,11 +64,7 @@ export const StelleContext = extendContext((i) => ({
     errorReply(this: AnyContext, description: string, options: QuickReplyOptions = {}): Promise<void> {
         // Extensions are `Object.assign`ed onto the context, so `this` is the real context
         // (which always has `editOrReply`), unlike `i` which may be a raw `Message` for prefix commands.
-        return this.editOrReply({
-            ...(options.content !== undefined && { content: options.content }),
-            ...(options.ephemeral && { flags: MessageFlags.Ephemeral }),
-            embeds: [{ description, color: EmbedColors.Red }],
-        });
+        return embedReply(this, description, EmbedColors.Red, options);
     },
     /**
      * Reply with a simple success embed (using the configured success color).
@@ -77,11 +73,7 @@ export const StelleContext = extendContext((i) => ({
      * @returns {Promise<void>} A promise that resolves when the reply is sent.
      */
     successReply(this: AnyContext, description: string, options: QuickReplyOptions = {}): Promise<void> {
-        return this.editOrReply({
-            ...(options.content !== undefined && { content: options.content }),
-            ...(options.ephemeral && { flags: MessageFlags.Ephemeral }),
-            embeds: [{ description, color: this.client.config.color.success }],
-        });
+        return embedReply(this, description, this.client.config.color.success, options);
     },
     /**
      * Get the lavalink player of the current guild, if any.
@@ -92,3 +84,20 @@ export const StelleContext = extendContext((i) => ({
         return this.client.manager.getPlayer(this.guildId);
     },
 }));
+
+/**
+ * Reply (or edit the deferred reply) with a single-embed message in the given color. Shared body behind the context
+ * `errorReply` / `successReply` helpers, so the flags/embed shape lives in one place.
+ * @param {AnyContext} ctx The command, component or modal context.
+ * @param {string} description The embed description.
+ * @param {number} color The embed color.
+ * @param {QuickReplyOptions} options The reply options.
+ * @returns {Promise<void>} A promise that resolves when the reply is sent.
+ */
+function embedReply(ctx: AnyContext, description: string, color: number, options: QuickReplyOptions): Promise<void> {
+    return ctx.editOrReply({
+        ...(options.content !== undefined && { content: options.content }),
+        ...(options.ephemeral && { flags: MessageFlags.Ephemeral }),
+        embeds: [{ description, color }],
+    });
+}
