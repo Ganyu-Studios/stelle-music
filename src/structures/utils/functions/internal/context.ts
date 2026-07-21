@@ -1,7 +1,19 @@
 import type { PlayerStructure } from "hoshimi";
-import { type AnyContext, type DefaultLocale, extendContext } from "seyfert";
+import { type AnyContext, type DefaultLocale, extendContext, type UsingClient } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { type LocaleString, MessageFlags } from "seyfert/lib/types/index.js";
+
+/**
+ * Resolve a guild's locale object from the database, deduping the
+ * `client.t(await client.database.locales.get(guildId)).get()` dance repeated by the code paths that resolve a locale
+ * outside a command context (where `ctx.locale()` isn't available).
+ * @param {UsingClient} client The client instance.
+ * @param {string} guildId The guild id.
+ * @returns {Promise<DefaultLocale>} The resolved locale object.
+ */
+export async function resolveLocale(client: UsingClient, guildId: string): Promise<DefaultLocale> {
+    return client.t(await client.database.locales.get(guildId)).get();
+}
 
 /**
  * The options for the quick reply helpers (`errorReply` / `successReply`).

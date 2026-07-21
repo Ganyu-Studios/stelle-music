@@ -1,6 +1,6 @@
 import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
 import { StelleMusic } from "#stelle/utils/data/constants.js";
-import { refreshComponents } from "#stelle/utils/functions/internal/discord.js";
+import { refreshComponents } from "#stelle/utils/functions/internal/components.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
 export default class AutoplayComponent extends ComponentCommand {

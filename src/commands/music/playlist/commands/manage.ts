@@ -25,7 +25,7 @@ import {
     playlistTrackSaveHandler,
     playlistVisibilityToggleHandler,
 } from "#stelle/utils/functions/components/playlist.js";
-import { updateComponents } from "#stelle/utils/functions/internal/discord.js";
+import { updateComponents } from "#stelle/utils/functions/internal/components.js";
 import { ms } from "#stelle/utils/functions/time.js";
 import { hasFlags } from "#stelle/utils/functions/utils.js";
 

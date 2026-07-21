@@ -15,7 +15,7 @@ import {
 } from "seyfert";
 import type { TrackUser } from "#stelle/types";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
-import { requesterFn } from "#stelle/utils/functions/internal/discord.js";
+import { requesterFn } from "#stelle/utils/functions/internal/track.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 
 const options = {

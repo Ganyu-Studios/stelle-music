@@ -1,6 +1,6 @@
 import type { AutocompleteInteraction, User } from "seyfert";
 import type { userPlaylist } from "#stelle/prisma";
-import { resolveLocale } from "#stelle/utils/functions/internal/discord.js";
+import { resolveLocale } from "#stelle/utils/functions/internal/context.js";
 
 /**
  *

@@ -2,7 +2,7 @@ import { EventNames } from "hoshimi";
 import { ActionRow, type AllChannels, Button, Embed, type MessageStructure } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 import { StelleMeta, StelleMusic } from "#stelle/utils/data/constants.js";
-import { formatDuration } from "#stelle/utils/functions/internal/discord.js";
+import { formatDuration } from "#stelle/utils/functions/internal/track.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 export default createLavalinkEvent({

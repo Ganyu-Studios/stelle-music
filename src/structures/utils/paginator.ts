@@ -22,7 +22,7 @@ import type { CreateComponentCollectorResult } from "seyfert/lib/components/hand
 import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
 import { type Omit, PaginatorButtonCustomIds, PaginatorButtonIdentifiers } from "#stelle/types";
 import { InvalidComponentRun, InvalidEmbedsLength, InvalidMessage, InvalidPageNumber } from "./errors.js";
-import { updateComponents } from "./functions/internal/discord.js";
+import { updateComponents } from "./functions/internal/components.js";
 import { ms } from "./functions/time.js";
 import { hasFlags } from "./functions/utils.js";
 
