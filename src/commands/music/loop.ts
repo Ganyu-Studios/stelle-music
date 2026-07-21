@@ -5,12 +5,6 @@ import { StelleCategory } from "#stelle/types";
 import { StelleMusic } from "#stelle/utils/data/constants.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
-const loopModes: Record<LoopMode, LoopMode> = {
-    [LoopMode.Off]: LoopMode.Track,
-    [LoopMode.Track]: LoopMode.Queue,
-    [LoopMode.Queue]: LoopMode.Off,
-};
-
 const options = {
     mode: createNumberOption({
         description: "Select the loop mode.",
@@ -54,7 +48,7 @@ export default class LoopCommand extends Command {
 
         const { player } = ctx.metadata.checkPlayer;
 
-        const mode: LoopMode = options.mode ?? loopModes[player.loop];
+        const mode: LoopMode = options.mode ?? StelleMusic.LoopMode(player.loop);
 
         await player.setLoop(mode);
         await ctx.successReply(

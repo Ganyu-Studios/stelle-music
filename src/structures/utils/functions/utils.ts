@@ -10,6 +10,7 @@ import {
     type Button,
     Container,
     type DefaultLocale,
+    Embed,
     extendContext,
     type GuildComponentContext,
     type MessageStructure,
@@ -303,6 +304,61 @@ export const updateComponents = (
 
         throw new InvalidRow("Invalid component type, expected ActionRow or Container.");
     });
+
+/**
+ * Defer a button interaction and re-render its source message with a single control button updated. Shared by the
+ * player control buttons (pause / autoplay / loop), which all toggle player state and then repaint their own button.
+ * @param {GuildComponentContext<"Button">} ctx The button component context.
+ * @param {Partial<EditButtonOptions>} options The button update to apply (custom id, label, style...).
+ * @returns {Promise<void>} A promise that resolves once the message is edited.
+ */
+export async function refreshComponents(ctx: GuildComponentContext<"Button">, options: Partial<EditButtonOptions>): Promise<void> {
+    await ctx.interaction.deferUpdate();
+    await ctx.interaction.message.edit({
+        components: updateComponents(ctx.interaction.message, options),
+    });
+}
+
+/**
+ * The minimal shape `sendGuildLog` reads off a guild, so it accepts both the guildCreate and guildDelete payloads
+ * without depending on their (differently-narrowed) structural types.
+ */
+interface GuildLogSource {
+    id: string;
+    name: string;
+    memberCount?: number;
+    fetchOwner(): Promise<{ displayName: string } | null>;
+}
+
+/**
+ * Send a guild join/leave log embed to the configured guilds channel. The guildCreate and guildDelete events build the
+ * same four-field embed and differ only in color, title and description.
+ * @param {UsingClient} client The client instance.
+ * @param {GuildLogSource} guild The guild that was added or removed.
+ * @param {{ color: Parameters<Embed["setColor"]>[0]; title: string; description: string }} options The embed accents.
+ * @returns {Promise<void>} A promise that resolves once the log is written.
+ */
+export async function sendGuildLog(
+    client: UsingClient,
+    guild: GuildLogSource,
+    options: { color: Parameters<Embed["setColor"]>[0]; title: string; description: string },
+): Promise<void> {
+    const owner = await guild.fetchOwner().catch((): null => null);
+    const ownerName: string = owner?.displayName ?? "Unknown";
+
+    const embed = new Embed()
+        .setColor(options.color)
+        .setTitle(options.title)
+        .setDescription(options.description)
+        .addFields(
+            { name: "`📜` Name", value: `\`${guild.name}\``, inline: true },
+            { name: "`👤` Owner", value: `\`${ownerName}\``, inline: true },
+            { name: "`🏮` ID", value: `\`${guild.id}\``, inline: true },
+            { name: "`👥` Members", value: `\`${guild.memberCount}\``, inline: true },
+        );
+
+    await client.messages.write(client.config.channels.guildsId, { embeds: [embed] });
+}
 
 /**
  *

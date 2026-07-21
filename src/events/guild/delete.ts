@@ -1,5 +1,6 @@
-import { createEvent, Embed, Guild } from "seyfert";
+import { createEvent, Guild } from "seyfert";
 import { StelleMeta } from "#stelle/utils/data/constants.js";
+import { sendGuildLog } from "#stelle/utils/functions/utils.js";
 
 export default createEvent({
     data: { name: "guildDelete" },
@@ -8,20 +9,10 @@ export default createEvent({
 
         if (StelleMeta.Debug) return client.debugger?.info(`[Guild] Deleted | id: ${guild.id} | name: ${guild.name}`);
 
-        const owner = await guild.fetchOwner().catch((): null => null);
-        const ownerName = owner?.displayName ?? "Unknown";
-
-        const embed = new Embed()
-            .setColor("Red")
-            .setTitle("A guild removed me!")
-            .setDescription("`📦` A guild removed me... I think I was not helpful...")
-            .addFields(
-                { name: "`📜` Name", value: `\`${guild.name}\``, inline: true },
-                { name: "`👤` Owner", value: `\`${ownerName}\``, inline: true },
-                { name: "`🏮` ID", value: `\`${guild.id}\``, inline: true },
-                { name: "`👥` Members", value: `\`${guild.memberCount}\``, inline: true },
-            );
-
-        await client.messages.write(client.config.channels.guildsId, { embeds: [embed] });
+        await sendGuildLog(client, guild, {
+            color: "Red",
+            title: "A guild removed me!",
+            description: "`📦` A guild removed me... I think I was not helpful...",
+        });
     },
 });
