@@ -1,5 +1,5 @@
 import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
-import { Constants } from "#stelle/utils/data/constants.js";
+import { StelleMusic } from "#stelle/utils/data/constants.js";
 import { updateComponents } from "#stelle/utils/functions/utils.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
@@ -11,7 +11,7 @@ export default class ToggleLoopComponent extends ComponentCommand {
         const { messages } = await ctx.locale();
         const { player } = ctx.metadata.checkPlayer;
 
-        await player.setLoop(Constants.LoopMode(player.loop));
+        await player.setLoop(StelleMusic.LoopMode(player.loop));
 
         await ctx.interaction.deferUpdate();
         await ctx.interaction.message.edit({

@@ -1,7 +1,7 @@
 import type { PlayerJSON } from "hoshimi";
 import { EventNames } from "hoshimi";
 import type { NonOptionsNode, SessionJson, TrackUser } from "#stelle/types";
-import { Constants } from "#stelle/utils/data/constants.js";
+import { StelleMeta } from "#stelle/utils/data/constants.js";
 import { omitKeys } from "#stelle/utils/functions/utils.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 import { Sessions } from "#stelle/utils/manager/sessions.js";
@@ -59,7 +59,7 @@ export default createLavalinkEvent({
                 node,
             });
 
-            if (Constants.Debug)
+            if (StelleMeta.Debug)
                 client.debugger?.info(
                     `[Lavalink] Session updated | guild: ${newPlayer.guildId} | node: ${node.id} | voice: ${newJson.voiceId} | text: ${newJson.textId}`,
                 );

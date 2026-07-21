@@ -1,7 +1,7 @@
 import { EventNames } from "hoshimi";
 import { ActionRow, type AllChannels, Button, Embed, type MessageStructure } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
-import { Constants } from "#stelle/utils/data/constants.js";
+import { StelleMeta, StelleMusic } from "#stelle/utils/data/constants.js";
 import { formatDuration } from "#stelle/utils/functions/utils.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
@@ -67,7 +67,7 @@ export default createLavalinkEvent({
                     .setStyle(ButtonStyle.Primary)
                     .setLabel(
                         messages.events.trackStart.components.autoplay({
-                            type: messages.commands.autoplay.autoplayType[Constants.AutoplayState(isAutoplay)],
+                            type: messages.commands.autoplay.autoplayType[StelleMusic.AutoplayState(isAutoplay)],
                         }),
                     ),
                 new Button()
@@ -81,7 +81,7 @@ export default createLavalinkEvent({
                 new Button()
                     .setCustomId("player-pauseTrack")
                     .setStyle(ButtonStyle.Primary)
-                    .setLabel(messages.events.trackStart.components.states[Constants.PauseState(player.paused)]),
+                    .setLabel(messages.events.trackStart.components.states[StelleMusic.PauseState(player.paused)]),
             ),
         ];
 
@@ -100,7 +100,7 @@ export default createLavalinkEvent({
             .catch((): null => null);
         if (message) await player.data.set("messageId", message.id);
 
-        if (Constants.Debug)
+        if (StelleMeta.Debug)
             client.debugger?.info(
                 `[Lavalink] Track started | guild: ${player.guildId} | title: ${track.info.title} | author: ${track.info.author}`,
             );

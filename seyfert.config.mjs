@@ -4,7 +4,7 @@ import { config } from "seyfert";
 import { GatewayIntentBits } from "seyfert/lib/types/index.js";
 
 import { Environment } from "#stelle/utils/data/configuration.js";
-import { Constants } from "#stelle/utils/data/constants.js";
+import { StelleMeta, StellePaths } from "#stelle/utils/data/constants.js";
 
 /**
  * @typedef StelleLocations
@@ -14,11 +14,11 @@ import { Constants } from "#stelle/utils/data/constants.js";
 
 // get the base directory for the bot
 // more funny.
-const base = Constants.WorkingDirectory();
+const base = StellePaths.WorkingDirectory();
 
 export default config.bot({
     token: Environment.TOKEN ?? "Ganyu on top!",
-    debug: Constants.Debug,
+    debug: StelleMeta.Debug,
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.MessageContent,

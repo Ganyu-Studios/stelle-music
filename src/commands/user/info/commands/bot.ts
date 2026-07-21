@@ -2,7 +2,7 @@ import { ActionRow, Button, type ClientUser, Declare, Embed, type Guild, type Gu
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 import { Shortcut } from "yunaforseyfert";
 import { Configuration } from "#stelle/utils/data/configuration.js";
-import { Constants } from "#stelle/utils/data/constants.js";
+import { StelleMeta } from "#stelle/utils/data/constants.js";
 import { type GitInfo, getGitInfo } from "#stelle/utils/functions/internal/git.js";
 import { formatMemoryUsage } from "#stelle/utils/functions/internal/logger.js";
 
@@ -47,7 +47,7 @@ export default class BotSubcommand extends SubCommand {
                     value: messages.commands.info.bot.fields.system.value({
                         memory: formatMemoryUsage(process.memoryUsage().rss),
                         uptime: Math.floor(client.readyTimestamp / 1000),
-                        version: Constants.Version,
+                        version: StelleMeta.Version,
                     }),
                 },
                 {

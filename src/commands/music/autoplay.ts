@@ -1,7 +1,7 @@
 import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares } from "seyfert";
 import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
-import { Constants } from "#stelle/utils/data/constants.js";
+import { StelleMusic } from "#stelle/utils/data/constants.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
 @Declare({
@@ -29,7 +29,7 @@ export default class AutoplayCommand extends Command {
 
         await ctx.successReply(
             messages.commands.autoplay.toggled({
-                type: messages.commands.autoplay.autoplayType[Constants.AutoplayState(isAutoplay)],
+                type: messages.commands.autoplay.autoplayType[StelleMusic.AutoplayState(isAutoplay)],
             }),
         );
     }

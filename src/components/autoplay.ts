@@ -1,5 +1,5 @@
 import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
-import { Constants } from "#stelle/utils/data/constants.js";
+import { StelleMusic } from "#stelle/utils/data/constants.js";
 import { updateComponents } from "#stelle/utils/functions/utils.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkTracks"])
@@ -20,7 +20,7 @@ export default class AutoplayComponent extends ComponentCommand {
             components: updateComponents(ctx.interaction.message, {
                 customId: "player-toggleAutoplay",
                 label: messages.events.trackStart.components.autoplay({
-                    type: messages.commands.autoplay.autoplayType[Constants.AutoplayState(isAutoplay)],
+                    type: messages.commands.autoplay.autoplayType[StelleMusic.AutoplayState(isAutoplay)],
                 }),
             }),
         });

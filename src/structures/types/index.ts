@@ -5,7 +5,17 @@ import type { ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.j
 
 export * from "./client/components.js";
 export type { InternalStelleConfiguration, StelleConfiguration } from "./client/configuration.js";
-export type { AutoplayState, PausedState, StelleConstants, WorkingDirectory } from "./client/constants.js";
+export type {
+    AutoplayState,
+    ConstantsMeta,
+    ConstantsMusic,
+    ConstantsPaths,
+    ConstantsPresence,
+    ConstantsRedis,
+    ConstantsText,
+    PausedState,
+    WorkingDirectory,
+} from "./client/constants.js";
 export type { ImageData } from "./client/image.js";
 export type {
     LavalinkEvent,

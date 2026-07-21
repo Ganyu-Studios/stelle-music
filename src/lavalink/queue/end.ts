@@ -1,6 +1,6 @@
 import { EventNames } from "hoshimi";
 import { type AllChannels, Embed } from "seyfert";
-import { Constants } from "#stelle/utils/data/constants.js";
+import { StelleMeta } from "#stelle/utils/data/constants.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 export default createLavalinkEvent({
@@ -44,7 +44,7 @@ export default createLavalinkEvent({
 
         const autoplay: boolean = !!(await player.data.get("enabledAutoplay"));
 
-        if (Constants.Debug)
+        if (StelleMeta.Debug)
             client.debugger?.info(
                 `[Lavalink] Queue ended | guild: ${player.guildId} | remaining: ${player.queue.tracks.length} | autoplay: ${autoplay}`,
             );

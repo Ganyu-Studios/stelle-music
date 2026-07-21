@@ -13,7 +13,7 @@ import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
 import { ApplicationIntegrationType, InteractionContextType, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 import { DeclareParserConfig, ParserRecommendedConfig, Watch, Yuna } from "yunaforseyfert";
 import { Environment } from "#stelle/utils/data/configuration.js";
-import { Constants } from "#stelle/utils/data/constants.js";
+import { StelleText } from "#stelle/utils/data/constants.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { ms } from "#stelle/utils/functions/time.js";
 import { inspect, truncate } from "#stelle/utils/functions/utils.js";
@@ -85,7 +85,7 @@ export default class EvalCommand extends Command {
         if (!code.length) return ctx.errorReply("`❌` Hey! Try typing some code to be evaluated...");
 
         try {
-            if (secretsRegex.test(code.toLowerCase()) || concatRegex.test(code.toLowerCase())) output = Constants.SecretMessage();
+            if (secretsRegex.test(code.toLowerCase()) || concatRegex.test(code.toLowerCase())) output = StelleText.Secret();
             else if (typeof output !== "string") {
                 if (awaitableRegex.test(code.toLowerCase())) code = `(async () => ${code})()`;
 

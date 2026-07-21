@@ -1,7 +1,7 @@
 import type { Guild, UsingClient } from "seyfert";
 import { type GatewayActivityUpdateData, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
 
-import { Constants } from "#stelle/utils/data/constants.js";
+import { StellePresence } from "#stelle/utils/data/constants.js";
 
 /**
  *
@@ -12,7 +12,7 @@ import { Constants } from "#stelle/utils/data/constants.js";
 export function changePresence(client: UsingClient): void {
     let index: number = 0;
 
-    const array: GatewayActivityUpdateData[] = Constants.Activities();
+    const array: GatewayActivityUpdateData[] = StellePresence.Activities();
 
     setInterval((): void => {
         if (index >= array.length) index = 0;
@@ -21,7 +21,7 @@ export function changePresence(client: UsingClient): void {
         const users: number = guilds.reduce((a, b) => a + (b.memberCount ?? 0), 0);
         const players: number = client.manager.players.size;
 
-        const activities: GatewayActivityUpdateData[] = Constants.Activities({ users, players, guilds: guilds.length });
+        const activities: GatewayActivityUpdateData[] = StellePresence.Activities({ users, players, guilds: guilds.length });
         const activity: GatewayActivityUpdateData = activities[index++ % array.length];
 
         client.gateway.setPresence({

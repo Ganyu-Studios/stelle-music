@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { createEvent } from "seyfert";
-import { Constants } from "#stelle/utils/data/constants.js";
+import { StelleMeta, StellePaths } from "#stelle/utils/data/constants.js";
 import { changePresence } from "#stelle/utils/functions/internal/presence.js";
 
 export default createEvent({
@@ -8,8 +8,8 @@ export default createEvent({
     async run(user, client, shardId): Promise<void> {
         client.readyTimestamp = Date.now();
 
-        const clientName = `${user.username} v${Constants.Version}`;
-        const cachePath = join(Constants.CachePath, Constants.CommandsFile);
+        const clientName = `${user.username} v${StelleMeta.Version}`;
+        const cachePath = join(StellePaths.CachePath, StellePaths.CommandsFile);
 
         client.logger.info(`[API] Logged in | user: ${user.username}`);
         client.logger.info(`[Client] Ready | name: ${clientName} | shard: ${shardId}`);

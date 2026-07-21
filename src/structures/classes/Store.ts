@@ -1,6 +1,6 @@
 import type { RedisClientType } from "@redis/client";
 import { type QueueJSON, QueueStorageAdapter } from "hoshimi";
-import { Constants } from "#stelle/utils/data/constants.js";
+import { StelleRedis } from "#stelle/utils/data/constants.js";
 
 /**
  * Class representing the Redis queue store.
@@ -8,7 +8,7 @@ import { Constants } from "#stelle/utils/data/constants.js";
  * @implements {QueueStoreManager}
  */
 export class RedisQueueStore extends QueueStorageAdapter {
-    override namespace: string = Constants.GetNamespace();
+    override namespace: string = StelleRedis.GetNamespace();
 
     /**
      * The redis client instance.

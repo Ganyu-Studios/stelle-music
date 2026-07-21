@@ -1,7 +1,7 @@
 import { Command, createBooleanOption, Declare, type GuildCommandContext, LocalesT, Middlewares, Options } from "seyfert";
 import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { type AutoplayState, StelleCategory } from "#stelle/types";
-import { Constants } from "#stelle/utils/data/constants.js";
+import { StelleMusic } from "#stelle/utils/data/constants.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
 const options = {
@@ -49,8 +49,8 @@ export default class TwentyFourSevenCommand extends Command {
 
         await ctx.successReply(
             messages.commands.is247.enabled({
-                is247: enabledState(Constants.AutoplayState(is247)),
-                autoPause: enabledState(Constants.AutoplayState(autoPause)),
+                is247: enabledState(StelleMusic.AutoplayState(is247)),
+                autoPause: enabledState(StelleMusic.AutoplayState(autoPause)),
             }),
         );
     }

@@ -1,7 +1,7 @@
 import type { LavalinkPlayer, NodeStructure } from "hoshimi";
 import type { UsingClient } from "seyfert";
 import type { SessionJson } from "#stelle/types";
-import { Constants } from "#stelle/utils/data/constants.js";
+import { StelleMeta } from "#stelle/utils/data/constants.js";
 import { Sessions } from "#stelle/utils/manager/sessions.js";
 
 /**
@@ -59,6 +59,6 @@ export async function resumeListener(client: UsingClient, node: NodeStructure, p
             loop: session.loop,
         });
 
-        if (Constants.Debug) client.debugger?.info(`[Lavalink] Player resumed | node: ${node.id} | guild: ${player.guildId}`);
+        if (StelleMeta.Debug) client.debugger?.info(`[Lavalink] Player resumed | node: ${node.id} | guild: ${player.guildId}`);
     }
 }

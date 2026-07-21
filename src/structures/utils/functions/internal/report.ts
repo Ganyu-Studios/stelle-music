@@ -1,7 +1,7 @@
 import { type AnyContext, AttachmentBuilder, Embed, type MessageStructure } from "seyfert";
 import { WebhookClient } from "#stelle/classes/WebhookClient.js";
 import { Environment } from "#stelle/utils/data/configuration.js";
-import { Constants } from "#stelle/utils/data/constants.js";
+import { StelleMeta } from "#stelle/utils/data/constants.js";
 import { logger } from "#stelle/utils/functions/internal/logger.js";
 import { inspect, truncate } from "#stelle/utils/functions/utils.js";
 
@@ -33,7 +33,7 @@ export async function sendErrorReport(options: ReportOptions): Promise<MessageSt
 
     //as long as I'm with the dev version of Stelle,
     //i don't want the logs to be sent to the server.
-    if (Constants.Dev) return logger.error("[Report] Error captured (dev mode)", options.error);
+    if (StelleMeta.Dev) return logger.error("[Report] Error captured (dev mode)", options.error);
 
     const date = new Date();
     const title: string = ctx?.client.me.username ?? "Stelle";

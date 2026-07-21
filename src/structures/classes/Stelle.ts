@@ -16,7 +16,7 @@ import { Yuna } from "yunaforseyfert";
 import { StelleMiddlewares } from "#stelle/middlewares";
 import type { NonGlobalCommands, StelleConfiguration } from "#stelle/types";
 import { Configuration } from "#stelle/utils/data/configuration.js";
-import { Constants } from "#stelle/utils/data/constants.js";
+import { StelleMeta, StellePaths, StelleRedis, StelleText } from "#stelle/utils/data/constants.js";
 import { onBotPermissionsFail, onOptionsError, onPermissionsFail, onRunError } from "#stelle/utils/functions/internal/overrides.js";
 import { sendErrorReport } from "#stelle/utils/functions/internal/report.js";
 import { inspect, StelleContext } from "#stelle/utils/functions/utils.js";
@@ -48,7 +48,7 @@ export class Stelle extends Client<true> {
      * @type {RedisClientType}
      * @readonly
      */
-    readonly redis: RedisClientType = createClient({ url: Constants.GetRedisUrl() });
+    readonly redis: RedisClientType = createClient({ url: StelleRedis.GetUrl() });
 
     /**
      * The client database instance.
@@ -102,7 +102,7 @@ export class Stelle extends Client<true> {
                     return prefixes.map((prefix): string => prefix.toLowerCase());
                 },
                 deferReplyResponse: ({ client }) => ({
-                    content: `<a:typing:1214253750093488149> **${client.me.username}** ${Constants.ThinkMessage()}`,
+                    content: `<a:typing:1214253750093488149> **${client.me.username}** ${StelleText.Think()}`,
                 }),
                 defaults: {
                     onBotPermissionsFail,
@@ -162,7 +162,7 @@ export class Stelle extends Client<true> {
             },
             handleCommand: class extends HandleCommand {
                 override argsParser = Yuna.parser({
-                    logResult: Constants.Debug,
+                    logResult: StelleMeta.Debug,
                     syntax: {
                         namedOptions: ["-", "--"],
                     },
@@ -170,9 +170,9 @@ export class Stelle extends Client<true> {
 
                 override resolveCommandFromContent = Yuna.resolver({
                     client: this.client,
-                    logResult: Constants.Debug,
+                    logResult: StelleMeta.Debug,
                     afterPrepare: (metadata): void => {
-                        if (Constants.Debug) this.client.logger.debug(`[Client] Commands prepared | count: ${metadata.commands.length}`);
+                        if (StelleMeta.Debug) this.client.logger.debug(`[Client] Commands prepared | count: ${metadata.commands.length}`);
                     },
                 });
             },
@@ -204,7 +204,7 @@ export class Stelle extends Client<true> {
     public async reload(): Promise<void> {
         this.logger.warn("[Client] Reload started");
 
-        const cachePath: string = Constants.GetCachePath();
+        const cachePath: string = StellePaths.GetCachePath();
 
         try {
             await this.events.reloadAll();

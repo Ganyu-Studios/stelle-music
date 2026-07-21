@@ -1,5 +1,5 @@
 import { EventNames } from "hoshimi";
-import { Constants } from "#stelle/utils/data/constants.js";
+import { StelleMeta } from "#stelle/utils/data/constants.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 export default createLavalinkEvent({
@@ -23,7 +23,7 @@ export default createLavalinkEvent({
 
         await player.data.delete("messageId");
 
-        if (Constants.Debug)
+        if (StelleMeta.Debug)
             client.debugger?.info(
                 `[Lavalink] Track ended | guild: ${player.guildId} | title: ${track?.info?.title ?? "Unknown"} | author: ${track?.info?.author ?? "Unknown"}`,
             );
