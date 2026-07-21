@@ -1,6 +1,6 @@
 import { createEvent } from "seyfert";
 import { StelleMeta } from "#stelle/utils/data/constants.js";
-import { sendGuildLog } from "#stelle/utils/functions/utils.js";
+import { sendGuildLog } from "#stelle/utils/functions/internal/discord.js";
 
 export default createEvent({
     data: { name: "guildCreate" },

@@ -25,8 +25,9 @@ import {
     playlistTrackSaveHandler,
     playlistVisibilityToggleHandler,
 } from "#stelle/utils/functions/components/playlist.js";
+import { updateComponents } from "#stelle/utils/functions/internal/discord.js";
 import { ms } from "#stelle/utils/functions/time.js";
-import { hasFlags, updateComponents } from "#stelle/utils/functions/utils.js";
+import { hasFlags } from "#stelle/utils/functions/utils.js";
 
 const options = {
     id: createStringOption({

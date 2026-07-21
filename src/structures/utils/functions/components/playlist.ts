@@ -22,9 +22,9 @@ import { ButtonStyle, MessageFlags, TextInputStyle } from "seyfert/lib/types/ind
 import type { userPlaylist } from "#stelle/prisma";
 import type { PermissionNames } from "#stelle/types";
 import { ManageButtonIdentifiers, SaveButtonCustomIds, SaveButtonIdentifiers, type TrackUser } from "#stelle/types";
+import { getPermissionKeys, requesterFn, updateComponents } from "#stelle/utils/functions/internal/discord.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 import { ms } from "#stelle/utils/functions/time.js";
-import { getPermissionKeys, requesterFn, updateComponents } from "#stelle/utils/functions/utils.js";
 import { EmbedPaginator } from "#stelle/utils/paginator.js";
 import { playlistTrackSave, SaveType } from "./playlist/save.js";
 import { parseTrackSelection } from "./playlist/selection.js";

@@ -1,5 +1,5 @@
 import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
-import { applyDeleter } from "#stelle/utils/functions/utils.js";
+import { applyDeleter } from "#stelle/utils/functions/internal/discord.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class StopComponent extends ComponentCommand {

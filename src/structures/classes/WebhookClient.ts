@@ -27,7 +27,7 @@ import type {
 } from "seyfert/lib/types/index.js";
 import type { WebhookMetadata } from "#stelle/types";
 import { InvalidWebhookURL } from "#stelle/utils/errors.js";
-import { parseDiscordWebhook } from "#stelle/utils/functions/utils.js";
+import { parseDiscordWebhook } from "#stelle/utils/functions/internal/discord.js";
 
 /**
  * The bot token for api calls.

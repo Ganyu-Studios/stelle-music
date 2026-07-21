@@ -19,9 +19,10 @@ import { EmbedColors } from "seyfert/lib/common/index.js";
 import { ApplicationIntegrationType, InteractionContextType, MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
+import { formatDuration, requesterFn, resolveLocale } from "#stelle/utils/functions/internal/discord.js";
 import { onAutocompleteError } from "#stelle/utils/functions/internal/overrides.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
-import { formatDuration, requesterFn, resolveLocale, truncate } from "#stelle/utils/functions/utils.js";
+import { truncate } from "#stelle/utils/functions/utils.js";
 
 const options = {
     query: createStringOption({

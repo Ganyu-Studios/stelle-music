@@ -17,9 +17,10 @@ import { StelleMiddlewares } from "#stelle/middlewares";
 import type { NonGlobalCommands, StelleConfiguration } from "#stelle/types";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 import { StelleMeta, StellePaths, StelleRedis, StelleText } from "#stelle/utils/data/constants.js";
+import { StelleContext } from "#stelle/utils/functions/internal/context.js";
 import { onBotPermissionsFail, onOptionsError, onPermissionsFail, onRunError } from "#stelle/utils/functions/internal/overrides.js";
 import { sendErrorReport } from "#stelle/utils/functions/internal/report.js";
-import { inspect, StelleContext } from "#stelle/utils/functions/utils.js";
+import { inspect } from "#stelle/utils/functions/utils.js";
 import { StelleDatabase } from "./Database.js";
 import { StelleManager } from "./Manager.js";
 

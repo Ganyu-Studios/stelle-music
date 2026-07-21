@@ -11,7 +11,7 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
 import type { PermissionNames } from "#stelle/types";
 import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js";
 import { sendErrorReport } from "#stelle/utils/functions/internal/report.js";
-import { getPermissionKeys, resolveLocale } from "../utils.js";
+import { getPermissionKeys, resolveLocale } from "./discord.js";
 
 /**
  *

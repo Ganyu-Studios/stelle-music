@@ -1,7 +1,7 @@
 import { Hoshimi, SearchSources } from "hoshimi";
 import type { UsingClient } from "seyfert";
+import { requesterFn } from "#stelle/utils/functions/internal/discord.js";
 import { autoplayFn } from "#stelle/utils/functions/manager/autoplay.js";
-import { requesterFn } from "#stelle/utils/functions/utils.js";
 import { LavalinkHandler } from "#stelle/utils/manager/handler.js";
 import { RedisQueueStore } from "./Store.js";
 

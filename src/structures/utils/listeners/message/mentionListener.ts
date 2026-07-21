@@ -1,6 +1,6 @@
 import type { MessageStructure, UsingClient } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
-import { resolveLocale } from "#stelle/utils/functions/utils.js";
+import { resolveLocale } from "#stelle/utils/functions/internal/discord.js";
 
 /**
  *
