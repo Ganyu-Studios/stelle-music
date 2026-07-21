@@ -1,5 +1,6 @@
 import type { MessageStructure, UsingClient } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
+import { resolveLocale } from "#stelle/utils/functions/utils.js";
 
 /**
  *
@@ -16,7 +17,7 @@ export async function mentionListener(client: UsingClient, message: MessageStruc
 
     const mentionRegex = new RegExp(`^<@!?${client.me.id}>( |)$`);
     if (content.match(mentionRegex)) {
-        const { messages } = client.t(await client.database.locales.get(guildId)).get();
+        const { messages } = await resolveLocale(client, guildId);
 
         const command = client.commands.values.find((command) => command.name === "help");
         if (!command) {

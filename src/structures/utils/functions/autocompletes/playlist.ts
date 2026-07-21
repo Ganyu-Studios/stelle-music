@@ -1,5 +1,6 @@
 import type { AutocompleteInteraction, User } from "seyfert";
 import type { userPlaylist } from "#stelle/prisma";
+import { resolveLocale } from "#stelle/utils/functions/utils.js";
 
 /**
  *
@@ -12,7 +13,7 @@ export async function playlistAutocomplete(interaction: AutocompleteInteraction)
 
     if (!interaction.guildId) return;
 
-    const { messages } = client.t(await client.database.locales.get(interaction.guildId)).get();
+    const { messages } = await resolveLocale(client, interaction.guildId);
 
     const subCommand: string | null = interaction.options.getSubCommand();
     const isManageable: boolean = !!(subCommand && ["manage", "delete", "rename"].includes(subCommand));

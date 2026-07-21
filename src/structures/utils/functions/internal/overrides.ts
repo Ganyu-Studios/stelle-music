@@ -11,7 +11,7 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
 import type { PermissionNames } from "#stelle/types";
 import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js";
 import { sendErrorReport } from "#stelle/utils/functions/internal/report.js";
-import { getPermissionKeys } from "../utils.js";
+import { getPermissionKeys, resolveLocale } from "../utils.js";
 
 /**
  *
@@ -37,7 +37,7 @@ export async function onRunError(ctx: AnyContext, error: unknown): Promise<void>
 export async function onAutocompleteError(interaction: AutocompleteInteraction, error: unknown): Promise<void> {
     if (!interaction.guildId) return;
 
-    const { messages } = interaction.client.t(await interaction.client.database.locales.get(interaction.guildId)).get();
+    const { messages } = await resolveLocale(interaction.client, interaction.guildId);
 
     await sendErrorReport({ error });
 

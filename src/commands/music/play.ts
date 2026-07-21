@@ -21,7 +21,7 @@ import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { onAutocompleteError } from "#stelle/utils/functions/internal/overrides.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
-import { formatDuration, requesterFn, truncate } from "#stelle/utils/functions/utils.js";
+import { formatDuration, requesterFn, resolveLocale, truncate } from "#stelle/utils/functions/utils.js";
 
 const options = {
     query: createStringOption({
@@ -41,7 +41,7 @@ const options = {
             if (!(guildId && member)) return interaction.respond([{ name: t.messages.events.autocomplete.noGuild, value: "noGuild" }]);
 
             const { searchPlatform: source } = await client.database.players.get(guildId);
-            const { messages } = client.t(await client.database.locales.get(guildId)).get();
+            const { messages } = await resolveLocale(client, guildId);
 
             if (!client.manager.isUseable()) return interaction.respond([{ name: messages.events.autocomplete.noNodes, value: "noNodes" }]);
 
@@ -121,22 +121,20 @@ export default class PlayCommand extends Command {
 
         const autoplayIndex = (await player.data.get("enabledAutoplay")) ? 0 : undefined;
 
+        // Shared "nothing to play" reply, reused by the empty/error/unknown load types and the empty-track guards below.
+        const noResults = () =>
+            ctx.editOrReply({
+                flags: MessageFlags.Ephemeral,
+                content: "",
+                embeds: [{ color: EmbedColors.Red, description: messages.commands.play.noResults }],
+            });
+
         switch (loadType) {
             case LoadType.Empty:
             case LoadType.Error:
                 {
                     if (!player.queue.current) await player.destroy();
-
-                    await ctx.editOrReply({
-                        flags: MessageFlags.Ephemeral,
-                        content: "",
-                        embeds: [
-                            {
-                                color: EmbedColors.Red,
-                                description: messages.commands.play.noResults,
-                            },
-                        ],
-                    });
+                    await noResults();
                 }
                 break;
 
@@ -144,17 +142,7 @@ export default class PlayCommand extends Command {
             case LoadType.Search:
                 {
                     const track: TrackStructure | undefined = tracks.at(0);
-                    if (!track)
-                        return ctx.editOrReply({
-                            flags: MessageFlags.Ephemeral,
-                            content: "",
-                            embeds: [
-                                {
-                                    color: EmbedColors.Red,
-                                    description: messages.commands.play.noResults,
-                                },
-                            ],
-                        });
+                    if (!track) return noResults();
 
                     await player.queue.add(track, autoplayIndex);
 
@@ -187,17 +175,7 @@ export default class PlayCommand extends Command {
             case LoadType.Playlist:
                 {
                     const track: TrackStructure | undefined = tracks.at(0);
-                    if (!track)
-                        return ctx.editOrReply({
-                            flags: MessageFlags.Ephemeral,
-                            content: "",
-                            embeds: [
-                                {
-                                    color: EmbedColors.Red,
-                                    description: messages.commands.play.noResults,
-                                },
-                            ],
-                        });
+                    if (!track) return noResults();
 
                     await player.queue.add(tracks, autoplayIndex);
 
@@ -227,17 +205,7 @@ export default class PlayCommand extends Command {
             default:
                 {
                     if (!player.queue.current) await player.destroy();
-
-                    await ctx.editOrReply({
-                        flags: MessageFlags.Ephemeral,
-                        content: "",
-                        embeds: [
-                            {
-                                color: EmbedColors.Red,
-                                description: messages.commands.play.noResults,
-                            },
-                        ],
-                    });
+                    await noResults();
                 }
                 break;
         }
