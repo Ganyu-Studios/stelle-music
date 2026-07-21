@@ -1,5 +1,5 @@
 import { createBooleanOption, createStringOption, Declare, type GuildCommandContext, LocalesT, Options, SubCommand } from "seyfert";
-import { createId, isUrl } from "#stelle/utils/functions/internal/utils.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 const options = {
     name: createStringOption({
@@ -36,7 +36,7 @@ export default class CreateSubCommand extends SubCommand {
         const { client, author } = ctx;
         const { messages } = await ctx.locale();
 
-        if (isUrl(playlistName)) return ctx.errorReply(messages.events.invalidInput, { ephemeral: true, content: "" });
+        if (UtilsOps.isUrl(playlistName)) return ctx.errorReply(messages.events.invalidInput, { ephemeral: true, content: "" });
 
         const userPlaylistAmount: number = await client.database.playlist.countByUser(author.id);
         const playlistLimit: number = client.config.playlists.userLimit;
@@ -48,7 +48,7 @@ export default class CreateSubCommand extends SubCommand {
             playlistName,
             createdAt: new Date(),
             public: isPublic,
-            playlistId: createId({ length: 6, segments: 4, separator: "-", uppercase: true }),
+            playlistId: UtilsOps.createId({ length: 6, segments: 4, separator: "-", uppercase: true }),
             tracks: [],
         });
 

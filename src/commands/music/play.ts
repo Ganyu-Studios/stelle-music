@@ -19,10 +19,10 @@ import { EmbedColors } from "seyfert/lib/common/index.js";
 import { ApplicationIntegrationType, InteractionContextType, MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
-import { resolveLocale } from "#stelle/utils/functions/internal/context.js";
+import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { onAutocompleteError } from "#stelle/utils/functions/internal/overrides.js";
-import { formatDuration, requesterFn } from "#stelle/utils/functions/internal/track.js";
-import { truncate } from "#stelle/utils/functions/internal/utils.js";
+import { TrackOps } from "#stelle/utils/functions/internal/track.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 
 const options = {
@@ -43,7 +43,7 @@ const options = {
             if (!(guildId && member)) return interaction.respond([{ name: t.messages.events.autocomplete.noGuild, value: "noGuild" }]);
 
             const { searchPlatform: source } = await client.database.players.get(guildId);
-            const { messages } = await resolveLocale(client, guildId);
+            const { messages } = await ContextOps.locale(client, guildId);
 
             if (!client.manager.isUseable()) return interaction.respond([{ name: messages.events.autocomplete.noNodes, value: "noNodes" }]);
 
@@ -62,10 +62,10 @@ const options = {
 
             await interaction.respond(
                 tracks.slice(0, 25).map((track) => {
-                    const duration: string = formatDuration(track, messages);
+                    const duration: string = TrackOps.duration(track, messages);
 
                     return {
-                        name: `${truncate(track.info.title, 45)} (${duration}) - ${truncate(track.info.author, 30)}`,
+                        name: `${UtilsOps.truncate(track.info.title, 45)} (${duration}) - ${UtilsOps.truncate(track.info.author, 30)}`,
                         value: track.info.uri,
                     };
                 }),
@@ -119,7 +119,7 @@ export default class PlayCommand extends Command {
         const { loadType, playlist, tracks } = await player.search({ query, source: searchPlatform, requester: ctx.author });
 
         if (!(await player.data.get("localeString"))) await player.data.set("localeString", await ctx.localeString());
-        if (!(await player.data.get("me"))) await player.data.set("me", requesterFn(client.me));
+        if (!(await player.data.get("me"))) await player.data.set("me", TrackOps.requesterFn(client.me));
 
         const autoplayIndex = (await player.data.get("enabledAutoplay")) ? 0 : undefined;
 
@@ -148,7 +148,7 @@ export default class PlayCommand extends Command {
 
                     await player.queue.add(track, autoplayIndex);
 
-                    const duration: string = formatDuration(track, messages);
+                    const duration: string = TrackOps.duration(track, messages);
 
                     const embed = new Embed()
                         .setThumbnail(track.info.artworkUrl ?? undefined)

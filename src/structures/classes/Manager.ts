@@ -1,6 +1,6 @@
 import { Hoshimi, SearchSources } from "hoshimi";
 import type { UsingClient } from "seyfert";
-import { requesterFn } from "#stelle/utils/functions/internal/track.js";
+import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { autoplayFn } from "#stelle/utils/functions/manager/autoplay.js";
 import { LavalinkHandler } from "#stelle/utils/manager/handler.js";
 import { RedisQueueStore } from "./Store.js";
@@ -53,7 +53,7 @@ export class StelleManager extends Hoshimi {
                 maxHistory: 25,
             },
             playerOptions: {
-                requesterFn,
+                requesterFn: TrackOps.requesterFn,
                 onDisconnect: {
                     autoDestroy: true,
                 },

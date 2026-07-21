@@ -1,7 +1,7 @@
 import { Controller } from "#stelle/classes/Controller.js";
 import type { userPlaylist } from "#stelle/prisma";
 import type { Omit } from "#stelle/types";
-import { omitKeys } from "#stelle/utils/functions/internal/utils.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  * The type of the playlist data without the id and userId.
@@ -83,8 +83,8 @@ export class PlaylistController extends Controller<"userPlaylist"> {
      * @returns {Promise<void>} A promise that resolves when the playlist is set.
      */
     public set(userId: string, data: PlaylistData): Promise<void> {
-        if ("id" in data) data = omitKeys(data, ["id"]);
-        if ("userId" in data) data = omitKeys(data, ["userId"]);
+        if ("id" in data) data = UtilsOps.omit(data, ["id"]);
+        if ("userId" in data) data = UtilsOps.omit(data, ["userId"]);
 
         return this.cacheSet({
             write: (record): void => {

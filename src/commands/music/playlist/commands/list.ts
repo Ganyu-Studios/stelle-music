@@ -13,7 +13,7 @@ import {
 } from "seyfert";
 import { MessageFlags } from "seyfert/lib/types/index.js";
 import { EmbedPaginator } from "#stelle/classes/EmbedPaginator.js";
-import { chunk, truncate } from "#stelle/utils/functions/internal/utils.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 const options = {
     user: createUserOption({
@@ -57,13 +57,13 @@ export default class ListSubcommand extends SubCommand {
         const timestamp = (date: Date): number => Math.floor(date.getTime() / 1e3);
 
         const formatPrivatePlaylist = (playlist: (typeof privatePlaylists)[number]): string =>
-            `• \`${playlist.playlistId}\` - **${truncate(playlist.playlistName, 28)}** | \`${playlist.tracks.length}\` tracks | <t:${timestamp(playlist.createdAt)}:R>`;
+            `• \`${playlist.playlistId}\` - **${UtilsOps.truncate(playlist.playlistName, 28)}** | \`${playlist.tracks.length}\` tracks | <t:${timestamp(playlist.createdAt)}:R>`;
 
         const formatPublicPlaylist = (playlist: (typeof publicPlaylists)[number]): string =>
-            `• \`${playlist.playlistId}\` - **${truncate(playlist.playlistName, 28)}** | <@${playlist.userId}> | \`${playlist.tracks.length}\` tracks | <t:${timestamp(playlist.createdAt)}:R>`;
+            `• \`${playlist.playlistId}\` - **${UtilsOps.truncate(playlist.playlistName, 28)}** | <@${playlist.userId}> | \`${playlist.tracks.length}\` tracks | <t:${timestamp(playlist.createdAt)}:R>`;
 
-        const privatePages: string[][] = chunk(privatePlaylists.map(formatPrivatePlaylist), limit);
-        const publicPages: string[][] = chunk(publicPlaylists.map(formatPublicPlaylist), limit);
+        const privatePages: string[][] = UtilsOps.chunk(privatePlaylists.map(formatPrivatePlaylist), limit);
+        const publicPages: string[][] = UtilsOps.chunk(publicPlaylists.map(formatPublicPlaylist), limit);
         const length: number = Math.max(privatePages.length, publicPages.length);
 
         const embeds: Embed[] = Array.from({ length }, (_, page: number): Embed => {

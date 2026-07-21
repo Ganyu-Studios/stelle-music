@@ -1,6 +1,6 @@
 import { type AnyContext, createMiddleware, type LimitedCollection, type MiddlewareContext } from "seyfert";
 
-import { getCollectionKey } from "#stelle/utils/functions/internal/utils.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  * The middleware to handle cooldowns.
@@ -16,7 +16,7 @@ export const checkCooldown: MiddlewareContext<void, AnyContext> = createMiddlewa
     const collection: LimitedCollection<string, number> = client.cooldowns;
     const cooldown: number = (command.cooldown ?? 3) * 1000;
     const now: number = Date.now();
-    const key: string = getCollectionKey(context);
+    const key: string = UtilsOps.collectionKey(context);
 
     const { messages } = await context.locale();
 

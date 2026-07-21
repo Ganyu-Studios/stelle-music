@@ -5,7 +5,7 @@ import type { StellePlayerJson } from "#stelle/types";
 import { StellePaths } from "#stelle/utils/data/constants.js";
 import { InvalidNodeSession } from "#stelle/utils/errors.js";
 import { ms } from "#stelle/utils/functions/internal/time.js";
-import { createDirectory } from "#stelle/utils/functions/internal/utils.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  * Lavalink node options without the `sessionId`.
@@ -22,7 +22,7 @@ type RequiredPlayerJson = MakeRequired<StellePlayerJson>;
  * The directory where the cache is stored.
  * @type {string}
  */
-const dir: string = await createDirectory(StellePaths.CachePath);
+const dir: string = await UtilsOps.createDir(StellePaths.CachePath);
 
 /**
  * The name of the sessions file without the `.json` extension.

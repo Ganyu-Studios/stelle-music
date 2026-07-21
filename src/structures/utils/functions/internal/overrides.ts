@@ -11,8 +11,8 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
 import type { PermissionNames } from "#stelle/types";
 import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js";
 import { sendErrorReport } from "#stelle/utils/functions/internal/report.js";
-import { resolveLocale } from "./context.js";
-import { getPermissionKeys } from "./discord.js";
+import { ContextOps } from "./context.js";
+import { DiscordOps } from "./discord.js";
 
 /**
  *
@@ -38,7 +38,7 @@ export async function onRunError(ctx: AnyContext, error: unknown): Promise<void>
 export async function onAutocompleteError(interaction: AutocompleteInteraction, error: unknown): Promise<void> {
     if (!interaction.guildId) return;
 
-    const { messages } = await resolveLocale(interaction.client, interaction.guildId);
+    const { messages } = await ContextOps.locale(interaction.client, interaction.guildId);
 
     await sendErrorReport({ error });
 
@@ -63,7 +63,7 @@ export async function onPermissionsFail(
 ): Promise<MessageStructure | WebhookMessageStructure | void> {
     const { messages } = await ctx.locale();
 
-    const keys: PermissionNames[] = getPermissionKeys(permissions);
+    const keys: PermissionNames[] = DiscordOps.perms(permissions);
 
     return ctx.editOrReply({
         content: "",
@@ -96,7 +96,7 @@ export async function onBotPermissionsFail(
 ): Promise<MessageStructure | WebhookMessageStructure | void> {
     const { messages } = await ctx.locale();
 
-    const keys: PermissionNames[] = getPermissionKeys(permissions);
+    const keys: PermissionNames[] = DiscordOps.perms(permissions);
 
     return ctx.editOrReply({
         content: "",

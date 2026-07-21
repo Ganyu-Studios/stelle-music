@@ -9,7 +9,7 @@ import {
     type WebhookMessageStructure,
 } from "seyfert";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
-import { isUrl } from "#stelle/utils/functions/internal/utils.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 const options = {
     id: createStringOption({
@@ -47,7 +47,7 @@ export default class RenameSubcommand extends SubCommand {
         const playlist = await client.database.playlist.get(id, ctx.author.id);
         if (!playlist) return ctx.errorReply(messages.commands.playlist.noPlaylist, { ephemeral: true, content: "" });
 
-        if (isUrl(name)) return ctx.errorReply(messages.events.invalidInput, { ephemeral: true, content: "" });
+        if (UtilsOps.isUrl(name)) return ctx.errorReply(messages.events.invalidInput, { ephemeral: true, content: "" });
 
         playlist.playlistName = name;
 

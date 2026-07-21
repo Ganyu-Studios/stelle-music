@@ -2,7 +2,7 @@ import { join } from "node:path";
 import { z } from "zod";
 import type { InternalStelleConfiguration, StelleConfiguration } from "#stelle/types";
 import { InvalidConfiguration } from "#stelle/utils/errors.js";
-import { customImport } from "../functions/internal/utils.js";
+import { UtilsOps } from "../functions/internal/utils.js";
 
 const envSchema = z.object({
     TOKEN: z.string(),
@@ -47,7 +47,7 @@ export const Configuration: StelleConfiguration = {
             for (const ext of extensions) {
                 const file: string = join(directory, `${filename}${ext}`);
 
-                const i: StelleConfiguration | null = await customImport<StelleConfiguration>(file).catch((error) => {
+                const i: StelleConfiguration | null = await UtilsOps.dynamicImport<StelleConfiguration>(file).catch((error) => {
                     if (error.stack.includes("ERR_MODULE_NOT_FOUND")) return null;
                     throw error;
                 });

@@ -2,7 +2,7 @@ import type { PlayerJSON } from "hoshimi";
 import { EventNames } from "hoshimi";
 import type { NonOptionsNode, SessionJson, TrackUser } from "#stelle/types";
 import { StelleMeta } from "#stelle/utils/data/constants.js";
-import { omitKeys } from "#stelle/utils/functions/internal/utils.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 import { Sessions } from "#stelle/utils/manager/sessions.js";
 
@@ -24,7 +24,7 @@ export default createLavalinkEvent({
         ) {
             if (newPlayerJson.queue?.current) newPlayerJson.queue.current.userData = {};
 
-            const newJson = omitKeys(newPlayerJson, [
+            const newJson = UtilsOps.omit(newPlayerJson, [
                 "ping",
                 "createdTimestamp",
                 "lastPositionUpdate",
@@ -35,7 +35,7 @@ export default createLavalinkEvent({
                 "node",
             ]);
 
-            const node: NonOptionsNode = omitKeys(newPlayerJson.node, ["options"]);
+            const node: NonOptionsNode = UtilsOps.omit(newPlayerJson.node, ["options"]);
 
             const messageId: string | undefined = await newPlayer.data.get("messageId");
             const enabledAutoplay: boolean | undefined = await newPlayer.data.get("enabledAutoplay");

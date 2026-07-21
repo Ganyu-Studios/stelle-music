@@ -3,25 +3,10 @@ import { gray, italic, LogLevels, red, rgb24, yellow } from "seyfert/lib/common/
 
 import { Configuration } from "#stelle/utils/data/configuration.js";
 
-/**
- * The type of the color function.
- */
 type ColorFunction = (text: string) => string;
 
-/**
- *
- * Custom color function.
- * @param {string} text The text.
- * @returns {string} The text with the color.
- */
 const customColor: ColorFunction = (text: string): string => rgb24(text, Configuration.color.success);
 
-/**
- *
- * Add padding to the label.
- * @param {string} label The label.
- * @returns {string} The label with padding.
- */
 function setPadding(label: string): string {
     const maxLength = 6;
     const bar = "|";
@@ -34,51 +19,6 @@ function setPadding(label: string): string {
     return spaces + bar;
 }
 
-/**
- * Formats memory usage data into a string.
- * @param {number} bytes The memory usage data.
- * @returns {string} The formatted memory usage data.
- */
-export function formatMemoryUsage(bytes: number): string {
-    const units: string[] = ["B", "KB", "MB", "GB", "TB"];
-    let i: number = 0;
-
-    while (bytes >= 1024 && i < units.length - 1) {
-        bytes /= 1024;
-        i++;
-    }
-
-    return `${bytes.toFixed(2)} ${units[i]}`;
-}
-
-/**
- *
- * Send ascii text.
- * @returns {void} Nah, for real?
- */
-export function getWatermark(): void {
-    console.info(
-        customColor(`
-
-
-        ███████╗████████╗███████╗██╗     ██╗     ███████╗
-        ██╔════╝╚══██╔══╝██╔════╝██║     ██║     ██╔════╝
-        ███████╗   ██║   █████╗  ██║     ██║     █████╗  
-        ╚════██║   ██║   ██╔══╝  ██║     ██║     ██╔══╝  
-        ███████║   ██║   ███████╗███████╗███████╗███████╗
-        ╚══════╝   ╚═╝   ╚══════╝╚══════╝╚══════╝╚══════╝
-														   
-		
-		   ${italic(`→   ${getRandomText()}`)}
-    `),
-    );
-}
-
-/**
- *
- * Get a random text to make it more lively...?
- * @returns {string} A random text.
- */
 function getRandomText(): string {
     const texts: string[] = [
         "Traveling~",
@@ -117,54 +57,69 @@ function getRandomText(): string {
     return texts[Math.floor(Math.random() * texts.length)];
 }
 
-/**
- *
- * Customize the Logger.
- * @param {Logger} _this The logger itself.
- * @param {LogLevels} level The log level.
- * @param {unknown[]} args The log arguments.
- * @returns {unknown[]} The log arguments.
- */
-export function customLogger(_this: Logger, level: LogLevels, args: unknown[]): unknown[] {
-    const date: Date = new Date();
-    const memory: NodeJS.MemoryUsage = process.memoryUsage();
+export const LoggerOps = {
+    memoryUsage(bytes: number): string {
+        const units: string[] = ["B", "KB", "MB", "GB", "TB"];
+        let i: number = 0;
 
-    const label: string = Logger.prefixes.get(level) ?? "UNKNOWN";
-    const timeFormat: string = `[${date.toLocaleDateString()} : ${date.toLocaleTimeString()}]`;
+        while (bytes >= 1024 && i < units.length - 1) {
+            bytes /= 1024;
+            i++;
+        }
 
-    const emojis: Record<LogLevels, string> = {
-        [LogLevels.Debug]: "🎩",
-        [LogLevels.Error]: "🏮",
-        [LogLevels.Info]: "📘",
-        [LogLevels.Warn]: "🔰",
-        [LogLevels.Fatal]: "💀",
-    };
+        return `${bytes.toFixed(2)} ${units[i]}`;
+    },
 
-    const colors: Record<LogLevels, ColorFunction> = {
-        [LogLevels.Debug]: gray,
-        [LogLevels.Error]: red,
-        [LogLevels.Info]: customColor,
-        [LogLevels.Warn]: yellow,
-        [LogLevels.Fatal]: red,
-    };
+    watermark(): void {
+        console.info(
+            customColor(`
 
-    const text = `${gray(`${timeFormat}`)} ${gray(`[RAM: ${formatMemoryUsage(memory.rss)}]`)} ${emojis[level]} [${colors[level](
-        label,
-    )}] ${setPadding(label)}`;
+        ███████╗████████╗███████╗██╗     ██╗     ███████╗
+        ██╔════╝╚══██╔══╝██╔════╝██║     ██║     ██╔════╝
+        ███████╗   ██║   █████╗  ██║     ██║     █████╗  
+        ╚════██║   ██║   ██╔══╝  ██║     ██║     ██╔══╝  
+        ███████║   ██║   ███████╗███████╗███████╗███████╗
+        ╚══════╝   ╚═╝   ╚══════╝╚══════╝╚══════╝╚══════╝
+													   
+		
+		   ${italic(`→   ${getRandomText()}`)}
+    `),
+        );
+    },
 
-    return [text, ...args];
-}
+    custom(_this: Logger, level: LogLevels, args: unknown[]): unknown[] {
+        const date: Date = new Date();
+        const memory: NodeJS.MemoryUsage = process.memoryUsage();
 
-/**
- *
- * Create a logger instance.
- * @param {string} name The name of the logger.
- * @returns {Logger} The logger instance.
- */
-export const createLogger = (name: string): Logger => new Logger({ name, saveOnFile: true, active: true });
+        const label: string = Logger.prefixes.get(level) ?? "UNKNOWN";
+        const timeFormat: string = `[${date.toLocaleDateString()} : ${date.toLocaleTimeString()}]`;
 
-/**
- * The logger instance.
- * @type {Logger}
- */
-export const logger: Logger = createLogger("[Stelle]");
+        const emojis: Record<LogLevels, string> = {
+            [LogLevels.Debug]: "🎩",
+            [LogLevels.Error]: "🏮",
+            [LogLevels.Info]: "📘",
+            [LogLevels.Warn]: "🔰",
+            [LogLevels.Fatal]: "💀",
+        };
+
+        const colors: Record<LogLevels, ColorFunction> = {
+            [LogLevels.Debug]: gray,
+            [LogLevels.Error]: red,
+            [LogLevels.Info]: customColor,
+            [LogLevels.Warn]: yellow,
+            [LogLevels.Fatal]: red,
+        };
+
+        const text = `${gray(`${timeFormat}`)} ${gray(`[RAM: ${LoggerOps.memoryUsage(memory.rss)}]`)} ${emojis[level]} [${colors[level](
+            label,
+        )}] ${setPadding(label)}`;
+
+        return [text, ...args];
+    },
+
+    create(name: string): Logger {
+        return new Logger({ name, saveOnFile: true, active: true });
+    },
+};
+
+export const logger: Logger = LoggerOps.create("[Stelle]");

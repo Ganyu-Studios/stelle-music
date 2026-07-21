@@ -15,7 +15,7 @@ import { MessageFlags } from "seyfert/lib/types/index.js";
 import { EmbedPaginator } from "#stelle/classes/EmbedPaginator.js";
 import type { TrackUser } from "#stelle/types";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
-import { requesterFn } from "#stelle/utils/functions/internal/track.js";
+import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 
 const options = {
     id: createStringOption({
@@ -60,7 +60,7 @@ export default class InfoSubcommand extends SubCommand {
             )
             .then((decoded: TrackStructure[]): string[] =>
                 decoded.map((track, i): string => {
-                    const requester: TrackUser = requesterFn(playlist.tracks[i].requester);
+                    const requester: TrackUser = TrackOps.requesterFn(playlist.tracks[i].requester);
 
                     return `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${requester.tag}`;
                 }),

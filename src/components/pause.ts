@@ -1,7 +1,7 @@
 import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 import { StelleMusic } from "#stelle/utils/data/constants.js";
-import { refreshComponents } from "#stelle/utils/functions/internal/components.js";
+import { ComponentOps } from "#stelle/utils/functions/internal/components.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class PauseTrackComponent extends ComponentCommand {
@@ -14,7 +14,7 @@ export default class PauseTrackComponent extends ComponentCommand {
 
         await player.setPaused(!player.paused);
 
-        await refreshComponents(ctx, {
+        await ComponentOps.refresh(ctx, {
             customId: "player-pauseTrack",
             label: messages.events.trackStart.components.states[StelleMusic.PauseState(player.paused)],
             style: player.paused ? ButtonStyle.Secondary : ButtonStyle.Primary,

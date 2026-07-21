@@ -1,6 +1,6 @@
 import { EventNames } from "hoshimi";
 import { StelleMeta } from "#stelle/utils/data/constants.js";
-import { clearNowPlaying, clearPlayerLyrics } from "#stelle/utils/functions/manager/player.js";
+import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 export default createLavalinkEvent({
@@ -8,8 +8,8 @@ export default createLavalinkEvent({
     async run(client, player, track): Promise<void> {
         if (!player.textId) return;
 
-        await clearNowPlaying(client, player, player.textId);
-        await clearPlayerLyrics(client, player, player.textId);
+        await PlayerOps.nowPlaying(client, player, player.textId);
+        await PlayerOps.lyrics(client, player, player.textId);
         await player.data.delete("messageId");
 
         if (StelleMeta.Debug)

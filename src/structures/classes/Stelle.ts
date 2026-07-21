@@ -20,7 +20,7 @@ import { StelleMeta, StellePaths, StelleRedis, StelleText } from "#stelle/utils/
 import { StelleContext } from "#stelle/utils/functions/internal/context.js";
 import { onBotPermissionsFail, onOptionsError, onPermissionsFail, onRunError } from "#stelle/utils/functions/internal/overrides.js";
 import { sendErrorReport } from "#stelle/utils/functions/internal/report.js";
-import { inspect } from "#stelle/utils/functions/internal/utils.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 import { StelleDatabase } from "./Database.js";
 import { StelleManager } from "./Manager.js";
 
@@ -190,7 +190,7 @@ export class Stelle extends Client<true> {
         this.events.onFail = (_, error): Promise<MessageStructure | void> => sendErrorReport({ error });
 
         this.redis.on("connect", (): void => this.logger.info("[Redis] Connected"));
-        this.redis.on("error", (error): void => this.logger.error(`[Redis] Client error | error: ${inspect(error)}`));
+        this.redis.on("error", (error): void => this.logger.error(`[Redis] Client error | error: ${UtilsOps.inspect(error)}`));
 
         await this.redis.connect();
         await this.manager.load();
@@ -218,7 +218,7 @@ export class Stelle extends Client<true> {
 
             this.logger.info("[Client] Reload completed");
         } catch (error) {
-            this.logger.error(`[Client] Reload failed | error: ${inspect(error)}`);
+            this.logger.error(`[Client] Reload failed | error: ${UtilsOps.inspect(error)}`);
             throw error;
         }
     }

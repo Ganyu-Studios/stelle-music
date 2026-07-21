@@ -4,7 +4,7 @@ import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/
 import { EmbedPaginator } from "#stelle/classes/EmbedPaginator.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
-import { formatMemoryUsage } from "#stelle/utils/functions/internal/logger.js";
+import { LoggerOps } from "#stelle/utils/functions/internal/logger.js";
 import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
 
 @Declare({
@@ -28,7 +28,7 @@ export default class NodesCommand extends Command {
                 state: messages.commands.nodes.states[node.state],
                 players: node.stats?.players ?? 0,
                 uptime: TimeFormat.toHumanize(node.stats?.uptime ?? 0),
-                memory: `${formatMemoryUsage(node.stats?.memory?.used ?? 0)} / ${formatMemoryUsage(node.stats?.memory?.allocated ?? 0)}`,
+                memory: `${LoggerOps.memoryUsage(node.stats?.memory?.used ?? 0)} / ${LoggerOps.memoryUsage(node.stats?.memory?.allocated ?? 0)}`,
                 cpu: `${node.stats?.cpu?.lavalinkLoad.toFixed(2) ?? 0}% / ${node.stats?.cpu?.systemLoad.toFixed(2) ?? 0}% (Cores: ${node.stats?.cpu?.cores ?? 0})`,
             }),
         }));

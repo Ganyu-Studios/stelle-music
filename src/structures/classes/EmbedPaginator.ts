@@ -22,9 +22,9 @@ import type { CreateComponentCollectorResult } from "seyfert/lib/components/hand
 import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
 import { type Omit, PaginatorButtonCustomIds, PaginatorButtonIdentifiers } from "#stelle/types";
 import { InvalidComponentRun, InvalidEmbedsLength, InvalidMessage, InvalidPageNumber } from "#stelle/utils/errors.js";
-import { updateComponents } from "#stelle/utils/functions/internal/components.js";
+import { ComponentOps } from "#stelle/utils/functions/internal/components.js";
 import { ms } from "#stelle/utils/functions/internal/time.js";
-import { hasFlags } from "#stelle/utils/functions/internal/utils.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  * The options of the paginator reply.
@@ -275,9 +275,9 @@ export class EmbedPaginator {
                 });
             },
             onStop: async (): Promise<void> => {
-                if (this.options.message && !hasFlags(this.options.message.flags, [MessageFlags.Ephemeral])) {
+                if (this.options.message && !UtilsOps.hasFlags(this.options.message.flags, [MessageFlags.Ephemeral])) {
                     await this.edit({
-                        components: updateComponents(this.options.message, {
+                        components: ComponentOps.update(this.options.message, {
                             disabled: true,
                             label: "0/0",
                             customId: PaginatorButtonIdentifiers.Position,

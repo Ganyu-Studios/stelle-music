@@ -15,7 +15,7 @@ import {
 } from "seyfert";
 import type { TrackUser } from "#stelle/types";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
-import { requesterFn } from "#stelle/utils/functions/internal/track.js";
+import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 
 const options = {
@@ -76,7 +76,7 @@ export default class LoadSubcommand extends SubCommand {
         await joinVoiceChannel(player, voice, me);
 
         if (!(await player.data.get("localeString"))) await player.data.set("localeString", await ctx.localeString());
-        if (!(await player.data.get("me"))) await player.data.set("me", requesterFn(client.me));
+        if (!(await player.data.get("me"))) await player.data.set("me", TrackOps.requesterFn(client.me));
 
         const tracks: TrackStructure[] = await player.node.decode
             .multiple(
@@ -85,7 +85,7 @@ export default class LoadSubcommand extends SubCommand {
             )
             .then((decoded: TrackStructure[]): TrackStructure[] =>
                 decoded.map((track, i): TrackStructure => {
-                    track.requester = requesterFn(playlist.tracks[i].requester);
+                    track.requester = TrackOps.requesterFn(playlist.tracks[i].requester);
                     return track;
                 }),
             );

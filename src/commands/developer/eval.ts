@@ -16,7 +16,7 @@ import { Environment } from "#stelle/utils/data/configuration.js";
 import { StelleText } from "#stelle/utils/data/constants.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { ms } from "#stelle/utils/functions/internal/time.js";
-import { inspect, truncate } from "#stelle/utils/functions/internal/utils.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 const secretsRegex = /\b(?:client\.(?:config)|config|env|process\.(?:env|exit)|eval|atob|btoa)\b/;
 const concatRegex = /".*?"\s*\+\s*".*?"(?:\s*\+\s*".*?")*/;
@@ -91,7 +91,7 @@ export default class EvalCommand extends Command {
 
                 output = await eval(code);
                 typecode = typeof output;
-                output = inspect(output, options.depth ?? 0);
+                output = UtilsOps.inspect(output, options.depth ?? 0);
 
                 // 100% security
                 if (envRegex.test(output)) output = output.replaceAll(envRegex, "🌟");
@@ -102,7 +102,9 @@ export default class EvalCommand extends Command {
                     new Embed()
                         .setAuthor({ name: author.tag, iconUrl: author.avatarURL() })
                         .setColor(client.config.color.success)
-                        .setDescription(`\`📖\` A code has been evaluated.\n \n${Formatter.codeBlock(truncate(output, 1900), "js")}`)
+                        .setDescription(
+                            `\`📖\` A code has been evaluated.\n \n${Formatter.codeBlock(UtilsOps.truncate(output, 1900), "js")}`,
+                        )
                         .setThumbnail(client.me.avatarURL())
                         .setTimestamp()
                         .addFields(
@@ -116,7 +118,7 @@ export default class EvalCommand extends Command {
                                 value: `\`${Math.floor(Date.now() - now)}ms\``,
                                 inline: true,
                             },
-                            { name: "`📥` Input", value: `${Formatter.codeBlock(truncate(options.code, 1024), "js")}` },
+                            { name: "`📥` Input", value: `${Formatter.codeBlock(UtilsOps.truncate(options.code, 1024), "js")}` },
                             { name: "`📤` Output", value: "Check the embed description." },
                         ),
                 ],
@@ -141,11 +143,11 @@ export default class EvalCommand extends Command {
                             },
                             {
                                 name: "`📥` Input",
-                                value: `${Formatter.codeBlock(truncate(options.code, 1024), "js")}`,
+                                value: `${Formatter.codeBlock(UtilsOps.truncate(options.code, 1024), "js")}`,
                             },
                             {
                                 name: "`📤` Output",
-                                value: `${Formatter.codeBlock(truncate(`${error}`, 1024), "js")}`,
+                                value: `${Formatter.codeBlock(UtilsOps.truncate(`${error}`, 1024), "js")}`,
                             },
                         ),
                 ],

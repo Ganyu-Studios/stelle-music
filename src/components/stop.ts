@@ -1,5 +1,5 @@
 import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
-import { applyDeleter } from "#stelle/utils/functions/internal/components.js";
+import { ComponentOps } from "#stelle/utils/functions/internal/components.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
 export default class StopComponent extends ComponentCommand {
@@ -10,6 +10,6 @@ export default class StopComponent extends ComponentCommand {
         const { player } = ctx.metadata.checkPlayer;
 
         await player.destroy();
-        await applyDeleter(ctx, "onPlayerStop");
+        await ComponentOps.cleanup(ctx, "onPlayerStop");
     }
 }

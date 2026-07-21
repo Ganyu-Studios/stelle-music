@@ -23,10 +23,10 @@ import { EmbedPaginator } from "#stelle/classes/EmbedPaginator.js";
 import type { userPlaylist } from "#stelle/prisma";
 import type { PermissionNames } from "#stelle/types";
 import { ManageButtonIdentifiers, SaveButtonCustomIds, SaveButtonIdentifiers, type TrackUser } from "#stelle/types";
-import { updateComponents } from "#stelle/utils/functions/internal/components.js";
-import { getPermissionKeys } from "#stelle/utils/functions/internal/discord.js";
+import { ComponentOps } from "#stelle/utils/functions/internal/components.js";
+import { DiscordOps } from "#stelle/utils/functions/internal/discord.js";
 import { ms } from "#stelle/utils/functions/internal/time.js";
-import { requesterFn } from "#stelle/utils/functions/internal/track.js";
+import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 import { playlistTrackSave, SaveType } from "./playlist/save.js";
 import { parseTrackSelection } from "./playlist/selection.js";
@@ -151,7 +151,7 @@ export async function playlistVisibilityToggleHandler(
 
     await ctx.client.database.playlist.set(interaction.user.id, playlist);
     await interaction.update({
-        components: updateComponents(interaction.message, {
+        components: ComponentOps.update(interaction.message, {
             style,
             label,
             customId: ManageButtonIdentifiers.ToggleVisibility,
@@ -241,7 +241,7 @@ export async function playlistLoadHandler(ctx: CommandContext, interaction: Butt
     const missings: PermissionStrings = permissions.keys(permissions.missings(voice.isStage() ? stagePermissions : voicePermissions));
 
     if (missings.length) {
-        const keys: PermissionNames[] = getPermissionKeys(missings);
+        const keys: PermissionNames[] = DiscordOps.perms(missings);
 
         return interaction.editOrReply({
             content: "",
@@ -279,7 +279,7 @@ export async function playlistLoadHandler(ctx: CommandContext, interaction: Butt
     await joinVoiceChannel(player, voice, me);
 
     if (!(await player.data.get("localeString"))) await player.data.set("localeString", await ctx.localeString());
-    if (!(await player.data.get("me"))) await player.data.set("me", requesterFn(ctx.client.me));
+    if (!(await player.data.get("me"))) await player.data.set("me", TrackOps.requesterFn(ctx.client.me));
 
     const tracks: TrackStructure[] = await player.node.decode
         .multiple(
@@ -288,7 +288,7 @@ export async function playlistLoadHandler(ctx: CommandContext, interaction: Butt
         )
         .then((decoded: TrackStructure[]): TrackStructure[] =>
             decoded.map((track, i): TrackStructure => {
-                track.requester = requesterFn(playlist.tracks[i].requester);
+                track.requester = TrackOps.requesterFn(playlist.tracks[i].requester);
                 return track;
             }),
         );
@@ -425,7 +425,7 @@ export async function playlistInfoHandler(ctx: CommandContext, interaction: Butt
         )
         .then((decoded: TrackStructure[]): string[] =>
             decoded.map((track, i): string => {
-                const requester: TrackUser = requesterFn(playlist.tracks[i].requester);
+                const requester: TrackUser = TrackOps.requesterFn(playlist.tracks[i].requester);
 
                 return `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${requester.tag}`;
             }),

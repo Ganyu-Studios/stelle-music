@@ -1,7 +1,7 @@
 import { EventNames } from "hoshimi";
 import { Embed } from "seyfert";
 import { StelleMeta } from "#stelle/utils/data/constants.js";
-import { clearNowPlaying, clearPlayerLyrics, fetchPlayerVoice, getPlayerMessages } from "#stelle/utils/functions/manager/player.js";
+import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 export default createLavalinkEvent({
@@ -10,13 +10,13 @@ export default createLavalinkEvent({
         if (!(player.textId && player.voiceId)) return;
 
         // only unsubscribe if the queue is ended.
-        await clearPlayerLyrics(client, player, player.textId, { unsubscribe: true, clearEnabled: true });
-        await clearNowPlaying(client, player, player.textId);
+        await PlayerOps.lyrics(client, player, player.textId, { unsubscribe: true, clearEnabled: true });
+        await PlayerOps.nowPlaying(client, player, player.textId);
 
-        const messages = await getPlayerMessages(client, player);
+        const messages = await PlayerOps.messages(client, player);
         if (!messages) return;
 
-        const voice = await fetchPlayerVoice(client, player);
+        const voice = await PlayerOps.voice(client, player);
         if (!voice) return;
 
         if (voice.isVoice()) await voice.setVoiceStatus(messages.events.voiceStatus.queueEnd).catch((): null => null);

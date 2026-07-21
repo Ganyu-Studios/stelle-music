@@ -1,7 +1,7 @@
 import type { HoshimiEvents } from "hoshimi";
 import type { UsingClient } from "seyfert";
 import { BaseHandler } from "seyfert/lib/common/index.js";
-import { customImport } from "../functions/internal/utils.js";
+import { UtilsOps } from "../functions/internal/utils.js";
 import type { Lavalink } from "./events.js";
 
 /**
@@ -92,7 +92,7 @@ export class LavalinkHandler extends BaseHandler {
         // don't ask... just... don't ask.
         this.client.manager.removeListener(oldEvent.name, oldEvent.run as never);
         // i hate this so much, but it's the only way to make it work.
-        const newEvent: Lavalink = await customImport<Lavalink>(oldEvent.filepath);
+        const newEvent: Lavalink = await UtilsOps.dynamicImport<Lavalink>(oldEvent.filepath);
         if (!newEvent) return;
 
         newEvent.filepath = oldEvent.filepath;

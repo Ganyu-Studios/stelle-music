@@ -1,6 +1,6 @@
 import { createEvent, Guild } from "seyfert";
 import { StelleMeta } from "#stelle/utils/data/constants.js";
-import { sendGuildLog } from "#stelle/utils/functions/internal/discord.js";
+import { DiscordOps } from "#stelle/utils/functions/internal/discord.js";
 
 export default createEvent({
     data: { name: "guildDelete" },
@@ -9,7 +9,7 @@ export default createEvent({
 
         if (StelleMeta.Debug) return client.debugger?.info(`[Guild] Deleted | id: ${guild.id} | name: ${guild.name}`);
 
-        await sendGuildLog(client, guild, {
+        await DiscordOps.guildLog(client, guild, {
             color: "Red",
             title: "A guild removed me!",
             description: "`📦` A guild removed me... I think I was not helpful...",

@@ -25,9 +25,9 @@ import {
     playlistTrackSaveHandler,
     playlistVisibilityToggleHandler,
 } from "#stelle/utils/functions/components/playlist.js";
-import { updateComponents } from "#stelle/utils/functions/internal/components.js";
+import { ComponentOps } from "#stelle/utils/functions/internal/components.js";
 import { ms } from "#stelle/utils/functions/internal/time.js";
-import { hasFlags } from "#stelle/utils/functions/internal/utils.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 const options = {
     id: createStringOption({
@@ -139,8 +139,8 @@ export default class ManageSubcommand extends SubCommand {
                 });
             },
             onStop: async (reason): Promise<void> => {
-                if (reason === "idle" && !hasFlags(message.flags, [MessageFlags.Ephemeral])) {
-                    await message.edit({ components: updateComponents(message, { disabled: true }) });
+                if (reason === "idle" && !UtilsOps.hasFlags(message.flags, [MessageFlags.Ephemeral])) {
+                    await message.edit({ components: ComponentOps.update(message, { disabled: true }) });
                 }
             },
         });

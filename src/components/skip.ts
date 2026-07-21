@@ -1,5 +1,5 @@
 import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
-import { applyDeleter } from "#stelle/utils/functions/internal/components.js";
+import { ComponentOps } from "#stelle/utils/functions/internal/components.js";
 
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
 export default class SkipTrackComponent extends ComponentCommand {
@@ -12,6 +12,6 @@ export default class SkipTrackComponent extends ComponentCommand {
         const isAutoplay: boolean | undefined = await player.data.get("enabledAutoplay");
 
         await player.skip({ throwError: !isAutoplay });
-        await applyDeleter(ctx, "onTrackSkip");
+        await ComponentOps.cleanup(ctx, "onTrackSkip");
     }
 }

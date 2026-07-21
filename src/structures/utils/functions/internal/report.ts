@@ -3,7 +3,7 @@ import { WebhookClient } from "#stelle/classes/WebhookClient.js";
 import { Environment } from "#stelle/utils/data/configuration.js";
 import { StelleMeta } from "#stelle/utils/data/constants.js";
 import { logger } from "#stelle/utils/functions/internal/logger.js";
-import { inspect, truncate } from "#stelle/utils/functions/internal/utils.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  * The report options interface.
@@ -51,7 +51,7 @@ export async function sendErrorReport(options: ReportOptions): Promise<MessageSt
                     "",
                     "+------------------------------+",
                     "",
-                    `Error: ${inspect(error, 1)}`,
+                    `Error: ${UtilsOps.inspect(error, 1)}`,
                 ].join("\n"),
             ),
         );
@@ -60,7 +60,7 @@ export async function sendErrorReport(options: ReportOptions): Promise<MessageSt
         .setColor("Red")
         .setTitle(`${title} | Error`)
         .setDescription(
-            `\`🏮\` An error ocurred while I tried to run.\n\n \`📜\` Name: ${truncate(error.name, 1000)}\n\`📨\` Reason: ${truncate(error.message, 1000)}`,
+            `\`🏮\` An error ocurred while I tried to run.\n\n \`📜\` Name: ${UtilsOps.truncate(error.name, 1000)}\n\`📨\` Reason: ${UtilsOps.truncate(error.message, 1000)}`,
         );
 
     if (ctx) {

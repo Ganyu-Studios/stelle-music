@@ -20,7 +20,7 @@ import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js";
 import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
-import { truncate } from "#stelle/utils/functions/internal/utils.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  * The type for a command that can be resolved to a command or a context menu command.
@@ -42,7 +42,7 @@ const options = {
                             const description: string = command.description_localizations?.[interaction.locale] ?? command.description;
 
                             return {
-                                name: `${command.name} - ${truncate(description, 124)} (${TimeFormat.toHumanize((command.cooldown ?? 3) * 1000)})`,
+                                name: `${command.name} - ${UtilsOps.truncate(description, 124)} (${TimeFormat.toHumanize((command.cooldown ?? 3) * 1000)})`,
                                 value: command.name,
                             };
                         })
@@ -63,7 +63,7 @@ const options = {
 
             return interaction.respond([
                 {
-                    name: `${command.name} - ${truncate(description, 124)} (${TimeFormat.toHumanize((command.cooldown ?? 3) * 1000)})`,
+                    name: `${command.name} - ${UtilsOps.truncate(description, 124)} (${TimeFormat.toHumanize((command.cooldown ?? 3) * 1000)})`,
                     value: command.name,
                 },
             ]);

@@ -18,9 +18,9 @@ import {
 import { ApplicationIntegrationType, InteractionContextType, MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
-import { getAlbumImage, renderImage } from "#stelle/utils/functions/internal/image.js";
+import { ImageOps } from "#stelle/utils/functions/internal/image.js";
 import { ms, TimeFormat } from "#stelle/utils/functions/internal/time.js";
-import { truncate } from "#stelle/utils/functions/internal/utils.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 @Declare({
     name: "nowplaying",
@@ -46,9 +46,9 @@ export default class NowPlayingCommand extends Command {
         const start: number = Date.now();
 
         const guild: Guild<"api" | "cached"> = await ctx.guild();
-        const image: Uint8Array = await renderImage({
-            name: truncate(track.info.title, 50),
-            artist: truncate(track.info.author, 50),
+        const image: Uint8Array = await ImageOps.render({
+            name: UtilsOps.truncate(track.info.title, 50),
+            artist: UtilsOps.truncate(track.info.author, 50),
             albumURL: track.info.artworkUrl ?? undefined,
             guildName: guild.name,
             timestamp: {
@@ -63,7 +63,7 @@ export default class NowPlayingCommand extends Command {
             },
         });
 
-        const albumImage: Image = await getAlbumImage(track.info.artworkUrl ?? undefined);
+        const albumImage: Image = await ImageOps.album(track.info.artworkUrl ?? undefined);
         const dominantColor: number = albumImage.dominantColor();
         const embedColor: number = (dominantColor >> 8) & 0xffffff;
 

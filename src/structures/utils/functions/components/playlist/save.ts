@@ -12,7 +12,7 @@ import {
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { MessageFlags, TextInputStyle } from "seyfert/lib/types/index.js";
 import type { userPlaylist } from "#stelle/prisma";
-import { isUrl } from "#stelle/utils/functions/internal/utils.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  * Enum representing the type of save operation for playlist tracks.
@@ -143,7 +143,7 @@ export async function playlistTrackSave(
                     await modal.deferReply(MessageFlags.Ephemeral);
 
                     const url: string = modal.getInputValue("playlist-saveFromURL-input", true) as string;
-                    if (!isUrl(url))
+                    if (!UtilsOps.isUrl(url))
                         return modal.editOrReply({
                             content: "",
                             flags: MessageFlags.Ephemeral,

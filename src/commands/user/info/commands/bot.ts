@@ -4,7 +4,7 @@ import { Shortcut } from "yunaforseyfert";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 import { StelleMeta } from "#stelle/utils/data/constants.js";
 import { type GitInfo, getGitInfo } from "#stelle/utils/functions/internal/git.js";
-import { formatMemoryUsage } from "#stelle/utils/functions/internal/logger.js";
+import { LoggerOps } from "#stelle/utils/functions/internal/logger.js";
 
 @Declare({
     name: "bot",
@@ -45,7 +45,7 @@ export default class BotSubcommand extends SubCommand {
                     inline,
                     name: messages.commands.info.bot.fields.system.name,
                     value: messages.commands.info.bot.fields.system.value({
-                        memory: formatMemoryUsage(process.memoryUsage().rss),
+                        memory: LoggerOps.memoryUsage(process.memoryUsage().rss),
                         uptime: Math.floor(client.readyTimestamp / 1000),
                         version: StelleMeta.Version,
                     }),

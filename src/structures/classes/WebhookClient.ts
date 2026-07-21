@@ -27,7 +27,7 @@ import type {
 } from "seyfert/lib/types/index.js";
 import type { WebhookMetadata } from "#stelle/types";
 import { InvalidWebhookURL } from "#stelle/utils/errors.js";
-import { parseDiscordWebhook } from "#stelle/utils/functions/internal/discord.js";
+import { DiscordOps } from "#stelle/utils/functions/internal/discord.js";
 
 /**
  * The bot token for api calls.
@@ -117,7 +117,7 @@ export class WebhookClient {
      */
     public constructor(data: string | WebhookMetadata) {
         if (typeof data === "string") {
-            const parsed: WebhookMetadata | null = parseDiscordWebhook(data);
+            const parsed: WebhookMetadata | null = DiscordOps.webhook(data);
             if (!parsed) throw new InvalidWebhookURL("The provided string is not a valid Discord webhook URL.");
             this.data = parsed;
         } else {
