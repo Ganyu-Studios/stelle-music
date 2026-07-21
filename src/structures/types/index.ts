@@ -45,28 +45,6 @@ export enum StelleCategory {
 }
 
 /**
- * The enum of the database cache keys.
- */
-export enum CacheKeys {
-    /**
-     * The guild player key.
-     */
-    Player = "guild:player",
-    /**
-     * The guild locale key.
-     */
-    Locale = "guild:locale",
-    /**
-     * The guild prefix key.
-     */
-    Prefix = "guild:prefix",
-    /**
-     * The user playlist key.
-     */
-    Playlist = "user:playlist",
-}
-
-/**
  * The type of the command options.
  */
 export interface Options {

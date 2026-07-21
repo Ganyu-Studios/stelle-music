@@ -1,96 +1,86 @@
 import { LimitedCollection } from "seyfert";
 import type { guildLocale, guildPlayer, guildPrefix, userPlaylist } from "#stelle/prisma";
-import { CacheKeys } from "#stelle/types";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 
 /**
- * The interface of the database cache keys.
+ * Everything cached for a single guild. The primary cache key is the guild id, so all of a guild's configuration lives
+ * together in one bucket and is evicted together.
+ * @class GuildBucket
  */
-interface CacheMap {
-    [CacheKeys.Locale]: guildLocale;
-    [CacheKeys.Player]: guildPlayer;
-    [CacheKeys.Prefix]: guildPrefix;
-    [CacheKeys.Playlist]: userPlaylist;
+export class GuildBucket {
+    // The config scalars are tri-state: `undefined` means "not read from the database yet" (a cache miss), while `null`
+    // means "read and known absent" (a negative cache) so a guild on default config doesn't re-hit MongoDB on every op.
+
+    /**
+     * The guild locale config. `null` when read and absent (negative cache).
+     * @type {guildLocale | null | undefined}
+     */
+    locale?: guildLocale | null;
+    /**
+     * The guild prefix config. `null` when read and absent (negative cache).
+     * @type {guildPrefix | null | undefined}
+     */
+    prefix?: guildPrefix | null;
+    /**
+     * The guild player config (default volume, search platform). `null` when read and absent (negative cache).
+     * @type {guildPlayer | null | undefined}
+     */
+    player?: guildPlayer | null;
 }
 
 /**
- * The interface of the filter functions for each cache key.
+ * Build the shared options for a cache collection: bounded by `size` with a sliding TTL (`resetOnDemand`) so that
+ * frequently-accessed entries stay cached and only idle ones are evicted.
+ * @returns {{ limit: number; expire: number; resetOnDemand: true }} The collection options.
  */
-type FilterMap<T extends CacheKeys = CacheKeys> = (data: CacheMap[T]) => boolean;
+function cacheOptions(): { limit: number; expire: number; resetOnDemand: true } {
+    return { limit: Configuration.cache.size, expire: Configuration.cache.expire, resetOnDemand: true };
+}
 
 /**
- * Class representing the cache of the bot.
+ * Class representing the cache of the bot. The primary tree is keyed by guild id ({@link GuildBucket}); the playlist
+ * collection is kept apart because playlists aren't guild-scoped (a playlist is owned by a user and addressed by its
+ * own id).
  * @class Cache
  */
 export class Cache {
     /**
-     *
-     * The internal cache.
-     * @type {LimitedCollection<string, LimitedCollection<CacheKeys, CacheMap[CacheKeys]>>}
+     * The per-guild buckets, keyed by guild id. This is the primary cache tree; its `limit` is the number of guilds.
+     * @type {LimitedCollection<string, GuildBucket>}
      * @readonly
      */
-    readonly internal: LimitedCollection<string, LimitedCollection<CacheKeys, CacheMap[CacheKeys]>> = new LimitedCollection({
-        limit: Configuration.cache.size,
-    });
+    readonly guilds: LimitedCollection<string, GuildBucket> = new LimitedCollection(cacheOptions());
 
     /**
-     *
-     * Get the data from the cache.
-     * @param {T} key The key.
-     * @param {string} id The guild id.
-     * @returns {CacheMap[T] | undefined} The cached data.
+     * The user playlists, keyed by playlist id. Global (a playlist belongs to a user, not a guild). A cached `null` is
+     * a negative cache (read and known absent), distinct from a missing key (not read yet).
+     * @type {LimitedCollection<string, userPlaylist | null>}
+     * @readonly
      */
-    public get<T extends CacheKeys = CacheKeys>(key: T, id: string): CacheMap[T] | undefined {
-        return this.internal.get(id)?.get(key) as CacheMap[T] | undefined;
+    readonly playlists: LimitedCollection<string, userPlaylist | null> = new LimitedCollection(cacheOptions());
+
+    /**
+     * Get the guild's bucket, creating (and caching) an empty one if it doesn't exist yet. Use this on writes.
+     * @param {string} guildId The guild id.
+     * @returns {GuildBucket} The guild's bucket.
+     */
+    public guild(guildId: string): GuildBucket {
+        let bucket: GuildBucket | undefined = this.guilds.get(guildId);
+        if (!bucket) {
+            bucket = new GuildBucket();
+            this.guilds.set(guildId, bucket);
+        }
+
+        return bucket;
     }
 
     /**
-     *
-     * Delete the data in the cache.
-     * @param {string} id The guild id.
-     * @returns {boolean} If the data was deleted.
+     * Get the guild's bucket without creating one. Use this on reads so a cache miss doesn't leave empty buckets
+     * behind (and, via `resetOnDemand`, a hit keeps the bucket warm).
+     * @param {string} guildId The guild id.
+     * @returns {GuildBucket | undefined} The guild's bucket, or undefined if it isn't cached.
      */
-    public delete(id: string): boolean {
-        return this.internal.delete(id);
-    }
-
-    /**
-     *
-     * Delete the data key in the cache.
-     * @param {string} id The guild id.
-     * @param {T} key The key.
-     * @returns {boolean} If the data key was deleted.
-     */
-    public deleteKey<T extends CacheKeys = CacheKeys>(key: T, id: string): boolean {
-        return this.internal.get(id)?.delete(key) ?? false;
-    }
-
-    /**
-     *
-     * Set the data to the cache.
-     * @param {string} id The guild id.
-     * @param {T} key The key.
-     * @param {CacheMap[T]} data The data.
-     * @returns {void} Nothing... just sets the data to the cache.
-     */
-    public set<T extends CacheKeys = CacheKeys>(key: T, id: string, data: CacheMap[T]): void {
-        const existing = this.internal.get(id) ?? new LimitedCollection<CacheKeys, CacheMap[CacheKeys]>();
-        existing.set(key, data);
-        this.internal.set(id, existing);
-    }
-
-    /**
-     *
-     * Get all cached data for a specific key.
-     * @param {T} key The key to get all cached data for.
-     * @param {FilterMap[T]} [filter] Optional filter function to filter the cached data.
-     * @returns {CacheMap[T][]} An array of all cached data for the key.
-     */
-    public all<T extends CacheKeys = CacheKeys>(key: T, filter?: FilterMap<T>): CacheMap[T][] {
-        const values = [...this.internal.values()].map((collection): unknown => collection.get(key)).filter((v): v is CacheMap[T] => !!v);
-
-        if (filter) return values.filter(filter);
-
-        return values;
+    public getGuild(guildId: string): GuildBucket | undefined {
+        return this.guilds.get(guildId);
     }
 }

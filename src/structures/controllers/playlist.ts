@@ -1,6 +1,6 @@
 import { Controller } from "#stelle/classes/Controller.js";
 import type { userPlaylist } from "#stelle/prisma";
-import { CacheKeys, type Omit } from "#stelle/types";
+import type { Omit } from "#stelle/types";
 import { omitKeys } from "#stelle/utils/functions/utils.js";
 
 /**
@@ -25,16 +25,25 @@ export class PlaylistController extends Controller<"userPlaylist"> {
      *
      * Get the playlist of a user from the database.
      * @param {string} playlistId The playlist id to get.
+     * @param {string} userId The user id that owns the playlist.
      * @returns {Promise<userPlaylist | null>} The playlist of the user.
      */
-    public async get(playlistId: string, userId: string): Promise<userPlaylist | null> {
-        const cached = this.cache.get(CacheKeys.Playlist, playlistId);
-        if (cached && cached.userId === userId) return cached;
-
-        const data = await this.model.findUnique({ where: { playlistId, userId } });
-        if (data) this.cache.set(CacheKeys.Playlist, playlistId, data);
-
-        return data;
+    public get(playlistId: string, userId: string): Promise<userPlaylist | null> {
+        // Clone on read: callers mutate the returned playlist (tracks, name) before persisting, so handing back the
+        // cached object would poison the shared entry before the DB write lands.
+        return this.cacheGet({
+            read: () => {
+                const cached = this.database.cache.playlists.get(playlistId);
+                return cached && cached.userId === userId ? cached : undefined;
+            },
+            write: (record): void => {
+                // Global collection addressed by playlistId, but the query is scoped by owner: cache only a hit, never a
+                // `null` miss — a null here means "not this user's", not "no such playlist", and would poison the owner.
+                if (record) this.database.cache.playlists.set(record.playlistId, record);
+            },
+            query: () => this.model.findUnique({ where: { playlistId, userId } }),
+            clone: true,
+        });
     }
 
     /**
@@ -45,19 +54,25 @@ export class PlaylistController extends Controller<"userPlaylist"> {
      * @param {string} userId The user id requesting the playlist.
      * @returns {Promise<userPlaylist | null>} The loadable playlist.
      */
-    public async getLoadable(playlistId: string, userId: string): Promise<userPlaylist | null> {
-        const cached = this.cache.get(CacheKeys.Playlist, playlistId);
-        if (cached && (cached.userId === userId || cached.public)) return cached;
-
-        const data = await this.model.findFirst({
-            where: {
-                playlistId,
-                OR: [{ userId }, { public: true }],
+    public getLoadable(playlistId: string, userId: string): Promise<userPlaylist | null> {
+        // Clone on read: same rationale as get() — the loaded playlist's tracks are copied into a live queue.
+        return this.cacheGet({
+            read: () => {
+                const cached = this.database.cache.playlists.get(playlistId);
+                return cached && (cached.userId === userId || cached.public) ? cached : undefined;
             },
+            write: (record): void => {
+                if (record) this.database.cache.playlists.set(record.playlistId, record);
+            },
+            query: () =>
+                this.model.findFirst({
+                    where: {
+                        playlistId,
+                        OR: [{ userId }, { public: true }],
+                    },
+                }),
+            clone: true,
         });
-        if (data) this.cache.set(CacheKeys.Playlist, playlistId, data);
-
-        return data;
     }
 
     /**
@@ -67,17 +82,21 @@ export class PlaylistController extends Controller<"userPlaylist"> {
      * @param {PlaylistData} data The playlist data to set.
      * @returns {Promise<void>} A promise that resolves when the playlist is set.
      */
-    public async set(userId: string, data: PlaylistData): Promise<void> {
+    public set(userId: string, data: PlaylistData): Promise<void> {
         if ("id" in data) data = omitKeys(data, ["id"]);
         if ("userId" in data) data = omitKeys(data, ["userId"]);
 
-        await this.model
-            .upsert({
-                where: { userId, playlistId: data.playlistId },
-                create: { userId, ...data },
-                update: data,
-            })
-            .then((created): void => this.cache.set(CacheKeys.Playlist, created.playlistId, created));
+        return this.cacheSet({
+            write: (record): void => {
+                this.database.cache.playlists.set(record.playlistId, record);
+            },
+            query: () =>
+                this.model.upsert({
+                    where: { userId, playlistId: data.playlistId },
+                    create: { userId, ...data },
+                    update: data,
+                }),
+        });
     }
 
     /**
@@ -87,21 +106,23 @@ export class PlaylistController extends Controller<"userPlaylist"> {
      * @param {string} playlistId The playlist id to delete.
      * @returns {Promise<void>} A promise that resolves when the playlist is deleted.
      */
-    public async delete(userId: string, playlistId: string): Promise<void> {
-        await this.model.delete({ where: { userId, playlistId } });
-        this.cache.deleteKey(CacheKeys.Playlist, playlistId);
+    public delete(userId: string, playlistId: string): Promise<void> {
+        return this.cacheDelete({
+            evict: (): void => {
+                this.database.cache.playlists.delete(playlistId);
+            },
+            query: () => this.model.delete({ where: { userId, playlistId } }),
+        });
     }
 
     /**
      *
-     * Get all playlists of a user from the database.
-     * @param {PlaylistFilter} filter The filter function to apply to the playlists.
+     * Get all playlists of a user from the database. This never reads the cache: the cache is a bounded, partial
+     * subset, so it can't authoritatively answer an "every playlist" query.
+     * @param {PlaylistFilter} [filter] The filter function to apply to the playlists.
      * @returns {Promise<userPlaylist[]>} A promise that resolves to an array of playlists.
      */
     public async all(filter?: PlaylistFilter): Promise<userPlaylist[]> {
-        const cached = this.cache.all(CacheKeys.Playlist, filter);
-        if (cached.length) return cached;
-
         const playlists = await this.model.findMany();
         if (filter) return playlists.filter(filter);
 
@@ -110,14 +131,11 @@ export class PlaylistController extends Controller<"userPlaylist"> {
 
     /**
      *
-     * Count all playlists owned by a user.
+     * Count all playlists owned by a user, straight from the database (see all()).
      * @param {string} userId The user id to count playlists from.
      * @returns {Promise<number>} The amount of playlists for the user.
      */
-    public async countByUser(userId: string): Promise<number> {
-        const cached = this.cache.all(CacheKeys.Playlist, (p) => p.userId === userId);
-        if (cached.length) return cached.length;
-
+    public countByUser(userId: string): Promise<number> {
         return this.model.count({ where: { userId } });
     }
 }

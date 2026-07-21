@@ -1,5 +1,4 @@
 import { Controller } from "#stelle/classes/Controller.js";
-import { CacheKeys } from "#stelle/types";
 
 /**
  * Class representing the prefix controller.
@@ -15,15 +14,15 @@ export class PrefixController extends Controller<"guildPrefix"> {
      * @returns {Promise<string>} The prefix for the guild.
      */
     public async get(guildId: string): Promise<string> {
-        const cached = this.cache.get(CacheKeys.Prefix, guildId);
-        if (cached?.prefix) return cached.prefix;
+        const data = await this.cacheGet({
+            read: () => this.database.cache.getGuild(guildId)?.prefix,
+            write: (record): void => {
+                this.database.cache.guild(guildId).prefix = record;
+            },
+            query: () => this.model.findUnique({ where: { guildId } }),
+        });
 
-        const data = await this.model.findUnique({ where: { guildId } });
-        if (!data?.prefix) return this.client.config.defaultPrefix;
-
-        this.cache.set(CacheKeys.Prefix, guildId, data);
-
-        return data.prefix;
+        return data?.prefix ?? this.database.client.config.defaultPrefix;
     }
 
     /**
@@ -32,13 +31,12 @@ export class PrefixController extends Controller<"guildPrefix"> {
      * @param {string} prefix The prefix to set.
      * @returns {Promise<void>} A promise that resolves when the prefix is set.
      */
-    public async set(guildId: string, prefix: string): Promise<void> {
-        await this.model
-            .upsert({
-                where: { guildId },
-                create: { guildId, prefix },
-                update: { prefix },
-            })
-            .then((data) => this.cache.set(CacheKeys.Prefix, data.guildId, data));
+    public set(guildId: string, prefix: string): Promise<void> {
+        return this.cacheSet({
+            write: (record): void => {
+                this.database.cache.guild(guildId).prefix = record;
+            },
+            query: () => this.model.upsert({ where: { guildId }, create: { guildId, prefix }, update: { prefix } }),
+        });
     }
 }
