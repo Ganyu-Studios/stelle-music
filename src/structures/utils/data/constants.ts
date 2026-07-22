@@ -16,8 +16,17 @@ import type {
 } from "#stelle/types";
 import { Environment } from "./configuration.js";
 
+/**
+ * The type of the package.json file.
+ */
+type PackageJSON = typeof import("../../../../package.json");
+
+/**
+ * The package.json file of the bot, parsed as JSON.
+ * @type {PackageJSON}
+ */
 // funny thing, it sucks, but it works.
-const packageJson = JSON.parse(await readFile(resolve("package.json"), "utf-8"));
+const packageJson: PackageJSON = JSON.parse(await readFile(resolve("package.json"), "utf-8"));
 
 /**
  * The version of Seyfert that the bot is using.
