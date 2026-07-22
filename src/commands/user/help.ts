@@ -99,6 +99,8 @@ export default class HelpCommand extends Command {
 
         const getAlias = (category: StelleCategory): string => messages.commands.help.aliases[category];
 
+        const localeString = await ctx.localeString();
+
         if (!options.command) {
             const paginator: EmbedPaginator = new EmbedPaginator({ ctx, disabled: true });
             const row: ActionRow<StelleStringMenu> = new ActionRow<StelleStringMenu>().addComponents(
@@ -139,9 +141,7 @@ export default class HelpCommand extends Command {
                                     .setDescription(
                                         messages.commands.help.selectMenu.options.description({
                                             options: commandList
-                                                .map((command): string =>
-                                                    parseCommand(command, messages.events.optionTypes, ctx.interaction?.locale),
-                                                )
+                                                .map((command): string => parseCommand(command, messages.events.optionTypes, localeString))
                                                 .join("\n\n"),
                                         }),
                                     ),
@@ -183,7 +183,7 @@ export default class HelpCommand extends Command {
             )
             .setDescription(
                 messages.commands.help.selectMenu.options.description({
-                    options: parseCommand(command, messages.events.optionTypes, ctx.interaction?.locale),
+                    options: parseCommand(command, messages.events.optionTypes, localeString),
                 }),
             );
 
