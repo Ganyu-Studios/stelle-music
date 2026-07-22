@@ -62,17 +62,9 @@ export default class VolumeCommand extends Command {
             });
         }
 
-        if (volume > 1 && player.paused) {
-            await player.setPaused(false);
-            await player.setVolume(volume);
-
-            return ctx.successReply(
-                messages.commands.volume.changed({
-                    volume,
-                    clientName: client.me.username,
-                }),
-            );
-        }
+        // `volume` is always > 1 here (the min is 1 and the === 1 case returned above), so unpausing hinges only on the
+        // current state — then set + reply once, instead of duplicating the change reply across both branches.
+        if (player.paused) await player.setPaused(false);
 
         await player.setVolume(volume);
         await ctx.successReply(
