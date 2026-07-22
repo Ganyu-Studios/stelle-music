@@ -43,12 +43,23 @@ async function getBuffer(url: string): Promise<Buffer> {
 }
 
 export const ImageOps = {
+    /**
+     *
+     * Fetches and decodes an album image from a given URL. If the URL is undefined, it returns a default 100x100 image filled with a base color.
+     * @param {string | undefined} url The URL of the album image to fetch and decode.
+     * @returns {Promise<Image>} A Promise that resolves to an Image object. If the URL is undefined, it returns a default 100x100 image filled with a base color.
+     */
     async album(url: string | undefined): Promise<Image> {
         if (url) return Image.decode(await getBuffer(url));
 
         return new Image(100, 100).fill(ImageColors.Base);
     },
-
+    /**
+     *
+     * Renders an image based on the provided ImageData, including album art, text, and progress bar.
+     * @param {ImageData} data The data required to render the image, including album URL, track name, artist, timestamp, queue information, and guild name.
+     * @returns {Promise<Uint8Array>} A Promise that resolves to a Uint8Array representing the encoded image.
+     */
     async render(data: ImageData): Promise<Uint8Array> {
         const { albumURL, name, artist, timestamp, queue, guildName } = data;
 

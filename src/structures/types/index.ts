@@ -257,3 +257,8 @@ export type NonCommandOptions = Omit<Options, "category">;
  * The types for non-global commands.
  */
 export type NonGlobalCommands = Command | ContextMenuCommand | SubCommand;
+
+/**
+ * The type of the Stelle version string.
+ */
+export type StelleVersion = `${string} v${string}`;

@@ -1,13 +1,27 @@
-import { Embed, type UsingClient } from "seyfert";
+import { Embed, type Guild, type UsingClient } from "seyfert";
 import type { ColorResolvable, PermissionStrings } from "seyfert/lib/common/index.js";
 import { PermissionsBitField } from "seyfert/lib/structures/extra/Permissions.js";
 import type { PermissionNames, WebhookMetadata } from "#stelle/types";
 
-interface GuildLogSource {
-    id: string;
-    name: string;
-    memberCount?: number;
-    fetchOwner(): Promise<{ displayName: string } | null>;
+/**
+ * The interface for the guild log options.
+ */
+interface GuildLogOptions {
+    /**
+     * The color of the embed.
+     * @type {ColorResolvable}
+     */
+    color: ColorResolvable;
+    /**
+     * The title of the embed.
+     * @type {string}
+     */
+    title: string;
+    /**
+     * The description of the embed.
+     * @type {string}
+     */
+    description: string;
 }
 
 export const DiscordOps = {
@@ -20,11 +34,7 @@ export const DiscordOps = {
         return { id: match.groups.id, token: match.groups.token };
     },
 
-    async guildLog(
-        client: UsingClient,
-        guild: GuildLogSource,
-        options: { color: ColorResolvable; title: string; description: string },
-    ): Promise<void> {
+    async guildLog(client: UsingClient, guild: Guild<"create"> | Guild<"cached">, options: GuildLogOptions): Promise<void> {
         const owner = await guild.fetchOwner().catch((): null => null);
         const ownerName: string = owner?.displayName ?? "Unknown";
 
@@ -42,7 +52,7 @@ export const DiscordOps = {
         await client.messages.write(client.config.channels.guildsId, { embeds: [embed] });
     },
 
-    perms(permissions: PermissionStrings): PermissionNames[] {
+    permissions(permissions: PermissionStrings): PermissionNames[] {
         return new PermissionsBitField(permissions.map((p): bigint => PermissionsBitField.resolve(p))).keys();
     },
 };

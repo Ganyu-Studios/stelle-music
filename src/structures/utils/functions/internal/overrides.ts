@@ -41,8 +41,7 @@ export async function onAutocompleteError(interaction: AutocompleteInteraction, 
     const { messages } = await ContextOps.locale(interaction.client, interaction.guildId);
 
     await sendErrorReport({ error });
-
-    return interaction.respond([
+    await interaction.respond([
         {
             name: messages.events.autocomplete.noAnything,
             value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT",
@@ -63,7 +62,7 @@ export async function onPermissionsFail(
 ): Promise<MessageStructure | WebhookMessageStructure | void> {
     const { messages } = await ctx.locale();
 
-    const keys: PermissionNames[] = DiscordOps.perms(permissions);
+    const keys: PermissionNames[] = DiscordOps.permissions(permissions);
 
     return ctx.editOrReply({
         content: "",
@@ -96,7 +95,7 @@ export async function onBotPermissionsFail(
 ): Promise<MessageStructure | WebhookMessageStructure | void> {
     const { messages } = await ctx.locale();
 
-    const keys: PermissionNames[] = DiscordOps.perms(permissions);
+    const keys: PermissionNames[] = DiscordOps.permissions(permissions);
 
     return ctx.editOrReply({
         content: "",

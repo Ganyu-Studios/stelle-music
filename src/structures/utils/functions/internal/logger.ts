@@ -3,10 +3,25 @@ import { gray, italic, LogLevels, red, rgb24, yellow } from "seyfert/lib/common/
 
 import { Configuration } from "#stelle/utils/data/configuration.js";
 
+/**
+ * The color function type used for coloring log messages.
+ */
 type ColorFunction = (text: string) => string;
 
+/**
+ *
+ * The custom color function for log messages, using the success color from the configuration.
+ * @param {string} text The text to color.
+ * @returns {string} The colored text.
+ */
 const customColor: ColorFunction = (text: string): string => rgb24(text, Configuration.color.success);
 
+/**
+ *
+ * Set padding for log message labels to ensure consistent formatting.
+ * @param {string} label The label to pad.
+ * @returns {string} The padded label with a bar.
+ */
 function setPadding(label: string): string {
     const maxLength = 6;
     const bar = "|";
@@ -19,6 +34,11 @@ function setPadding(label: string): string {
     return spaces + bar;
 }
 
+/**
+ *
+ * Get a random text from a predefined list of texts for logging purposes.
+ * @returns {string} A random text from the list.
+ */
 function getRandomText(): string {
     const texts: string[] = [
         "Traveling~",
@@ -58,6 +78,12 @@ function getRandomText(): string {
 }
 
 export const LoggerOps = {
+    /**
+     *
+     * Format memory usage in bytes to a human-readable string with appropriate units.
+     * @param {number} bytes The memory usage in bytes.
+     * @returns {string} The formatted memory usage string.
+     */
     memoryUsage(bytes: number): string {
         const units: string[] = ["B", "KB", "MB", "GB", "TB"];
         let i: number = 0;
@@ -69,7 +95,11 @@ export const LoggerOps = {
 
         return `${bytes.toFixed(2)} ${units[i]}`;
     },
-
+    /**
+     *
+     * Log a watermark message to the console with a custom design and a random text.
+     * @returns {void} This function does not return a value.
+     */
     watermark(): void {
         console.info(
             customColor(`
@@ -86,7 +116,14 @@ export const LoggerOps = {
     `),
         );
     },
-
+    /**
+     *
+     * Custom log formatting for different log levels, including timestamp, memory usage, and emojis.
+     * @param {Logger} _this The logger instance.
+     * @param {LogLevels} level The log level (Debug, Error, Info, Warn, Fatal).
+     * @param {unknown[]} args The arguments to log.
+     * @returns {unknown[]} The formatted log message and arguments.
+     */
     custom(_this: Logger, level: LogLevels, args: unknown[]): unknown[] {
         const date: Date = new Date();
         const memory: NodeJS.MemoryUsage = process.memoryUsage();
@@ -116,10 +153,20 @@ export const LoggerOps = {
 
         return [text, ...args];
     },
-
+    /**
+     *
+     * Create a new logger instance with a specified name, enabling file saving and active logging.
+     * @param {string} name The name of the logger instance.
+     * @returns {Logger} A new logger instance with the specified name.
+     */
     create(name: string): Logger {
         return new Logger({ name, saveOnFile: true, active: true });
     },
 };
 
+/**
+ *
+ * The logger instance used in log messages.
+ * @type {Logger} The logger instance.
+ */
 export const logger: Logger = LoggerOps.create("[Stelle]");

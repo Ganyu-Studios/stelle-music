@@ -22,6 +22,13 @@ import type { EditButtonOptions, StelleConfiguration } from "#stelle/types";
 import { InvalidRow } from "#stelle/utils/errors.js";
 
 export const ComponentOps = {
+    /**
+     *
+     * Update buttons in a message, with optional overrides for specific buttons.
+     * @param {MessageStructure | WebhookMessageStructure} message The message to edit the components of.
+     * @param {EditButtonOptions} options The options to edit the rows.
+     * @returns {(ActionRow<Button> | Container)[]} The edited components.
+     */
     update(
         message: MessageStructure | WebhookMessageStructure,
         options?: Partial<EditButtonOptions>,
@@ -91,14 +98,26 @@ export const ComponentOps = {
             throw new InvalidRow("Invalid component type, expected ActionRow or Container.");
         });
     },
-
+    /**
+     *
+     * Refresh a message's components, optionally updating a specific button.
+     * @param {GuildComponentContext<"Button">} ctx The context of the button interaction.
+     * @param {Partial<EditButtonOptions>} options The options to edit the rows.
+     * @returns {Promise<void>} A promise that resolves when the message is updated.
+     */
     async refresh(ctx: GuildComponentContext<"Button">, options: Partial<EditButtonOptions>): Promise<void> {
         await ctx.interaction.deferUpdate();
         await ctx.interaction.message.edit({
             components: ComponentOps.update(ctx.interaction.message, options),
         });
     },
-
+    /**
+     *
+     * Cleanup a message's components, optionally deleting the message or clearing the components.
+     * @param {GuildComponentContext<"Button">} ctx The context of the button interaction.
+     * @param {keyof StelleConfiguration["deleter"]} kind The type of deletion to perform.
+     * @returns {Promise<void>} A promise that resolves when the cleanup is complete.
+     */
     async cleanup(ctx: GuildComponentContext<"Button">, kind: keyof StelleConfiguration["deleter"]): Promise<void> {
         await ctx.interaction.deferUpdate();
 

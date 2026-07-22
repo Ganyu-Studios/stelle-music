@@ -241,7 +241,7 @@ export async function playlistLoadHandler(ctx: CommandContext, interaction: Butt
     const missings: PermissionStrings = permissions.keys(permissions.missings(voice.isStage() ? stagePermissions : voicePermissions));
 
     if (missings.length) {
-        const keys: PermissionNames[] = DiscordOps.perms(missings);
+        const keys: PermissionNames[] = DiscordOps.permissions(missings);
 
         return interaction.editOrReply({
             content: "",
