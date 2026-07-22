@@ -23,9 +23,9 @@ interface ActivityOptions {
 }
 
 /**
- * The type of the working directory of the bot.
+ * The type of the output directory of the bot.
  */
-export type WorkingDirectory = "src" | "dist";
+export type OutputDirectory = "src" | "dist";
 
 /**
  * The type of the paused state of the player.
@@ -93,15 +93,15 @@ export interface ConstantsPaths {
      */
     readonly SessionsFile: `${string}.json`;
     /**
-     * Get the current working directory of the bot. (By default, derived from `StelleMeta.Dev`.)
-     * @returns {WorkingDirectory} The current working directory of the bot.
+     * Get the current output directory of the bot. (By default, derived from `StelleMeta.Dev`.)
+     * @returns {OutputDirectory} The current output directory of the bot.
      */
-    WorkingDirectory(): WorkingDirectory;
+    GetOutDirectory(): OutputDirectory;
     /**
      * Get the absolute path to the commands cache file.
      * @returns {string} The commands cache path.
      */
-    GetCachePath(): string;
+    GetCacheDirectory(): string;
 }
 
 /**

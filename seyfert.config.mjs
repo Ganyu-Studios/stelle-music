@@ -14,7 +14,7 @@ import { StelleMeta, StellePaths } from "#stelle/utils/data/constants.js";
 
 // get the base directory for the bot
 // more funny.
-const base = StellePaths.WorkingDirectory();
+const base = StellePaths.GetOutDirectory();
 
 export default config.bot({
     token: Environment.TOKEN ?? "Ganyu on top!",

@@ -11,8 +11,8 @@ import type {
     ConstantsPresence,
     ConstantsRedis,
     ConstantsText,
+    OutputDirectory,
     PausedState,
-    WorkingDirectory,
 } from "#stelle/types";
 import { Environment } from "./configuration.js";
 
@@ -45,10 +45,10 @@ export const StellePaths: ConstantsPaths = {
     CachePath: "./cache",
     CommandsFile: "./commands.json",
     SessionsFile: "./sessions.json",
-    WorkingDirectory(): WorkingDirectory {
+    GetOutDirectory(): OutputDirectory {
         return StelleMeta.Dev ? "src" : "dist";
     },
-    GetCachePath(): string {
+    GetCacheDirectory(): string {
         return join(process.cwd(), StellePaths.CachePath, StellePaths.CommandsFile);
     },
 };

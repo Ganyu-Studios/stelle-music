@@ -13,8 +13,8 @@ export type {
     ConstantsPresence,
     ConstantsRedis,
     ConstantsText,
+    OutputDirectory,
     PausedState,
-    WorkingDirectory,
 } from "./client/constants.js";
 export type { ImageData } from "./client/image.js";
 export type {
