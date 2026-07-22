@@ -28,12 +28,14 @@ import {
     type IPing,
     type IPlaylist,
     type IPlaylistDelete,
+    type IPlaylistEntry,
     type IPlaylistName,
     type IPlaylistSave,
     type IPlayPlaylist,
     type IPlayTrack,
     type IPrefix,
     type IPrevious,
+    type IPublicPlaylistEntry,
     type ISeek,
     type IState,
     type ITrackStart,
@@ -102,6 +104,10 @@ export default {
                     available: "`📋` Available playlists",
                     private: "`📚` Private Playlists",
                     public: "`📚` Public Playlists",
+                    privateEntry: ({ id, name, tracks, timestamp }: IPlaylistEntry): string =>
+                        `• \`${id}\` - **${name}** | \`${tracks}\` tracks | <t:${timestamp}:R>`,
+                    publicEntry: ({ id, name, tracks, userId, timestamp }: IPublicPlaylistEntry): string =>
+                        `• \`${id}\` - **${name}** | <@${userId}> | \`${tracks}\` tracks | <t:${timestamp}:R>`,
                 },
                 manage: {
                     title: ({ name }: IPlaylistName): string => `\`🎵\` Managing Playlist: \`${name}\``,

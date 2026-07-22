@@ -53,6 +53,10 @@ export default {
                     available: "`📋` Playlists disponibles",
                     private: "`📚` Playlists Privadas",
                     public: "`📚` Playlists Públicas",
+                    privateEntry: ({ id, name, tracks, timestamp }): string =>
+                        `• \`${id}\` - **${name}** | \`${tracks}\` canciones | <t:${timestamp}:R>`,
+                    publicEntry: ({ id, name, tracks, userId, timestamp }): string =>
+                        `• \`${id}\` - **${name}** | <@${userId}> | \`${tracks}\` canciones | <t:${timestamp}:R>`,
                 },
                 manage: {
                     title: ({ name }): string => `\`🎵\` Gestionando Playlist: \`${name}\``,

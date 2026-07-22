@@ -57,10 +57,21 @@ export default class ListSubcommand extends SubCommand {
         const timestamp = (date: Date): number => Math.floor(date.getTime() / 1e3);
 
         const formatPrivatePlaylist = (playlist: (typeof privatePlaylists)[number]): string =>
-            `• \`${playlist.playlistId}\` - **${UtilsOps.truncate(playlist.playlistName, 28)}** | \`${playlist.tracks.length}\` tracks | <t:${timestamp(playlist.createdAt)}:R>`;
+            messages.commands.playlist.list.privateEntry({
+                id: playlist.playlistId,
+                name: UtilsOps.truncate(playlist.playlistName, 28),
+                tracks: playlist.tracks.length,
+                timestamp: timestamp(playlist.createdAt),
+            });
 
         const formatPublicPlaylist = (playlist: (typeof publicPlaylists)[number]): string =>
-            `• \`${playlist.playlistId}\` - **${UtilsOps.truncate(playlist.playlistName, 28)}** | <@${playlist.userId}> | \`${playlist.tracks.length}\` tracks | <t:${timestamp(playlist.createdAt)}:R>`;
+            messages.commands.playlist.list.publicEntry({
+                id: playlist.playlistId,
+                name: UtilsOps.truncate(playlist.playlistName, 28),
+                tracks: playlist.tracks.length,
+                userId: playlist.userId,
+                timestamp: timestamp(playlist.createdAt),
+            });
 
         const privatePages: string[][] = UtilsOps.chunk(privatePlaylists.map(formatPrivatePlaylist), limit);
         const publicPages: string[][] = UtilsOps.chunk(publicPlaylists.map(formatPublicPlaylist), limit);
