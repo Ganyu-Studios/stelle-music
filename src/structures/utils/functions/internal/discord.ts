@@ -34,7 +34,7 @@ export const DiscordOps = {
         return { id: match.groups.id, token: match.groups.token };
     },
 
-    async guildLog(client: UsingClient, guild: Guild<"create"> | Guild<"cached">, options: GuildLogOptions): Promise<void> {
+    async guildLog(client: UsingClient, guild: Guild<"create" | "cached">, options: GuildLogOptions): Promise<void> {
         const owner = await guild.fetchOwner().catch((): null => null);
         const ownerName: string = owner?.displayName ?? "Unknown";
 
