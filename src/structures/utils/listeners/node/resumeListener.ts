@@ -40,6 +40,7 @@ export async function resumeListener(client: UsingClient, node: NodeStructure, p
         if (session.lyricsEnabled) await player.data.set("lyricsEnabled", session.lyricsEnabled);
         if (session.is247) await player.data.set("is247", session.is247);
         if (session.isAutoPause) await player.data.set("isAutoPause", session.isAutoPause);
+        if (session.isRequestChannel) await player.data.set("isRequestChannel", session.isRequestChannel);
 
         player.voice.patch({ ...data.voice });
 
