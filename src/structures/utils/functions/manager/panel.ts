@@ -118,14 +118,14 @@ export async function buildPanel(
         });
 
         const upNext: string[] = player.queue.tracks.slice(0, QUEUE_PREVIEW).map((entry, index): string =>
-            messages.events.requestChannel.queueEntry({
+            messages.events.requestChannel.queue.entry({
                 position: index + 1,
                 title: entry.info.title,
                 requester: entry.requester.id,
             }),
         );
 
-        const queue: string = upNext.length ? `\n\n${messages.events.requestChannel.queueTitle}\n${upNext.join("\n")}` : "";
+        const queue: string = upNext.length ? `\n\n${messages.events.requestChannel.queue.title}\n${upNext.join("\n")}` : "";
 
         embed.setDescription(`${nowPlaying}${queue}`).setTimestamp();
 
@@ -133,6 +133,7 @@ export async function buildPanel(
             albumURL: track.info.artworkUrl ?? undefined,
             name: UtilsOps.truncate(UtilsOps.sanitize(track.info.title), 50),
             artist: UtilsOps.truncate(UtilsOps.sanitize(track.info.author), 50),
+            by: messages.events.requestChannel.banner.by,
         });
 
         const attachment = new AttachmentBuilder().setFile("buffer", banner).setName("panel-banner.png");
@@ -149,9 +150,9 @@ export async function buildPanel(
 
     const banner = await ImageOps.empty({
         avatarURL: client.me.avatarURL(),
-        title: messages.events.requestChannel.emptyBannerTitle({ clientName: client.me.username }),
-        prompt: messages.events.requestChannel.emptyBannerPrompt,
-        footer: messages.events.requestChannel.emptyBannerFooter,
+        title: messages.events.requestChannel.banner.title({ clientName: client.me.username }),
+        prompt: messages.events.requestChannel.banner.prompt,
+        footer: messages.events.requestChannel.banner.footer,
         accentColor: client.config.color.extra,
     });
 

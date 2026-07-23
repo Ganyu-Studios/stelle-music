@@ -334,12 +334,17 @@ export default {
             },
             requestChannel: {
                 empty: "`🎧` Únete a un canal de voz y envía aquí el nombre o URL de una canción para empezar a reproducir.",
-                queueTitle: "`📋` **A continuación**",
                 title: ({ clientName }): string => `${clientName} - Canal de Peticiones`,
-                queueEntry: ({ position, title, requester }): string => `\`${position}.\` \`${title}\` — <@${requester}>`,
-                emptyBannerTitle: ({ clientName }): string => `${clientName} PETICIONES`,
-                emptyBannerPrompt: "Únete a un canal de voz y envía el nombre o URL de una canción",
-                emptyBannerFooter: "STELLE  MUSIC  BOT",
+                queue: {
+                    title: "`📋` **A continuación**",
+                    entry: ({ position, title, requester }): string => `\`${position}.\` \`${title}\` — <@${requester}>`,
+                },
+                banner: {
+                    title: ({ clientName }): string => `${clientName} PETICIONES`,
+                    prompt: "Únete a un canal de voz y envía el nombre o URL de una canción",
+                    footer: "STELLE  MUSIC  BOT",
+                    by: "por",
+                },
             },
             permissions: {
                 list: {

@@ -390,14 +390,19 @@ export default {
                 },
             },
             requestChannel: {
-                empty: "`🎧` Join a voice channel and send a song name or URL here to start playing.",
-                queueTitle: "`📋` **Up next**",
                 title: ({ clientName }: IClientName): string => `${clientName} - Request Channel`,
-                queueEntry: ({ position, title, requester }: IRequestQueueEntry): string =>
-                    `\`${position}.\` \`${title}\` — <@${requester}>`,
-                emptyBannerTitle: ({ clientName }: IClientName): string => `${clientName} REQUESTS`,
-                emptyBannerPrompt: "Join a voice channel and send a song name or URL",
-                emptyBannerFooter: "STELLE  MUSIC  BOT",
+                empty: "`🎧` Join a voice channel and send a song name or URL here to start playing.",
+                queue: {
+                    title: "`📋` **Up next**",
+                    entry: ({ position, title, requester }: IRequestQueueEntry): string =>
+                        `\`${position}.\` \`${title}\` — <@${requester}>`,
+                },
+                banner: {
+                    title: ({ clientName }: IClientName): string => `${clientName} REQUESTS`,
+                    prompt: "Join a voice channel and send a song name or URL",
+                    footer: "STELLE  MUSIC  BOT",
+                    by: "by",
+                },
             },
             permissions: {
                 list: {

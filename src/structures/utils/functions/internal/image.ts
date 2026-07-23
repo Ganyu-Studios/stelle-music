@@ -311,11 +311,11 @@ export const ImageOps = {
      * Unlike {@link ImageOps.render}, this draws its own frame procedurally instead of reusing
      * `border_w`/`border_b`.png, since those assets bake in fixed-position decorations (the header bar,
      * the "..." dots) meant for the full 1080x1350 layout and don't line up correctly on a banner canvas.
-     * @param {Pick<ImageData, "albumURL" | "name" | "artist">} data The album URL, track name, and artist to render.
+     * @param {Pick<ImageData, "albumURL" | "name" | "artist"> & { by: string }} data The album URL, track name, and artist (with "by" prefix) to render.
      * @returns {Promise<Uint8Array>} A Promise that resolves to a Uint8Array representing the encoded image.
      */
-    async banner(data: Pick<ImageData, "albumURL" | "name" | "artist">): Promise<Uint8Array> {
-        const { albumURL, name, artist } = data;
+    async banner(data: Pick<ImageData, "albumURL" | "name" | "artist"> & { by: string }): Promise<Uint8Array> {
+        const { albumURL, name, artist, by } = data;
         const fontsPath: string = join(process.cwd(), "assets", "fonts");
         const font: Buffer<ArrayBuffer> = await readFile(join(fontsPath, "BoldFont.ttf"));
 
@@ -336,8 +336,14 @@ export const ImageOps = {
         const layoutColor: number = opaque ? ImageColors.SubText : ImageColors.Surface;
 
         const textMaxWidth: number = WIDTH - (MARGIN + ART_SIZE + 50) - MARGIN;
+        const artistLabel: string = `${by} ${artist}`;
         const trackText: Image = await Image.renderText(font, getFontSizeByLength(name, textMaxWidth, 54, 24), name, mainColor);
-        const artistText: Image = await Image.renderText(font, getFontSizeByLength(artist, textMaxWidth, 38, 20), artist, layoutColor);
+        const artistText: Image = await Image.renderText(
+            font,
+            getFontSizeByLength(artistLabel, textMaxWidth, 38, 20),
+            artistLabel,
+            layoutColor,
+        );
 
         // 1. Card frame: a thin outer stroke (mainColor) with the dominant color filling the inside
         const outer: Image = new Image(WIDTH, HEIGHT).fill(mainColor).opacity(0.9).roundCorners(RADIUS);
