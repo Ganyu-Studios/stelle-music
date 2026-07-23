@@ -23,6 +23,54 @@ function getFontSizeByLength(text: string, maxWidth: number, maxFontSize: number
     return minFontSize;
 }
 
+function lerpChannel(a: number, b: number, t: number): number {
+    return Math.round(a + (b - a) * t);
+}
+
+function lerpColor(c1: number, c2: number, t: number): number {
+    const r1 = (c1 >> 24) & 0xff,
+        g1 = (c1 >> 16) & 0xff,
+        b1 = (c1 >> 8) & 0xff,
+        a1 = c1 & 0xff;
+    const r2 = (c2 >> 24) & 0xff,
+        g2 = (c2 >> 16) & 0xff,
+        b2 = (c2 >> 8) & 0xff,
+        a2 = c2 & 0xff;
+    return Image.rgbaToColor(lerpChannel(r1, r2, t), lerpChannel(g1, g2, t), lerpChannel(b1, b2, t), lerpChannel(a1, a2, t));
+}
+
+function drawMusicNote(img: Image, x: number, y: number, color: number): void {
+    const headW = 22,
+        headH = 16;
+    for (let dy = -headH / 2; dy < headH / 2; dy++) {
+        for (let dx = -headW / 2; dx < headW / 2; dx++) {
+            if ((dx * dx) / (headW / 2) ** 2 + (dy * dy) / (headH / 2) ** 2 <= 1) {
+                img.setPixelAt(Math.round(x + dx) + 1, Math.round(y + dy) + 1, color);
+            }
+        }
+    }
+    for (let i = 0; i < 70; i++) {
+        img.setPixelAt(Math.round(x + headW / 2 - 2) + 1, Math.round(y - i) + 1, color);
+        img.setPixelAt(Math.round(x + headW / 2 - 1) + 1, Math.round(y - i) + 1, color);
+    }
+    for (let i = 0; i < 20; i++) {
+        img.setPixelAt(Math.round(x + headW / 2 - 1 + i * 0.5) + 1, Math.round(y - 70 + i) + 1, color);
+    }
+}
+
+function drawStar(img: Image, cx: number, cy: number, color: number): void {
+    const size = 7;
+    for (let i = -size; i <= size; i++) {
+        img.setPixelAt(Math.round(cx + i) + 1, Math.round(cy) + 1, color);
+        img.setPixelAt(Math.round(cx) + 1, Math.round(cy + i) + 1, color);
+    }
+    const diag = 4;
+    for (let i = -diag; i <= diag; i++) {
+        img.setPixelAt(Math.round(cx + i) + 1, Math.round(cy + i) + 1, color);
+        img.setPixelAt(Math.round(cx + i) + 1, Math.round(cy - i) + 1, color);
+    }
+}
+
 function isOpaque(rgb: number[]): boolean {
     const luminosity: number = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
     return !(luminosity > 0.5);
@@ -112,6 +160,149 @@ export const ImageOps = {
     },
     /**
      *
+     * Renders a "empty" style image for the request-channel idle panel: a card frame with the bot
+     * avatar (or a music-note placeholder) on the left and a prompt message on the right.
+     * @param {Object} data The render data.
+     * @param {string} [data.avatarURL] The bot avatar URL to display.
+     * @param {string} data.clientName The bot display name.
+     * @param {string} data.prompt The prompt text shown in the panel.
+     * @param {number} [data.accentColor] The accent color for the background.
+     * @returns {Promise<Uint8Array>} A Promise that resolves to a Uint8Array representing the encoded image.
+     */
+    async empty(data: { avatarURL?: string; title: string; prompt: string; footer: string; accentColor?: number }): Promise<Uint8Array> {
+        const fontsPath: string = join(process.cwd(), "assets", "fonts");
+        const font: Buffer<ArrayBuffer> = await readFile(join(fontsPath, "BoldFont.ttf"));
+
+        const WIDTH = 960;
+        const HEIGHT = 540;
+
+        const COLOR_BG_TOP = 0x11151dff;
+        const COLOR_BG_BOTTOM = 0x1a2233ff;
+        const COLOR_ACCENT = 0x6f8cffff;
+        const COLOR_ACCENT_SOFT = 0x9db4ffff;
+        const COLOR_TEXT = 0xf5f7ffff;
+        const COLOR_SUBTEXT = 0xaeb8d6ff;
+
+        const img: Image = new Image(WIDTH, HEIGHT);
+
+        // 1. Vertical gradient background
+        for (let y = 0; y < HEIGHT; y++) {
+            const t = y / HEIGHT;
+            const color = lerpColor(COLOR_BG_TOP, COLOR_BG_BOTTOM, t);
+            for (let x = 0; x < WIDTH; x++) {
+                img.setPixelAt(x + 1, y + 1, color);
+            }
+        }
+
+        // 2. Subtle grain texture
+        for (let i = 0; i < 14000; i++) {
+            const x = Math.floor(Math.random() * WIDTH);
+            const y = Math.floor(Math.random() * HEIGHT);
+            const base = img.getPixelAt(x + 1, y + 1);
+            const r = (base >> 24) & 0xff,
+                g = (base >> 16) & 0xff,
+                b = (base >> 8) & 0xff;
+            const delta = Math.floor(Math.random() * 10) - 5;
+            img.setPixelAt(
+                x + 1,
+                y + 1,
+                Image.rgbaToColor(
+                    Math.min(255, Math.max(0, r + delta)),
+                    Math.min(255, Math.max(0, g + delta)),
+                    Math.min(255, Math.max(0, b + delta)),
+                    255,
+                ),
+            );
+        }
+
+        // 3. Diagonal stave lines
+        const lineColor = Image.rgbaToColor(255, 255, 255, 10);
+        for (let offset = -HEIGHT; offset < WIDTH; offset += 46) {
+            for (let i = 0; i < Math.max(WIDTH, HEIGHT); i++) {
+                const x = offset + i;
+                const y = i;
+                if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT) {
+                    img.setPixelAt(x + 1, y + 1, lineColor);
+                }
+            }
+        }
+
+        // 4. Soft radial glow
+        const glow: Image = new Image(WIDTH, HEIGHT);
+        const cx = WIDTH / 2,
+            cy = HEIGHT / 2 - 20;
+        const maxR = 340;
+        for (let gy = 0; gy < HEIGHT; gy++) {
+            for (let gx = 0; gx < WIDTH; gx++) {
+                const d = Math.sqrt((gx - cx) ** 2 + (gy - cy) ** 2);
+                const t = Math.min(1, d / maxR);
+                const alpha = Math.round((1 - t) * 40);
+                if (alpha > 0) {
+                    glow.setPixelAt(gx + 1, gy + 1, Image.rgbaToColor(111, 140, 255, alpha));
+                } else {
+                    glow.setPixelAt(gx + 1, gy + 1, Image.rgbaToColor(0, 0, 0, 0));
+                }
+            }
+        }
+        img.composite(glow, 0, 0);
+
+        // 5. Music notes
+        drawMusicNote(img, WIDTH / 2 - 210, 150, COLOR_ACCENT_SOFT);
+        drawMusicNote(img, WIDTH / 2 + 190, 175, COLOR_ACCENT_SOFT);
+
+        // 6. Decorative line under title
+        for (let lx = Math.round(WIDTH / 2 - 90); lx < Math.round(WIDTH / 2 + 90); lx++) {
+            img.setPixelAt(lx + 1, 332, COLOR_ACCENT);
+            img.setPixelAt(lx + 1, 333, COLOR_ACCENT);
+        }
+
+        // 7. Avatar (PFP) centered above title
+        if (data.avatarURL) {
+            try {
+                const avatarBuffer: Buffer = await getBuffer(data.avatarURL);
+                const avatarImage: Image = await Image.decode(avatarBuffer);
+                const avatarSize = 80;
+                avatarImage.resize(avatarSize, avatarSize);
+
+                const ring: Image = new Image(avatarSize + 8, avatarSize + 8)
+                    .fill(Image.rgbaToColor(255, 255, 255, 30))
+                    .roundCorners((avatarSize + 8) / 2);
+
+                img.composite(ring, Math.round((WIDTH - avatarSize) / 2) - 4, 86);
+                img.composite(avatarImage.roundCorners(avatarSize / 2), Math.round((WIDTH - avatarSize) / 2), 90);
+            } catch {
+                // skip avatar on error
+            }
+        }
+
+        // 8. Typography
+        const titleLayer: Image = await Image.renderText(font, 58, data.title, COLOR_TEXT);
+        img.composite(titleLayer, Math.round((WIDTH - titleLayer.width) / 2), 240);
+
+        const subLayer: Image = await Image.renderText(font, 24, data.prompt, COLOR_SUBTEXT);
+        img.composite(subLayer, Math.round((WIDTH - subLayer.width) / 2), 360);
+
+        const tagLayer: Image = await Image.renderText(font, 20, data.footer, COLOR_ACCENT_SOFT);
+        const tagX = Math.round((WIDTH - tagLayer.width) / 2);
+        img.composite(tagLayer, tagX, 460);
+        drawStar(img, tagX - 26, 470, COLOR_ACCENT_SOFT);
+        drawStar(img, tagX + tagLayer.width + 26, 470, COLOR_ACCENT_SOFT);
+
+        // 9. Decorative frame border
+        const borderColor = Image.rgbaToColor(255, 255, 255, 25);
+        for (let bx = 0; bx < WIDTH; bx++) {
+            img.setPixelAt(bx + 1, 23, borderColor);
+            img.setPixelAt(bx + 1, HEIGHT - 22, borderColor);
+        }
+        for (let by = 0; by < HEIGHT; by++) {
+            img.setPixelAt(23, by + 1, borderColor);
+            img.setPixelAt(WIDTH - 22, by + 1, borderColor);
+        }
+
+        return img.encode();
+    },
+    /**
+     *
      * Renders a lighter "banner" style image for the now-playing panel: the album art in a rounded
      * card frame on the left, with the track name and artist to the right, vertically centered. Meant
      * for panels where the rest of the metadata (author, duration, volume, requester, queue) is already
@@ -164,14 +355,13 @@ export const ImageOps = {
         canvas.composite(ring, artX - 8, artY - 8);
         canvas.composite(albumImage.roundCorners(RADIUS - OUTER_BORDER), artX, artY);
 
-        // 3. Track name to the right, artist centered under the title's width, both vertically centered against the art
-        const textX = artX + ART_SIZE + 50;
+        // 3. Track name and artist centered in the right-side area, both vertically centered against the art
+        const textAreaLeft = artX + ART_SIZE + 50;
+        const textAreaCenter = textAreaLeft + (WIDTH - MARGIN - textAreaLeft) / 2;
         const blockHeight = trackText.height + 14 + artistText.height;
         const textStartY = (HEIGHT - blockHeight) / 2;
-        canvas.composite(trackText, textX, textStartY);
-
-        const artistX = textX + (trackText.width - artistText.width) / 2;
-        canvas.composite(artistText.opacity(0.9), artistX, textStartY + trackText.height + 14);
+        canvas.composite(trackText, Math.round(textAreaCenter - trackText.width / 2), textStartY);
+        canvas.composite(artistText.opacity(0.9), Math.round(textAreaCenter - artistText.width / 2), textStartY + trackText.height + 14);
 
         return canvas.encode();
     },

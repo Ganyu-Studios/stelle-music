@@ -28,6 +28,8 @@ export default class SetRequestChannelSubCommand extends SubCommand {
         const target = ctx.options.channel;
 
         let channelId: string;
+        let messageId: string | undefined;
+
         if (target) {
             channelId = target.id;
         } else {
@@ -35,15 +37,28 @@ export default class SetRequestChannelSubCommand extends SubCommand {
             const created = await guild.channels.create({ name: "stelle-requests", type: ChannelType.GuildText }).catch((): null => null);
 
             if (!created) return ctx.errorReply(messages.commands.requestchannel.createFailed, { ephemeral: true, content: "" });
+
             channelId = created.id;
         }
 
-        const panel: MessageStructure | null = await client.messages
-            .write(channelId, await buildPanel(client, messages))
-            .catch((): null => null);
-        if (!panel) return ctx.errorReply(messages.commands.requestchannel.postFailed, { ephemeral: true, content: "" });
+        const body = await buildPanel(client, messages);
+        const existing = await client.database.requests.get(guildId);
 
-        await client.database.requests.set(guildId, { channelId, messageId: panel.id });
+        if (existing && existing.channelId === channelId) {
+            const edited = await client.messages.edit(existing.messageId, channelId, body).catch((): null => null);
+            if (edited) messageId = edited.id;
+        }
+
+        if (!messageId) {
+            if (existing) client.messages.delete(existing.messageId, existing.channelId).catch((): null => null);
+
+            const panel: MessageStructure | null = await client.messages.write(channelId, body).catch((): null => null);
+            if (!panel) return ctx.errorReply(messages.commands.requestchannel.postFailed, { ephemeral: true, content: "" });
+
+            messageId = panel.id;
+        }
+
+        await client.database.requests.set(guildId, { channelId, messageId });
 
         await ctx.successReply(messages.commands.requestchannel.set({ channelId }), { ephemeral: true, content: "" });
     }

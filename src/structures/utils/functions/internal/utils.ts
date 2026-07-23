@@ -180,4 +180,13 @@ export const UtilsOps = {
     hasFlags(flags: number = 0, check: number[]): boolean {
         return check.every((flag) => (flags & flag) === flag);
     },
+    /**
+     *
+     * Sanitize a string by removing diacritical marks (accents) and normalizing it.
+     * @param {string} text The string to sanitize.
+     * @returns {string} The sanitized string.
+     */
+    sanitize(text: string): string {
+        return text.normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
+    },
 };

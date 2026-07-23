@@ -1,7 +1,6 @@
-import { AttachmentBuilder, Command, type CommandContext, Declare } from "seyfert";
+import { Command, type CommandContext, Declare } from "seyfert";
 import { ApplicationIntegrationType, InteractionContextType, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
-import { ImageOps } from "#stelle/utils/functions/internal/image.js";
 
 @Declare({
     name: "test",
@@ -10,21 +9,11 @@ import { ImageOps } from "#stelle/utils/functions/internal/image.js";
     contexts: [InteractionContextType.Guild],
     defaultMemberPermissions: [PermissionFlagsBits.Administrator],
 })
-@StelleOptions({ onlyDeveloper: true, skipRegister: false })
+@StelleOptions({ onlyDeveloper: true, skipRegister: true })
 export default class TestCommand extends Command {
     override async run(ctx: CommandContext) {
-        const player = ctx.getPlayer();
+        const { config } = ctx.client;
 
-        const current = player?.queue.current ?? undefined;
-
-        const banner = await ImageOps.banner({
-            albumURL: current?.info.artworkUrl ?? undefined,
-            artist: current?.info.author ?? "Unknown Artist",
-            name: current?.info.title ?? "Unknown Track",
-        });
-
-        const attachment = new AttachmentBuilder().setFile("buffer", banner).setName("banner.png");
-
-        await ctx.editOrReply({ files: [attachment] });
+        await ctx.editOrReply({ content: `Invite link: ${config.inviteLink}` });
     }
 }

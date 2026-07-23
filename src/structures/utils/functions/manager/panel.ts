@@ -1,11 +1,11 @@
-import { readFile } from "node:fs/promises";
-import { resolve } from "node:path";
 import { LoopMode, type PlayerStructure, type TrackStructure } from "hoshimi";
 import { ActionRow, AttachmentBuilder, Button, type DefaultLocale, Embed, type UsingClient } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 import { StelleMusic } from "#stelle/utils/data/constants.js";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
+import { ImageOps } from "#stelle/utils/functions/internal/image.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
+import { UtilsOps } from "../internal/utils.js";
 
 /**
  * The messages tree of a resolved locale.
@@ -104,11 +104,6 @@ export async function buildPanel(
         .setTitle(messages.events.requestChannel.title({ clientName: client.me.username }))
         .setColor(client.config.color.extra);
 
-    const file = await readFile(resolve(process.cwd(), "assets", "images", "request", "request-banner.png"));
-    const attachment = new AttachmentBuilder().setFile("buffer", file).setName("request-banner.png");
-
-    embed.setImage("attachment://request-banner.png");
-
     if (player && track) {
         const isAutoplay: boolean = (await player.data.get("enabledAutoplay")) ?? false;
 
@@ -132,10 +127,16 @@ export async function buildPanel(
 
         const queue: string = upNext.length ? `\n\n${messages.events.requestChannel.queueTitle}\n${upNext.join("\n")}` : "";
 
-        embed
-            .setImage(track.info.artworkUrl ?? undefined)
-            .setDescription(`${nowPlaying}${queue}`)
-            .setTimestamp();
+        embed.setDescription(`${nowPlaying}${queue}`).setTimestamp();
+
+        const banner = await ImageOps.banner({
+            albumURL: track.info.artworkUrl ?? undefined,
+            name: UtilsOps.truncate(UtilsOps.sanitize(track.info.title), 50),
+            artist: UtilsOps.truncate(UtilsOps.sanitize(track.info.author), 50),
+        });
+
+        const attachment = new AttachmentBuilder().setFile("buffer", banner).setName("panel-banner.png");
+        embed.setImage("attachment://panel-banner.png");
 
         return {
             embeds: [embed],
@@ -145,6 +146,17 @@ export async function buildPanel(
     }
 
     embed.setThumbnail(client.me.avatarURL()).setDescription(messages.events.requestChannel.empty);
+
+    const banner = await ImageOps.empty({
+        avatarURL: client.me.avatarURL(),
+        title: messages.events.requestChannel.emptyBannerTitle({ clientName: client.me.username }),
+        prompt: messages.events.requestChannel.emptyBannerPrompt,
+        footer: messages.events.requestChannel.emptyBannerFooter,
+        accentColor: client.config.color.extra,
+    });
+
+    const attachment = new AttachmentBuilder().setFile("buffer", banner).setName("panel-banner.png");
+    embed.setImage("attachment://panel-banner.png");
 
     return {
         embeds: [embed],

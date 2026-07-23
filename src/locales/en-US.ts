@@ -395,6 +395,9 @@ export default {
                 title: ({ clientName }: IClientName): string => `${clientName} - Request Channel`,
                 queueEntry: ({ position, title, requester }: IRequestQueueEntry): string =>
                     `\`${position}.\` \`${title}\` — <@${requester}>`,
+                emptyBannerTitle: ({ clientName }: IClientName): string => `${clientName} REQUESTS`,
+                emptyBannerPrompt: "Join a voice channel and send a song name or URL",
+                emptyBannerFooter: "STELLE  MUSIC  BOT",
             },
             permissions: {
                 list: {
