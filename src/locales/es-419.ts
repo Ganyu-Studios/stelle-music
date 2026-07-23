@@ -335,6 +335,7 @@ export default {
             requestChannel: {
                 empty: "`🎧` Únete a un canal de voz y envía aquí el nombre o URL de una canción para empezar a reproducir.",
                 queueTitle: "`📋` **A continuación**",
+                title: ({ clientName }): string => `${clientName} - Canal de Peticiones`,
                 queueEntry: ({ position, title, requester }): string => `\`${position}.\` \`${title}\` — <@${requester}>`,
             },
             permissions: {

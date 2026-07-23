@@ -100,7 +100,9 @@ export async function buildPanel(
     player?: PlayerStructure,
     track?: TrackStructure,
 ): Promise<PanelBody> {
-    const embed = new Embed().setColor(client.config.color.extra);
+    const embed = new Embed()
+        .setTitle(messages.events.requestChannel.title({ clientName: client.me.username }))
+        .setColor(client.config.color.extra);
 
     const file = await readFile(resolve(process.cwd(), "assets", "images", "request", "request-banner.png"));
     const attachment = new AttachmentBuilder().setFile("buffer", file).setName("request-banner.png");

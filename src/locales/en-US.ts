@@ -392,6 +392,7 @@ export default {
             requestChannel: {
                 empty: "`🎧` Join a voice channel and send a song name or URL here to start playing.",
                 queueTitle: "`📋` **Up next**",
+                title: ({ clientName }: IClientName): string => `${clientName} - Request Channel`,
                 queueEntry: ({ position, title, requester }: IRequestQueueEntry): string =>
                     `\`${position}.\` \`${title}\` — <@${requester}>`,
             },
