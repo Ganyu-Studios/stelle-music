@@ -1,10 +1,112 @@
 import type { LyricsResult, PlayerStructure, TrackStructure } from "hoshimi";
-import { ActionRow, type AnyContext, Button, Embed, type MessageStructure, type WebhookMessageStructure } from "seyfert";
+import {
+    ActionRow,
+    type AnyContext,
+    Button,
+    type DefaultLocale,
+    Embed,
+    type MessageStructure,
+    type UsingClient,
+    type WebhookMessageStructure,
+} from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
-import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
+import type { CollectorInteraction, CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
 import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
 import { ms } from "#stelle/utils/functions/internal/time.js";
 
+/**
+ * The options for the sync response.
+ */
+interface SyncResponseOptions {
+    /**
+     * The interaction to respond to.
+     * @type {CollectorInteraction}
+     */
+    interaction: CollectorInteraction;
+    /**
+     * The embed to update.
+     * @type {Embed}
+     */
+    embed: Embed;
+    /**
+     * The lyrics result for the current track.
+     * @type {LyricsResult}
+     */
+    lyrics: LyricsResult;
+    /**
+     * The current track.
+     * @type {TrackStructure}
+     */
+    track: TrackStructure;
+    /**
+     * The guild player.
+     * @type {PlayerStructure}
+     */
+    player: PlayerStructure;
+    /**
+     * The message id to store for updates.
+     * @type {string}
+     */
+    messageId: string;
+    /**
+     * The resolved locale messages.
+     * @type {DefaultLocale["messages"]}
+     */
+    messages: DefaultLocale["messages"];
+    /**
+     * The client instance.
+     * @type {UsingClient}
+     */
+    client: UsingClient;
+}
+
+/**
+ *
+ * Updates the lyrics embed with synced lines and stores the new message id. Shared by both the
+ * first-time subscribe path and the reconnect path (when the subscription is already active).
+ * @param options The options for the sync response.
+ * @returns A promise that resolves once the response is sent.
+ */
+async function syncResponse(options: SyncResponseOptions): Promise<void> {
+    const { interaction, embed, lyrics, track, player, messageId, messages, client } = options;
+    const syncedLines: string = lyrics.lines
+        .map((line): string => `-# ${line.line}`)
+        .slice(0, client.config.lyricsLines)
+        .join("\n");
+
+    embed.setDescription(
+        messages.commands.lyrics.embed.description({
+            lines: syncedLines,
+            author: track.info.author,
+            provider: lyrics.provider,
+        }),
+    );
+
+    const row: ActionRow<Button> = new ActionRow<Button>().addComponents(
+        new Button().setCustomId("player-lyricsDelete").setLabel(messages.commands.lyrics.components.close).setStyle(ButtonStyle.Secondary),
+    );
+
+    await interaction.editResponse({ embeds: [embed], components: [row] });
+    await interaction.followup({
+        flags: MessageFlags.Ephemeral,
+        embeds: [
+            {
+                color: client.config.color.success,
+                description: messages.commands.lyrics.synced,
+            },
+        ],
+    });
+
+    await player.data.set("lyricsId", messageId);
+}
+
+/**
+ *
+ * Cleans the lyrics object and saves it to the player data.
+ * @param {PlayerStructure} player The guild player.
+ * @param {LyricsResult} lyrics The lyrics object to clean and save.
+ * @returns {Promise<LyricsResult>} The cleaned lyrics object.
+ */
 async function cleanLyrics(player: PlayerStructure, lyrics: LyricsResult): Promise<LyricsResult> {
     if (typeof lyrics.provider !== "string") lyrics.provider = "Unknown";
     if (typeof lyrics.sourceName !== "string") lyrics.sourceName = "Unknown";
@@ -125,47 +227,22 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | MessageStru
         await interaction.deferUpdate();
 
         const isEnabled: boolean = !!(await player.data.get("lyricsEnabled"));
-        if (isEnabled) return;
+
+        if (isEnabled) {
+            await syncResponse({ interaction, embed, lyrics, track, player, messageId: message.id, messages, client });
+
+            collector.stop();
+
+            return;
+        }
 
         try {
             await player.lyrics.subscribe(skipTrackSource);
 
-            // The subscribe resolved: edit the embed with the synced lyrics and keep only the close button.
-            const syncedLines: string = lyrics.lines
-                .map((line): string => `-# ${line.line}`)
-                .slice(0, client.config.lyricsLines)
-                .join("\n");
+            await syncResponse({ interaction, embed, lyrics, track, player, messageId: message.id, messages, client });
 
-            embed.setDescription(
-                messages.commands.lyrics.embed.description({
-                    lines: syncedLines,
-                    author: track.info.author,
-                    provider: lyrics.provider,
-                }),
-            );
-
-            const row: ActionRow<Button> = new ActionRow<Button>().addComponents(
-                new Button()
-                    .setCustomId("player-lyricsDelete")
-                    .setLabel(messages.commands.lyrics.components.close)
-                    .setStyle(ButtonStyle.Secondary),
-            );
-
-            await interaction.editResponse({ embeds: [embed], components: [row] });
-            await interaction.followup({
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        color: client.config.color.success,
-                        description: messages.commands.lyrics.synced,
-                    },
-                ],
-            });
-
-            await player.data.set("lyricsId", message.id);
             await player.data.set("lyricsEnabled", true);
         } catch {
-            // The subscribe rejected: warn the user, then delete the message.
             await interaction.followup({
                 embeds: [
                     {

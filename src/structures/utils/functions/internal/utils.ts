@@ -6,6 +6,9 @@ import { inspect as nodeInspect } from "node:util";
 import type { AnyContext, UsingClient } from "seyfert";
 import type { Omit, Plain, Prettify } from "#stelle/types";
 
+/**
+ * The options for creating an ID.
+ */
 interface CreateIdOptions {
     /**
      * The length of each segment.

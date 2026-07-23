@@ -2,6 +2,9 @@ import type { PlayerStructure } from "hoshimi";
 import type { AllChannels, DefaultLocale, UsingClient } from "seyfert";
 import type { ChannelType } from "seyfert/lib/types/index.js";
 
+/**
+ * The voice channel types that the player can connect to.
+ */
 type PlayerVoiceChannel = Extract<AllChannels, { type: ChannelType.GuildVoice | ChannelType.GuildStageVoice }>;
 
 export const PlayerOps = {
