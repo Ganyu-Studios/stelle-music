@@ -166,6 +166,15 @@ export async function buildPanel(
 }
 
 /**
+ * Guilds whose panel is currently rendered in its idle state. Used to short-circuit redundant idle redraws:
+ * a normal stop flushes both `queue/end` and `player/destroy`, each calling {@link resetPanel}, which would
+ * otherwise redraw and re-edit the exact same idle panel (and burn a Discord API call) twice in a row.
+ * In-memory only — after a restart the first idle reset simply renders once, which is harmless.
+ * @type {Set<string>}
+ */
+const idlePanels: Set<string> = new Set();
+
+/**
  * Edit the guild's persistent panel to reflect the given state (or idle when no track). No-op when the guild has no
  * request channel configured. If the stored panel message is gone, it is re-posted and the stored id is refreshed.
  * @param {UsingClient} client The client instance.
@@ -175,18 +184,29 @@ export async function buildPanel(
  * @returns {Promise<void>} A promise that resolves once the panel is updated.
  */
 export async function updatePanel(client: UsingClient, guildId: string, player?: PlayerStructure, track?: TrackStructure): Promise<void> {
+    const isIdle: boolean = !(player && track);
+
+    // Nothing changed since the last idle render: skip the rebuild and the edit entirely.
+    if (isIdle && idlePanels.has(guildId)) return;
+
     const config = await client.database.requests.get(guildId);
     if (!config) return;
 
     const { messages } = await ContextOps.locale(client, guildId);
     const body: PanelBody = await buildPanel(client, messages, player, track);
 
-    const edited = await client.messages.edit(config.messageId, config.channelId, body).catch((): null => null);
-    if (edited) return;
+    let updated = await client.messages.edit(config.messageId, config.channelId, body).catch((): null => null);
+    if (!updated) {
+        // The panel message was deleted out from under us: re-post it and persist the new id.
+        updated = await client.messages.write(config.channelId, body).catch((): null => null);
+        if (updated) await client.database.requests.set(guildId, { channelId: config.channelId, messageId: updated.id });
+    }
 
-    // The panel message was deleted out from under us: re-post it and persist the new id.
-    const posted = await client.messages.write(config.channelId, body).catch((): null => null);
-    if (posted) await client.database.requests.set(guildId, { channelId: config.channelId, messageId: posted.id });
+    // Remember the rendered state so the next idle reset can be short-circuited (only once it actually landed).
+    if (updated) {
+        if (isIdle) idlePanels.add(guildId);
+        else idlePanels.delete(guildId);
+    }
 }
 
 /**

@@ -90,6 +90,130 @@ async function getBuffer(url: string): Promise<Buffer> {
     return Buffer.from(await res.arrayBuffer());
 }
 
+/**
+ * The fixed dimensions of the idle request-channel banner.
+ */
+const IDLE_WIDTH: number = 960;
+const IDLE_HEIGHT: number = 540;
+
+/**
+ * The idle request-channel banner palette, shared by the static backdrop and the dynamic overlay.
+ */
+const IDLE_COLORS = {
+    BgTop: 0x11151dff,
+    BgBottom: 0x1a2233ff,
+    Accent: 0x6f8cffff,
+    AccentSoft: 0x9db4ffff,
+    Text: 0xf5f7ffff,
+    SubText: 0xaeb8d6ff,
+} as const;
+
+/**
+ * Memoized promise for the static idle-banner backdrop. The backdrop depends on neither the bot avatar nor
+ * the locale, yet it is the expensive part to draw (a full-canvas gradient, grain pass, and per-pixel
+ * radial glow), so it is rendered once and reused. Bounded to a single ~2MB image — no per-input cache.
+ * @type {Promise<Image> | undefined}
+ */
+let idleBasePromise: Promise<Image> | undefined;
+
+/**
+ * Draw the static backdrop of the idle request-channel banner: the vertical gradient, grain texture,
+ * diagonal staves, radial glow, decorative music notes, the accent divider, and the frame border. None of
+ * this varies between renders, so {@link ImageOps.empty} clones the memoized result and only composites the
+ * dynamic avatar and text on top.
+ * @returns {Promise<Image>} The static backdrop, ready to be cloned.
+ */
+async function buildIdleBase(): Promise<Image> {
+    const WIDTH: number = IDLE_WIDTH;
+    const HEIGHT: number = IDLE_HEIGHT;
+
+    const img: Image = new Image(WIDTH, HEIGHT);
+
+    // 1. Vertical gradient background
+    for (let y = 0; y < HEIGHT; y++) {
+        const t = y / HEIGHT;
+        const color = lerpColor(IDLE_COLORS.BgTop, IDLE_COLORS.BgBottom, t);
+        for (let x = 0; x < WIDTH; x++) {
+            img.setPixelAt(x + 1, y + 1, color);
+        }
+    }
+
+    // 2. Subtle grain texture
+    for (let i = 0; i < 14000; i++) {
+        const x = Math.floor(Math.random() * WIDTH);
+        const y = Math.floor(Math.random() * HEIGHT);
+        const base = img.getPixelAt(x + 1, y + 1);
+        const r = (base >> 24) & 0xff,
+            g = (base >> 16) & 0xff,
+            b = (base >> 8) & 0xff;
+        const delta = Math.floor(Math.random() * 10) - 5;
+        img.setPixelAt(
+            x + 1,
+            y + 1,
+            Image.rgbaToColor(
+                Math.min(255, Math.max(0, r + delta)),
+                Math.min(255, Math.max(0, g + delta)),
+                Math.min(255, Math.max(0, b + delta)),
+                255,
+            ),
+        );
+    }
+
+    // 3. Diagonal stave lines
+    const lineColor = Image.rgbaToColor(255, 255, 255, 10);
+    for (let offset = -HEIGHT; offset < WIDTH; offset += 46) {
+        for (let i = 0; i < Math.max(WIDTH, HEIGHT); i++) {
+            const x = offset + i;
+            const y = i;
+            if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT) {
+                img.setPixelAt(x + 1, y + 1, lineColor);
+            }
+        }
+    }
+
+    // 4. Soft radial glow
+    const glow: Image = new Image(WIDTH, HEIGHT);
+    const cx = WIDTH / 2,
+        cy = HEIGHT / 2 - 20;
+    const maxR = 340;
+    for (let gy = 0; gy < HEIGHT; gy++) {
+        for (let gx = 0; gx < WIDTH; gx++) {
+            const d = Math.sqrt((gx - cx) ** 2 + (gy - cy) ** 2);
+            const t = Math.min(1, d / maxR);
+            const alpha = Math.round((1 - t) * 40);
+            if (alpha > 0) {
+                glow.setPixelAt(gx + 1, gy + 1, Image.rgbaToColor(111, 140, 255, alpha));
+            } else {
+                glow.setPixelAt(gx + 1, gy + 1, Image.rgbaToColor(0, 0, 0, 0));
+            }
+        }
+    }
+    img.composite(glow, 0, 0);
+
+    // 5. Music notes
+    drawMusicNote(img, WIDTH / 2 - 210, 150, IDLE_COLORS.AccentSoft);
+    drawMusicNote(img, WIDTH / 2 + 190, 175, IDLE_COLORS.AccentSoft);
+
+    // 6. Decorative line under title
+    for (let lx = Math.round(WIDTH / 2 - 90); lx < Math.round(WIDTH / 2 + 90); lx++) {
+        img.setPixelAt(lx + 1, 332, IDLE_COLORS.Accent);
+        img.setPixelAt(lx + 1, 333, IDLE_COLORS.Accent);
+    }
+
+    // 7. Decorative frame border
+    const borderColor = Image.rgbaToColor(255, 255, 255, 25);
+    for (let bx = 0; bx < WIDTH; bx++) {
+        img.setPixelAt(bx + 1, 23, borderColor);
+        img.setPixelAt(bx + 1, HEIGHT - 22, borderColor);
+    }
+    for (let by = 0; by < HEIGHT; by++) {
+        img.setPixelAt(23, by + 1, borderColor);
+        img.setPixelAt(WIDTH - 22, by + 1, borderColor);
+    }
+
+    return img;
+}
+
 export const ImageOps = {
     /**
      *
@@ -173,90 +297,13 @@ export const ImageOps = {
         const fontsPath: string = join(process.cwd(), "assets", "fonts");
         const font: Buffer<ArrayBuffer> = await readFile(join(fontsPath, "BoldFont.ttf"));
 
-        const WIDTH = 960;
-        const HEIGHT = 540;
+        const WIDTH: number = IDLE_WIDTH;
 
-        const COLOR_BG_TOP = 0x11151dff;
-        const COLOR_BG_BOTTOM = 0x1a2233ff;
-        const COLOR_ACCENT = 0x6f8cffff;
-        const COLOR_ACCENT_SOFT = 0x9db4ffff;
-        const COLOR_TEXT = 0xf5f7ffff;
-        const COLOR_SUBTEXT = 0xaeb8d6ff;
+        // Clone the memoized static backdrop; only the avatar and text below vary between renders.
+        idleBasePromise ??= buildIdleBase();
+        const img: Image = (await idleBasePromise).clone();
 
-        const img: Image = new Image(WIDTH, HEIGHT);
-
-        // 1. Vertical gradient background
-        for (let y = 0; y < HEIGHT; y++) {
-            const t = y / HEIGHT;
-            const color = lerpColor(COLOR_BG_TOP, COLOR_BG_BOTTOM, t);
-            for (let x = 0; x < WIDTH; x++) {
-                img.setPixelAt(x + 1, y + 1, color);
-            }
-        }
-
-        // 2. Subtle grain texture
-        for (let i = 0; i < 14000; i++) {
-            const x = Math.floor(Math.random() * WIDTH);
-            const y = Math.floor(Math.random() * HEIGHT);
-            const base = img.getPixelAt(x + 1, y + 1);
-            const r = (base >> 24) & 0xff,
-                g = (base >> 16) & 0xff,
-                b = (base >> 8) & 0xff;
-            const delta = Math.floor(Math.random() * 10) - 5;
-            img.setPixelAt(
-                x + 1,
-                y + 1,
-                Image.rgbaToColor(
-                    Math.min(255, Math.max(0, r + delta)),
-                    Math.min(255, Math.max(0, g + delta)),
-                    Math.min(255, Math.max(0, b + delta)),
-                    255,
-                ),
-            );
-        }
-
-        // 3. Diagonal stave lines
-        const lineColor = Image.rgbaToColor(255, 255, 255, 10);
-        for (let offset = -HEIGHT; offset < WIDTH; offset += 46) {
-            for (let i = 0; i < Math.max(WIDTH, HEIGHT); i++) {
-                const x = offset + i;
-                const y = i;
-                if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT) {
-                    img.setPixelAt(x + 1, y + 1, lineColor);
-                }
-            }
-        }
-
-        // 4. Soft radial glow
-        const glow: Image = new Image(WIDTH, HEIGHT);
-        const cx = WIDTH / 2,
-            cy = HEIGHT / 2 - 20;
-        const maxR = 340;
-        for (let gy = 0; gy < HEIGHT; gy++) {
-            for (let gx = 0; gx < WIDTH; gx++) {
-                const d = Math.sqrt((gx - cx) ** 2 + (gy - cy) ** 2);
-                const t = Math.min(1, d / maxR);
-                const alpha = Math.round((1 - t) * 40);
-                if (alpha > 0) {
-                    glow.setPixelAt(gx + 1, gy + 1, Image.rgbaToColor(111, 140, 255, alpha));
-                } else {
-                    glow.setPixelAt(gx + 1, gy + 1, Image.rgbaToColor(0, 0, 0, 0));
-                }
-            }
-        }
-        img.composite(glow, 0, 0);
-
-        // 5. Music notes
-        drawMusicNote(img, WIDTH / 2 - 210, 150, COLOR_ACCENT_SOFT);
-        drawMusicNote(img, WIDTH / 2 + 190, 175, COLOR_ACCENT_SOFT);
-
-        // 6. Decorative line under title
-        for (let lx = Math.round(WIDTH / 2 - 90); lx < Math.round(WIDTH / 2 + 90); lx++) {
-            img.setPixelAt(lx + 1, 332, COLOR_ACCENT);
-            img.setPixelAt(lx + 1, 333, COLOR_ACCENT);
-        }
-
-        // 7. Avatar (PFP) centered above title
+        // Avatar (PFP) centered above title
         if (data.avatarURL) {
             try {
                 const avatarBuffer: Buffer = await getBuffer(data.avatarURL);
@@ -275,29 +322,18 @@ export const ImageOps = {
             }
         }
 
-        // 8. Typography
-        const titleLayer: Image = await Image.renderText(font, 58, data.title, COLOR_TEXT);
+        // Typography
+        const titleLayer: Image = await Image.renderText(font, 58, data.title, IDLE_COLORS.Text);
         img.composite(titleLayer, Math.round((WIDTH - titleLayer.width) / 2), 240);
 
-        const subLayer: Image = await Image.renderText(font, 24, data.prompt, COLOR_SUBTEXT);
+        const subLayer: Image = await Image.renderText(font, 24, data.prompt, IDLE_COLORS.SubText);
         img.composite(subLayer, Math.round((WIDTH - subLayer.width) / 2), 360);
 
-        const tagLayer: Image = await Image.renderText(font, 20, data.footer, COLOR_ACCENT_SOFT);
+        const tagLayer: Image = await Image.renderText(font, 20, data.footer, IDLE_COLORS.AccentSoft);
         const tagX = Math.round((WIDTH - tagLayer.width) / 2);
         img.composite(tagLayer, tagX, 460);
-        drawStar(img, tagX - 26, 470, COLOR_ACCENT_SOFT);
-        drawStar(img, tagX + tagLayer.width + 26, 470, COLOR_ACCENT_SOFT);
-
-        // 9. Decorative frame border
-        const borderColor = Image.rgbaToColor(255, 255, 255, 25);
-        for (let bx = 0; bx < WIDTH; bx++) {
-            img.setPixelAt(bx + 1, 23, borderColor);
-            img.setPixelAt(bx + 1, HEIGHT - 22, borderColor);
-        }
-        for (let by = 0; by < HEIGHT; by++) {
-            img.setPixelAt(23, by + 1, borderColor);
-            img.setPixelAt(WIDTH - 22, by + 1, borderColor);
-        }
+        drawStar(img, tagX - 26, 470, IDLE_COLORS.AccentSoft);
+        drawStar(img, tagX + tagLayer.width + 26, 470, IDLE_COLORS.AccentSoft);
 
         return img.encode();
     },
