@@ -45,7 +45,7 @@ const options = {
             const { searchPlatform: source } = await client.database.players.get(guildId);
             const { messages } = await ContextOps.locale(client, guildId);
 
-            if (!client.manager.isUseable()) return interaction.respond([{ name: messages.events.autocomplete.noNodes, value: "noNodes" }]);
+            if (!client.manager.isUsable()) return interaction.respond([{ name: messages.events.autocomplete.noNodes, value: "noNodes" }]);
 
             const voice: VoiceState | null = await member.voice().catch((): null => null);
             if (!voice) return interaction.respond([{ name: messages.events.autocomplete.noVoiceChannel, value: "noVoice" }]);

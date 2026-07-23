@@ -46,7 +46,7 @@ export async function requestListener(client: UsingClient, message: MessageStruc
 
     const { messages } = await ContextOps.locale(client, guildId);
 
-    if (!client.manager.isUseable()) {
+    if (!client.manager.isUsable()) {
         await sendTemporary(client, channelId, messages.events.noNodes);
         return true;
     }
@@ -66,9 +66,9 @@ export async function requestListener(client: UsingClient, message: MessageStruc
         guildId,
         voice,
         me,
+        query,
         textId: config.channelId,
         requester: author,
-        query,
         localeString: await client.database.locales.get(guildId),
         isRequestChannel: true,
     });
