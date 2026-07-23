@@ -110,4 +110,69 @@ export const ImageOps = {
 
         return canvas.encode();
     },
+    /**
+     *
+     * Renders a lighter "banner" style image for the now-playing panel: the album art in a rounded
+     * card frame on the left, with the track name and artist to the right, vertically centered. Meant
+     * for panels where the rest of the metadata (author, duration, volume, requester, queue) is already
+     * shown as embed fields, so the image itself doesn't need to repeat it.
+     *
+     * Unlike {@link ImageOps.render}, this draws its own frame procedurally instead of reusing
+     * `border_w`/`border_b`.png, since those assets bake in fixed-position decorations (the header bar,
+     * the "..." dots) meant for the full 1080x1350 layout and don't line up correctly on a banner canvas.
+     * @param {Pick<ImageData, "albumURL" | "name" | "artist">} data The album URL, track name, and artist to render.
+     * @returns {Promise<Uint8Array>} A Promise that resolves to a Uint8Array representing the encoded image.
+     */
+    async banner(data: Pick<ImageData, "albumURL" | "name" | "artist">): Promise<Uint8Array> {
+        const { albumURL, name, artist } = data;
+        const fontsPath: string = join(process.cwd(), "assets", "fonts");
+        const font: Buffer<ArrayBuffer> = await readFile(join(fontsPath, "BoldFont.ttf"));
+
+        const WIDTH = 960;
+        const HEIGHT = 540;
+        const ART_SIZE = 420;
+        const OUTER_BORDER = 14;
+        const RADIUS = 48;
+        const MARGIN = 60;
+
+        const albumImage: Image = await ImageOps.album(albumURL);
+        if (albumImage.width === albumImage.height) albumImage.resize(ART_SIZE, ART_SIZE);
+        else albumImage.crop((albumImage.width - ART_SIZE) / 2, (albumImage.height - ART_SIZE) / 2, ART_SIZE, ART_SIZE);
+
+        const dominant: number = albumImage.dominantColor();
+        const opaque: boolean = isOpaque(Image.colorToRGB(dominant));
+        const mainColor: number = opaque ? ImageColors.Text : ImageColors.Base;
+        const layoutColor: number = opaque ? ImageColors.SubText : ImageColors.Surface;
+
+        const textMaxWidth: number = WIDTH - (MARGIN + ART_SIZE + 50) - MARGIN;
+        const trackText: Image = await Image.renderText(font, getFontSizeByLength(name, textMaxWidth, 54, 24), name, mainColor);
+        const artistText: Image = await Image.renderText(font, getFontSizeByLength(artist, textMaxWidth, 38, 20), artist, layoutColor);
+
+        // 1. Card frame: a thin outer stroke (mainColor) with the dominant color filling the inside
+        const outer: Image = new Image(WIDTH, HEIGHT).fill(mainColor).opacity(0.9).roundCorners(RADIUS);
+        const inner: Image = new Image(WIDTH - OUTER_BORDER * 2, HEIGHT - OUTER_BORDER * 2)
+            .fill(dominant)
+            .roundCorners(RADIUS - OUTER_BORDER);
+        const canvas: Image = new Image(WIDTH, HEIGHT).composite(outer, 0, 0).composite(inner, OUTER_BORDER, OUTER_BORDER);
+
+        // 2. Album art on the left, with a thin ring around it
+        const artX = MARGIN;
+        const artY = (HEIGHT - ART_SIZE) / 2;
+        const ring: Image = new Image(ART_SIZE + 16, ART_SIZE + 16)
+            .fill(Image.rgbaToColor(255, 255, 255, 30))
+            .roundCorners(RADIUS - OUTER_BORDER + 8);
+        canvas.composite(ring, artX - 8, artY - 8);
+        canvas.composite(albumImage.roundCorners(RADIUS - OUTER_BORDER), artX, artY);
+
+        // 3. Track name to the right, artist centered under the title's width, both vertically centered against the art
+        const textX = artX + ART_SIZE + 50;
+        const blockHeight = trackText.height + 14 + artistText.height;
+        const textStartY = (HEIGHT - blockHeight) / 2;
+        canvas.composite(trackText, textX, textStartY);
+
+        const artistX = textX + (trackText.width - artistText.width) / 2;
+        canvas.composite(artistText.opacity(0.9), artistX, textStartY + trackText.height + 14);
+
+        return canvas.encode();
+    },
 };
