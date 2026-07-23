@@ -205,7 +205,7 @@ export default {
                     `\`❌\` El idioma : \`${locale}\` es inválido.\n\`📢\` **Idiomas disponibles**: \`${available}\``,
                 newLocale: ({ locale }): string => `\`✅\` El idioma de **Stelle** ahora es: \`${locale}\``,
             },
-            requestchannel: {
+            setrequest: {
                 set: ({ channelId }): string => `\`✅\` El canal de peticiones ahora es <#${channelId}>.`,
                 disabled: "`✅` El canal de peticiones ha sido desactivado.",
                 alreadyDisabled: "`❌` No hay un canal de peticiones configurado.",
@@ -496,11 +496,11 @@ export default {
                 description: "Introduce el prefijo nuevo.",
             },
         },
-        requestchannel: {
+        setrequest: {
             name: "peticiones",
             description: "Gestiona el canal de peticiones de canciones.",
             commands: {
-                set: {
+                setup: {
                     name: "establecer",
                     description: "Establece (o crea) el canal de peticiones.",
                     options: {

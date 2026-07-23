@@ -260,7 +260,7 @@ export default {
                     `\`❌\` The locale : \`${locale}\` is invalid.\n\`📢\` **Available locales**: \`${available}\``,
                 newLocale: ({ locale }: ILocale): string => `\`✅\` The locale of **Stelle** is now: \`${locale}\``,
             },
-            requestchannel: {
+            setrequest: {
                 set: ({ channelId }: IChannel): string => `\`✅\` The song request channel is now <#${channelId}>.`,
                 disabled: "`✅` The song request channel has been disabled.",
                 alreadyDisabled: "`❌` There is no song request channel configured.",
@@ -555,13 +555,13 @@ export default {
                 description: "Enter the new prefix.",
             },
         },
-        requestchannel: {
-            name: "requestchannel",
+        setrequest: {
+            name: "setrequest",
             description: "Manage the song request channel.",
             commands: {
-                set: {
-                    name: "set",
-                    description: "Set (or create) the song request channel.",
+                setup: {
+                    name: "setup",
+                    description: "Set up (or create) the song request channel.",
                     options: {
                         channel: {
                             name: "channel",

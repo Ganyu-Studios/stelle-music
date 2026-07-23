@@ -4,7 +4,7 @@ import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
 @Declare({
-    name: "requestchannel",
+    name: "setrequest",
     description: "Manage the song request channel.",
     integrationTypes: [ApplicationIntegrationType.GuildInstall],
     contexts: [InteractionContextType.Guild],
@@ -12,5 +12,5 @@ import { StelleOptions } from "#stelle/utils/decorator.js";
 })
 @AutoLoad()
 @StelleOptions({ cooldown: 10, category: StelleCategory.Guild })
-@LocalesT("locales.requestchannel.name", "locales.requestchannel.description")
-export default class RequestChannelCommand extends Command {}
+@LocalesT("locales.setrequest.name", "locales.setrequest.description")
+export default class SetRequestCommand extends Command {}
