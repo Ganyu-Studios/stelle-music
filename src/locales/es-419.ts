@@ -205,6 +205,13 @@ export default {
                     `\`❌\` El idioma : \`${locale}\` es inválido.\n\`📢\` **Idiomas disponibles**: \`${available}\``,
                 newLocale: ({ locale }): string => `\`✅\` El idioma de **Stelle** ahora es: \`${locale}\``,
             },
+            requestchannel: {
+                set: ({ channelId }): string => `\`✅\` El canal de peticiones ahora es <#${channelId}>.`,
+                disabled: "`✅` El canal de peticiones ha sido desactivado.",
+                alreadyDisabled: "`❌` No hay un canal de peticiones configurado.",
+                createFailed: "`❌` No pude crear el canal de peticiones. Revisa mis permisos.",
+                postFailed: "`❌` No pude publicar el panel en ese canal. Revisa mis permisos.",
+            },
             ping: {
                 response: ({ wsPing, clientPing, shardPing, shardId }): string =>
                     `\`🌐\` Pong! (**Cliente**: \`${wsPing}ms\` - **API**: \`${clientPing}ms\` - **Fragmento (${shardId})**: \`${shardPing}ms\`)`,
@@ -324,6 +331,11 @@ export default {
                         pause: "Pausar",
                     },
                 },
+            },
+            requestChannel: {
+                empty: "`🎧` Únete a un canal de voz y envía aquí el nombre o URL de una canción para empezar a reproducir.",
+                queueTitle: "`📋` **A continuación**",
+                queueEntry: ({ position, title, requester }): string => `\`${position}.\` \`${title}\` — <@${requester}>`,
             },
             permissions: {
                 list: {
@@ -473,6 +485,26 @@ export default {
             option: {
                 name: "prefijo",
                 description: "Introduce el prefijo nuevo.",
+            },
+        },
+        requestchannel: {
+            name: "peticiones",
+            description: "Gestiona el canal de peticiones de canciones.",
+            commands: {
+                set: {
+                    name: "establecer",
+                    description: "Establece (o crea) el canal de peticiones.",
+                    options: {
+                        channel: {
+                            name: "canal",
+                            description: "El canal a usar. Si se omite, se crea uno nuevo.",
+                        },
+                    },
+                },
+                disable: {
+                    name: "desactivar",
+                    description: "Desactiva el canal de peticiones.",
+                },
             },
         },
         default: {

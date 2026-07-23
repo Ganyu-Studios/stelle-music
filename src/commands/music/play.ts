@@ -23,7 +23,7 @@ import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { onAutocompleteError } from "#stelle/utils/functions/internal/overrides.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
-import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
+import { resolveAndQueue } from "#stelle/utils/functions/manager/play.js";
 
 const options = {
     query: createStringOption({
@@ -104,24 +104,17 @@ export default class PlayCommand extends Command {
         await ctx.deferReply();
 
         const { messages } = await ctx.locale();
-        const { defaultVolume, searchPlatform } = await client.database.players.get(ctx.guildId);
 
-        const player = client.manager.createPlayer({
+        const { player, loadType, playlist, tracks } = await resolveAndQueue({
+            client,
             guildId: ctx.guildId,
+            voice,
+            me,
             textId: channelId,
-            voiceId: voice.id,
-            volume: defaultVolume,
-            selfDeaf: true,
+            requester: ctx.author,
+            query,
+            localeString: await ctx.localeString(),
         });
-
-        await joinVoiceChannel(player, voice, me);
-
-        const { loadType, playlist, tracks } = await player.search({ query, source: searchPlatform, requester: ctx.author });
-
-        if (!(await player.data.get("localeString"))) await player.data.set("localeString", await ctx.localeString());
-        if (!(await player.data.get("me"))) await player.data.set("me", TrackOps.requesterFn(client.me));
-
-        const autoplayIndex = (await player.data.get("enabledAutoplay")) ? 0 : undefined;
 
         // Shared "nothing to play" reply, reused by the empty/error/unknown load types and the empty-track guards below.
         const noResults = () =>
@@ -132,30 +125,18 @@ export default class PlayCommand extends Command {
             });
 
         switch (loadType) {
-            case LoadType.Empty:
-            case LoadType.Error:
-                {
-                    if (!player.queue.current) await player.destroy();
-                    await noResults();
-                }
-                break;
-
             case LoadType.Track:
             case LoadType.Search:
                 {
                     const track: TrackStructure | undefined = tracks.at(0);
                     if (!track) return noResults();
 
-                    await player.queue.add(track, autoplayIndex);
-
-                    const duration: string = TrackOps.duration(track, messages);
-
                     const embed = new Embed()
                         .setThumbnail(track.info.artworkUrl ?? undefined)
                         .setColor(client.config.color.success)
                         .setDescription(
                             messages.commands.play.embed.result({
-                                duration,
+                                duration: TrackOps.duration(track, messages),
                                 requester: track.requester.id,
                                 position: player.queue.tracks.findIndex((t) => t.info.identifier === track.info.identifier) + 1,
                                 title: track.info.title,
@@ -165,12 +146,7 @@ export default class PlayCommand extends Command {
                         )
                         .setTimestamp();
 
-                    await ctx.editOrReply({
-                        content: "",
-                        embeds: [embed],
-                    });
-
-                    if (!player.playing) await player.play();
+                    await ctx.editOrReply({ content: "", embeds: [embed] });
                 }
                 break;
 
@@ -178,8 +154,6 @@ export default class PlayCommand extends Command {
                 {
                     const track: TrackStructure | undefined = tracks.at(0);
                     if (!track) return noResults();
-
-                    await player.queue.add(tracks, autoplayIndex);
 
                     const embed = new Embed()
                         .setColor(client.config.color.success)
@@ -195,20 +169,12 @@ export default class PlayCommand extends Command {
                         )
                         .setTimestamp();
 
-                    await ctx.editOrReply({
-                        content: "",
-                        embeds: [embed],
-                    });
-
-                    if (!player.playing) await player.play();
+                    await ctx.editOrReply({ content: "", embeds: [embed] });
                 }
                 break;
 
             default:
-                {
-                    if (!player.queue.current) await player.destroy();
-                    await noResults();
-                }
+                await noResults();
                 break;
         }
     }

@@ -10,8 +10,13 @@ export default class SkipTrackComponent extends ComponentCommand {
         const { player } = ctx.metadata.checkPlayer;
 
         const isAutoplay: boolean | undefined = await player.data.get("enabledAutoplay");
+        const isRequestChannel: boolean = !!(await player.data.get("isRequestChannel"));
 
         await player.skip({ throwError: !isAutoplay });
-        await ComponentOps.cleanup(ctx, "onTrackSkip");
+
+        // On a request channel the button lives on the persistent panel: never delete/clear it (the next track's start
+        // refreshes it) — just acknowledge the interaction.
+        if (isRequestChannel) await ctx.interaction.deferUpdate();
+        else await ComponentOps.cleanup(ctx, "onTrackSkip");
     }
 }

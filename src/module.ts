@@ -47,5 +47,6 @@ declare module "hoshimi" {
         is247: boolean;
         isAutoPause: boolean;
         messageId: string;
+        isRequestChannel: boolean;
     }
 }

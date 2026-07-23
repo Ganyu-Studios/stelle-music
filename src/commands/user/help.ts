@@ -200,12 +200,12 @@ export default class HelpCommand extends Command {
  * @returns {string} The parsed command.
  */
 function parseCommand(
-    command: Command | ContextMenuCommand,
+    command: ResolvableCommand,
     optionsType: Record<ApplicationCommandOptionType, string>,
     locale?: LocaleString,
 ): string {
     if (command instanceof ContextMenuCommand) return command.name;
-    let content = command.name;
+    let content: string = command.name;
     for (const option of command.options ?? []) {
         if (option instanceof SubCommand) {
             content += `\n    ${parseSubCommand(option, optionsType)}`;
@@ -225,11 +225,14 @@ function parseCommand(
  * @returns {string} The parsed subcommand.
  */
 function parseSubCommand(subCommand: SubCommand, optionsType: Record<ApplicationCommandOptionType, string>): string {
-    if (!subCommand.options?.length) return `↪ ${subCommand.name}`;
-    return `↪ ${subCommand.group ?? ""} ${subCommand.name} ${getFormattedOptions(
-        subCommand.options as APIApplicationCommandOption[],
-        optionsType,
-    )
-        .map((x) => x.option)
-        .join(" ")}`.trim();
+    // getFormattedOptions returns [] for missing options, so no guard is needed.
+    const options: string[] = getFormattedOptions(subCommand.options as APIApplicationCommandOption[] | undefined, optionsType).map(
+        (x): string => x.option,
+    );
+
+    // Join only the present parts: a subcommand may have no group (top-level) and/or no options. The old two branches
+    // dropped the group on optionless subs and left a double space when the group was empty.
+    const parts: string[] = [subCommand.group, subCommand.name, ...options].filter((part): part is string => Boolean(part));
+
+    return `↪ ${parts.join(" ")}`;
 }

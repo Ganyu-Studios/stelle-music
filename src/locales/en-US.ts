@@ -36,6 +36,7 @@ import {
     type IPrefix,
     type IPrevious,
     type IPublicPlaylistEntry,
+    type IRequestQueueEntry,
     type ISeek,
     type IState,
     type ITrackStart,
@@ -259,6 +260,13 @@ export default {
                     `\`❌\` The locale : \`${locale}\` is invalid.\n\`📢\` **Available locales**: \`${available}\``,
                 newLocale: ({ locale }: ILocale): string => `\`✅\` The locale of **Stelle** is now: \`${locale}\``,
             },
+            requestchannel: {
+                set: ({ channelId }: IChannel): string => `\`✅\` The song request channel is now <#${channelId}>.`,
+                disabled: "`✅` The song request channel has been disabled.",
+                alreadyDisabled: "`❌` There is no song request channel configured.",
+                createFailed: "`❌` I couldn't create the request channel. Check my permissions.",
+                postFailed: "`❌` I couldn't post the panel in that channel. Check my permissions.",
+            },
             ping: {
                 response: ({ wsPing, clientPing, shardPing, shardId }: IPing): string =>
                     `\`🌐\` Pong! (**Client**: \`${wsPing}ms\` - **API**: \`${clientPing}ms\` - **Shard (${shardId})**: \`${shardPing}ms\`)`,
@@ -380,6 +388,12 @@ export default {
                         pause: "Pause",
                     } satisfies Record<PausedState, string>,
                 },
+            },
+            requestChannel: {
+                empty: "`🎧` Join a voice channel and send a song name or URL here to start playing.",
+                queueTitle: "`📋` **Up next**",
+                queueEntry: ({ position, title, requester }: IRequestQueueEntry): string =>
+                    `\`${position}.\` \`${title}\` — <@${requester}>`,
             },
             permissions: {
                 list: {
@@ -530,6 +544,26 @@ export default {
             option: {
                 name: "prefix",
                 description: "Enter the new prefix.",
+            },
+        },
+        requestchannel: {
+            name: "requestchannel",
+            description: "Manage the song request channel.",
+            commands: {
+                set: {
+                    name: "set",
+                    description: "Set (or create) the song request channel.",
+                    options: {
+                        channel: {
+                            name: "channel",
+                            description: "The channel to use. If omitted, a new one is created.",
+                        },
+                    },
+                },
+                disable: {
+                    name: "disable",
+                    description: "Disable the song request channel.",
+                },
             },
         },
         default: {

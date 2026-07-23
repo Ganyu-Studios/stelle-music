@@ -1,5 +1,5 @@
 import { LimitedCollection } from "seyfert";
-import type { guildLocale, guildPlayer, guildPrefix, userPlaylist } from "#stelle/prisma";
+import type { guildLocale, guildPlayer, guildPrefix, guildRequestChannel, userPlaylist } from "#stelle/prisma";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 
 /**
@@ -26,6 +26,11 @@ export class GuildBucket {
      * @type {guildPlayer | null | undefined}
      */
     player?: guildPlayer | null;
+    /**
+     * The guild request-channel config (channel + panel message). `null` when read and absent (negative cache).
+     * @type {guildRequestChannel | null | undefined}
+     */
+    requests?: guildRequestChannel | null;
 }
 
 /**

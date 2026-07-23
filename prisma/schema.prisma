@@ -39,6 +39,13 @@ model guildPlayer {
   defaultVolume  Int    @default(100)
 }
 
+model guildRequestChannel {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  guildId   String @unique
+  channelId String
+  messageId String
+}
+
 type PlaylistTrackRequester {
   id       String
   username String
