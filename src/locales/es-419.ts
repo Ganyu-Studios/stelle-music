@@ -333,7 +333,7 @@ export default {
                 },
             },
             requestChannel: {
-                empty: "`🎧` Únete a un canal de voz y envía aquí el nombre o URL de una canción para empezar a reproducir.",
+                empty: "`🎧` **Listo cuando quieras.**\nÚnete a un canal de voz y luego escribe aquí —sin comandos— y lo agrego a la cola.\n\n`🔎` **Búsqueda** — el título de una canción o el nombre de un artista\n`🔗` **Enlace** — Spotify, YouTube, SoundCloud y más\n`📋` **Playlist** — pega la URL de una playlist para cargarla completa\n\n`💡` Este panel se actualiza en vivo y los controles de abajo se activan cuando algo suena.",
                 title: ({ clientName }): string => `${clientName} - Canal de Peticiones`,
                 queue: {
                     title: "`📋` **A continuación**",

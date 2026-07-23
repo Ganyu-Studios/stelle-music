@@ -160,16 +160,16 @@ export const ImageOps = {
     },
     /**
      *
-     * Renders a "empty" style image for the request-channel idle panel: a card frame with the bot
-     * avatar (or a music-note placeholder) on the left and a prompt message on the right.
+     * Renders an "empty" style banner for the request-channel idle panel: a gradient card with the bot
+     * avatar centered above the title, a prompt line, and a footer tag.
      * @param {Object} data The render data.
      * @param {string} [data.avatarURL] The bot avatar URL to display.
-     * @param {string} data.clientName The bot display name.
-     * @param {string} data.prompt The prompt text shown in the panel.
-     * @param {number} [data.accentColor] The accent color for the background.
+     * @param {string} data.title The title text shown in the panel.
+     * @param {string} data.prompt The prompt text shown under the title.
+     * @param {string} data.footer The footer tag shown at the bottom.
      * @returns {Promise<Uint8Array>} A Promise that resolves to a Uint8Array representing the encoded image.
      */
-    async empty(data: { avatarURL?: string; title: string; prompt: string; footer: string; accentColor?: number }): Promise<Uint8Array> {
+    async empty(data: { avatarURL?: string; title: string; prompt: string; footer: string }): Promise<Uint8Array> {
         const fontsPath: string = join(process.cwd(), "assets", "fonts");
         const font: Buffer<ArrayBuffer> = await readFile(join(fontsPath, "BoldFont.ttf"));
 

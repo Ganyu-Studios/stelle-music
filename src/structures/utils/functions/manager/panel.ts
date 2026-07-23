@@ -146,14 +146,13 @@ export async function buildPanel(
         };
     }
 
-    embed.setThumbnail(client.me.avatarURL()).setDescription(messages.events.requestChannel.empty);
+    embed.setDescription(messages.events.requestChannel.empty);
 
     const banner = await ImageOps.empty({
         avatarURL: client.me.avatarURL(),
         title: messages.events.requestChannel.banner.title({ clientName: client.me.username }),
         prompt: messages.events.requestChannel.banner.prompt,
         footer: messages.events.requestChannel.banner.footer,
-        accentColor: client.config.color.extra,
     });
 
     const attachment = new AttachmentBuilder().setFile("buffer", banner).setName("panel-banner.png");
