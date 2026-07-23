@@ -19,7 +19,7 @@ export default {
             skip: ({ amount }): string => `\`✅\` Saltando la cantidad de: \`${amount} canciones\`.`,
             move: ({ textId, voiceId }): string => `\`✅\` Me movi al canal de voz <#${voiceId}> y canal de texto: <#${textId}>`,
             previous: ({ title, uri }): string => `\`✅\` La canción anterior [**${title}**](${uri}) ha sido añadida a la cola.`,
-            nowplaying: ({ userName, time }): string => `-# Pedido por: ${userName} con ${time}`,
+            nowplaying: ({ userName, time }): string => `-# Pedido por: ${userName} en ${time}`,
             stop: "`👋` Deteniendo y abandonando el canal...",
             shuffle: "`✅` La cola ha sido mezclada.",
             pause: {

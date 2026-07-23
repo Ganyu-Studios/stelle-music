@@ -70,7 +70,7 @@ export default {
                 `\`✅\` Moved to the voice channel <#${voiceId}> and the text channel: <#${textId}>`,
             previous: ({ title, uri }: IPrevious): string =>
                 `\`✅\` The previous track [**${title}**](${uri}) has been added to the queue.`,
-            nowplaying: ({ userName, time }: INowPlaying): string => `-# Requested by ${userName} with ${time}`,
+            nowplaying: ({ userName, time }: INowPlaying): string => `-# Requested by ${userName} in ${time}`,
             stop: "`👋` Stopping and leaving...",
             shuffle: "`✅` The queue has been shuffled.",
             pause: {
