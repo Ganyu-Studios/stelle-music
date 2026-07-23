@@ -23,6 +23,54 @@ function getFontSizeByLength(text: string, maxWidth: number, maxFontSize: number
     return minFontSize;
 }
 
+/**
+ * Scale an image to cover a `size`×`size` square (like CSS `object-fit: cover`) and center-crop the overflow.
+ * Unlike a fixed-window crop, this keeps the subject framed for any aspect ratio — square Spotify covers as
+ * well as 16:9 YouTube thumbnails, which are also shorter than the art box and made a raw crop run out of bounds.
+ * @param {Image} image The source image (mutated in place).
+ * @param {number} size The target square side, in pixels.
+ * @returns {Image} The cropped `size`×`size` image.
+ */
+function coverCrop(image: Image, size: number): Image {
+    const scale: number = size / Math.min(image.width, image.height);
+    image.resize(Math.max(size, Math.round(image.width * scale)), Math.max(size, Math.round(image.height * scale)));
+
+    const x: number = Math.floor((image.width - size) / 2);
+    const y: number = Math.floor((image.height - size) / 2);
+
+    return image.crop(x, y, size, size);
+}
+
+/**
+ * Render a single line of text sized to fit `maxWidth`. The size is first estimated from the text length, then
+ * the string is truncated with an ellipsis until the rendered layer actually fits — the estimate alone can still
+ * overflow for wide glyphs (e.g. long YouTube autoplay titles), which would spill over the art and the canvas edge.
+ * @param {Buffer} font The font buffer.
+ * @param {string} text The text to render.
+ * @param {number} maxWidth The maximum layer width, in pixels.
+ * @param {number} maxSize The maximum font size.
+ * @param {number} minSize The minimum font size.
+ * @param {number} color The text color.
+ * @returns {Promise<Image>} The rendered text layer, guaranteed to fit `maxWidth`.
+ */
+async function renderFitted(font: Buffer, text: string, maxWidth: number, maxSize: number, minSize: number, color: number): Promise<Image> {
+    const size: number = getFontSizeByLength(text, maxWidth, maxSize, minSize);
+
+    let layer: Image = await Image.renderText(font, size, text, color);
+    if (layer.width <= maxWidth) return layer;
+
+    // Jump close to the fitting length in one step, then trim the last few characters precisely.
+    let current: string = text.slice(0, Math.max(1, Math.floor((text.length * maxWidth) / layer.width) - 1)).trimEnd();
+    layer = await Image.renderText(font, size, `${current}…`, color);
+
+    while (layer.width > maxWidth && current.length > 1) {
+        current = current.slice(0, -1).trimEnd();
+        layer = await Image.renderText(font, size, `${current}…`, color);
+    }
+
+    return layer;
+}
+
 function lerpChannel(a: number, b: number, t: number): number {
     return Math.round(a + (b - a) * t);
 }
@@ -239,10 +287,7 @@ export const ImageOps = {
         const imagesPath: string = join(process.cwd(), "assets", "images", "nowplaying");
 
         const font: Buffer<ArrayBuffer> = await readFile(join(fontsPath, "BoldFont.ttf"));
-        const albumImage: Image = await ImageOps.album(albumURL);
-
-        if (albumImage.width === albumImage.height) albumImage.resize(504, 504);
-        else albumImage.crop((albumImage.width - 504) / 2, (albumImage.height - 504) / 2, 504, 504);
+        const albumImage: Image = coverCrop(await ImageOps.album(albumURL), 504);
 
         const dominant: number = albumImage.dominantColor();
         const opaque: boolean = isOpaque(Image.colorToRGB(dominant));
@@ -362,9 +407,7 @@ export const ImageOps = {
         const RADIUS = 48;
         const MARGIN = 60;
 
-        const albumImage: Image = await ImageOps.album(albumURL);
-        if (albumImage.width === albumImage.height) albumImage.resize(ART_SIZE, ART_SIZE);
-        else albumImage.crop((albumImage.width - ART_SIZE) / 2, (albumImage.height - ART_SIZE) / 2, ART_SIZE, ART_SIZE);
+        const albumImage: Image = coverCrop(await ImageOps.album(albumURL), ART_SIZE);
 
         const dominant: number = albumImage.dominantColor();
         const opaque: boolean = isOpaque(Image.colorToRGB(dominant));
@@ -373,13 +416,8 @@ export const ImageOps = {
 
         const textMaxWidth: number = WIDTH - (MARGIN + ART_SIZE + 50) - MARGIN;
         const artistLabel: string = `${by} ${artist}`;
-        const trackText: Image = await Image.renderText(font, getFontSizeByLength(name, textMaxWidth, 54, 24), name, mainColor);
-        const artistText: Image = await Image.renderText(
-            font,
-            getFontSizeByLength(artistLabel, textMaxWidth, 38, 20),
-            artistLabel,
-            layoutColor,
-        );
+        const trackText: Image = await renderFitted(font, name, textMaxWidth, 54, 24, mainColor);
+        const artistText: Image = await renderFitted(font, artistLabel, textMaxWidth, 38, 20, layoutColor);
 
         // 1. Card frame: a thin outer stroke (mainColor) with the dominant color filling the inside
         const outer: Image = new Image(WIDTH, HEIGHT).fill(mainColor).opacity(0.9).roundCorners(RADIUS);
