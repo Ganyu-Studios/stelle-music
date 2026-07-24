@@ -65,7 +65,6 @@ export default {
         commands: {
             join: ({ channelId }: IChannel): string => `\`✅\` Joined the voice channel <#${channelId}>.`,
             setprefix: ({ prefix }: IPrefix): string => `\`✅\` The **new prefix** for this guild is now: \`${prefix}\``,
-            skip: ({ amount }: IAmount): string => `\`✅\` Skipped the amount of: \`${amount} tracks\`.`,
             move: ({ textId, voiceId }: IMove): string =>
                 `\`✅\` Moved to the voice channel <#${voiceId}> and the text channel: <#${textId}>`,
             previous: ({ title, uri }: IPrevious): string =>
@@ -73,6 +72,11 @@ export default {
             nowplaying: ({ userName, time }: INowPlaying): string => `-# Requested by ${userName} in ${time}`,
             stop: "`👋` Stopping and leaving...",
             shuffle: "`✅` The queue has been shuffled.",
+            skip: {
+                amount: ({ amount }: IAmount): string => `\`✅\` Skipped the amount of: \`${amount} tracks\`.`,
+                invalidAmount: ({ amount }: IAmount): string =>
+                    `\`❌\` The amount you specified is invalid. The queue only has \`${amount} tracks\`.`,
+            },
             pause: {
                 success: "`✅` The player has been paused.",
                 alreadyPaused: "`❌` The player is already paused.",
