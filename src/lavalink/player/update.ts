@@ -45,6 +45,7 @@ export default createLavalinkEvent({
             const lyricsEnabled: boolean | undefined = await newPlayer.data.get("lyricsEnabled");
             const is247: boolean | undefined = await newPlayer.data.get("is247");
             const isAutoPause: boolean | undefined = await newPlayer.data.get("isAutoPause");
+            const isRequestChannel: boolean | undefined = await newPlayer.data.get("isRequestChannel");
 
             Sessions.set<SessionJson>(newPlayer.guildId, {
                 ...newJson,
@@ -56,6 +57,7 @@ export default createLavalinkEvent({
                 lyricsEnabled,
                 is247,
                 isAutoPause,
+                isRequestChannel,
                 node,
             });
 

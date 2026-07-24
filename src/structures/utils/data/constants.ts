@@ -51,14 +51,18 @@ export const StelleMeta: ConstantsMeta = {
  * @type {ConstantsPaths}
  */
 export const StellePaths: ConstantsPaths = {
-    CachePath: "./cache",
-    CommandsFile: "./commands.json",
-    SessionsFile: "./sessions.json",
+    CacheDirectory: "cache",
+    BannersDirectory: "banners",
+    CommandsFile: "commands.json",
+    SessionsFile: "sessions.json",
+    GetCommandsPath(): string {
+        return join(process.cwd(), StellePaths.CacheDirectory, StellePaths.CommandsFile);
+    },
     GetOutDirectory(): OutputDirectory {
         return StelleMeta.Dev ? "src" : "dist";
     },
-    GetCacheDirectory(): string {
-        return join(process.cwd(), StellePaths.CachePath, StellePaths.CommandsFile);
+    GetBannersDirectory(): string {
+        return join(process.cwd(), StellePaths.CacheDirectory, StellePaths.BannersDirectory);
     },
 };
 

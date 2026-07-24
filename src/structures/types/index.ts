@@ -205,6 +205,11 @@ export interface SessionJson extends StellePlayerJson {
      * @type {boolean | undefined}
      */
     isAutoPause?: boolean;
+    /**
+     * Whatever the player was created from a request channel or not.
+     * @type {boolean | undefined}
+     */
+    isRequestChannel?: boolean;
 }
 
 /**

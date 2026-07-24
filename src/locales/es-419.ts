@@ -16,12 +16,16 @@ export default {
         commands: {
             join: ({ channelId }): string => `\`✅\` Me uní al canal de voz <#${channelId}>.`,
             setprefix: ({ prefix }): string => `\`✅\` El **nuevo prefijo** para este servidor es: \`${prefix}\``,
-            skip: ({ amount }): string => `\`✅\` Saltando la cantidad de: \`${amount} canciones\`.`,
             move: ({ textId, voiceId }): string => `\`✅\` Me movi al canal de voz <#${voiceId}> y canal de texto: <#${textId}>`,
             previous: ({ title, uri }): string => `\`✅\` La canción anterior [**${title}**](${uri}) ha sido añadida a la cola.`,
-            nowplaying: ({ userName, time }): string => `-# Pedido por: ${userName} con ${time}`,
+            nowplaying: ({ userName, time }): string => `-# Pedido por: ${userName} en ${time}`,
             stop: "`👋` Deteniendo y abandonando el canal...",
             shuffle: "`✅` La cola ha sido mezclada.",
+            skip: {
+                amount: ({ amount }): string => `\`✅\` Se han saltado: \`${amount} canciones\`.`,
+                invalidAmount: ({ amount }): string =>
+                    `\`❌\` La cantidad que especificaste es inválida. La cola solo tiene \`${amount} canciones\`.`,
+            },
             pause: {
                 success: "`✅` El reproductor ha sido pausado.",
                 alreadyPaused: "`❌` El reproductor ya está pausado.",
@@ -205,6 +209,13 @@ export default {
                     `\`❌\` El idioma : \`${locale}\` es inválido.\n\`📢\` **Idiomas disponibles**: \`${available}\``,
                 newLocale: ({ locale }): string => `\`✅\` El idioma de **Stelle** ahora es: \`${locale}\``,
             },
+            setrequest: {
+                set: ({ channelId }): string => `\`✅\` El canal de peticiones ahora es <#${channelId}>.`,
+                disabled: "`✅` El canal de peticiones ha sido desactivado.",
+                alreadyDisabled: "`❌` No hay un canal de peticiones configurado.",
+                createFailed: "`❌` No pude crear el canal de peticiones. Revisa mis permisos.",
+                postFailed: "`❌` No pude publicar el panel en ese canal. Revisa mis permisos.",
+            },
             ping: {
                 response: ({ wsPing, clientPing, shardPing, shardId }): string =>
                     `\`🌐\` Pong! (**Cliente**: \`${wsPing}ms\` - **API**: \`${clientPing}ms\` - **Fragmento (${shardId})**: \`${shardPing}ms\`)`,
@@ -323,6 +334,20 @@ export default {
                         resume: "Resumir",
                         pause: "Pausar",
                     },
+                },
+            },
+            requestChannel: {
+                empty: "`🎧` **Listo cuando quieras.**\nÚnete a un canal de voz y luego escribe aquí —sin comandos— y lo agrego a la cola.\n\n`🔎` **Búsqueda** — el título de una canción o el nombre de un artista\n`🔗` **Enlace** — Spotify, YouTube, SoundCloud y más\n`📋` **Playlist** — pega la URL de una playlist para cargarla completa\n\n`💡` Este panel se actualiza en vivo y los controles de abajo se activan cuando algo suena.",
+                title: ({ clientName }): string => `${clientName} - Canal de Peticiones`,
+                footer: ({ userName, time }): string => `Pedido por ${userName} • en ${time}`,
+                queue: {
+                    title: "`📋` **A continuación**",
+                    entry: ({ position, title, requester }): string => `\`${position}.\` \`${title}\` — <@${requester}>`,
+                },
+                banner: {
+                    title: ({ clientName }): string => `${clientName} PETICIONES`,
+                    prompt: "Únete a un canal de voz y envía el nombre o URL de una canción",
+                    footer: "STELLE  MUSIC  BOT",
                 },
             },
             permissions: {
@@ -473,6 +498,26 @@ export default {
             option: {
                 name: "prefijo",
                 description: "Introduce el prefijo nuevo.",
+            },
+        },
+        setrequest: {
+            name: "peticiones",
+            description: "Gestiona el canal de peticiones de canciones.",
+            commands: {
+                setup: {
+                    name: "establecer",
+                    description: "Establece (o crea) el canal de peticiones.",
+                    options: {
+                        channel: {
+                            name: "canal",
+                            description: "El canal a usar. Si se omite, se crea uno nuevo.",
+                        },
+                    },
+                },
+                disable: {
+                    name: "desactivar",
+                    description: "Desactiva el canal de peticiones.",
+                },
             },
         },
         default: {

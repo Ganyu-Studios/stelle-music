@@ -171,7 +171,7 @@ export async function playlistLoadHandler(ctx: CommandContext, interaction: Butt
 
     const { messages } = await ctx.locale();
 
-    if (!ctx.client.manager.isUseable())
+    if (!ctx.client.manager.isUsable())
         return interaction.editOrReply({
             content: "",
             flags: MessageFlags.Ephemeral,

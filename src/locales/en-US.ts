@@ -36,6 +36,7 @@ import {
     type IPrefix,
     type IPrevious,
     type IPublicPlaylistEntry,
+    type IRequestQueueEntry,
     type ISeek,
     type IState,
     type ITrackStart,
@@ -64,14 +65,18 @@ export default {
         commands: {
             join: ({ channelId }: IChannel): string => `\`✅\` Joined the voice channel <#${channelId}>.`,
             setprefix: ({ prefix }: IPrefix): string => `\`✅\` The **new prefix** for this guild is now: \`${prefix}\``,
-            skip: ({ amount }: IAmount): string => `\`✅\` Skipped the amount of: \`${amount} tracks\`.`,
             move: ({ textId, voiceId }: IMove): string =>
                 `\`✅\` Moved to the voice channel <#${voiceId}> and the text channel: <#${textId}>`,
             previous: ({ title, uri }: IPrevious): string =>
                 `\`✅\` The previous track [**${title}**](${uri}) has been added to the queue.`,
-            nowplaying: ({ userName, time }: INowPlaying): string => `-# Requested by ${userName} with ${time}`,
+            nowplaying: ({ userName, time }: INowPlaying): string => `-# Requested by ${userName} in ${time}`,
             stop: "`👋` Stopping and leaving...",
             shuffle: "`✅` The queue has been shuffled.",
+            skip: {
+                amount: ({ amount }: IAmount): string => `\`✅\` Skipped the amount of: \`${amount} tracks\`.`,
+                invalidAmount: ({ amount }: IAmount): string =>
+                    `\`❌\` The amount you specified is invalid. The queue only has \`${amount} tracks\`.`,
+            },
             pause: {
                 success: "`✅` The player has been paused.",
                 alreadyPaused: "`❌` The player is already paused.",
@@ -259,6 +264,13 @@ export default {
                     `\`❌\` The locale : \`${locale}\` is invalid.\n\`📢\` **Available locales**: \`${available}\``,
                 newLocale: ({ locale }: ILocale): string => `\`✅\` The locale of **Stelle** is now: \`${locale}\``,
             },
+            setrequest: {
+                set: ({ channelId }: IChannel): string => `\`✅\` The song request channel is now <#${channelId}>.`,
+                disabled: "`✅` The song request channel has been disabled.",
+                alreadyDisabled: "`❌` There is no song request channel configured.",
+                createFailed: "`❌` I couldn't create the request channel. Check my permissions.",
+                postFailed: "`❌` I couldn't post the panel in that channel. Check my permissions.",
+            },
             ping: {
                 response: ({ wsPing, clientPing, shardPing, shardId }: IPing): string =>
                     `\`🌐\` Pong! (**Client**: \`${wsPing}ms\` - **API**: \`${clientPing}ms\` - **Shard (${shardId})**: \`${shardPing}ms\`)`,
@@ -379,6 +391,21 @@ export default {
                         resume: "Resume",
                         pause: "Pause",
                     } satisfies Record<PausedState, string>,
+                },
+            },
+            requestChannel: {
+                title: ({ clientName }: IClientName): string => `${clientName} - Request Channel`,
+                footer: ({ userName, time }: INowPlaying): string => `Requested by ${userName} • in ${time}`,
+                empty: "`🎧` **Ready when you are.**\nJoin a voice channel, then just type here — no command needed — and I'll queue it up.\n\n`🔎` **Search** — a song title or artist name\n`🔗` **Link** — Spotify, YouTube, SoundCloud & more\n`📋` **Playlist** — paste a playlist URL to load it all at once\n\n`💡` This panel updates live, and the controls below light up once something's playing.",
+                queue: {
+                    title: "`📋` **Up next**",
+                    entry: ({ position, title, requester }: IRequestQueueEntry): string =>
+                        `\`${position}.\` \`${title}\` — <@${requester}>`,
+                },
+                banner: {
+                    title: ({ clientName }: IClientName): string => `${clientName} REQUESTS`,
+                    prompt: "Join a voice channel and send a song name or URL",
+                    footer: "STELLE  MUSIC  BOT",
                 },
             },
             permissions: {
@@ -530,6 +557,26 @@ export default {
             option: {
                 name: "prefix",
                 description: "Enter the new prefix.",
+            },
+        },
+        setrequest: {
+            name: "setrequest",
+            description: "Manage the song request channel.",
+            commands: {
+                setup: {
+                    name: "setup",
+                    description: "Set up (or create) the song request channel.",
+                    options: {
+                        channel: {
+                            name: "channel",
+                            description: "The channel to use. If omitted, a new one is created.",
+                        },
+                    },
+                },
+                disable: {
+                    name: "disable",
+                    description: "Disable the song request channel.",
+                },
             },
         },
         default: {

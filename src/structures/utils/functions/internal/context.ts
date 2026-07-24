@@ -20,6 +20,15 @@ interface QuickReplyOptions {
     content?: string;
 }
 
+/**
+ *
+ * Reply with a simple embed with the given description and color.
+ * @param {AnyContext} ctx The context to reply in.
+ * @param {string} description The embed description.
+ * @param {number} color The embed color.
+ * @param {QuickReplyOptions} options The reply options.
+ * @returns {Promise<void>} A promise that resolves when the reply is sent.
+ */
 function embedReply(ctx: AnyContext, description: string, color: number, options: QuickReplyOptions): Promise<void> {
     return ctx.editOrReply({
         ...(options.content !== undefined && { content: options.content }),

@@ -9,7 +9,7 @@ export default createEvent({
         client.readyTimestamp = Date.now();
 
         const clientName: StelleVersion = `${user.username} v${StelleMeta.Version}`;
-        const cachePath: string = StellePaths.GetCacheDirectory();
+        const cachePath: string = StellePaths.GetCommandsPath();
 
         client.logger.info(`[API] Logged in | user: ${user.username}`);
         client.logger.info(`[Client] Ready | name: ${clientName} | shard: ${shardId}`);

@@ -9,7 +9,7 @@ import { StelleOptions } from "#stelle/utils/decorator.js";
     contexts: [InteractionContextType.Guild],
     defaultMemberPermissions: [PermissionFlagsBits.Administrator],
 })
-@StelleOptions({ onlyDeveloper: true, skipRegister: false })
+@StelleOptions({ onlyDeveloper: true, skipRegister: true })
 export default class TestCommand extends Command {
     override async run(ctx: CommandContext) {
         const { config } = ctx.client;

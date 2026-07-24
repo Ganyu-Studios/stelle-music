@@ -4,8 +4,19 @@ import { isAbsolute, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { inspect as nodeInspect } from "node:util";
 import type { AnyContext, UsingClient } from "seyfert";
+import type { APIApplicationCommandOptionChoice } from "seyfert/lib/types/index.js";
 import type { Omit, Plain, Prettify } from "#stelle/types";
 
+/**
+ * The sentinel value used by informative autocomplete choices ({@link UtilsOps.autocomplete}); command
+ * runs treat it as a missing/invalid selection.
+ * @type {string}
+ */
+export const AutocompleteNoticeValue: string = "none";
+
+/**
+ * The options for creating an ID.
+ */
 interface CreateIdOptions {
     /**
      * The length of each segment.
@@ -47,6 +58,16 @@ export const UtilsOps = {
         if (ctx.isComponent() || ctx.isModal()) return `${authorId}-${ctx.customId}-component`;
 
         return `${authorId}-all`;
+    },
+    /**
+     *
+     * Build a single-choice autocomplete response that surfaces a notice (empty results, missing selection)
+     * instead of an empty dropdown. Uses a unicode emoji since custom emojis don't render in autocomplete.
+     * @param {string} message The notice to show as the choice label.
+     * @returns {APIApplicationCommandOptionChoice<string>[]} The single-choice response.
+     */
+    autocomplete(message: string): APIApplicationCommandOptionChoice<string>[] {
+        return [{ name: `⚠️ ${message}`, value: AutocompleteNoticeValue }];
     },
     /**
      *
@@ -177,7 +198,16 @@ export const UtilsOps = {
      * @param {number} check The flags to check for.
      * @returns {boolean} True if the flags include the checkFlags.
      */
-    hasFlags(flags: number = 0, check: number[]): boolean {
+    flags(flags: number = 0, check: number[]): boolean {
         return check.every((flag) => (flags & flag) === flag);
+    },
+    /**
+     *
+     * Sanitize a string by removing diacritical marks (accents) and normalizing it.
+     * @param {string} text The string to sanitize.
+     * @returns {string} The sanitized string.
+     */
+    sanitize(text: string): string {
+        return text.normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
     },
 };

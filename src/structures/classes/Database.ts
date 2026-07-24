@@ -3,6 +3,7 @@ import { LocaleController } from "#stelle/controllers/locale.js";
 import { PlayerController } from "#stelle/controllers/player.js";
 import { PlaylistController } from "#stelle/controllers/playlist.js";
 import { PrefixController } from "#stelle/controllers/prefix.js";
+import { RequestsController } from "#stelle/controllers/requests.js";
 import { PrismaClient } from "#stelle/prisma";
 import { Cache } from "./Cache.js";
 
@@ -64,6 +65,13 @@ export class StelleDatabase {
     public readonly playlist: PlaylistController;
 
     /**
+     * The request-channel controller.
+     * @type {RequestsController}
+     * @readonly
+     */
+    public readonly requests: RequestsController;
+
+    /**
      * Indicates whether the database is connected.
      * @type {boolean}
      * @default false
@@ -81,6 +89,7 @@ export class StelleDatabase {
         this.prefixes = new PrefixController(this);
         this.players = new PlayerController(this);
         this.playlist = new PlaylistController(this);
+        this.requests = new RequestsController(this);
     }
 
     /**

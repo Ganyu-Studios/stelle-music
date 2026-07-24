@@ -41,6 +41,28 @@ const filter = (player: PlayerStructure, lastTrack: TrackStructure, tracks: Trac
 
 /**
  *
+ * Seed a YouTube "RD" radio mix from a video id and queue a slice of it. Shared by the YouTube / YouTube Music
+ * branch and the Spotify fallback (once it has bridged the Spotify track to a YouTube video).
+ * @param {PlayerStructure} player The player instance.
+ * @param {string} videoId The YouTube video id to seed the radio from.
+ * @param {TrackStructure} seed The track filtered out of the results (the radio seed itself).
+ * @param {TrackUser} me The requester.
+ * @returns {Promise<void>} A promise that resolves once the radio tracks are queued.
+ */
+async function startRadio(player: PlayerStructure, videoId: string, seed: TrackStructure, me: TrackUser): Promise<void> {
+    const url: string = `https://www.youtube.com/watch?v=${videoId}&list=RD${videoId}`;
+    const query: QueryResult = await player.search({ query: url, source: SearchSources.YoutubeMusic, requester: me });
+
+    const tracks: TrackResolvableStructure[] = filter(player, seed, query.tracks);
+    if (!tracks.length) return;
+
+    // Pick a random window so replaying the same seed doesn't always queue the same run of tracks.
+    const start: number = Math.max(0, Math.floor(Math.random() * (tracks.length - trackLimit + 1)));
+    await player.queue.add(tracks.slice(start, start + trackLimit));
+}
+
+/**
+ *
  * An autoplay function, that's all.
  * @param player The player instance.
  * @param lastTrack The last track played.
@@ -56,54 +78,46 @@ export async function autoplayFn(player: PlayerStructure, lastTrack: TrackStruct
 
     switch (lastTrack.info.sourceName) {
         case SourceNames.Spotify: {
-            const search: QueryResult = await player.search({
+            const { tracks }: QueryResult = await player.search({
                 query: lastTrack.info.identifier,
                 source: SearchSources.SpotifyTrackMix,
                 requester: me,
             });
 
-            // If we have results, add them to the queue
-            if (search.tracks.length) {
-                const tracks: TrackResolvableStructure[] = filter(player, lastTrack, search.tracks).slice(0, trackLimit);
-
-                await player.queue.add(tracks);
-                // If we don't have results, search on youtube
-            } else {
-                const search: QueryResult = await player.search({
-                    source: SearchSources.Youtube,
-                    query: `${lastTrack.info.title} ${lastTrack.info.author}`,
-                    requester: me,
-                });
-                const tracks: TrackResolvableStructure[] = filter(player, lastTrack, search.tracks).slice(0, trackLimit);
-
-                await player.queue.add(tracks);
+            // Spotify gave us a mix: queue it directly.
+            if (tracks.length) {
+                await player.queue.add(filter(player, lastTrack, tracks).slice(0, trackLimit));
+                break;
             }
+
+            // No mix available: bridge the Spotify track to a YouTube video, then seed a radio from it.
+            const query: QueryResult = await player.search({
+                source: SearchSources.Youtube,
+                query: `${lastTrack.info.title} ${lastTrack.info.author}`,
+                requester: me,
+            });
+
+            const match: TrackStructure | undefined = query.tracks.at(0);
+            if (match) await startRadio(player, match.info.identifier, match, me);
 
             break;
         }
 
         case SourceNames.Youtube:
         case SourceNames.YoutubeMusic: {
-            const url = `https://www.youtube.com/watch?v=${lastTrack.info.identifier}&list=RD${lastTrack.info.identifier}`;
-            const search: QueryResult = await player.search({ query: url, source: SearchSources.YoutubeMusic, requester: me });
-
-            if (search.tracks.length) {
-                const random: number = Math.floor(Math.random() * search.tracks.length);
-                const tracks: TrackResolvableStructure[] = filter(player, lastTrack, search.tracks).slice(random, random + trackLimit);
-
-                await player.queue.add(tracks);
-            }
+            await startRadio(player, lastTrack.info.identifier, lastTrack, me);
 
             break;
         }
 
         case SourceNames.Deezer: {
-            const search: QueryResult = await player.search({
+            const query: QueryResult = await player.search({
                 query: lastTrack.info.identifier,
                 source: SearchSources.DeezerRecommendations,
                 requester: me,
             });
-            const tracks: TrackResolvableStructure[] = filter(player, lastTrack, search.tracks).slice(0, trackLimit);
+
+            const tracks: TrackResolvableStructure[] = filter(player, lastTrack, query.tracks).slice(0, trackLimit);
 
             await player.queue.add(tracks);
 

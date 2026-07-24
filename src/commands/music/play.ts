@@ -22,8 +22,8 @@ import { StelleOptions } from "#stelle/utils/decorator.js";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { onAutocompleteError } from "#stelle/utils/functions/internal/overrides.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
-import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
-import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
+import { AutocompleteNoticeValue, UtilsOps } from "#stelle/utils/functions/internal/utils.js";
+import { playQuery } from "#stelle/utils/functions/manager/play.js";
 
 const options = {
     query: createStringOption({
@@ -40,25 +40,22 @@ const options = {
             const localeString: string = interaction.user.locale ?? client.config.defaultLocale;
             const t: DefaultLocale = client.t(localeString).get();
 
-            if (!(guildId && member)) return interaction.respond([{ name: t.messages.events.autocomplete.noGuild, value: "noGuild" }]);
+            if (!(guildId && member)) return interaction.respond(UtilsOps.autocomplete(t.messages.events.autocomplete.noGuild));
 
             const { searchPlatform: source } = await client.database.players.get(guildId);
             const { messages } = await ContextOps.locale(client, guildId);
 
-            if (!client.manager.isUseable()) return interaction.respond([{ name: messages.events.autocomplete.noNodes, value: "noNodes" }]);
+            if (!client.manager.isUsable()) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noNodes));
 
             const voice: VoiceState | null = await member.voice().catch((): null => null);
-            if (!voice) return interaction.respond([{ name: messages.events.autocomplete.noVoiceChannel, value: "noVoice" }]);
+            if (!voice) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noVoiceChannel));
 
             const query: string = interaction.getInput();
-            if (!query)
-                return interaction.respond([
-                    { name: messages.events.autocomplete.noQuery, value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT" },
-                ]);
+            if (!query) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noQuery));
 
             const { tracks }: QueryResult = await client.manager.search({ query, source, requester: null });
 
-            if (!tracks.length) return interaction.respond([{ name: messages.events.autocomplete.noTracks, value: "noTracks" }]);
+            if (!tracks.length) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noTracks));
 
             await interaction.respond(
                 tracks.slice(0, 25).map((track) => {
@@ -90,6 +87,11 @@ export default class PlayCommand extends Command {
         const { options, client, channelId, member } = ctx;
         const { query } = options;
 
+        const { messages } = await ctx.locale();
+
+        // The user picked an informative autocomplete notice, not a real track.
+        if (query === AutocompleteNoticeValue) return ctx.errorReply(messages.commands.play.noResults, { ephemeral: true, content: "" });
+
         if (!member) return;
 
         const me: GuildMember | null = await ctx.me().catch((): null => null);
@@ -103,25 +105,16 @@ export default class PlayCommand extends Command {
 
         await ctx.deferReply();
 
-        const { messages } = await ctx.locale();
-        const { defaultVolume, searchPlatform } = await client.database.players.get(ctx.guildId);
-
-        const player = client.manager.createPlayer({
+        const { player, loadType, playlist, tracks } = await playQuery({
+            client,
+            query,
+            voice,
+            me,
             guildId: ctx.guildId,
             textId: channelId,
-            voiceId: voice.id,
-            volume: defaultVolume,
-            selfDeaf: true,
+            requester: ctx.author,
+            localeString: await ctx.localeString(),
         });
-
-        await joinVoiceChannel(player, voice, me);
-
-        const { loadType, playlist, tracks } = await player.search({ query, source: searchPlatform, requester: ctx.author });
-
-        if (!(await player.data.get("localeString"))) await player.data.set("localeString", await ctx.localeString());
-        if (!(await player.data.get("me"))) await player.data.set("me", TrackOps.requesterFn(client.me));
-
-        const autoplayIndex = (await player.data.get("enabledAutoplay")) ? 0 : undefined;
 
         // Shared "nothing to play" reply, reused by the empty/error/unknown load types and the empty-track guards below.
         const noResults = () =>
@@ -132,30 +125,18 @@ export default class PlayCommand extends Command {
             });
 
         switch (loadType) {
-            case LoadType.Empty:
-            case LoadType.Error:
-                {
-                    if (!player.queue.current) await player.destroy();
-                    await noResults();
-                }
-                break;
-
             case LoadType.Track:
             case LoadType.Search:
                 {
                     const track: TrackStructure | undefined = tracks.at(0);
                     if (!track) return noResults();
 
-                    await player.queue.add(track, autoplayIndex);
-
-                    const duration: string = TrackOps.duration(track, messages);
-
                     const embed = new Embed()
                         .setThumbnail(track.info.artworkUrl ?? undefined)
                         .setColor(client.config.color.success)
                         .setDescription(
                             messages.commands.play.embed.result({
-                                duration,
+                                duration: TrackOps.duration(track, messages),
                                 requester: track.requester.id,
                                 position: player.queue.tracks.findIndex((t) => t.info.identifier === track.info.identifier) + 1,
                                 title: track.info.title,
@@ -165,12 +146,7 @@ export default class PlayCommand extends Command {
                         )
                         .setTimestamp();
 
-                    await ctx.editOrReply({
-                        content: "",
-                        embeds: [embed],
-                    });
-
-                    if (!player.playing) await player.play();
+                    await ctx.editOrReply({ content: "", embeds: [embed] });
                 }
                 break;
 
@@ -178,8 +154,6 @@ export default class PlayCommand extends Command {
                 {
                     const track: TrackStructure | undefined = tracks.at(0);
                     if (!track) return noResults();
-
-                    await player.queue.add(tracks, autoplayIndex);
 
                     const embed = new Embed()
                         .setColor(client.config.color.success)
@@ -195,20 +169,12 @@ export default class PlayCommand extends Command {
                         )
                         .setTimestamp();
 
-                    await ctx.editOrReply({
-                        content: "",
-                        embeds: [embed],
-                    });
-
-                    if (!player.playing) await player.play();
+                    await ctx.editOrReply({ content: "", embeds: [embed] });
                 }
                 break;
 
             default:
-                {
-                    if (!player.queue.current) await player.destroy();
-                    await noResults();
-                }
+                await noResults();
                 break;
         }
     }

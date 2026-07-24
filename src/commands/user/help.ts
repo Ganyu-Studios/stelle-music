@@ -20,7 +20,7 @@ import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js";
 import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
-import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
+import { AutocompleteNoticeValue, UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  * The type for a command that can be resolved to a command or a context menu command.
@@ -51,13 +51,7 @@ const options = {
             }
 
             const command: ResolvableCommand | undefined = commands.find((command) => command.name === input);
-            if (!command)
-                return interaction.respond([
-                    {
-                        name: messages.events.autocomplete.noCommand,
-                        value: "noCommand",
-                    },
-                ]);
+            if (!command) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noCommand));
 
             const description: string = command.description_localizations?.[interaction.locale] ?? command.description;
 
@@ -90,7 +84,7 @@ export default class HelpCommand extends Command {
         const { client, options } = ctx;
         const { messages } = await ctx.locale();
 
-        if (options.command === "noCommand") return ctx.errorReply(messages.commands.help.noCommand, { ephemeral: true });
+        if (options.command === AutocompleteNoticeValue) return ctx.errorReply(messages.commands.help.noCommand, { ephemeral: true });
 
         const commands: ResolvableCommand[] = client.commands.values.filter((command): boolean => !command.guildId);
         const categoryList: number[] = commands
@@ -200,12 +194,12 @@ export default class HelpCommand extends Command {
  * @returns {string} The parsed command.
  */
 function parseCommand(
-    command: Command | ContextMenuCommand,
+    command: ResolvableCommand,
     optionsType: Record<ApplicationCommandOptionType, string>,
     locale?: LocaleString,
 ): string {
     if (command instanceof ContextMenuCommand) return command.name;
-    let content = command.name;
+    let content: string = command.name;
     for (const option of command.options ?? []) {
         if (option instanceof SubCommand) {
             content += `\n    ${parseSubCommand(option, optionsType)}`;
@@ -225,11 +219,14 @@ function parseCommand(
  * @returns {string} The parsed subcommand.
  */
 function parseSubCommand(subCommand: SubCommand, optionsType: Record<ApplicationCommandOptionType, string>): string {
-    if (!subCommand.options?.length) return `↪ ${subCommand.name}`;
-    return `↪ ${subCommand.group ?? ""} ${subCommand.name} ${getFormattedOptions(
-        subCommand.options as APIApplicationCommandOption[],
-        optionsType,
-    )
-        .map((x) => x.option)
-        .join(" ")}`.trim();
+    // getFormattedOptions returns [] for missing options, so no guard is needed.
+    const options: string[] = getFormattedOptions(subCommand.options as APIApplicationCommandOption[] | undefined, optionsType).map(
+        (x): string => x.option,
+    );
+
+    // Join only the present parts: a subcommand may have no group (top-level) and/or no options. The old two branches
+    // dropped the group on optionless subs and left a double space when the group was empty.
+    const parts: string[] = [subCommand.group, subCommand.name, ...options].filter((part): part is string => Boolean(part));
+
+    return `↪ ${parts.join(" ")}`;
 }

@@ -1,6 +1,7 @@
 import type { AutocompleteInteraction, User } from "seyfert";
 import type { userPlaylist } from "#stelle/prisma";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  *
@@ -23,13 +24,7 @@ export async function playlistAutocomplete(interaction: AutocompleteInteraction)
             playlist.userId === user.id || (playlist.public && (!isManageable || playlist.userId === interaction.user.id)),
     );
 
-    if (!data.length)
-        return interaction.respond([
-            {
-                name: messages.events.autocomplete.noPlaylist,
-                value: "no-playlists-found",
-            },
-        ]);
+    if (!data.length) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noPlaylist));
 
     /**
      *
@@ -59,14 +54,7 @@ export async function playlistAutocomplete(interaction: AutocompleteInteraction)
             .slice(0, 25),
     );
 
-    if (!playlists.length) {
-        return interaction.respond([
-            {
-                name: messages.events.autocomplete.noPlaylist,
-                value: "no-playlists-found",
-            },
-        ]);
-    }
+    if (!playlists.length) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noPlaylist));
 
     return interaction.respond(playlists);
 }

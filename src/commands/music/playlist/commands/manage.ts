@@ -139,7 +139,7 @@ export default class ManageSubcommand extends SubCommand {
                 });
             },
             onStop: async (reason): Promise<void> => {
-                if (reason === "idle" && !UtilsOps.hasFlags(message.flags, [MessageFlags.Ephemeral])) {
+                if (reason === "idle" && !UtilsOps.flags(message.flags, [MessageFlags.Ephemeral])) {
                     await message.edit({ components: ComponentOps.update(message, { disabled: true }) });
                 }
             },

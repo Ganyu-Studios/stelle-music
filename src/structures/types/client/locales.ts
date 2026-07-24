@@ -38,6 +38,7 @@ export type IPlaylistSave = { type: string; amount: number };
 export type IPlaylistDelete = { amount: number };
 export type IPlaylistEntry = { id: string; name: string; tracks: number; timestamp: number };
 export type IPublicPlaylistEntry = IPlaylistEntry & IUser;
+export type IRequestQueueEntry = { position: number; title: string; requester: string };
 export type ITwentyForSeven = { is247: string; autoPause: string };
 export type INowPlaying = { userName: string; time: string };
 export type IBotInfoGitField = { branch: string; commit: string; time: string; commitUrl: string };

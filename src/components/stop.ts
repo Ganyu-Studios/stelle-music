@@ -9,7 +9,13 @@ export default class StopComponent extends ComponentCommand {
     async run(ctx: GuildComponentContext<typeof this.componentType, "checkPlayer">): Promise<void> {
         const { player } = ctx.metadata.checkPlayer;
 
+        const isRequestChannel: boolean = !!(await player.data.get("isRequestChannel"));
+
         await player.destroy();
-        await ComponentOps.cleanup(ctx, "onPlayerStop");
+
+        // On a request channel the button lives on the persistent panel: never delete/clear it (the destroy event
+        // resets it to idle) — just acknowledge the interaction.
+        if (isRequestChannel) await ctx.interaction.deferUpdate();
+        else await ComponentOps.cleanup(ctx, "onPlayerStop");
     }
 }

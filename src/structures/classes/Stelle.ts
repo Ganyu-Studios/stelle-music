@@ -205,7 +205,7 @@ export class Stelle extends Client<true> {
     public async reload(): Promise<void> {
         this.logger.warn("[Client] Reload started");
 
-        const cachePath: string = StellePaths.GetCacheDirectory();
+        const cachePath: string = StellePaths.GetCommandsPath();
 
         try {
             await this.events.reloadAll();

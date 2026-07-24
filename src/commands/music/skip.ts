@@ -31,15 +31,16 @@ export default class SkipCommand extends Command {
     public override async run(ctx: GuildCommandContext<typeof options, "checkPlayer">): Promise<void> {
         const { options } = ctx;
         const { to } = options;
-
+        const { player } = ctx.metadata.checkPlayer;
         const { messages } = await ctx.locale();
 
-        const { player } = ctx.metadata.checkPlayer;
+        const length: number = player.queue.size;
+
+        if (to && (to < 1 || to > length)) return ctx.errorReply(messages.commands.skip.invalidAmount({ amount: length }));
 
         const isAutoplay: boolean | undefined = await player.data.get("enabledAutoplay");
 
         await player.skip({ to, throwError: !isAutoplay });
-
-        await ctx.successReply(messages.commands.skip({ amount: to ?? 1 }));
+        await ctx.successReply(messages.commands.skip.amount({ amount: to ?? 1 }));
     }
 }

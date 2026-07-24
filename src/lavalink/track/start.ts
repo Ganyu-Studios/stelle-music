@@ -1,8 +1,8 @@
 import { EventNames } from "hoshimi";
-import { ActionRow, Button, Embed, type MessageStructure } from "seyfert";
-import { ButtonStyle } from "seyfert/lib/types/index.js";
-import { StelleMeta, StelleMusic } from "#stelle/utils/data/constants.js";
+import { Embed, type MessageStructure } from "seyfert";
+import { StelleMeta } from "#stelle/utils/data/constants.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
+import { buildControls, updatePanel } from "#stelle/utils/functions/manager/panel.js";
 import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
@@ -12,93 +12,46 @@ export default createLavalinkEvent({
         if (!(player.textId && player.voiceId)) return;
         if (!track) return;
 
-        const isAutoplay: boolean = (await player.data.get("enabledAutoplay")) ?? false;
-
         const messages = await PlayerOps.messages(client, player);
         if (!messages) return;
 
         const voice = await PlayerOps.voice(client, player);
         if (!voice) return;
 
-        const duration: string = TrackOps.duration(track, messages);
-
-        const embed = new Embed()
-            .setDescription(
-                messages.events.trackStart.embed({
-                    duration,
-                    requester: track.requester.id,
-                    title: track.info.title,
-                    url: track.info.uri,
-                    volume: player.volume,
-                    author: track.info.author,
-                    size: player.queue.tracks.length,
-                }),
-            )
-            .setThumbnail(track.info.artworkUrl ?? undefined)
-            .setColor(client.config.color.extra)
-            .setTimestamp();
-
-        const components: ActionRow<Button>[] = [
-            new ActionRow<Button>().addComponents(
-                new Button()
-                    .setCustomId("player-stopPlayer")
-                    .setStyle(ButtonStyle.Danger)
-                    .setLabel(messages.events.trackStart.components.stop),
-                new Button()
-                    .setCustomId("player-skipTrack")
-                    .setStyle(ButtonStyle.Secondary)
-                    .setLabel(messages.events.trackStart.components.skip),
-                new Button()
-                    .setCustomId("player-previousTrack")
-                    .setStyle(ButtonStyle.Secondary)
-                    .setLabel(messages.events.trackStart.components.previous),
-                new Button()
-                    .setCustomId("player-lyricsShow")
-                    .setStyle(ButtonStyle.Secondary)
-                    .setLabel(messages.events.trackStart.components.lyrics),
-                new Button()
-                    .setCustomId("player-guildQueue")
-                    .setStyle(ButtonStyle.Primary)
-                    .setLabel(messages.events.trackStart.components.queue),
-            ),
-            new ActionRow<Button>().addComponents(
-                new Button()
-                    .setCustomId("player-toggleAutoplay")
-                    .setStyle(ButtonStyle.Primary)
-                    .setLabel(
-                        messages.events.trackStart.components.autoplay({
-                            type: messages.commands.autoplay.autoplayType[StelleMusic.AutoplayState(isAutoplay)],
-                        }),
-                    ),
-                new Button()
-                    .setCustomId("player-toggleLoop")
-                    .setStyle(ButtonStyle.Secondary)
-                    .setLabel(
-                        messages.events.trackStart.components.loop({
-                            type: messages.commands.loop.loopType[player.loop],
-                        }),
-                    ),
-                new Button()
-                    .setCustomId("player-pauseTrack")
-                    .setStyle(ButtonStyle.Primary)
-                    .setLabel(messages.events.trackStart.components.states[StelleMusic.PauseState(player.paused)]),
-            ),
-        ];
-
         if (voice.isVoice())
             await voice
-                .setVoiceStatus(
-                    messages.events.voiceStatus.trackStart({
-                        author: track.info.author,
-                        title: track.info.title,
-                    }),
-                )
+                .setVoiceStatus(messages.events.voiceStatus.trackStart({ author: track.info.author, title: track.info.title }))
                 .catch((): null => null);
 
-        const message: MessageStructure | null = await client.messages
-            .write(player.textId, { embeds: [embed], components })
-            .catch((): null => null);
-        if (message) await player.data.set("messageId", message.id);
+        if (await player.data.get("isRequestChannel")) {
+            // Persistent panel: edit the request-channel message in place instead of posting a new now-playing message.
+            await updatePanel(client, player.guildId, player, track);
+        } else {
+            const isAutoplay: boolean = (await player.data.get("enabledAutoplay")) ?? false;
+
+            const embed = new Embed()
+                .setDescription(
+                    messages.events.trackStart.embed({
+                        duration: TrackOps.duration(track, messages),
+                        requester: track.requester.id,
+                        title: track.info.title,
+                        url: track.info.uri,
+                        volume: player.volume,
+                        author: track.info.author,
+                        size: player.queue.tracks.length,
+                    }),
+                )
+                .setThumbnail(track.info.artworkUrl ?? undefined)
+                .setColor(client.config.color.extra)
+                .setTimestamp();
+
+            const components = buildControls(messages, { isAutoplay, loop: player.loop, paused: player.paused });
+
+            const message: MessageStructure | null = await client.messages
+                .write(player.textId, { embeds: [embed], components })
+                .catch((): null => null);
+            if (message) await player.data.set("messageId", message.id);
+        }
 
         if (StelleMeta.Debug)
             client.debugger?.info(
