@@ -22,7 +22,7 @@ type RequiredPlayerJson = MakeRequired<StellePlayerJson>;
  * The directory where the cache is stored.
  * @type {string}
  */
-const dir: string = await UtilsOps.createDir(StellePaths.CachePath);
+const dir: string = await UtilsOps.createDir(StellePaths.CacheDirectory);
 
 /**
  * The name of the sessions file without the `.json` extension.

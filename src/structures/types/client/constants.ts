@@ -79,7 +79,13 @@ export interface ConstantsPaths {
      * @type {string}
      * @default "./cache"
      */
-    readonly CachePath: string;
+    readonly CacheDirectory: string;
+    /**
+     * The subdirectory (under {@link ConstantsPaths.CacheDirectory}) where rendered banners are cached.
+     * @type {string}
+     * @default "banners"
+     */
+    readonly BannersDirectory: string;
     /**
      * The filename to save the commands cache.
      * @type {`${string}.json`}
@@ -93,15 +99,20 @@ export interface ConstantsPaths {
      */
     readonly SessionsFile: `${string}.json`;
     /**
+     * Get the absolute path to the commands cache file.
+     * @returns {string} The commands cache path.
+     */
+    GetCommandsPath(): string;
+    /**
      * Get the current output directory of the bot. (By default, derived from `StelleMeta.Dev`.)
      * @returns {OutputDirectory} The current output directory of the bot.
      */
     GetOutDirectory(): OutputDirectory;
     /**
-     * Get the absolute path to the commands cache file.
-     * @returns {string} The commands cache path.
+     * Get the absolute path to the directory where rendered banners are cached.
+     * @returns {string} The banners cache directory.
      */
-    GetCacheDirectory(): string;
+    GetBannersDirectory(): string;
 }
 
 /**
