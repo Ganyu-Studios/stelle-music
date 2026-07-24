@@ -130,10 +130,10 @@ export async function buildPanel(
         embed.setDescription(`${nowPlaying}${queue}`).setTimestamp();
 
         const banner = await ImageOps.banner({
+            identifier: track.info.identifier,
             albumURL: track.info.artworkUrl ?? undefined,
             name: UtilsOps.truncate(UtilsOps.sanitize(track.info.title), 50),
             artist: UtilsOps.truncate(UtilsOps.sanitize(track.info.author), 50),
-            by: messages.events.requestChannel.banner.by,
         });
 
         const attachment = new AttachmentBuilder().setFile("buffer", banner).setName("panel-banner.png");

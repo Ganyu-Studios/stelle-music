@@ -343,7 +343,6 @@ export default {
                     title: ({ clientName }): string => `${clientName} PETICIONES`,
                     prompt: "Únete a un canal de voz y envía el nombre o URL de una canción",
                     footer: "STELLE  MUSIC  BOT",
-                    by: "por",
                 },
             },
             permissions: {

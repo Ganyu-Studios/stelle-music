@@ -401,7 +401,6 @@ export default {
                     title: ({ clientName }: IClientName): string => `${clientName} REQUESTS`,
                     prompt: "Join a voice channel and send a song name or URL",
                     footer: "STELLE  MUSIC  BOT",
-                    by: "by",
                 },
             },
             permissions: {

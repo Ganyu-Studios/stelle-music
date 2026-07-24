@@ -1,7 +1,9 @@
-import { readFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, stat, unlink, utimes, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { Image } from "imagescript";
 import type { ImageData } from "#stelle/types";
+import { Configuration } from "#stelle/utils/data/configuration.js";
+import { StellePaths } from "#stelle/utils/data/constants.js";
 
 const ImageColors = {
     Text: -841550593,
@@ -136,6 +138,99 @@ function getProgress(progress: number, total: number, x: number): number {
 async function getBuffer(url: string): Promise<Buffer> {
     const res: Response = await fetch(url);
     return Buffer.from(await res.arrayBuffer());
+}
+
+/**
+ * The directory where rendered now-playing banners are cached on disk, one PNG per track identifier.
+ * @type {string}
+ */
+const BANNERS_DIR: string = StellePaths.GetBannersDirectory();
+
+/**
+ * Resolve the on-disk path for a track's cached banner. Source identifiers are already url-safe (base62 /
+ * 11-char / numeric ids), but any stray character is squashed so it never escapes the cache directory.
+ * @param {string} identifier The track source identifier.
+ * @returns {string} The absolute PNG path.
+ */
+function bannerPath(identifier: string): string {
+    return join(BANNERS_DIR, `${identifier.replace(/[^a-zA-Z0-9._-]/g, "_")}.png`);
+}
+
+/**
+ * Read a cached banner if present and still within its TTL. A hit refreshes the file's mtime, so the TTL is
+ * sliding (time since last use) and the mtime doubles as the LRU recency signal used by {@link evictBanners}.
+ * @param {string} identifier The track source identifier.
+ * @param {number} ttl The maximum age since last use, in milliseconds.
+ * @returns {Promise<Uint8Array | null>} The cached PNG buffer, or null on miss / stale / unreadable.
+ */
+async function readBannerCache(identifier: string, ttl: number): Promise<Uint8Array | null> {
+    const file: string = bannerPath(identifier);
+
+    try {
+        const info = await stat(file);
+        if (Date.now() - info.mtimeMs > ttl) {
+            await unlink(file).catch((): null => null);
+            return null;
+        }
+
+        const buffer: Buffer = await readFile(file);
+
+        const now: Date = new Date();
+        await utimes(file, now, now).catch((): null => null);
+
+        return buffer;
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Write a rendered banner to the cache, then evict the least-recently-used entries beyond `maxEntries`.
+ * Best-effort: any filesystem error is swallowed so caching never breaks rendering.
+ * @param {string} identifier The track source identifier.
+ * @param {Uint8Array} buffer The encoded PNG.
+ * @param {number} maxEntries The maximum number of cached banners to keep.
+ * @returns {Promise<void>} A promise that resolves once the banner is written and the cache is pruned.
+ */
+async function writeBannerCache(identifier: string, buffer: Uint8Array, maxEntries: number): Promise<void> {
+    try {
+        await mkdir(BANNERS_DIR, { recursive: true });
+        await writeFile(bannerPath(identifier), buffer);
+        await evictBanners(maxEntries);
+    } catch {
+        // Caching is best-effort; ignore write/eviction failures.
+    }
+}
+
+/**
+ * Drop the oldest cached banners (by mtime, i.e. least recently used) until at most `maxEntries` remain.
+ * @param {number} maxEntries The maximum number of cached banners to keep.
+ * @returns {Promise<void>} A promise that resolves once the cache is within the cap.
+ */
+async function evictBanners(maxEntries: number): Promise<void> {
+    const files: string[] = await readdir(BANNERS_DIR).catch((): string[] => []);
+    if (files.length <= maxEntries) return;
+
+    const entries = await Promise.all(
+        files.map(
+            async (file): Promise<{ file: string; mtime: number }> => ({
+                file,
+                mtime: (await stat(join(BANNERS_DIR, file)).catch((): null => null))?.mtimeMs ?? 0,
+            }),
+        ),
+    );
+
+    entries.sort((a, b): number => a.mtime - b.mtime);
+
+    const excess = entries.slice(0, entries.length - maxEntries);
+    await Promise.all(
+        excess.map(
+            (entry): Promise<void> =>
+                unlink(join(BANNERS_DIR, entry.file))
+                    .then(() => {})
+                    .catch((): void => {}),
+        ),
+    );
 }
 
 /**
@@ -392,11 +487,21 @@ export const ImageOps = {
      * Unlike {@link ImageOps.render}, this draws its own frame procedurally instead of reusing
      * `border_w`/`border_b`.png, since those assets bake in fixed-position decorations (the header bar,
      * the "..." dots) meant for the full 1080x1350 layout and don't line up correctly on a banner canvas.
-     * @param {Pick<ImageData, "albumURL" | "name" | "artist"> & { by: string }} data The album URL, track name, and artist (with "by" prefix) to render.
+     *
+     * The result is deterministic per track, so it is cached on disk by `identifier` (see
+     * {@link readBannerCache}) when `config.images.enabled`, skipping both the artwork fetch and the render.
+     * @param {Pick<ImageData, "albumURL" | "name" | "artist"> & { identifier: string }} data The track identifier, album URL, track name, and artist to render.
      * @returns {Promise<Uint8Array>} A Promise that resolves to a Uint8Array representing the encoded image.
      */
-    async banner(data: Pick<ImageData, "albumURL" | "name" | "artist"> & { by: string }): Promise<Uint8Array> {
-        const { albumURL, name, artist, by } = data;
+    async banner(data: Pick<ImageData, "albumURL" | "name" | "artist"> & { identifier: string }): Promise<Uint8Array> {
+        const { albumURL, name, artist, identifier } = data;
+
+        const { enabled, ttl, maxEntries } = Configuration.images;
+        if (enabled) {
+            const cached: Uint8Array | null = await readBannerCache(identifier, ttl);
+            if (cached) return cached;
+        }
+
         const fontsPath: string = join(process.cwd(), "assets", "fonts");
         const font: Buffer<ArrayBuffer> = await readFile(join(fontsPath, "BoldFont.ttf"));
 
@@ -415,9 +520,8 @@ export const ImageOps = {
         const layoutColor: number = opaque ? ImageColors.SubText : ImageColors.Surface;
 
         const textMaxWidth: number = WIDTH - (MARGIN + ART_SIZE + 50) - MARGIN;
-        const artistLabel: string = `${by} ${artist}`;
         const trackText: Image = await renderFitted(font, name, textMaxWidth, 54, 24, mainColor);
-        const artistText: Image = await renderFitted(font, artistLabel, textMaxWidth, 38, 20, layoutColor);
+        const artistText: Image = await renderFitted(font, artist, textMaxWidth, 38, 20, layoutColor);
 
         // 1. Card frame: a thin outer stroke (mainColor) with the dominant color filling the inside
         const outer: Image = new Image(WIDTH, HEIGHT).fill(mainColor).opacity(0.9).roundCorners(RADIUS);
@@ -443,6 +547,9 @@ export const ImageOps = {
         canvas.composite(trackText, Math.round(textAreaCenter - trackText.width / 2), textStartY);
         canvas.composite(artistText.opacity(0.9), Math.round(textAreaCenter - artistText.width / 2), textStartY + trackText.height + 14);
 
-        return canvas.encode();
+        const encoded: Uint8Array = await canvas.encode();
+        if (enabled) await writeBannerCache(identifier, encoded, maxEntries);
+
+        return encoded;
     },
 };

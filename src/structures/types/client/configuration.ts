@@ -94,6 +94,30 @@ interface Cache {
     expire: number;
 }
 
+/**
+ * The rendered-image (banner) disk cache configuration.
+ */
+interface Images {
+    /**
+     * Whether to cache rendered now-playing banners on disk.
+     * @type {boolean}
+     * @default true
+     */
+    enabled: boolean;
+    /**
+     * How long a cached banner stays valid, refreshed on each hit. (In milliseconds)
+     * @type {number}
+     * @default ms("24h")
+     */
+    ttl: number;
+    /**
+     * The maximum number of cached banners kept on disk (least-recently-used are evicted first).
+     * @type {number}
+     * @default 100
+     */
+    maxEntries: number;
+}
+
 interface Deleter {
     /**
      * Whether to delete the message when the track ends.
@@ -247,6 +271,11 @@ export interface InternalStelleConfiguration {
      * @type {Cache}
      */
     cache: Cache;
+    /**
+     * The rendered-image (banner) disk cache configuration.
+     * @type {Images}
+     */
+    images: Images;
     /**
      * The deleter message configuration.
      * @type {Deleter}
