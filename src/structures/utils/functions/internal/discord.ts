@@ -25,6 +25,12 @@ interface GuildLogOptions {
 }
 
 export const DiscordOps = {
+    /**
+     *
+     * Return the webhook metadata from a Discord webhook URL.
+     * @param {string} url The Discord webhook URL.
+     * @returns {WebhookMetadata | null} The webhook metadata or null if the URL is invalid.
+     */
     webhook(url: string): WebhookMetadata | null {
         const regex = /https?:\/\/(?:ptb\.|canary\.)?discord\.com\/api(?:\/v\d{1,2})?\/webhooks\/(?<id>\d{17,19})\/(?<token>[\w-]{68})/i;
 
@@ -33,7 +39,14 @@ export const DiscordOps = {
 
         return { id: match.groups.id, token: match.groups.token };
     },
-
+    /**
+     *
+     * Log a guild event to the specified channel using an embed.
+     * @param {UsingClient} client The client instance.
+     * @param {Guild<"create" | "cached">} guild The guild to log.
+     * @param {GuildLogOptions} options The options for the log.
+     * @returns {Promise<void>} A promise that resolves when the log is sent.
+     */
     async guildLog(client: UsingClient, guild: Guild<"create" | "cached">, options: GuildLogOptions): Promise<void> {
         const owner = await guild.fetchOwner().catch((): null => null);
         const ownerName: string = owner?.displayName ?? "Unknown";
@@ -51,7 +64,12 @@ export const DiscordOps = {
 
         await client.messages.write(client.config.channels.guildsId, { embeds: [embed] });
     },
-
+    /**
+     *
+     * Return the permission names from the given permission strings.
+     * @param {PermissionStrings} permissions The permission strings.
+     * @returns {PermissionNames[]} The permission names.
+     */
     permissions(permissions: PermissionStrings): PermissionNames[] {
         return new PermissionsBitField(permissions.map((p): bigint => PermissionsBitField.resolve(p))).keys();
     },

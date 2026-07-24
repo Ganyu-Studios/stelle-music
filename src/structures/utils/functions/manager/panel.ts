@@ -167,7 +167,7 @@ export async function buildPanel(
 
         embed.setImage("attachment://panel-banner.png");
         embed.setFooter({
-            text: messages.events.requestChannel.footer({ userName: track.requester.username, time: ms(Date.now() - start) }),
+            text: messages.events.requestChannel.footer({ userName: track.requester.tag, time: ms(Date.now() - start) }),
         });
 
         return {
