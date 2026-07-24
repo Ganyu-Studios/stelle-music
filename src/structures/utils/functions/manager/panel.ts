@@ -4,6 +4,7 @@ import { ButtonStyle } from "seyfert/lib/types/index.js";
 import { StelleMusic } from "#stelle/utils/data/constants.js";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { ImageOps } from "#stelle/utils/functions/internal/image.js";
+import { ms } from "#stelle/utils/functions/internal/time.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { UtilsOps } from "../internal/utils.js";
 
@@ -100,6 +101,8 @@ export async function buildPanel(
     player?: PlayerStructure,
     track?: TrackStructure,
 ): Promise<PanelBody> {
+    const start: number = Date.now();
+
     const embed = new Embed()
         .setTitle(messages.events.requestChannel.title({ clientName: client.me.username }))
         .setColor(client.config.color.extra);
@@ -138,6 +141,10 @@ export async function buildPanel(
 
         const attachment = new AttachmentBuilder().setFile("buffer", banner).setName("panel-banner.png");
         embed.setImage("attachment://panel-banner.png");
+
+        embed.setFooter({
+            text: messages.events.requestChannel.footer({ userName: track.requester.username, time: ms(Date.now() - start) }),
+        });
 
         return {
             embeds: [embed],
