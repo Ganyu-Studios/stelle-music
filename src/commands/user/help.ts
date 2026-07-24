@@ -20,7 +20,7 @@ import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js";
 import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
-import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
+import { AutocompleteNoticeValue, UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  * The type for a command that can be resolved to a command or a context menu command.
@@ -51,13 +51,7 @@ const options = {
             }
 
             const command: ResolvableCommand | undefined = commands.find((command) => command.name === input);
-            if (!command)
-                return interaction.respond([
-                    {
-                        name: messages.events.autocomplete.noCommand,
-                        value: "noCommand",
-                    },
-                ]);
+            if (!command) return interaction.respond(UtilsOps.autocompleteNotice(messages.events.autocomplete.noCommand));
 
             const description: string = command.description_localizations?.[interaction.locale] ?? command.description;
 
@@ -90,7 +84,7 @@ export default class HelpCommand extends Command {
         const { client, options } = ctx;
         const { messages } = await ctx.locale();
 
-        if (options.command === "noCommand") return ctx.errorReply(messages.commands.help.noCommand, { ephemeral: true });
+        if (options.command === AutocompleteNoticeValue) return ctx.errorReply(messages.commands.help.noCommand, { ephemeral: true });
 
         const commands: ResolvableCommand[] = client.commands.values.filter((command): boolean => !command.guildId);
         const categoryList: number[] = commands

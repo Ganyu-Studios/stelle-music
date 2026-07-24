@@ -4,7 +4,15 @@ import { isAbsolute, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { inspect as nodeInspect } from "node:util";
 import type { AnyContext, UsingClient } from "seyfert";
+import type { APIApplicationCommandOptionChoice } from "seyfert/lib/types/index.js";
 import type { Omit, Plain, Prettify } from "#stelle/types";
+
+/**
+ * The sentinel value used by informative autocomplete choices ({@link UtilsOps.autocompleteNotice}); command
+ * runs treat it as a missing/invalid selection.
+ * @type {string}
+ */
+export const AutocompleteNoticeValue: string = "none";
 
 /**
  * The options for creating an ID.
@@ -50,6 +58,16 @@ export const UtilsOps = {
         if (ctx.isComponent() || ctx.isModal()) return `${authorId}-${ctx.customId}-component`;
 
         return `${authorId}-all`;
+    },
+    /**
+     *
+     * Build a single-choice autocomplete response that surfaces a notice (empty results, missing selection)
+     * instead of an empty dropdown. Uses a unicode emoji since custom emojis don't render in autocomplete.
+     * @param {string} message The notice to show as the choice label.
+     * @returns {APIApplicationCommandOptionChoice<string>[]} The single-choice response.
+     */
+    autocompleteNotice(message: string): APIApplicationCommandOptionChoice<string>[] {
+        return [{ name: `⚠️ ${message}`, value: AutocompleteNoticeValue }];
     },
     /**
      *

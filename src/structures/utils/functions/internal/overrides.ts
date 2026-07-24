@@ -13,6 +13,7 @@ import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js
 import { sendErrorReport } from "#stelle/utils/functions/internal/report.js";
 import { ContextOps } from "./context.js";
 import { DiscordOps } from "./discord.js";
+import { UtilsOps } from "./utils.js";
 
 /**
  *
@@ -41,12 +42,7 @@ export async function onAutocompleteError(interaction: AutocompleteInteraction, 
     const { messages } = await ContextOps.locale(interaction.client, interaction.guildId);
 
     await sendErrorReport({ error });
-    await interaction.respond([
-        {
-            name: messages.events.autocomplete.noAnything,
-            value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT",
-        },
-    ]);
+    await interaction.respond(UtilsOps.autocompleteNotice(messages.events.autocomplete.noAnything));
 }
 
 /**

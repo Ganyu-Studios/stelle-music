@@ -22,7 +22,7 @@ import { StelleOptions } from "#stelle/utils/decorator.js";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { onAutocompleteError } from "#stelle/utils/functions/internal/overrides.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
-import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
+import { AutocompleteNoticeValue, UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 import { playQuery } from "#stelle/utils/functions/manager/play.js";
 
 const options = {
@@ -40,25 +40,22 @@ const options = {
             const localeString: string = interaction.user.locale ?? client.config.defaultLocale;
             const t: DefaultLocale = client.t(localeString).get();
 
-            if (!(guildId && member)) return interaction.respond([{ name: t.messages.events.autocomplete.noGuild, value: "noGuild" }]);
+            if (!(guildId && member)) return interaction.respond(UtilsOps.autocompleteNotice(t.messages.events.autocomplete.noGuild));
 
             const { searchPlatform: source } = await client.database.players.get(guildId);
             const { messages } = await ContextOps.locale(client, guildId);
 
-            if (!client.manager.isUsable()) return interaction.respond([{ name: messages.events.autocomplete.noNodes, value: "noNodes" }]);
+            if (!client.manager.isUsable()) return interaction.respond(UtilsOps.autocompleteNotice(messages.events.autocomplete.noNodes));
 
             const voice: VoiceState | null = await member.voice().catch((): null => null);
-            if (!voice) return interaction.respond([{ name: messages.events.autocomplete.noVoiceChannel, value: "noVoice" }]);
+            if (!voice) return interaction.respond(UtilsOps.autocompleteNotice(messages.events.autocomplete.noVoiceChannel));
 
             const query: string = interaction.getInput();
-            if (!query)
-                return interaction.respond([
-                    { name: messages.events.autocomplete.noQuery, value: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT" },
-                ]);
+            if (!query) return interaction.respond(UtilsOps.autocompleteNotice(messages.events.autocomplete.noQuery));
 
             const { tracks }: QueryResult = await client.manager.search({ query, source, requester: null });
 
-            if (!tracks.length) return interaction.respond([{ name: messages.events.autocomplete.noTracks, value: "noTracks" }]);
+            if (!tracks.length) return interaction.respond(UtilsOps.autocompleteNotice(messages.events.autocomplete.noTracks));
 
             await interaction.respond(
                 tracks.slice(0, 25).map((track) => {
@@ -90,6 +87,11 @@ export default class PlayCommand extends Command {
         const { options, client, channelId, member } = ctx;
         const { query } = options;
 
+        const { messages } = await ctx.locale();
+
+        // The user picked an informative autocomplete notice, not a real track.
+        if (query === AutocompleteNoticeValue) return ctx.errorReply(messages.commands.play.noResults, { ephemeral: true, content: "" });
+
         if (!member) return;
 
         const me: GuildMember | null = await ctx.me().catch((): null => null);
@@ -102,8 +104,6 @@ export default class PlayCommand extends Command {
         if (!voice) return;
 
         await ctx.deferReply();
-
-        const { messages } = await ctx.locale();
 
         const { player, loadType, playlist, tracks } = await playQuery({
             client,
