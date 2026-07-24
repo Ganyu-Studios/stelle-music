@@ -36,7 +36,8 @@ export default class SkipCommand extends Command {
 
         const length: number = player.queue.size;
 
-        if (to && (to < 1 || to > length)) return ctx.errorReply(messages.commands.skip.invalidAmount({ amount: length }));
+        if (to && (to < 1 || to > length))
+            return ctx.errorReply(messages.commands.skip.invalidAmount({ amount: length }), { ephemeral: true });
 
         const isAutoplay: boolean | undefined = await player.data.get("enabledAutoplay");
 
