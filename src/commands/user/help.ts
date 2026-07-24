@@ -51,7 +51,7 @@ const options = {
             }
 
             const command: ResolvableCommand | undefined = commands.find((command) => command.name === input);
-            if (!command) return interaction.respond(UtilsOps.autocompleteNotice(messages.events.autocomplete.noCommand));
+            if (!command) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noCommand));
 
             const description: string = command.description_localizations?.[interaction.locale] ?? command.description;
 

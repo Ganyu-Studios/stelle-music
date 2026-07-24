@@ -24,7 +24,7 @@ export async function playlistAutocomplete(interaction: AutocompleteInteraction)
             playlist.userId === user.id || (playlist.public && (!isManageable || playlist.userId === interaction.user.id)),
     );
 
-    if (!data.length) return interaction.respond(UtilsOps.autocompleteNotice(messages.events.autocomplete.noPlaylist));
+    if (!data.length) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noPlaylist));
 
     /**
      *
@@ -54,7 +54,7 @@ export async function playlistAutocomplete(interaction: AutocompleteInteraction)
             .slice(0, 25),
     );
 
-    if (!playlists.length) return interaction.respond(UtilsOps.autocompleteNotice(messages.events.autocomplete.noPlaylist));
+    if (!playlists.length) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noPlaylist));
 
     return interaction.respond(playlists);
 }

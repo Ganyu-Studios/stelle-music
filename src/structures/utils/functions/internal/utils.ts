@@ -8,7 +8,7 @@ import type { APIApplicationCommandOptionChoice } from "seyfert/lib/types/index.
 import type { Omit, Plain, Prettify } from "#stelle/types";
 
 /**
- * The sentinel value used by informative autocomplete choices ({@link UtilsOps.autocompleteNotice}); command
+ * The sentinel value used by informative autocomplete choices ({@link UtilsOps.autocomplete}); command
  * runs treat it as a missing/invalid selection.
  * @type {string}
  */
@@ -66,7 +66,7 @@ export const UtilsOps = {
      * @param {string} message The notice to show as the choice label.
      * @returns {APIApplicationCommandOptionChoice<string>[]} The single-choice response.
      */
-    autocompleteNotice(message: string): APIApplicationCommandOptionChoice<string>[] {
+    autocomplete(message: string): APIApplicationCommandOptionChoice<string>[] {
         return [{ name: `⚠️ ${message}`, value: AutocompleteNoticeValue }];
     },
     /**
@@ -198,7 +198,7 @@ export const UtilsOps = {
      * @param {number} check The flags to check for.
      * @returns {boolean} True if the flags include the checkFlags.
      */
-    hasFlags(flags: number = 0, check: number[]): boolean {
+    flags(flags: number = 0, check: number[]): boolean {
         return check.every((flag) => (flags & flag) === flag);
     },
     /**

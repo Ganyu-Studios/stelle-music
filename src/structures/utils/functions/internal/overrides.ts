@@ -42,7 +42,7 @@ export async function onAutocompleteError(interaction: AutocompleteInteraction, 
     const { messages } = await ContextOps.locale(interaction.client, interaction.guildId);
 
     await sendErrorReport({ error });
-    await interaction.respond(UtilsOps.autocompleteNotice(messages.events.autocomplete.noAnything));
+    await interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noAnything));
 }
 
 /**

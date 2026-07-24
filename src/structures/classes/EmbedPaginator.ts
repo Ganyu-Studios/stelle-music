@@ -275,7 +275,7 @@ export class EmbedPaginator {
                 });
             },
             onStop: async (): Promise<void> => {
-                if (this.options.message && !UtilsOps.hasFlags(this.options.message.flags, [MessageFlags.Ephemeral])) {
+                if (this.options.message && !UtilsOps.flags(this.options.message.flags, [MessageFlags.Ephemeral])) {
                     await this.edit({
                         components: ComponentOps.update(this.options.message, {
                             disabled: true,
