@@ -23,18 +23,30 @@ const QUEUE_PREVIEW: number = 10;
  * The state used to render the player control buttons.
  */
 interface ControlsState {
-    /** Whether autoplay is enabled. */
+    /**
+     * Whether the player is in autoplay mode.
+     * @type {boolean}
+     */
     isAutoplay: boolean;
-    /** The current loop mode. */
+    /**
+     * The current loop mode of the player.
+     * @type {LoopMode}
+     */
     loop: LoopMode;
-    /** Whether the player is paused. */
+    /**
+     * Whether the player is currently paused.
+     * @type {boolean}
+     */
     paused: boolean;
-    /** Whether the buttons should be disabled (idle panel). */
+    /**
+     * Whether the buttons should be disabled (e.g., when the panel is idle).
+     * @type {boolean}
+     */
     disabled?: boolean;
 }
 
 /**
- * Build the two rows of player control buttons shared by the ephemeral now-playing message ({@link file track/start})
+ * Build the two rows of player control buttons shared by the ephemeral now-playing message
  * and the persistent request-channel panel. The custom ids match the component handlers in `src/components`.
  * @param {Messages} messages The resolved locale messages.
  * @param {ControlsState} state The button state (autoplay / loop / paused / disabled).
@@ -80,8 +92,20 @@ export function buildControls(messages: Messages, state: ControlsState): ActionR
  * The rendered body of the request-channel panel.
  */
 interface PanelBody {
+    /**
+     * The embeds to write/edit into the panel.
+     * @type {Embed[]}
+     */
     embeds: Embed[];
+    /**
+     * The components to write/edit into the panel.
+     * @type {ActionRow<Button>[]}
+     */
     components: ActionRow<Button>[];
+    /**
+     * The attachments to write/edit into the panel.
+     * @type {AttachmentBuilder[]}
+     */
     files: AttachmentBuilder[];
 }
 
@@ -139,9 +163,9 @@ export async function buildPanel(
             artist: UtilsOps.truncate(UtilsOps.sanitize(track.info.author), 50),
         });
 
-        const attachment = new AttachmentBuilder().setFile("buffer", banner).setName("panel-banner.png");
-        embed.setImage("attachment://panel-banner.png");
+        const attachment: AttachmentBuilder = new AttachmentBuilder().setFile("buffer", banner).setName("panel-banner.png");
 
+        embed.setImage("attachment://panel-banner.png");
         embed.setFooter({
             text: messages.events.requestChannel.footer({ userName: track.requester.username, time: ms(Date.now() - start) }),
         });
@@ -162,7 +186,8 @@ export async function buildPanel(
         footer: messages.events.requestChannel.banner.footer,
     });
 
-    const attachment = new AttachmentBuilder().setFile("buffer", banner).setName("panel-banner.png");
+    const attachment: AttachmentBuilder = new AttachmentBuilder().setFile("buffer", banner).setName("panel-banner.png");
+
     embed.setImage("attachment://panel-banner.png");
 
     return {

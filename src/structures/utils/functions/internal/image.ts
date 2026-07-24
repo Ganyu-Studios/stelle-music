@@ -1,3 +1,4 @@
+import type { Stats } from "node:fs";
 import { mkdir, readdir, readFile, stat, unlink, utimes, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { Image } from "imagescript";
@@ -73,59 +74,112 @@ async function renderFitted(font: Buffer, text: string, maxWidth: number, maxSiz
     return layer;
 }
 
+/**
+ *
+ * Interpolate between two color channels (0–255) based on a parameter `t` (0–1).
+ * @param {number} a The starting channel value.
+ * @param {number} b The ending channel value.
+ * @param {number} t The interpolation parameter (0–1).
+ * @returns {number} The interpolated channel value, rounded to the nearest integer.
+ */
 function lerpChannel(a: number, b: number, t: number): number {
     return Math.round(a + (b - a) * t);
 }
 
+/**
+ * Interpolate between two RGBA colors represented as 32-bit integers based on a parameter `t` (0–1).
+ * @param {number} c1 The starting color (32-bit integer).
+ * @param {number} c2 The ending color (32-bit integer).
+ * @param {number} t The interpolation parameter (0–1).
+ * @returns {number} The interpolated color as a 32-bit integer.
+ */
 function lerpColor(c1: number, c2: number, t: number): number {
-    const r1 = (c1 >> 24) & 0xff,
-        g1 = (c1 >> 16) & 0xff,
-        b1 = (c1 >> 8) & 0xff,
-        a1 = c1 & 0xff;
-    const r2 = (c2 >> 24) & 0xff,
-        g2 = (c2 >> 16) & 0xff,
-        b2 = (c2 >> 8) & 0xff,
-        a2 = c2 & 0xff;
+    const r1: number = (c1 >> 24) & 0xff;
+    const g1: number = (c1 >> 16) & 0xff;
+    const b1: number = (c1 >> 8) & 0xff;
+    const a1: number = c1 & 0xff;
+    const r2: number = (c2 >> 24) & 0xff;
+    const g2: number = (c2 >> 16) & 0xff;
+    const b2: number = (c2 >> 8) & 0xff;
+    const a2: number = c2 & 0xff;
+
     return Image.rgbaToColor(lerpChannel(r1, r2, t), lerpChannel(g1, g2, t), lerpChannel(b1, b2, t), lerpChannel(a1, a2, t));
 }
 
+/**
+ *
+ * Draw a music note shape on the given image at the specified coordinates with the specified color.
+ * @param {Image} img The image to draw on.
+ * @param {number} x The x-coordinate of the center of the music note.
+ * @param {number} y The y-coordinate of the center of the music note.
+ * @param {number} color The color of the music note (32-bit integer).
+ * @returns {void} This function modifies the image in place and does not return a value.
+ */
 function drawMusicNote(img: Image, x: number, y: number, color: number): void {
-    const headW = 22,
-        headH = 16;
-    for (let dy = -headH / 2; dy < headH / 2; dy++) {
-        for (let dx = -headW / 2; dx < headW / 2; dx++) {
+    const headW: number = 22;
+    const headH: number = 16;
+
+    for (let dy: number = -headH / 2; dy < headH / 2; dy++) {
+        for (let dx: number = -headW / 2; dx < headW / 2; dx++) {
             if ((dx * dx) / (headW / 2) ** 2 + (dy * dy) / (headH / 2) ** 2 <= 1) {
                 img.setPixelAt(Math.round(x + dx) + 1, Math.round(y + dy) + 1, color);
             }
         }
     }
-    for (let i = 0; i < 70; i++) {
+
+    for (let i: number = 0; i < 70; i++) {
         img.setPixelAt(Math.round(x + headW / 2 - 2) + 1, Math.round(y - i) + 1, color);
         img.setPixelAt(Math.round(x + headW / 2 - 1) + 1, Math.round(y - i) + 1, color);
     }
-    for (let i = 0; i < 20; i++) {
+
+    for (let i: number = 0; i < 20; i++) {
         img.setPixelAt(Math.round(x + headW / 2 - 1 + i * 0.5) + 1, Math.round(y - 70 + i) + 1, color);
     }
 }
 
+/**
+ * Draw a star shape on the given image at the specified coordinates with the specified color.
+ * @param {Image} img The image to draw on.
+ * @param {number} cx The x-coordinate of the center of the star.
+ * @param {number} cy The y-coordinate of the center of the star.
+ * @param {number} color The color of the star (32-bit integer).
+ * @returns {void} This function modifies the image in place and does not return a value.
+ */
 function drawStar(img: Image, cx: number, cy: number, color: number): void {
-    const size = 7;
-    for (let i = -size; i <= size; i++) {
+    const size: number = 7;
+
+    for (let i: number = -size; i <= size; i++) {
         img.setPixelAt(Math.round(cx + i) + 1, Math.round(cy) + 1, color);
         img.setPixelAt(Math.round(cx) + 1, Math.round(cy + i) + 1, color);
     }
-    const diag = 4;
-    for (let i = -diag; i <= diag; i++) {
+
+    const diag: number = 4;
+
+    for (let i: number = -diag; i <= diag; i++) {
         img.setPixelAt(Math.round(cx + i) + 1, Math.round(cy + i) + 1, color);
         img.setPixelAt(Math.round(cx + i) + 1, Math.round(cy - i) + 1, color);
     }
 }
 
+/**
+ *
+ * Determine if a given RGB color is considered opaque based on its luminosity.
+ * @param {number[]} rgb An array containing the red, green, and blue channel values (0–255).
+ * @returns {boolean} True if the color is considered opaque (luminosity ≤ 0.5), false otherwise.
+ */
 function isOpaque(rgb: number[]): boolean {
     const luminosity: number = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
     return !(luminosity > 0.5);
 }
 
+/**
+ *
+ * Calculate the progress of a task as a fraction of a total, scaled to a specified range.
+ * @param {number} progress The current progress value.
+ * @param {number} total The total value representing 100% progress.
+ * @param {number} x The maximum value to scale the progress to.
+ * @returns {number} The scaled progress value, clamped between 0 and x.
+ */
 function getProgress(progress: number, total: number, x: number): number {
     const prg: number = (progress / total) * x;
 
@@ -135,6 +189,12 @@ function getProgress(progress: number, total: number, x: number): number {
     return prg;
 }
 
+/**
+ *
+ * Fetch a resource from a given URL and return its content as a Buffer.
+ * @param {string} url The URL of the resource to fetch.
+ * @returns {Promise<Buffer>} A Promise that resolves to a Buffer containing the fetched resource's content.
+ */
 async function getBuffer(url: string): Promise<Buffer> {
     const res: Response = await fetch(url);
     return Buffer.from(await res.arrayBuffer());
@@ -167,7 +227,8 @@ async function readBannerCache(identifier: string, ttl: number): Promise<Uint8Ar
     const file: string = bannerPath(identifier);
 
     try {
-        const info = await stat(file);
+        const info: Stats = await stat(file);
+
         if (Date.now() - info.mtimeMs > ttl) {
             await unlink(file).catch((): null => null);
             return null;
@@ -273,23 +334,25 @@ async function buildIdleBase(): Promise<Image> {
     const img: Image = new Image(WIDTH, HEIGHT);
 
     // 1. Vertical gradient background
-    for (let y = 0; y < HEIGHT; y++) {
-        const t = y / HEIGHT;
-        const color = lerpColor(IDLE_COLORS.BgTop, IDLE_COLORS.BgBottom, t);
-        for (let x = 0; x < WIDTH; x++) {
+    for (let y: number = 0; y < HEIGHT; y++) {
+        const t: number = y / HEIGHT;
+        const color: number = lerpColor(IDLE_COLORS.BgTop, IDLE_COLORS.BgBottom, t);
+
+        for (let x: number = 0; x < WIDTH; x++) {
             img.setPixelAt(x + 1, y + 1, color);
         }
     }
 
     // 2. Subtle grain texture
-    for (let i = 0; i < 14000; i++) {
-        const x = Math.floor(Math.random() * WIDTH);
-        const y = Math.floor(Math.random() * HEIGHT);
-        const base = img.getPixelAt(x + 1, y + 1);
-        const r = (base >> 24) & 0xff,
-            g = (base >> 16) & 0xff,
-            b = (base >> 8) & 0xff;
-        const delta = Math.floor(Math.random() * 10) - 5;
+    for (let i: number = 0; i < 14000; i++) {
+        const x: number = Math.floor(Math.random() * WIDTH);
+        const y: number = Math.floor(Math.random() * HEIGHT);
+        const base: number = img.getPixelAt(x + 1, y + 1);
+        const r: number = (base >> 24) & 0xff;
+        const g: number = (base >> 16) & 0xff;
+        const b: number = (base >> 8) & 0xff;
+        const delta: number = Math.floor(Math.random() * 10) - 5;
+
         img.setPixelAt(
             x + 1,
             y + 1,
@@ -303,11 +366,13 @@ async function buildIdleBase(): Promise<Image> {
     }
 
     // 3. Diagonal stave lines
-    const lineColor = Image.rgbaToColor(255, 255, 255, 10);
-    for (let offset = -HEIGHT; offset < WIDTH; offset += 46) {
-        for (let i = 0; i < Math.max(WIDTH, HEIGHT); i++) {
-            const x = offset + i;
-            const y = i;
+    const lineColor: number = Image.rgbaToColor(255, 255, 255, 10);
+
+    for (let offset: number = -HEIGHT; offset < WIDTH; offset += 46) {
+        for (let i: number = 0; i < Math.max(WIDTH, HEIGHT); i++) {
+            const x: number = offset + i;
+            const y: number = i;
+
             if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT) {
                 img.setPixelAt(x + 1, y + 1, lineColor);
             }
@@ -316,14 +381,15 @@ async function buildIdleBase(): Promise<Image> {
 
     // 4. Soft radial glow
     const glow: Image = new Image(WIDTH, HEIGHT);
-    const cx = WIDTH / 2,
-        cy = HEIGHT / 2 - 20;
-    const maxR = 340;
-    for (let gy = 0; gy < HEIGHT; gy++) {
-        for (let gx = 0; gx < WIDTH; gx++) {
-            const d = Math.sqrt((gx - cx) ** 2 + (gy - cy) ** 2);
-            const t = Math.min(1, d / maxR);
-            const alpha = Math.round((1 - t) * 40);
+    const cx: number = WIDTH / 2;
+    const cy: number = HEIGHT / 2 - 20;
+    const maxR: number = 340;
+
+    for (let gy: number = 0; gy < HEIGHT; gy++) {
+        for (let gx: number = 0; gx < WIDTH; gx++) {
+            const d: number = Math.sqrt((gx - cx) ** 2 + (gy - cy) ** 2);
+            const t: number = Math.min(1, d / maxR);
+            const alpha: number = Math.round((1 - t) * 40);
             if (alpha > 0) {
                 glow.setPixelAt(gx + 1, gy + 1, Image.rgbaToColor(111, 140, 255, alpha));
             } else {
@@ -331,6 +397,7 @@ async function buildIdleBase(): Promise<Image> {
             }
         }
     }
+
     img.composite(glow, 0, 0);
 
     // 5. Music notes
@@ -338,18 +405,18 @@ async function buildIdleBase(): Promise<Image> {
     drawMusicNote(img, WIDTH / 2 + 190, 175, IDLE_COLORS.AccentSoft);
 
     // 6. Decorative line under title
-    for (let lx = Math.round(WIDTH / 2 - 90); lx < Math.round(WIDTH / 2 + 90); lx++) {
+    for (let lx: number = Math.round(WIDTH / 2 - 90); lx < Math.round(WIDTH / 2 + 90); lx++) {
         img.setPixelAt(lx + 1, 332, IDLE_COLORS.Accent);
         img.setPixelAt(lx + 1, 333, IDLE_COLORS.Accent);
     }
 
     // 7. Decorative frame border
-    const borderColor = Image.rgbaToColor(255, 255, 255, 25);
-    for (let bx = 0; bx < WIDTH; bx++) {
+    const borderColor: number = Image.rgbaToColor(255, 255, 255, 25);
+    for (let bx: number = 0; bx < WIDTH; bx++) {
         img.setPixelAt(bx + 1, 23, borderColor);
         img.setPixelAt(bx + 1, HEIGHT - 22, borderColor);
     }
-    for (let by = 0; by < HEIGHT; by++) {
+    for (let by: number = 0; by < HEIGHT; by++) {
         img.setPixelAt(23, by + 1, borderColor);
         img.setPixelAt(WIDTH - 22, by + 1, borderColor);
     }
@@ -441,6 +508,7 @@ export const ImageOps = {
 
         // Clone the memoized static backdrop; only the avatar and text below vary between renders.
         idleBasePromise ??= buildIdleBase();
+
         const img: Image = (await idleBasePromise).clone();
 
         // Avatar (PFP) centered above title
@@ -464,14 +532,18 @@ export const ImageOps = {
 
         // Typography
         const titleLayer: Image = await Image.renderText(font, 58, data.title, IDLE_COLORS.Text);
+
         img.composite(titleLayer, Math.round((WIDTH - titleLayer.width) / 2), 240);
 
         const subLayer: Image = await Image.renderText(font, 24, data.prompt, IDLE_COLORS.SubText);
+
         img.composite(subLayer, Math.round((WIDTH - subLayer.width) / 2), 360);
 
         const tagLayer: Image = await Image.renderText(font, 20, data.footer, IDLE_COLORS.AccentSoft);
         const tagX = Math.round((WIDTH - tagLayer.width) / 2);
+
         img.composite(tagLayer, tagX, 460);
+
         drawStar(img, tagX - 26, 470, IDLE_COLORS.AccentSoft);
         drawStar(img, tagX + tagLayer.width + 26, 470, IDLE_COLORS.AccentSoft);
 

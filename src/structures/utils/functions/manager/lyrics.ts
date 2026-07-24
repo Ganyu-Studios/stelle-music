@@ -67,7 +67,7 @@ interface SyncResponseOptions {
  * @param options The options for the sync response.
  * @returns A promise that resolves once the response is sent.
  */
-async function syncResponse(options: SyncResponseOptions): Promise<void> {
+async function sendLyricsUpdate(options: SyncResponseOptions): Promise<void> {
     const { interaction, embed, lyrics, track, player, messageId, messages, client } = options;
     const syncedLines: string = lyrics.lines
         .map((line): string => `-# ${line.line}`)
@@ -229,7 +229,7 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | MessageStru
         const isEnabled: boolean = !!(await player.data.get("lyricsEnabled"));
 
         if (isEnabled) {
-            await syncResponse({ interaction, embed, lyrics, track, player, messageId: message.id, messages, client });
+            await sendLyricsUpdate({ interaction, embed, lyrics, track, player, messages, client, messageId: message.id });
 
             collector.stop();
 
@@ -239,7 +239,7 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | MessageStru
         try {
             await player.lyrics.subscribe(skipTrackSource);
 
-            await syncResponse({ interaction, embed, lyrics, track, player, messageId: message.id, messages, client });
+            await sendLyricsUpdate({ interaction, embed, lyrics, track, player, messages, client, messageId: message.id });
 
             await player.data.set("lyricsEnabled", true);
         } catch {
