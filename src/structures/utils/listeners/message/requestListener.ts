@@ -2,7 +2,7 @@ import { LoadType } from "hoshimi";
 import type { AllGuildVoiceChannels, GuildMember, MessageStructure, UsingClient, VoiceState } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
-import { resolveAndQueue } from "#stelle/utils/functions/manager/play.js";
+import { playQuery } from "#stelle/utils/functions/manager/play.js";
 
 /**
  * Send a short-lived message to a channel and delete it after `ttl` ms. Used for request-channel feedback, since a
@@ -61,7 +61,7 @@ export async function requestListener(client: UsingClient, message: MessageStruc
     const me: GuildMember | null = await client.members.fetch(guildId, client.botId).catch((): null => null);
     if (!me) return true;
 
-    const { loadType, tracks } = await resolveAndQueue({
+    const { loadType, tracks } = await playQuery({
         client,
         guildId,
         voice,

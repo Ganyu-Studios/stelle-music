@@ -23,7 +23,7 @@ import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { onAutocompleteError } from "#stelle/utils/functions/internal/overrides.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
-import { resolveAndQueue } from "#stelle/utils/functions/manager/play.js";
+import { playQuery } from "#stelle/utils/functions/manager/play.js";
 
 const options = {
     query: createStringOption({
@@ -105,14 +105,14 @@ export default class PlayCommand extends Command {
 
         const { messages } = await ctx.locale();
 
-        const { player, loadType, playlist, tracks } = await resolveAndQueue({
+        const { player, loadType, playlist, tracks } = await playQuery({
             client,
-            guildId: ctx.guildId,
+            query,
             voice,
             me,
+            guildId: ctx.guildId,
             textId: channelId,
             requester: ctx.author,
-            query,
             localeString: await ctx.localeString(),
         });
 
