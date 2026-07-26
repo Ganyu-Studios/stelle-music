@@ -6,8 +6,6 @@ import { LoggerOps } from "#stelle/utils/functions/internal/logger.js";
 // The configuration now is dynamically loaded, so we need to call it first.
 await Configuration.load();
 
-LoggerOps.watermark();
-
 import { Logger } from "seyfert";
 import { Stelle } from "#stelle/classes/Stelle.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";

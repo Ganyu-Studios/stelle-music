@@ -1,7 +1,7 @@
 import { Logger } from "seyfert";
 import { gray, italic, LogLevels, red, rgb24, yellow } from "seyfert/lib/common/index.js";
-
 import { Configuration } from "#stelle/utils/data/configuration.js";
+import { type GitInfo, getGitInfo } from "./git.js";
 
 /**
  * The color function type used for coloring log messages.
@@ -15,6 +15,32 @@ type ColorFunction = (text: string) => string;
  * @returns {string} The colored text.
  */
 const customColor: ColorFunction = (text: string): string => rgb24(text, Configuration.color.success);
+
+/**
+ *
+ * The emojis associated with each log level for formatting log messages.
+ * @type {Record<LogLevels, string>}
+ */
+const levelEmojis: Record<LogLevels, string> = {
+    [LogLevels.Debug]: "🎩",
+    [LogLevels.Error]: "🏮",
+    [LogLevels.Info]: "📘",
+    [LogLevels.Warn]: "🔰",
+    [LogLevels.Fatal]: "💀",
+};
+
+/**
+ *
+ * The colors associated with each log level for formatting log messages.
+ * @type {Record<LogLevels, ColorFunction>}
+ */
+const levelColors: Record<LogLevels, ColorFunction> = {
+    [LogLevels.Debug]: gray,
+    [LogLevels.Error]: red,
+    [LogLevels.Info]: customColor,
+    [LogLevels.Warn]: yellow,
+    [LogLevels.Fatal]: red,
+};
 
 /**
  *
@@ -98,9 +124,12 @@ export const LoggerOps = {
     /**
      *
      * Log a watermark message to the console with a custom design and a random text.
-     * @returns {void} This function does not return a value.
+     * @returns {Promise<void>} A promise that resolves when the watermark is logged.
      */
-    watermark(): void {
+    async watermark(): Promise<void> {
+        const git: GitInfo | null = await getGitInfo();
+        const info: GitInfo = git ?? { branch: "unknown", commit: "unknown", commitUrl: "unknown", time: "unknown", date: new Date() };
+
         console.info(
             customColor(`
 
@@ -110,7 +139,10 @@ export const LoggerOps = {
         ╚════██║   ██║   ██╔══╝  ██║     ██║     ██╔══╝  
         ███████║   ██║   ███████╗███████╗███████╗███████╗
         ╚══════╝   ╚═╝   ╚══════╝╚══════╝╚══════╝╚══════╝
-													   
+		
+           ${italic(`Branch: ${info.branch}`)}
+           ${italic(`Commit: ${info.commit}`)}
+           ${italic(`Time: ${info.date}`)}
 		
 		   ${italic(`→   ${getRandomText()}`)}
     `),
@@ -131,25 +163,9 @@ export const LoggerOps = {
         const label: string = Logger.prefixes.get(level) ?? "UNKNOWN";
         const timeFormat: string = `[${date.toLocaleDateString()} : ${date.toLocaleTimeString()}]`;
 
-        const emojis: Record<LogLevels, string> = {
-            [LogLevels.Debug]: "🎩",
-            [LogLevels.Error]: "🏮",
-            [LogLevels.Info]: "📘",
-            [LogLevels.Warn]: "🔰",
-            [LogLevels.Fatal]: "💀",
-        };
-
-        const colors: Record<LogLevels, ColorFunction> = {
-            [LogLevels.Debug]: gray,
-            [LogLevels.Error]: red,
-            [LogLevels.Info]: customColor,
-            [LogLevels.Warn]: yellow,
-            [LogLevels.Fatal]: red,
-        };
-
-        const text = `${gray(`${timeFormat}`)} ${gray(`[RAM: ${LoggerOps.memoryUsage(memory.rss)}]`)} ${emojis[level]} [${colors[level](
-            label,
-        )}] ${setPadding(label)}`;
+        const text = `${gray(`${timeFormat}`)} ${gray(`[RAM: ${LoggerOps.memoryUsage(memory.rss)}]`)} ${levelEmojis[level]} [${levelColors[
+            level
+        ](label)}] ${setPadding(label)}`;
 
         return [text, ...args];
     },

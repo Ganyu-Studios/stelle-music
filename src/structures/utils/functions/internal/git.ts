@@ -5,8 +5,13 @@ import type { IBotInfoGitField, Prettify } from "#stelle/types";
 /**
  * The type of the Git information.
  */
-export type GitInfo = Prettify<IBotInfoGitField>;
+export type GitInfo = Prettify<IBotInfoGitField & { date: Date }>;
 
+/**
+ * Execute a shell command asynchronously and return the result.
+ * @param {string} command The shell command to execute.
+ * @returns {Promise<{ stdout: string; stderr: string }>} The result of the command execution.
+ */
 const execAsync = promisify(exec);
 
 /**
@@ -39,6 +44,7 @@ export async function getGitInfo(): Promise<GitInfo | null> {
         const divided: number = Math.floor(date.getTime() / 1e3);
 
         return {
+            date,
             branch: branch.trim(),
             commit: commitHash.slice(0, 7),
             commitUrl: commitUrl.trim(),

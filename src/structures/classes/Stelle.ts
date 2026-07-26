@@ -18,6 +18,7 @@ import type { NonGlobalCommands, StelleConfiguration } from "#stelle/types";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 import { StelleMeta, StellePaths, StelleRedis, StelleText } from "#stelle/utils/data/constants.js";
 import { StelleContext } from "#stelle/utils/functions/internal/context.js";
+import { LoggerOps } from "#stelle/utils/functions/internal/logger.js";
 import { onBotPermissionsFail, onOptionsError, onPermissionsFail, onRunError } from "#stelle/utils/functions/internal/overrides.js";
 import { sendErrorReport } from "#stelle/utils/functions/internal/report.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
@@ -123,6 +124,8 @@ export class Stelle extends Client<true> {
      * @returns {Promise<void>} A promise, yay!
      */
     public async run(): Promise<void> {
+        await LoggerOps.watermark();
+
         this.commands.onCommand = (file): InstanceType<HandleableCommand> | false => {
             const command =
                 file instanceof Command ||
