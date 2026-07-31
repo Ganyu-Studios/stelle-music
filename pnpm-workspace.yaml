@@ -17,6 +17,7 @@ minimumReleaseAgeExclude:
   - '@biomejs/cli-win32-arm64@2.5.4 || 2.5.5'
   - '@biomejs/cli-win32-x64@2.5.4 || 2.5.5'
   - yunaforseyfert@1.2.3
-  - lint-staged@17.1.1 || 17.2.0
+  - lint-staged@17.1.1 || 17.2.0 || 17.3.0
+  - '@redis/client@6.2.0'
 
 packages: []
