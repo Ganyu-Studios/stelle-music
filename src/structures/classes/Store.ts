@@ -43,7 +43,12 @@ export class RedisQueueStore extends QueueStorageAdapter {
     }
 
     override async clear(): Promise<void> {
-        await this.redis.flushAll();
+        // Scoped to this store's namespace instead of `flushAll()`: the queues share the database with
+        // whatever else lives in it, and dev (`internal`) shares it with prod (`stellequeue`), so
+        // flushing everything would take far more than the queues this adapter owns.
+        for await (const keys of this.redis.scanIterator({ MATCH: `${this.namespace}:*`, COUNT: 100 })) {
+            if (keys.length) await this.redis.del(keys);
+        }
     }
 
     override async has(key: string): Promise<boolean> {
