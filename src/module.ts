@@ -48,5 +48,6 @@ declare module "hoshimi" {
         isAutoPause: boolean;
         messageId: string;
         isRequestChannel: boolean;
+        isQuiz: boolean;
     }
 }

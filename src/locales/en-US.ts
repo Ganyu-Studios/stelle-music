@@ -36,6 +36,11 @@ import {
     type IPrefix,
     type IPrevious,
     type IPublicPlaylistEntry,
+    type IQuizLeaderboardEntry,
+    type IQuizReveal,
+    type IQuizRound,
+    type IQuizStarted,
+    type IQuizUser,
     type IRequestQueueEntry,
     type ISeek,
     type IState,
@@ -72,6 +77,15 @@ export default {
             nowplaying: ({ userName, time }: INowPlaying): string => `-# Requested by ${userName} in ${time}`,
             stop: "`👋` Stopping and leaving...",
             shuffle: "`✅` The queue has been shuffled.",
+            quiz: {
+                notInVoice: "`❌` You must be in a voice channel to start a quiz.",
+                alreadyRunning: "`❌` A music quiz is already running in this server.",
+                notEnoughTracks: "`❌` I couldn't gather enough tracks for the quiz. Check the configured source.",
+                started: ({ rounds }: IQuizStarted): string =>
+                    `\`🎶\` **Music quiz started!** \`${rounds}\` rounds — hop in voice and guess the title and artist!`,
+                noQuiz: "`❌` There is no quiz running in this server.",
+                stopped: "`👋` The music quiz has been stopped.",
+            },
             skip: {
                 amount: ({ amount }: IAmount): string => `\`✅\` Skipped the amount of: \`${amount} tracks\`.`,
                 invalidAmount: ({ amount }: IAmount): string =>
@@ -376,6 +390,22 @@ export default {
                 trackStart: ({ title, author }: IVoiceStatus): string => `${title} by ${author}`,
                 queueEnd: "The queue is empty.",
             },
+            quiz: {
+                voiceStatus: "🎧 Music quiz in progress...",
+                roundStart: ({ round, total }: IQuizRound): string =>
+                    `\`🎧\` **Round ${round}/${total}** — guess the **title** and the **artist**!`,
+                guessed: {
+                    title: ({ user }: IQuizUser): string => `\`✅\` <@${user}> nailed the **title**!`,
+                    artist: ({ user }: IQuizUser): string => `\`✅\` <@${user}> nailed the **artist**!`,
+                },
+                timeout: "`⏱️` Time's up!",
+                reveal: ({ title, artist }: IQuizReveal): string => `\`🎵\` It was **${title}** by **${artist}**.`,
+                leaderboard: {
+                    title: "`🏆` **Final scores**",
+                    entry: ({ position, user, points }: IQuizLeaderboardEntry): string => `\`${position}.\` <@${user}> — \`${points}\` pts`,
+                },
+                noScores: "`🤷` Nobody scored this time.",
+            },
             trackStart: {
                 embed: ({ duration, requester, title, url, volume, author, size }: ITrackStart): string =>
                     `\`📻\` Now playing [\`${title}\`](${url})\n\n\`🎤\` **Author**: \`${author}\`\n\`🕛\` **Duration**: \`${duration}\`\n\`🔊\` **Volume**: \`${volume}%\`\n\`👤\` **Requested by**: <@${requester}>\n\n\`📋\` **In queue**: \`${size} tracks\``,
@@ -576,6 +606,24 @@ export default {
                 disable: {
                     name: "disable",
                     description: "Disable the song request channel.",
+                },
+            },
+        },
+        quiz: {
+            name: "quiz",
+            description: "Play a music guessing quiz.",
+            commands: {
+                start: {
+                    name: "start",
+                    description: "Start a music quiz.",
+                },
+                stop: {
+                    name: "stop",
+                    description: "Stop the running music quiz.",
+                },
+                leaderboard: {
+                    name: "leaderboard",
+                    description: "Show the current music quiz standings.",
                 },
             },
         },

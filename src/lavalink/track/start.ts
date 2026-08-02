@@ -18,6 +18,13 @@ export default createLavalinkEvent({
         const voice = await PlayerOps.voice(client, player);
         if (!voice) return;
 
+        // In quiz mode the engine drives its own UI: set a neutral voice status and never reveal the track here.
+        if (await player.data.get("isQuiz")) {
+            if (voice.isVoice()) await voice.setVoiceStatus(messages.events.quiz.voiceStatus).catch((): null => null);
+
+            return;
+        }
+
         if (voice.isVoice())
             await voice
                 .setVoiceStatus(messages.events.voiceStatus.trackStart({ author: track.info.author, title: track.info.title }))

@@ -21,6 +21,15 @@ export default {
             nowplaying: ({ userName, time }): string => `-# Pedido por: ${userName} en ${time}`,
             stop: "`👋` Deteniendo y abandonando el canal...",
             shuffle: "`✅` La cola ha sido mezclada.",
+            quiz: {
+                notInVoice: "`❌` Debes estar en un canal de voz para iniciar un quiz.",
+                alreadyRunning: "`❌` Ya hay un quiz musical en curso en este servidor.",
+                notEnoughTracks: "`❌` No pude juntar suficientes canciones para el quiz. Revisa la fuente configurada.",
+                started: ({ rounds }): string =>
+                    `\`🎶\` **¡Quiz musical iniciado!** \`${rounds}\` rondas — entra al voice y adivina el título y el artista.`,
+                noQuiz: "`❌` No hay ningún quiz en curso en este servidor.",
+                stopped: "`👋` El quiz musical fue detenido.",
+            },
             skip: {
                 amount: ({ amount }): string => `\`✅\` Se han saltado: \`${amount} canciones\`.`,
                 invalidAmount: ({ amount }): string =>
@@ -319,6 +328,21 @@ export default {
                 trackStart: ({ title, author }): string => `${title} por ${author}`,
                 queueEnd: "La cola está vacía.",
             },
+            quiz: {
+                voiceStatus: "🎧 Quiz musical en curso...",
+                roundStart: ({ round, total }): string => `\`🎧\` **Ronda ${round}/${total}** — ¡adivina el **título** y el **artista**!`,
+                guessed: {
+                    title: ({ user }): string => `\`✅\` ¡<@${user}> acertó el **título**!`,
+                    artist: ({ user }): string => `\`✅\` ¡<@${user}> acertó el **artista**!`,
+                },
+                timeout: "`⏱️` ¡Se acabó el tiempo!",
+                reveal: ({ title, artist }): string => `\`🎵\` Era **${title}** de **${artist}**.`,
+                leaderboard: {
+                    title: "`🏆` **Puntajes finales**",
+                    entry: ({ position, user, points }): string => `\`${position}.\` <@${user}> — \`${points}\` pts`,
+                },
+                noScores: "`🤷` Nadie puntuó esta vez.",
+            },
             trackStart: {
                 embed: ({ duration, requester, title, url, volume, author, size }): string =>
                     `\`📻\` Reproduciendo ahora [\`${title}\`](${url})\n\n\`🎤\` **Autor**: \`${author}\`\n\`🕛\` **Duración**: \`${duration}\`\n\`🔊\` **Volumen**: \`${volume}%\`\n\`👤\` **Solicitado por**: <@${requester}>\n\n\`📋\` **En cola**: \`${size} canciones\``,
@@ -517,6 +541,24 @@ export default {
                 disable: {
                     name: "desactivar",
                     description: "Desactiva el canal de peticiones.",
+                },
+            },
+        },
+        quiz: {
+            name: "quiz",
+            description: "Juega un quiz musical de adivinanzas.",
+            commands: {
+                start: {
+                    name: "iniciar",
+                    description: "Inicia un quiz musical.",
+                },
+                stop: {
+                    name: "detener",
+                    description: "Detén el quiz musical en curso.",
+                },
+                leaderboard: {
+                    name: "tabla",
+                    description: "Muestra los puntajes actuales del quiz.",
                 },
             },
         },
