@@ -156,7 +156,7 @@ async function say(client: UsingClient, channelId: string, content: string): Pro
  * @returns {Promise<TrackStructure[]>} The shuffled track pool.
  */
 async function buildPool(client: UsingClient): Promise<TrackStructure[]> {
-    const { source } = client.config.quiz;
+    const { sources: source } = client.config.quiz;
     const searchSource = client.config.defaultSearchSource;
 
     const results: TrackStructure[][] = await Promise.all(

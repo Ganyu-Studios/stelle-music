@@ -127,7 +127,7 @@ interface Quiz {
      * plain search query. All entries are resolved, flattened, de-duplicated and shuffled once per game.
      * @type {string[]}
      */
-    source: string[];
+    sources: string[];
     /**
      * How many tracks (rounds) a single game runs for.
      * @type {number}

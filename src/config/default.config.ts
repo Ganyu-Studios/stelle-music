@@ -80,7 +80,7 @@ export default createConfig({
     },
     quiz: {
         // <-- Playlist/track URLs or plain search queries; replace with your own quiz pool.
-        source: ["https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M"],
+        sources: ["https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M"],
         rounds: 10,
         snippet: ms("30s"),
     },
