@@ -470,12 +470,25 @@ export const QuizOps = {
      */
     async stop(guildId: string): Promise<boolean> {
         const session: QuizSession | undefined = sessions.get(guildId);
+        if (!QuizOps.abort(guildId)) return false;
+
+        await session?.player.destroy().catch((): null => null);
+
+        return true;
+    },
+    /**
+     *
+     * Tear down a quiz's in-memory state (its round timer and session) without touching the player — for when the
+     * player is already gone (destroyed externally), so a dangling timer can't keep advancing rounds on a dead player.
+     * @param {string} guildId The guild id.
+     * @returns {boolean} True if a running quiz was aborted, false if there was none.
+     */
+    abort(guildId: string): boolean {
+        const session: QuizSession | undefined = sessions.get(guildId);
         if (!session) return false;
 
         if (session.timer) clearTimeout(session.timer);
         sessions.delete(guildId);
-
-        await session.player.destroy().catch((): null => null);
 
         return true;
     },

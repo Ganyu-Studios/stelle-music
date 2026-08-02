@@ -2,6 +2,7 @@ import { EventNames } from "hoshimi";
 import type { AllChannels } from "seyfert";
 import { PanelOps } from "#stelle/utils/functions/manager/panel.js";
 import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
+import { QuizOps } from "#stelle/utils/functions/manager/quiz.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 import { Sessions } from "#stelle/utils/manager/sessions.js";
 
@@ -9,6 +10,9 @@ export default createLavalinkEvent({
     name: EventNames.PlayerDestroy,
     async run(client, player): Promise<void> {
         Sessions.delete(player.guildId);
+
+        // If a quiz was running on this player, tear its state down so a dangling timer can't keep advancing rounds.
+        if (QuizOps.abort(player.guildId)) client.debug(`[Quiz] Aborted (player destroyed) | guild: ${player.guildId}`);
 
         const textId: string | undefined = player.textId ?? player.options.textId;
         if (!textId) return;
