@@ -469,10 +469,10 @@ export const QuizOps = {
      * @returns {Promise<boolean>} True if a quiz was running and got stopped, false if there was none.
      */
     async stop(guildId: string): Promise<boolean> {
-        const session: QuizSession | undefined = sessions.get(guildId);
-        if (!QuizOps.abort(guildId)) return false;
+        const session: QuizSession | undefined = QuizOps.abort(guildId);
+        if (!session) return false;
 
-        await session?.player.destroy().catch((): null => null);
+        await session.player.destroy().catch((): null => null);
 
         return true;
     },
@@ -481,15 +481,15 @@ export const QuizOps = {
      * Tear down a quiz's in-memory state (its round timer and session) without touching the player — for when the
      * player is already gone (destroyed externally), so a dangling timer can't keep advancing rounds on a dead player.
      * @param {string} guildId The guild id.
-     * @returns {boolean} True if a running quiz was aborted, false if there was none.
+     * @returns {QuizSession | undefined} The aborted session (so the caller can notify its channel), or undefined if none.
      */
-    abort(guildId: string): boolean {
+    abort(guildId: string): QuizSession | undefined {
         const session: QuizSession | undefined = sessions.get(guildId);
-        if (!session) return false;
+        if (!session) return undefined;
 
         if (session.timer) clearTimeout(session.timer);
         sessions.delete(guildId);
 
-        return true;
+        return session;
     },
 };

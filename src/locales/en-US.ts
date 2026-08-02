@@ -406,6 +406,7 @@ export default {
                     entry: ({ position, user, points }: IQuizLeaderboardEntry): string => `\`${position}.\` <@${user}> — \`${points}\` pts`,
                 },
                 noScores: "`🤷` Nobody scored this time.",
+                interrupted: "`🛑` The music quiz was interrupted.",
             },
             trackStart: {
                 embed: ({ duration, requester, title, url, volume, author, size }: ITrackStart): string =>

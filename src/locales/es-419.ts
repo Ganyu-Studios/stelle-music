@@ -343,6 +343,7 @@ export default {
                     entry: ({ position, user, points }): string => `\`${position}.\` <@${user}> — \`${points}\` pts`,
                 },
                 noScores: "`🤷` Nadie puntuó esta vez.",
+                interrupted: "`🛑` El quiz musical fue interrumpido.",
             },
             trackStart: {
                 embed: ({ duration, requester, title, url, volume, author, size }): string =>

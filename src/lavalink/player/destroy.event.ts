@@ -12,7 +12,14 @@ export default createLavalinkEvent({
         Sessions.delete(player.guildId);
 
         // If a quiz was running on this player, tear its state down so a dangling timer can't keep advancing rounds.
-        if (QuizOps.abort(player.guildId)) client.debug(`[Quiz] Aborted (player destroyed) | guild: ${player.guildId}`);
+        const quiz = QuizOps.abort(player.guildId);
+        if (quiz) {
+            client.debug(`[Quiz] Aborted (player destroyed) | guild: ${player.guildId}`);
+
+            const messages = await PlayerOps.messages(client, player);
+            if (messages)
+                await client.messages.write(quiz.channelId, { content: messages.events.quiz.interrupted }).catch((): null => null);
+        }
 
         const textId: string | undefined = player.textId ?? player.options.textId;
         if (!textId) return;
