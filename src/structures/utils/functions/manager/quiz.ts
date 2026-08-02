@@ -173,11 +173,11 @@ interface MixQuery {
  *
  * Expand a single track into a mix of related tracks, picking the strategy from the seed's source (Spotify mix,
  * YouTube "RD" radio, or Deezer recommendations). Unsupported sources yield nothing, so the seed stands alone.
- * @param {UsingClient} client The client instance.
+ * @param {PlayerStructure} player The player to search through.
  * @param {TrackStructure} seed The track to seed the mix from.
  * @returns {Promise<TrackStructure[]>} The related tracks (excluding the seed).
  */
-async function seedMix(client: UsingClient, seed: TrackStructure): Promise<TrackStructure[]> {
+async function seedMix(player: PlayerStructure, seed: TrackStructure): Promise<TrackStructure[]> {
     const { identifier, sourceName } = seed.info;
 
     const query: MixQuery | null = ((): MixQuery | null => {
@@ -196,7 +196,7 @@ async function seedMix(client: UsingClient, seed: TrackStructure): Promise<Track
 
     if (!query) return [];
 
-    const mix: QueryResult | null = await client.manager.search({ ...query, requester: null }).catch((): null => null);
+    const mix: QueryResult | null = await player.search({ ...query, requester: null }).catch((): null => null);
     return mix?.tracks ?? [];
 }
 
@@ -205,36 +205,35 @@ async function seedMix(client: UsingClient, seed: TrackStructure): Promise<Track
  * Resolve a single `quiz.sources` entry into its tracks. A playlist contributes all of its tracks; anything that
  * resolves to a single track (a track URL or a plain query's top hit) is expanded into a pool via a source-aware
  * mix (see {@link seedMix}), so one song still yields a full game.
- * @param {UsingClient} client The client instance.
+ * @param {PlayerStructure} player The player to search through.
  * @param {string} entry The source entry (URL or search query).
  * @param {SearchSources} searchSource The platform to search plain queries on.
  * @returns {Promise<TrackStructure[]>} The tracks contributed by this entry.
  */
-async function resolveSource(client: UsingClient, entry: string, searchSource: SearchSources): Promise<TrackStructure[]> {
-    const result: QueryResult | null = await client.manager
-        .search({ query: entry, source: searchSource, requester: null })
-        .catch((): null => null);
+async function resolveSource(player: PlayerStructure, entry: string, searchSource: SearchSources): Promise<TrackStructure[]> {
+    const result: QueryResult | null = await player.search({ query: entry, source: searchSource, requester: null }).catch((): null => null);
     if (!result?.tracks.length) return [];
 
     if (result.loadType === LoadType.Playlist) return result.tracks;
 
     const seed: TrackStructure = result.tracks[0];
-    return [seed, ...(await seedMix(client, seed))];
+    return [seed, ...(await seedMix(player, seed))];
 }
 
 /**
  *
- * Resolve the configured `quiz.sources` entries into a shuffled, de-duplicated pool of tracks (see
- * {@link resolveSource} for how each entry contributes).
+ * Resolve the configured `quiz.sources` entries into a shuffled, de-duplicated pool of tracks, searched through
+ * the game's player (see {@link resolveSource} for how each entry contributes).
  * @param {UsingClient} client The client instance.
+ * @param {PlayerStructure} player The player to search through.
  * @returns {Promise<TrackStructure[]>} The shuffled track pool.
  */
-async function buildPool(client: UsingClient): Promise<TrackStructure[]> {
+async function buildPool(client: UsingClient, player: PlayerStructure): Promise<TrackStructure[]> {
     const { sources } = client.config.quiz;
     const searchSource = client.config.defaultSearchSource;
 
     const results: TrackStructure[][] = await Promise.all(
-        sources.map((entry): Promise<TrackStructure[]> => resolveSource(client, entry, searchSource)),
+        sources.map((entry): Promise<TrackStructure[]> => resolveSource(player, entry, searchSource)),
     );
 
     const seen: Set<string> = new Set();
@@ -369,10 +368,6 @@ export const QuizOps = {
         // A regular player is already busy in this guild; don't hijack an ongoing session with a quiz.
         if (client.manager.getPlayer(guildId)) return { ok: false, reason: "busy" };
 
-        const pool: TrackStructure[] = await buildPool(client);
-        const total: number = Math.min(rounds ?? client.config.quiz.rounds, pool.length);
-        if (total < 1) return { ok: false, reason: "notEnoughTracks" };
-
         const { defaultVolume } = await client.database.players.get(guildId);
 
         const player = client.manager.createPlayer({
@@ -382,6 +377,15 @@ export const QuizOps = {
             volume: defaultVolume,
             selfDeaf: true,
         });
+
+        // Build the pool through the player's node (mix sources resolve the same way autoplay's do); voice is only
+        // joined once we know there are enough tracks, so a failed pool doesn't leave the bot idling in the channel.
+        const pool: TrackStructure[] = await buildPool(client, player);
+        const total: number = Math.min(rounds ?? client.config.quiz.rounds, pool.length);
+        if (total < 1) {
+            await player.destroy().catch((): null => null);
+            return { ok: false, reason: "notEnoughTracks" };
+        }
 
         await joinVoiceChannel(player, voice, me);
         await player.data.set("isQuiz", true);
