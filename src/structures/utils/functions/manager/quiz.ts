@@ -1,4 +1,4 @@
-import { LoadType, type PlayerStructure, SearchSources, type TrackStructure } from "hoshimi";
+import { LoadType, type PlayerStructure, SearchSources, SourceNames, type TrackStructure } from "hoshimi";
 import type { AllGuildVoiceChannels, DefaultLocale, GuildMember, LocaleString, UsingClient } from "seyfert";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { matches } from "#stelle/utils/functions/internal/quiz.js";
@@ -150,9 +150,40 @@ async function say(client: UsingClient, channelId: string, content: string): Pro
 
 /**
  *
+ * Expand a single track into a mix of related tracks, picking the strategy from the seed's source (Spotify mix,
+ * YouTube "RD" radio, or Deezer recommendations). Unsupported sources yield nothing, so the seed stands alone.
+ * @param {UsingClient} client The client instance.
+ * @param {TrackStructure} seed The track to seed the mix from.
+ * @returns {Promise<TrackStructure[]>} The related tracks (excluding the seed).
+ */
+async function seedMix(client: UsingClient, seed: TrackStructure): Promise<TrackStructure[]> {
+    const { identifier, sourceName } = seed.info;
+
+    const query: { query: string; source: SearchSources } | null = ((): { query: string; source: SearchSources } | null => {
+        switch (sourceName) {
+            case SourceNames.Spotify:
+                return { query: identifier, source: SearchSources.SpotifyTrackMix };
+            case SourceNames.Youtube:
+            case SourceNames.YoutubeMusic:
+                return { query: `https://www.youtube.com/watch?v=${identifier}&list=RD${identifier}`, source: SearchSources.YoutubeMusic };
+            case SourceNames.Deezer:
+                return { query: identifier, source: SearchSources.DeezerRecommendations };
+            default:
+                return null;
+        }
+    })();
+
+    if (!query) return [];
+
+    const mix = await client.manager.search({ ...query, requester: null }).catch((): null => null);
+    return mix?.tracks ?? [];
+}
+
+/**
+ *
  * Resolve a single `quiz.sources` entry into its tracks. A playlist contributes all of its tracks; anything that
- * resolves to a single track (a track URL or a plain query's top hit) is expanded into a pool by seeding a Spotify
- * mix from it, so one song still yields a full game. Non-Spotify seeds just contribute themselves (the mix is empty).
+ * resolves to a single track (a track URL or a plain query's top hit) is expanded into a pool via a source-aware
+ * mix (see {@link seedMix}), so one song still yields a full game.
  * @param {UsingClient} client The client instance.
  * @param {string} entry The source entry (URL or search query).
  * @param {SearchSources} searchSource The platform to search plain queries on.
@@ -164,13 +195,8 @@ async function resolveSource(client: UsingClient, entry: string, searchSource: S
 
     if (result.loadType === LoadType.Playlist) return result.tracks;
 
-    // Single track (or a plain query): use the top hit as a seed and expand it into a mix so it forms a pool.
     const seed: TrackStructure = result.tracks[0];
-    const mix = await client.manager
-        .search({ query: seed.info.identifier, source: SearchSources.SpotifyTrackMix, requester: null })
-        .catch((): null => null);
-
-    return [seed, ...(mix?.tracks ?? [])];
+    return [seed, ...(await seedMix(client, seed))];
 }
 
 /**
