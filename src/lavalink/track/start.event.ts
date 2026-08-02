@@ -1,6 +1,5 @@
 import { EventNames } from "hoshimi";
 import { Embed, type MessageStructure } from "seyfert";
-import { StelleMeta } from "#stelle/utils/data/constants.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { PanelOps } from "#stelle/utils/functions/manager/panel.js";
 import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
@@ -60,9 +59,6 @@ export default createLavalinkEvent({
             if (message) await player.data.set("messageId", message.id);
         }
 
-        if (StelleMeta.Debug)
-            client.debugger?.info(
-                `[Lavalink] Track started | guild: ${player.guildId} | title: ${track.info.title} | author: ${track.info.author}`,
-            );
+        client.debug(`[Lavalink] Track started | guild: ${player.guildId} | title: ${track.info.title} | author: ${track.info.author}`);
     },
 });

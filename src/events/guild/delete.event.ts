@@ -7,7 +7,7 @@ export default createEvent({
     async run(guild, client): Promise<void> {
         if (guild.unavailable || !(guild instanceof Guild)) return;
 
-        if (StelleMeta.Debug) return client.debugger?.info(`[Guild] Deleted | id: ${guild.id} | name: ${guild.name}`);
+        if (StelleMeta.Debug) return client.debug(`[Guild] Deleted | id: ${guild.id} | name: ${guild.name}`);
 
         await DiscordOps.guildLog(client, guild, {
             color: "Red",

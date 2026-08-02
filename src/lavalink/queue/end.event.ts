@@ -1,6 +1,5 @@
 import { EventNames } from "hoshimi";
 import { Embed } from "seyfert";
-import { StelleMeta } from "#stelle/utils/data/constants.js";
 import { PanelOps } from "#stelle/utils/functions/manager/panel.js";
 import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
@@ -37,9 +36,8 @@ export default createLavalinkEvent({
 
         const autoplay: boolean = !!(await player.data.get("enabledAutoplay"));
 
-        if (StelleMeta.Debug)
-            client.debugger?.info(
-                `[Lavalink] Queue ended | guild: ${player.guildId} | remaining: ${player.queue.tracks.length} | autoplay: ${autoplay}`,
-            );
+        client.debug(
+            `[Lavalink] Queue ended | guild: ${player.guildId} | remaining: ${player.queue.tracks.length} | autoplay: ${autoplay}`,
+        );
     },
 });

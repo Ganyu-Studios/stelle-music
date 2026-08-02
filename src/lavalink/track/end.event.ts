@@ -1,5 +1,4 @@
 import { EventNames } from "hoshimi";
-import { StelleMeta } from "#stelle/utils/data/constants.js";
 import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
@@ -12,9 +11,8 @@ export default createLavalinkEvent({
         await PlayerOps.lyrics(client, player, player.textId);
         await player.data.delete("messageId");
 
-        if (StelleMeta.Debug)
-            client.debugger?.info(
-                `[Lavalink] Track ended | guild: ${player.guildId} | title: ${track?.info?.title ?? "Unknown"} | author: ${track?.info?.author ?? "Unknown"}`,
-            );
+        client.debug(
+            `[Lavalink] Track ended | guild: ${player.guildId} | title: ${track?.info?.title ?? "Unknown"} | author: ${track?.info?.author ?? "Unknown"}`,
+        );
     },
 });

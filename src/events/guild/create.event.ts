@@ -7,7 +7,7 @@ export default createEvent({
     async run(guild, client): Promise<void> {
         if (guild.unavailable) return;
 
-        if (StelleMeta.Debug) return client.debugger?.info(`[Guild] Created | id: ${guild.id} | name: ${guild.name}`);
+        if (StelleMeta.Debug) return client.debug(`[Guild] Created | id: ${guild.id} | name: ${guild.name}`);
 
         await DiscordOps.guildLog(client, guild, {
             color: client.config.color.success,

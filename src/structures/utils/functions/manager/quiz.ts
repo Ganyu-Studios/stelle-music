@@ -269,6 +269,10 @@ async function nextRound(client: UsingClient, session: QuizSession): Promise<voi
     const track: TrackStructure = session.pool[session.index - 1];
     session.current = { track, titleBy: null, artistBy: null };
 
+    client.debug(
+        `[Quiz] Round ${session.index}/${session.total} | guild: ${session.guildId} | track: ${track.info.title} - ${track.info.author}`,
+    );
+
     const { messages } = await ContextOps.locale(client, session.guildId);
     await say(client, session.channelId, messages.events.quiz.roundStart({ round: session.index, total: session.total }));
 
@@ -322,6 +326,8 @@ async function endRound(client: UsingClient, session: QuizSession, reason: "solv
 async function endGame(client: UsingClient, session: QuizSession): Promise<void> {
     if (session.timer) clearTimeout(session.timer);
     sessions.delete(session.guildId);
+
+    client.debug(`[Quiz] Ended | guild: ${session.guildId} | rounds: ${session.total} | scorers: ${session.scores.size}`);
 
     const { messages } = await ContextOps.locale(client, session.guildId);
     await say(client, session.channelId, QuizOps.leaderboard(messages, session.scores));
@@ -407,6 +413,8 @@ export const QuizOps = {
         };
 
         sessions.set(guildId, session);
+
+        client.debug(`[Quiz] Started | guild: ${guildId} | rounds: ${total} | pool: ${pool.length}`);
 
         await nextRound(client, session);
 
