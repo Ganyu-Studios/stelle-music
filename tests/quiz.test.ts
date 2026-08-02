@@ -27,6 +27,9 @@ const ACCEPT: Array<[guess: string, target: string, why: string]> = [
     ["blindng lights", "Blinding Lights", "typo (missing char)"],
     ["dont stop me now", "Don't Stop Me Now", "apostrophe"],
     ["Lil Nas X", "lil nas x - MONTERO (Call Me By Your Name)", "subphrase before dash"],
+    ["prophecy san-z", "Prophecy", "combined title+artist guess matches the title"],
+    ["prophecy san-z", "Sān-Z", "combined title+artist guess matches the artist"],
+    ["blinding lights the weeknd", "Blinding Lights", "title with extra words"],
 ];
 
 /**

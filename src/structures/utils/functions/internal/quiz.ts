@@ -97,12 +97,17 @@ export function matches(guess: string, target: string): boolean {
     if (g === t) return true;
     if (ratio(g, t) >= MATCH_THRESHOLD) return true;
 
-    // A specific multi-word subphrase counts (guards against single common words matching by accident).
-    const words: string[] = g.split(" ");
-    if (words.length >= 2) {
-        const targetWords: Set<string> = new Set(t.split(" "));
-        if (words.every((word): boolean => targetWords.has(word))) return true;
-    }
+    const guessWords: string[] = g.split(" ");
+    const targetWords: string[] = t.split(" ");
+    const guessSet: Set<string> = new Set(guessWords);
+    const targetSet: Set<string> = new Set(targetWords);
+
+    // A specific multi-word guess that is a subphrase of the target (guards single common words by accident).
+    if (guessWords.length >= 2 && guessWords.every((word): boolean => targetSet.has(word))) return true;
+
+    // The guess contains the whole target — the user typed the title and artist together, or added extra words.
+    // Requires a non-trivial target so a short common word can't match just by appearing in a long guess.
+    if (t.length >= 4 && targetWords.every((word): boolean => guessSet.has(word))) return true;
 
     return false;
 }
