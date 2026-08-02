@@ -7,6 +7,7 @@ export default createEvent({
     async run(guild, client): Promise<void> {
         if (guild.unavailable) return;
 
+        // We check `StelleMeta.Debug` here, and then `client.debug` checks it again inside — belt and suspenders...
         if (StelleMeta.Debug) return client.debug(`[Guild] Created | id: ${guild.id} | name: ${guild.name}`);
 
         await DiscordOps.guildLog(client, guild, {
