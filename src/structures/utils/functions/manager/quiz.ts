@@ -171,10 +171,10 @@ export function leaderboardText(messages: Messages, scores: Map<string, number>)
  * @param {UsingClient} client The client instance.
  * @param {string} channelId The channel id.
  * @param {string} content The message content.
- * @returns {Promise<unknown>} A promise that resolves once the message is sent (or the failure is swallowed).
+ * @returns {Promise<void>} A promise that resolves once the message is sent (or the failure is swallowed).
  */
-function say(client: UsingClient, channelId: string, content: string): Promise<unknown> {
-    return client.messages.write(channelId, { content }).catch((): null => null);
+async function say(client: UsingClient, channelId: string, content: string): Promise<void> {
+    await client.messages.write(channelId, { content }).catch((): null => null);
 }
 
 /**
