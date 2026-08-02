@@ -30,6 +30,12 @@ const ACCEPT: Array<[guess: string, target: string, why: string]> = [
     ["prophecy san-z", "Prophecy", "combined title+artist guess matches the title"],
     ["prophecy san-z", "Sān-Z", "combined title+artist guess matches the artist"],
     ["blinding lights the weeknd", "Blinding Lights", "title with extra words"],
+    ["moe chakka fire", "Moe Chakka Fire / Ellen Joe cover by HoYoFair and issey", "slash artist tail + cover tail stripped"],
+    [
+        "モエチャッカファイア",
+        "【ゼンゼロ】モエチャッカファイア / エレン・ジョー cover by HoYoFair",
+        "CJK title survives normalize (not emptied)",
+    ],
 ];
 
 /**
@@ -42,6 +48,7 @@ const REJECT: Array<[guess: string, target: string, why: string]> = [
     ["the weeknd", "Blinding Lights", "artist guessed for a title target"],
     ["", "Blinding Lights", "empty guess"],
     ["stairway", "Highway to Hell", "single word, unrelated"],
+    ["moe chakka fire", "モエチャッカファイア", "romaji cannot match the CJK title (no transliteration)"],
 ];
 
 for (const [guess, target, why] of ACCEPT) {

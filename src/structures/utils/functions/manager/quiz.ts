@@ -1,7 +1,7 @@
 import { LoadType, type PlayerStructure, type QueryResult, SearchSources, SourceNames, type TrackStructure } from "hoshimi";
 import type { AllGuildVoiceChannels, DefaultLocale, GuildMember, LocaleString, UsingClient } from "seyfert";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
-import { matches } from "#stelle/utils/functions/internal/quiz.js";
+import { clean, matches } from "#stelle/utils/functions/internal/quiz.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
@@ -314,7 +314,11 @@ async function endRound(client: UsingClient, session: QuizSession, reason: "solv
     const { messages } = await ContextOps.locale(client, session.guildId);
 
     if (reason === "timeout") await say(client, session.channelId, messages.events.quiz.timeout);
-    await say(client, session.channelId, messages.events.quiz.reveal({ title: round.track.info.title, artist: round.track.info.author }));
+    await say(
+        client,
+        session.channelId,
+        messages.events.quiz.reveal({ title: clean(round.track.info.title), artist: clean(round.track.info.author) }),
+    );
 
     await UtilsOps.wait(INTER_ROUND_DELAY);
 

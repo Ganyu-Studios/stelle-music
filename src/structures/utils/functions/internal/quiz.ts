@@ -16,20 +16,39 @@ const FEAT_TAIL: RegExp = /\b(feat|ft|featuring|prod|with)\b.*$/i;
 
 /**
  *
- * Normalize a title or artist for fuzzy comparison: strip diacritics, lowercase, drop bracketed qualifiers
- * (`(Official Video)`, `[Remastered]`, …) and `feat.`/`prod.` tails, expand `&`, remove punctuation, and
- * collapse whitespace. The result is a bag of lowercase alphanumeric words separated by single spaces.
+ * Tidy a raw title/artist for display: drop bracketed qualifiers (`(Official Video)`, `[Remastered]`, and the
+ * CJK/full-width `【…】`「…」（…） variants), the `song / artist` tail, and `cover …` / `feat. …` tails, while keeping
+ * the original casing and script (so a Japanese title stays readable). Falls back to the raw text if it strips to
+ * nothing.
+ * @param {string} text The raw title or artist.
+ * @returns {string} The tidied text.
+ */
+export function clean(text: string): string {
+    const tidied: string = text
+        .replace(/[([{（【「『〔《][^)\]}）】」』〕》]*[)\]}）】」』〕》]/gu, " ")
+        .replace(/\s\/\s.*$/u, " ")
+        .replace(/\bcover\b.*$/iu, " ")
+        .replace(FEAT_TAIL, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+
+    return tidied || text.trim();
+}
+
+/**
+ *
+ * Normalize a title or artist for fuzzy comparison: {@link clean} it, strip diacritics, lowercase, expand `&`,
+ * and drop punctuation, keeping unicode letters/numbers (so CJK titles survive as matchable tokens instead of
+ * normalizing to an empty, never-matchable string). The result is a bag of lowercase words separated by spaces.
  * @param {string} text The raw title or artist.
  * @returns {string} The normalized comparison string.
  */
 export function normalize(text: string): string {
-    return UtilsOps.sanitize(text)
+    return UtilsOps.sanitize(clean(text))
         .toLowerCase()
-        .replace(/[([{].*?[)\]}]/g, " ")
-        .replace(FEAT_TAIL, " ")
         .replace(/&/g, " and ")
         .replace(/['’`´"]/g, "")
-        .replace(/[^a-z0-9]+/g, " ")
+        .replace(/[^\p{L}\p{N}]+/gu, " ")
         .replace(/\s+/g, " ")
         .trim();
 }
