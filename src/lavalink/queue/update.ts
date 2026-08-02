@@ -1,6 +1,6 @@
 import { EventNames, type TrackStructure } from "hoshimi";
 import { StelleMeta } from "#stelle/utils/data/constants.js";
-import { updatePanel } from "#stelle/utils/functions/manager/panel.js";
+import { PanelOps } from "#stelle/utils/functions/manager/panel.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
 export default createLavalinkEvent({
@@ -15,6 +15,6 @@ export default createLavalinkEvent({
         if (!(await player.data.get("isRequestChannel"))) return;
 
         const current: TrackStructure | undefined = player.queue.current ?? undefined;
-        await updatePanel(client, player.guildId, player, current);
+        await PanelOps.update(client, player.guildId, player, current);
     },
 });

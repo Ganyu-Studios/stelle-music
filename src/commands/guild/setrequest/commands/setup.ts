@@ -1,6 +1,6 @@
 import { createChannelOption, Declare, type GuildCommandContext, LocalesT, type MessageStructure, Options, SubCommand } from "seyfert";
 import { ChannelType } from "seyfert/lib/types/index.js";
-import { buildPanel } from "#stelle/utils/functions/manager/panel.js";
+import { PanelOps } from "#stelle/utils/functions/manager/panel.js";
 
 const options = {
     channel: createChannelOption({
@@ -41,7 +41,7 @@ export default class SetupRequestSubCommand extends SubCommand {
             channelId = created.id;
         }
 
-        const body = await buildPanel(client, messages);
+        const body = await PanelOps.build(client, messages);
         const existing = await client.database.requests.get(guildId);
 
         if (existing && existing.channelId === channelId) {

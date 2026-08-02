@@ -1,7 +1,7 @@
 import { EventNames } from "hoshimi";
 import { Embed } from "seyfert";
 import { StelleMeta } from "#stelle/utils/data/constants.js";
-import { resetPanel } from "#stelle/utils/functions/manager/panel.js";
+import { PanelOps } from "#stelle/utils/functions/manager/panel.js";
 import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
@@ -27,7 +27,7 @@ export default createLavalinkEvent({
 
         if (await player.data.get("isRequestChannel")) {
             // Persistent panel: return it to idle instead of posting a one-off "queue ended" message.
-            await resetPanel(client, player.guildId);
+            await PanelOps.reset(client, player.guildId);
         } else {
             const embed = new Embed().setDescription(messages.events.playerEnd).setColor(client.config.color.success).setTimestamp();
 
