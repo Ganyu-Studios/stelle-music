@@ -1,4 +1,4 @@
-import { LoadType, type PlayerStructure, SearchSources, SourceNames, type TrackStructure } from "hoshimi";
+import { LoadType, type PlayerStructure, type QueryResult, SearchSources, SourceNames, type TrackStructure } from "hoshimi";
 import type { AllGuildVoiceChannels, DefaultLocale, GuildMember, LocaleString, UsingClient } from "seyfert";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { matches } from "#stelle/utils/functions/internal/quiz.js";
@@ -119,6 +119,11 @@ export interface StartQuizOptions {
      */
     me: GuildMember;
     /**
+     * The number of rounds to play. Falls back to `config.quiz.rounds` when omitted.
+     * @type {number | undefined}
+     */
+    rounds?: number;
+    /**
      * The locale string used for the game's messages.
      * @type {LocaleString}
      */
@@ -149,6 +154,22 @@ async function say(client: UsingClient, channelId: string, content: string): Pro
 }
 
 /**
+ * A resolved mix search: the query to run and the source to run it on.
+ */
+interface MixQuery {
+    /**
+     * The query to search (a track identifier or a radio URL).
+     * @type {string}
+     */
+    query: string;
+    /**
+     * The source to run the query on.
+     * @type {SearchSources}
+     */
+    source: SearchSources;
+}
+
+/**
  *
  * Expand a single track into a mix of related tracks, picking the strategy from the seed's source (Spotify mix,
  * YouTube "RD" radio, or Deezer recommendations). Unsupported sources yield nothing, so the seed stands alone.
@@ -159,7 +180,7 @@ async function say(client: UsingClient, channelId: string, content: string): Pro
 async function seedMix(client: UsingClient, seed: TrackStructure): Promise<TrackStructure[]> {
     const { identifier, sourceName } = seed.info;
 
-    const query: { query: string; source: SearchSources } | null = ((): { query: string; source: SearchSources } | null => {
+    const query: MixQuery | null = ((): MixQuery | null => {
         switch (sourceName) {
             case SourceNames.Spotify:
                 return { query: identifier, source: SearchSources.SpotifyTrackMix };
@@ -175,7 +196,7 @@ async function seedMix(client: UsingClient, seed: TrackStructure): Promise<Track
 
     if (!query) return [];
 
-    const mix = await client.manager.search({ ...query, requester: null }).catch((): null => null);
+    const mix: QueryResult | null = await client.manager.search({ ...query, requester: null }).catch((): null => null);
     return mix?.tracks ?? [];
 }
 
@@ -190,7 +211,9 @@ async function seedMix(client: UsingClient, seed: TrackStructure): Promise<Track
  * @returns {Promise<TrackStructure[]>} The tracks contributed by this entry.
  */
 async function resolveSource(client: UsingClient, entry: string, searchSource: SearchSources): Promise<TrackStructure[]> {
-    const result = await client.manager.search({ query: entry, source: searchSource, requester: null }).catch((): null => null);
+    const result: QueryResult | null = await client.manager
+        .search({ query: entry, source: searchSource, requester: null })
+        .catch((): null => null);
     if (!result?.tracks.length) return [];
 
     if (result.loadType === LoadType.Playlist) return result.tracks;
@@ -340,14 +363,14 @@ export const QuizOps = {
      * @returns {Promise<StartQuizResult>} The started round count, or the reason it couldn't start.
      */
     async start(options: StartQuizOptions): Promise<StartQuizResult> {
-        const { client, guildId, channelId, voice, me, localeString } = options;
+        const { client, guildId, channelId, voice, me, rounds, localeString } = options;
 
         if (sessions.has(guildId)) return { ok: false, reason: "alreadyRunning" };
         // A regular player is already busy in this guild; don't hijack an ongoing session with a quiz.
         if (client.manager.getPlayer(guildId)) return { ok: false, reason: "busy" };
 
         const pool: TrackStructure[] = await buildPool(client);
-        const total: number = Math.min(client.config.quiz.rounds, pool.length);
+        const total: number = Math.min(rounds ?? client.config.quiz.rounds, pool.length);
         if (total < 1) return { ok: false, reason: "notEnoughTracks" };
 
         const { defaultVolume } = await client.database.players.get(guildId);

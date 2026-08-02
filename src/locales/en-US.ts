@@ -617,6 +617,12 @@ export default {
                 start: {
                     name: "start",
                     description: "Start a music quiz.",
+                    options: {
+                        rounds: {
+                            name: "rounds",
+                            description: "How many rounds to play. Defaults to the configured amount.",
+                        },
+                    },
                 },
                 stop: {
                     name: "stop",

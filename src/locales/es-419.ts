@@ -552,6 +552,12 @@ export default {
                 start: {
                     name: "iniciar",
                     description: "Inicia un quiz musical.",
+                    options: {
+                        rounds: {
+                            name: "rondas",
+                            description: "Cuántas rondas jugar. Por defecto usa la cantidad configurada.",
+                        },
+                    },
                 },
                 stop: {
                     name: "detener",
