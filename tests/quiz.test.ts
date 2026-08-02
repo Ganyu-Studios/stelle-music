@@ -10,7 +10,7 @@ process.env.REDIS_HOST ||= "127.0.0.1";
 process.env.REDIS_PORT ||= "6379";
 process.env.REDIS_PASSWORD ||= "test";
 
-const { QuizOps } = await import("#stelle/utils/functions/internal/quiz.js");
+const { matches } = await import("#stelle/utils/functions/internal/quiz.js");
 
 /**
  * Guesses that SHOULD be accepted for a given target, grouped by what tolerance they exercise.
@@ -43,12 +43,12 @@ const REJECT: Array<[guess: string, target: string, why: string]> = [
 
 for (const [guess, target, why] of ACCEPT) {
     test(`accepts "${guess}" ~ "${target}" (${why})`, (): void => {
-        assert.equal(QuizOps.matches(guess, target), true);
+        assert.equal(matches(guess, target), true);
     });
 }
 
 for (const [guess, target, why] of REJECT) {
     test(`rejects "${guess}" ~ "${target}" (${why})`, (): void => {
-        assert.equal(QuizOps.matches(guess, target), false);
+        assert.equal(matches(guess, target), false);
     });
 }

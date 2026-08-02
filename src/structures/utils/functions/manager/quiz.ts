@@ -1,7 +1,7 @@
 import type { PlayerStructure, TrackStructure } from "hoshimi";
 import type { AllGuildVoiceChannels, DefaultLocale, GuildMember, LocaleString, UsingClient } from "seyfert";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
-import { QuizOps } from "#stelle/utils/functions/internal/quiz.js";
+import { matches } from "#stelle/utils/functions/internal/quiz.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
@@ -126,44 +126,15 @@ export interface StartQuizOptions {
 }
 
 /**
- * The outcome of {@link startQuiz}: either the started game's round count, or why it couldn't start.
+ * The outcome of {@link QuizOps.start}: either the started game's round count, or why it couldn't start.
  */
-export type StartQuizResult = { ok: true; rounds: number } | { ok: false; reason: "alreadyRunning" | "notEnoughTracks" };
+export type StartQuizResult = { ok: true; rounds: number } | { ok: false; reason: "alreadyRunning" | "busy" | "notEnoughTracks" };
 
 /**
  * The running quiz per guild id. In-memory only, mirroring the ephemeral nature of a game.
  * @type {Map<string, QuizSession>}
  */
 const sessions: Map<string, QuizSession> = new Map();
-
-/**
- *
- * Get the running quiz session for a guild, if any. Used by the message listener to route guesses.
- * @param {string} guildId The guild id.
- * @returns {QuizSession | undefined} The running session, or undefined.
- */
-export function getQuiz(guildId: string): QuizSession | undefined {
-    return sessions.get(guildId);
-}
-
-/**
- *
- * Render the scoreboard from a scores map: the ranked leaderboard, or the "nobody scored" line when empty. Shared
- * by the game-over summary and the `/quiz leaderboard` subcommand.
- * @param {Messages} messages The resolved locale messages.
- * @param {Map<string, number>} scores The user id -> points map.
- * @returns {string} The rendered scoreboard.
- */
-export function leaderboardText(messages: Messages, scores: Map<string, number>): string {
-    const ranked: Array<[string, number]> = [...scores.entries()].sort((a, b): number => b[1] - a[1]);
-    if (!ranked.length) return messages.events.quiz.noScores;
-
-    const lines: string[] = ranked.map(([user, points], index): string =>
-        messages.events.quiz.leaderboard.entry({ position: index + 1, user, points }),
-    );
-
-    return `${messages.events.quiz.leaderboard.title}\n${lines.join("\n")}`;
-}
 
 /**
  *
@@ -215,49 +186,6 @@ async function buildPool(client: UsingClient): Promise<TrackStructure[]> {
 
 /**
  *
- * Start a quiz in a guild: gather the pool, spin up a hidden (`isQuiz`) player, join voice, and kick off round 1.
- * @param {StartQuizOptions} options The start inputs.
- * @returns {Promise<StartQuizResult>} The started round count, or the reason it couldn't start.
- */
-export async function startQuiz(options: StartQuizOptions): Promise<StartQuizResult> {
-    const { client, guildId, channelId, voice, me, localeString } = options;
-
-    if (sessions.has(guildId)) return { ok: false, reason: "alreadyRunning" };
-
-    const pool: TrackStructure[] = await buildPool(client);
-    const total: number = Math.min(client.config.quiz.rounds, pool.length);
-    if (total < 1) return { ok: false, reason: "notEnoughTracks" };
-
-    const { defaultVolume } = await client.database.players.get(guildId);
-
-    const player = client.manager.createPlayer({ guildId, textId: channelId, voiceId: voice.id, volume: defaultVolume, selfDeaf: true });
-
-    await joinVoiceChannel(player, voice, me);
-    await player.data.set("isQuiz", true);
-    await player.data.set("localeString", localeString);
-    await player.data.set("me", TrackOps.requesterFn(client.me));
-
-    const session: QuizSession = {
-        guildId,
-        channelId,
-        player,
-        pool: pool.slice(0, total),
-        total,
-        index: 0,
-        scores: new Map(),
-        current: null,
-        timer: null,
-    };
-
-    sessions.set(guildId, session);
-
-    await nextRound(client, session);
-
-    return { ok: true, rounds: total };
-}
-
-/**
- *
  * Advance to the next round (or end the game when the pool is exhausted): announce it, play the track, and arm
  * the snippet timer that ends the round on timeout.
  * @param {UsingClient} client The client instance.
@@ -266,7 +194,7 @@ export async function startQuiz(options: StartQuizOptions): Promise<StartQuizRes
  */
 async function nextRound(client: UsingClient, session: QuizSession): Promise<void> {
     session.index++;
-    if (session.index > session.total) return endQuiz(client, session);
+    if (session.index > session.total) return endGame(client, session);
 
     const track: TrackStructure = session.pool[session.index - 1];
     session.current = { track, titleBy: null, artistBy: null };
@@ -279,41 +207,6 @@ async function nextRound(client: UsingClient, session: QuizSession): Promise<voi
     session.timer = setTimeout((): void => {
         void endRound(client, session, "timeout");
     }, client.config.quiz.snippet);
-}
-
-/**
- *
- * Handle a chat guess for the current round. Awards a point for a newly-claimed title or artist, announces it,
- * and ends the round early once both have been claimed. No-op when there's no active round.
- * @param {UsingClient} client The client instance.
- * @param {QuizSession} session The running session.
- * @param {string} userId The guesser's user id.
- * @param {string} content The raw message content.
- * @returns {Promise<void>} A promise that resolves once the guess is processed.
- */
-export async function handleGuess(client: UsingClient, session: QuizSession, userId: string, content: string): Promise<void> {
-    const round: QuizRound | null = session.current;
-    if (!round) return;
-
-    const { messages } = await ContextOps.locale(client, session.guildId);
-
-    const award = (): void => {
-        session.scores.set(userId, (session.scores.get(userId) ?? 0) + 1);
-    };
-
-    if (!round.titleBy && QuizOps.matches(content, round.track.info.title)) {
-        round.titleBy = userId;
-        award();
-        await say(client, session.channelId, messages.events.quiz.guessed.title({ user: userId }));
-    }
-
-    if (!round.artistBy && QuizOps.matches(content, round.track.info.author)) {
-        round.artistBy = userId;
-        award();
-        await say(client, session.channelId, messages.events.quiz.guessed.artist({ user: userId }));
-    }
-
-    if (round.titleBy && round.artistBy) await endRound(client, session, "solved");
 }
 
 /**
@@ -356,30 +249,143 @@ async function endRound(client: UsingClient, session: QuizSession, reason: "solv
  * @param {QuizSession} session The running session.
  * @returns {Promise<void>} A promise that resolves once the game is finished.
  */
-async function endQuiz(client: UsingClient, session: QuizSession): Promise<void> {
+async function endGame(client: UsingClient, session: QuizSession): Promise<void> {
     if (session.timer) clearTimeout(session.timer);
     sessions.delete(session.guildId);
 
     const { messages } = await ContextOps.locale(client, session.guildId);
-    await say(client, session.channelId, leaderboardText(messages, session.scores));
+    await say(client, session.channelId, QuizOps.leaderboard(messages, session.scores));
 
     await session.player.destroy().catch((): null => null);
 }
 
-/**
- *
- * Stop a running quiz on request: cancel its timer, drop the session, and tear down the player.
- * @param {string} guildId The guild id.
- * @returns {Promise<boolean>} True if a quiz was running and got stopped, false if there was none.
- */
-export async function stopQuiz(guildId: string): Promise<boolean> {
-    const session: QuizSession | undefined = sessions.get(guildId);
-    if (!session) return false;
+export const QuizOps = {
+    /**
+     *
+     * Get the running quiz session for a guild, if any. Used by the message listener to route guesses.
+     * @param {string} guildId The guild id.
+     * @returns {QuizSession | undefined} The running session, or undefined.
+     */
+    get(guildId: string): QuizSession | undefined {
+        return sessions.get(guildId);
+    },
+    /**
+     *
+     * Render the scoreboard from a scores map: the ranked leaderboard, or the "nobody scored" line when empty.
+     * Shared by the game-over summary and the `/quiz leaderboard` subcommand.
+     * @param {Messages} messages The resolved locale messages.
+     * @param {Map<string, number>} scores The user id -> points map.
+     * @returns {string} The rendered scoreboard.
+     */
+    leaderboard(messages: Messages, scores: Map<string, number>): string {
+        const ranked: Array<[string, number]> = [...scores.entries()].sort((a, b): number => b[1] - a[1]);
+        if (!ranked.length) return messages.events.quiz.noScores;
 
-    if (session.timer) clearTimeout(session.timer);
-    sessions.delete(guildId);
+        const lines: string[] = ranked.map(([user, points], index): string =>
+            messages.events.quiz.leaderboard.entry({ position: index + 1, user, points }),
+        );
 
-    await session.player.destroy().catch((): null => null);
+        return `${messages.events.quiz.leaderboard.title}\n${lines.join("\n")}`;
+    },
+    /**
+     *
+     * Start a quiz in a guild: gather the pool, spin up a hidden (`isQuiz`) player, join voice, and kick off round 1.
+     * @param {StartQuizOptions} options The start inputs.
+     * @returns {Promise<StartQuizResult>} The started round count, or the reason it couldn't start.
+     */
+    async start(options: StartQuizOptions): Promise<StartQuizResult> {
+        const { client, guildId, channelId, voice, me, localeString } = options;
 
-    return true;
-}
+        if (sessions.has(guildId)) return { ok: false, reason: "alreadyRunning" };
+        // A regular player is already busy in this guild; don't hijack an ongoing session with a quiz.
+        if (client.manager.getPlayer(guildId)) return { ok: false, reason: "busy" };
+
+        const pool: TrackStructure[] = await buildPool(client);
+        const total: number = Math.min(client.config.quiz.rounds, pool.length);
+        if (total < 1) return { ok: false, reason: "notEnoughTracks" };
+
+        const { defaultVolume } = await client.database.players.get(guildId);
+
+        const player = client.manager.createPlayer({
+            guildId,
+            textId: channelId,
+            voiceId: voice.id,
+            volume: defaultVolume,
+            selfDeaf: true,
+        });
+
+        await joinVoiceChannel(player, voice, me);
+        await player.data.set("isQuiz", true);
+        await player.data.set("localeString", localeString);
+        await player.data.set("me", TrackOps.requesterFn(client.me));
+
+        const session: QuizSession = {
+            guildId,
+            channelId,
+            player,
+            pool: pool.slice(0, total),
+            total,
+            index: 0,
+            scores: new Map(),
+            current: null,
+            timer: null,
+        };
+
+        sessions.set(guildId, session);
+
+        await nextRound(client, session);
+
+        return { ok: true, rounds: total };
+    },
+    /**
+     *
+     * Handle a chat guess for the current round. Awards a point for a newly-claimed title or artist, announces it,
+     * and ends the round early once both have been claimed. No-op when there's no active round.
+     * @param {UsingClient} client The client instance.
+     * @param {QuizSession} session The running session.
+     * @param {string} userId The guesser's user id.
+     * @param {string} content The raw message content.
+     * @returns {Promise<void>} A promise that resolves once the guess is processed.
+     */
+    async guess(client: UsingClient, session: QuizSession, userId: string, content: string): Promise<void> {
+        const round: QuizRound | null = session.current;
+        if (!round) return;
+
+        const { messages } = await ContextOps.locale(client, session.guildId);
+
+        const award = (): void => {
+            session.scores.set(userId, (session.scores.get(userId) ?? 0) + 1);
+        };
+
+        if (!round.titleBy && matches(content, round.track.info.title)) {
+            round.titleBy = userId;
+            award();
+            await say(client, session.channelId, messages.events.quiz.guessed.title({ user: userId }));
+        }
+
+        if (!round.artistBy && matches(content, round.track.info.author)) {
+            round.artistBy = userId;
+            award();
+            await say(client, session.channelId, messages.events.quiz.guessed.artist({ user: userId }));
+        }
+
+        if (round.titleBy && round.artistBy) await endRound(client, session, "solved");
+    },
+    /**
+     *
+     * Stop a running quiz on request: cancel its timer, drop the session, and tear down the player.
+     * @param {string} guildId The guild id.
+     * @returns {Promise<boolean>} True if a quiz was running and got stopped, false if there was none.
+     */
+    async stop(guildId: string): Promise<boolean> {
+        const session: QuizSession | undefined = sessions.get(guildId);
+        if (!session) return false;
+
+        if (session.timer) clearTimeout(session.timer);
+        sessions.delete(guildId);
+
+        await session.player.destroy().catch((): null => null);
+
+        return true;
+    },
+};

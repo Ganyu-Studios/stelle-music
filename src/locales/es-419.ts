@@ -24,6 +24,7 @@ export default {
             quiz: {
                 notInVoice: "`❌` Debes estar en un canal de voz para iniciar un quiz.",
                 alreadyRunning: "`❌` Ya hay un quiz musical en curso en este servidor.",
+                busy: "`❌` Ya estoy reproduciendo música en este servidor. Detén el reproductor antes de iniciar un quiz.",
                 notEnoughTracks: "`❌` No pude juntar suficientes canciones para el quiz. Revisa la fuente configurada.",
                 started: ({ rounds }): string =>
                     `\`🎶\` **¡Quiz musical iniciado!** \`${rounds}\` rondas — entra al voice y adivina el título y el artista.`,

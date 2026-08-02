@@ -1,5 +1,5 @@
 import { Declare, type GuildCommandContext, LocalesT, type MessageStructure, SubCommand, type WebhookMessageStructure } from "seyfert";
-import { stopQuiz } from "#stelle/utils/functions/manager/quiz.js";
+import { QuizOps } from "#stelle/utils/functions/manager/quiz.js";
 
 @Declare({
     name: "stop",
@@ -11,7 +11,7 @@ export default class QuizStopSubCommand extends SubCommand {
         const { guildId } = ctx;
         const { messages } = await ctx.locale();
 
-        const stopped: boolean = await stopQuiz(guildId);
+        const stopped: boolean = await QuizOps.stop(guildId);
         if (!stopped) return ctx.errorReply(messages.commands.quiz.noQuiz, { ephemeral: true });
 
         return ctx.editOrReply({ content: messages.commands.quiz.stopped });

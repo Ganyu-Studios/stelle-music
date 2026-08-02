@@ -11,7 +11,7 @@ import {
     type WebhookMessageStructure,
 } from "seyfert";
 import { MessageFlags } from "seyfert/lib/types/index.js";
-import { startQuiz } from "#stelle/utils/functions/manager/quiz.js";
+import { QuizOps } from "#stelle/utils/functions/manager/quiz.js";
 
 @Declare({
     name: "start",
@@ -35,12 +35,15 @@ export default class QuizStartSubCommand extends SubCommand {
 
         await ctx.deferReply();
 
-        const result = await startQuiz({ client, guildId, channelId, voice, me, localeString: await ctx.localeString() });
+        const result = await QuizOps.start({ client, guildId, channelId, voice, me, localeString: await ctx.localeString() });
         if (!result.ok) {
-            const reason: string =
-                result.reason === "alreadyRunning" ? messages.commands.quiz.alreadyRunning : messages.commands.quiz.notEnoughTracks;
+            const reasons: Record<typeof result.reason, string> = {
+                alreadyRunning: messages.commands.quiz.alreadyRunning,
+                busy: messages.commands.quiz.busy,
+                notEnoughTracks: messages.commands.quiz.notEnoughTracks,
+            };
 
-            return ctx.editOrReply({ content: reason, flags: MessageFlags.Ephemeral });
+            return ctx.editOrReply({ content: reasons[result.reason], flags: MessageFlags.Ephemeral });
         }
 
         return ctx.editOrReply({ content: messages.commands.quiz.started({ rounds: result.rounds }) });

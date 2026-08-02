@@ -80,6 +80,7 @@ export default {
             quiz: {
                 notInVoice: "`❌` You must be in a voice channel to start a quiz.",
                 alreadyRunning: "`❌` A music quiz is already running in this server.",
+                busy: "`❌` I'm already playing music in this server. Stop the player before starting a quiz.",
                 notEnoughTracks: "`❌` I couldn't gather enough tracks for the quiz. Check the configured source.",
                 started: ({ rounds }: IQuizStarted): string =>
                     `\`🎶\` **Music quiz started!** \`${rounds}\` rounds — hop in voice and guess the title and artist!`,
