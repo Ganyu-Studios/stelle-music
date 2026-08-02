@@ -1,4 +1,4 @@
-import type { PlayerStructure, TrackStructure } from "hoshimi";
+import { LoadType, type PlayerStructure, SearchSources, type TrackStructure } from "hoshimi";
 import type { AllGuildVoiceChannels, DefaultLocale, GuildMember, LocaleString, UsingClient } from "seyfert";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { matches } from "#stelle/utils/functions/internal/quiz.js";
@@ -150,22 +150,42 @@ async function say(client: UsingClient, channelId: string, content: string): Pro
 
 /**
  *
- * Resolve the configured `quiz.source` entries into a shuffled, de-duplicated pool of tracks. URL entries load
- * their whole result (a playlist or a single track); plain entries are searched and contribute their top hit.
+ * Resolve a single `quiz.sources` entry into its tracks. A playlist contributes all of its tracks; anything that
+ * resolves to a single track (a track URL or a plain query's top hit) is expanded into a pool by seeding a Spotify
+ * mix from it, so one song still yields a full game. Non-Spotify seeds just contribute themselves (the mix is empty).
+ * @param {UsingClient} client The client instance.
+ * @param {string} entry The source entry (URL or search query).
+ * @param {SearchSources} searchSource The platform to search plain queries on.
+ * @returns {Promise<TrackStructure[]>} The tracks contributed by this entry.
+ */
+async function resolveSource(client: UsingClient, entry: string, searchSource: SearchSources): Promise<TrackStructure[]> {
+    const result = await client.manager.search({ query: entry, source: searchSource, requester: null }).catch((): null => null);
+    if (!result?.tracks.length) return [];
+
+    if (result.loadType === LoadType.Playlist) return result.tracks;
+
+    // Single track (or a plain query): use the top hit as a seed and expand it into a mix so it forms a pool.
+    const seed: TrackStructure = result.tracks[0];
+    const mix = await client.manager
+        .search({ query: seed.info.identifier, source: SearchSources.SpotifyTrackMix, requester: null })
+        .catch((): null => null);
+
+    return [seed, ...(mix?.tracks ?? [])];
+}
+
+/**
+ *
+ * Resolve the configured `quiz.sources` entries into a shuffled, de-duplicated pool of tracks (see
+ * {@link resolveSource} for how each entry contributes).
  * @param {UsingClient} client The client instance.
  * @returns {Promise<TrackStructure[]>} The shuffled track pool.
  */
 async function buildPool(client: UsingClient): Promise<TrackStructure[]> {
-    const { sources: source } = client.config.quiz;
+    const { sources } = client.config.quiz;
     const searchSource = client.config.defaultSearchSource;
 
     const results: TrackStructure[][] = await Promise.all(
-        source.map(async (entry): Promise<TrackStructure[]> => {
-            const result = await client.manager.search({ query: entry, source: searchSource, requester: null }).catch((): null => null);
-            if (!result) return [];
-
-            return UtilsOps.isUrl(entry) ? result.tracks : result.tracks.slice(0, 1);
-        }),
+        sources.map((entry): Promise<TrackStructure[]> => resolveSource(client, entry, searchSource)),
     );
 
     const seen: Set<string> = new Set();
