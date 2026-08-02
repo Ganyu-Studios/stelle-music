@@ -249,6 +249,8 @@ async function buildPool(client: UsingClient, player: PlayerStructure): Promise<
         [pool[i], pool[j]] = [pool[j], pool[i]];
     }
 
+    client.debug(`[Quiz] Pool built | sources: ${sources.length} | unique tracks: ${pool.length}`);
+
     return pool;
 }
 

@@ -225,4 +225,15 @@ export class Stelle extends Client<true> {
             throw error;
         }
     }
+
+    /**
+     *
+     * Log a debug message through the debugger, only when debug mode is enabled. Wraps the repeated
+     * `if (StelleMeta.Debug) client.debugger?.info(...)` pattern used across the codebase.
+     * @param {string} message The message to log.
+     * @returns {void}
+     */
+    public debug(message: string): void {
+        if (StelleMeta.Debug) this.debugger?.info(message);
+    }
 }
