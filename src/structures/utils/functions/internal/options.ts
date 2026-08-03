@@ -77,18 +77,14 @@ function getRange(option: APIApplicationCommandOption): string {
 
     switch (option.type) {
         case ApplicationCommandOptionType.String:
-            {
-                text += option.max_length ? ` Max: ${option.max_length}` : "";
-                text += option.min_length ? ` Min: ${option.min_length}` : "";
-            }
+            if (option.max_length) text += ` Max: ${option.max_length}`;
+            if (option.min_length) text += ` Min: ${option.min_length}`;
             break;
 
         case ApplicationCommandOptionType.Integer:
         case ApplicationCommandOptionType.Number:
-            {
-                text += option.max_value ? ` Max: ${option.max_value}` : "";
-                text += option.min_value ? ` Min: ${option.min_value}` : "";
-            }
+            if (option.max_value) text += ` Max: ${option.max_value}`;
+            if (option.min_value) text += ` Min: ${option.min_value}`;
             break;
 
         default:
