@@ -1,9 +1,10 @@
-import { LoadType, type PlayerStructure, type QueryResult, SearchSources, SourceNames, type TrackStructure } from "hoshimi";
+import { LoadType, type PlayerStructure, type QueryResult, type SearchSources, type TrackStructure } from "hoshimi";
 import type { AllGuildVoiceChannels, DefaultLocale, GuildMember, LocaleString, UsingClient } from "seyfert";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { clean, matches } from "#stelle/utils/functions/internal/quiz.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
+import { type Mix, seedMix } from "#stelle/utils/functions/manager/radio.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 
 /**
@@ -155,61 +156,6 @@ async function say(client: UsingClient, channelId: string, content: string): Pro
 
 /**
  *
- * Run a search through the player and return just its tracks (empty on any failure).
- * @param {PlayerStructure} player The player to search through.
- * @param {string} query The query to search.
- * @param {SearchSources} source The source to run the query on.
- * @returns {Promise<TrackStructure[]>} The resulting tracks.
- */
-async function searchTracks(player: PlayerStructure, query: string, source: SearchSources): Promise<TrackStructure[]> {
-    const result: QueryResult | null = await player.search({ query, source, requester: null }).catch((): null => null);
-    return result?.tracks ?? [];
-}
-
-/**
- *
- * Fetch a YouTube "RD" radio mix seeded from a video id.
- * @param {PlayerStructure} player The player to search through.
- * @param {string} videoId The YouTube video id to seed the radio from.
- * @returns {Promise<TrackStructure[]>} The radio tracks.
- */
-function youtubeRadio(player: PlayerStructure, videoId: string): Promise<TrackStructure[]> {
-    return searchTracks(player, `https://www.youtube.com/watch?v=${videoId}&list=RD${videoId}`, SearchSources.YoutubeMusic);
-}
-
-/**
- *
- * Expand a single track into a mix of related tracks, picking the strategy from the seed's source (Spotify mix,
- * YouTube "RD" radio, or Deezer recommendations). When the Spotify mix comes back empty it bridges to a YouTube
- * radio via a title/artist lookup (the same fallback as autoplay); unsupported sources yield nothing.
- * @param {PlayerStructure} player The player to search through.
- * @param {TrackStructure} seed The track to seed the mix from.
- * @returns {Promise<TrackStructure[]>} The related tracks (excluding the seed).
- */
-async function seedMix(player: PlayerStructure, seed: TrackStructure): Promise<TrackStructure[]> {
-    const { identifier, sourceName, title, author } = seed.info;
-
-    switch (sourceName) {
-        case SourceNames.Spotify: {
-            const mix: TrackStructure[] = await searchTracks(player, identifier, SearchSources.SpotifyTrackMix);
-            if (mix.length) return mix;
-
-            // Spotify mix empty: bridge to a YouTube radio via a title/artist lookup.
-            const [match]: TrackStructure[] = await searchTracks(player, `${title} ${author}`, SearchSources.Youtube);
-            return match ? youtubeRadio(player, match.info.identifier) : [];
-        }
-        case SourceNames.Youtube:
-        case SourceNames.YoutubeMusic:
-            return youtubeRadio(player, identifier);
-        case SourceNames.Deezer:
-            return searchTracks(player, identifier, SearchSources.DeezerRecommendations);
-        default:
-            return [];
-    }
-}
-
-/**
- *
  * Resolve a single `quiz.sources` entry into its tracks. A playlist contributes all of its tracks; anything that
  * resolves to a single track (a track URL or a plain query's top hit) is expanded into a pool via a source-aware
  * mix (see {@link seedMix}), so one song still yields a full game.
@@ -225,7 +171,9 @@ async function resolveSource(player: PlayerStructure, entry: string, searchSourc
     if (result.loadType === LoadType.Playlist) return result.tracks;
 
     const seed: TrackStructure = result.tracks[0];
-    return [seed, ...(await seedMix(player, seed))];
+    const { tracks }: Mix = await seedMix(player, seed, null);
+
+    return [seed, ...tracks];
 }
 
 /**
