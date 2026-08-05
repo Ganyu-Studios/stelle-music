@@ -88,12 +88,6 @@ interface QuizSession {
      * @type {NodeJS.Timeout | null}
      */
     timer: NodeJS.Timeout | null;
-    /**
-     * Removes the game's `playerDestroy` listener from the manager. Called on every teardown so the hook doesn't
-     * outlive the game. Undefined until the listener is armed in {@link QuizOps.start}.
-     * @type {(() => void) | undefined}
-     */
-    dispose?: () => void;
 }
 
 /**
@@ -147,6 +141,33 @@ export type StartQuizResult = { ok: true; rounds: number } | { ok: false; reason
  * @type {Map<string, QuizSession>}
  */
 const sessions: Map<string, QuizSession> = new Map();
+
+/**
+ * Whether the shared `playerDestroy` listener has been armed. Armed once, lazily, on the first
+ * {@link QuizOps.start} (module scope has no client to register it earlier).
+ * @type {boolean}
+ */
+let isArmed: boolean = false;
+
+/**
+ *
+ * Arm — once — a single manager `playerDestroy` listener that interrupts whichever guild's game owned the
+ * destroyed player. One listener covers every game (rather than one per game, which would pile up and trip Node's
+ * max-listeners warning). It's registered from this module instance — the one that runs {@link QuizOps.start} and
+ * so holds the session registry — because the lavalink `playerDestroy` event runs in a separate module graph and
+ * cannot see the games.
+ * @param {UsingClient} client The client instance.
+ * @returns {void}
+ */
+function ensureDestroyListener(client: UsingClient): void {
+    if (isArmed) return;
+
+    isArmed = true;
+
+    client.manager.on(EventNames.PlayerDestroy, (destroyed: PlayerStructure): void => {
+        if (sessions.has(destroyed.guildId)) void QuizOps.interrupt(client, destroyed.guildId);
+    });
+}
 
 /**
  *
@@ -302,7 +323,6 @@ async function endRound(client: UsingClient, session: QuizSession, reason: "solv
  */
 async function endGame(client: UsingClient, session: QuizSession): Promise<void> {
     if (session.timer) clearTimeout(session.timer);
-    session.dispose?.();
     sessions.delete(session.guildId);
 
     client.debug(`[Quiz] Ended | guild: ${session.guildId} | rounds: ${session.total} | scorers: ${session.scores.size}`);
@@ -392,19 +412,9 @@ export const QuizOps = {
 
         sessions.set(guildId, session);
 
-        // The player can be torn down without going through the quiz (e.g. the bot is disconnected from voice →
-        // hoshimi's autoDestroy). Listen on the shared manager for that so the game ends promptly and notifies the
-        // channel. Registering it here — not in the lavalink `playerDestroy` event — keeps the handler in this
-        // module instance, so it sees this session; the lavalink event runs in a separate module graph with its
-        // own (empty) registry and could never find it.
-        const onDestroy = (destroyed: PlayerStructure): void => {
-            if (destroyed.guildId === guildId) void QuizOps.interrupt(client, guildId);
-        };
-
-        client.manager.on(EventNames.PlayerDestroy, onDestroy);
-        session.dispose = (): void => {
-            client.manager.off(EventNames.PlayerDestroy, onDestroy);
-        };
+        // Arm the shared listener so a game ends promptly if its player is torn down out-of-band (e.g. the bot is
+        // disconnected from voice → hoshimi's autoDestroy). One listener covers every guild; see ensureDestroyListener.
+        ensureDestroyListener(client);
 
         client.debug(`[Quiz] Started | guild: ${guildId} | rounds: ${total} | pool: ${pool.length}`);
 
@@ -492,7 +502,6 @@ export const QuizOps = {
         if (!session) return undefined;
 
         if (session.timer) clearTimeout(session.timer);
-        session.dispose?.();
 
         sessions.delete(guildId);
 
