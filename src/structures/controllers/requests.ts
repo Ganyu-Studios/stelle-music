@@ -21,9 +21,9 @@ export class RequestsController extends Controller<"guildRequestChannel"> {
      */
     public get(guildId: string): Promise<guildRequestChannel | null> {
         return this.cacheGet({
-            read: () => this.database.cache.getGuild(guildId)?.requests,
+            read: () => this.cache.getGuild(guildId)?.requests,
             write: (record): void => {
-                this.database.cache.guild(guildId).requests = record;
+                this.cache.guild(guildId).requests = record;
             },
             query: () => this.model.findUnique({ where: { guildId } }),
         });
@@ -38,7 +38,7 @@ export class RequestsController extends Controller<"guildRequestChannel"> {
     public set(guildId: string, data: RequestChannelData): Promise<void> {
         return this.cacheSet({
             write: (record): void => {
-                this.database.cache.guild(guildId).requests = record;
+                this.cache.guild(guildId).requests = record;
             },
             query: () => this.model.upsert({ where: { guildId }, create: { guildId, ...data }, update: data }),
         });
@@ -52,7 +52,7 @@ export class RequestsController extends Controller<"guildRequestChannel"> {
     public delete(guildId: string): Promise<void> {
         return this.cacheDelete({
             evict: (): void => {
-                this.database.cache.guild(guildId).requests = null;
+                this.cache.guild(guildId).requests = null;
             },
             query: () => this.model.delete({ where: { guildId } }),
         });

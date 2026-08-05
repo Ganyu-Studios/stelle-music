@@ -33,13 +33,13 @@ export class PlaylistController extends Controller<"userPlaylist"> {
         // cached object would poison the shared entry before the DB write lands.
         return this.cacheGet({
             read: () => {
-                const cached = this.database.cache.playlists.get(playlistId);
+                const cached = this.cache.playlists.get(playlistId);
                 return cached && cached.userId === userId ? cached : undefined;
             },
             write: (record): void => {
                 // Global collection addressed by playlistId, but the query is scoped by owner: cache only a hit, never a
                 // `null` miss — a null here means "not this user's", not "no such playlist", and would poison the owner.
-                if (record) this.database.cache.playlists.set(record.playlistId, record);
+                if (record) this.cache.playlists.set(record.playlistId, record);
             },
             query: () => this.model.findUnique({ where: { playlistId, userId } }),
             clone: true,
@@ -58,11 +58,11 @@ export class PlaylistController extends Controller<"userPlaylist"> {
         // Clone on read: same rationale as get() — the loaded playlist's tracks are copied into a live queue.
         return this.cacheGet({
             read: () => {
-                const cached = this.database.cache.playlists.get(playlistId);
+                const cached = this.cache.playlists.get(playlistId);
                 return cached && (cached.userId === userId || cached.public) ? cached : undefined;
             },
             write: (record): void => {
-                if (record) this.database.cache.playlists.set(record.playlistId, record);
+                if (record) this.cache.playlists.set(record.playlistId, record);
             },
             query: () =>
                 this.model.findFirst({
@@ -88,7 +88,7 @@ export class PlaylistController extends Controller<"userPlaylist"> {
 
         return this.cacheSet({
             write: (record): void => {
-                this.database.cache.playlists.set(record.playlistId, record);
+                this.cache.playlists.set(record.playlistId, record);
             },
             query: () =>
                 this.model.upsert({
@@ -109,7 +109,7 @@ export class PlaylistController extends Controller<"userPlaylist"> {
     public delete(userId: string, playlistId: string): Promise<void> {
         return this.cacheDelete({
             evict: (): void => {
-                this.database.cache.playlists.delete(playlistId);
+                this.cache.playlists.delete(playlistId);
             },
             query: () => this.model.delete({ where: { userId, playlistId } }),
         });
