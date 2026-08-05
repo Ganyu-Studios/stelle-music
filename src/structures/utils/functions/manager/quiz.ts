@@ -159,7 +159,7 @@ let isArmed: boolean = false;
  * @param {UsingClient} client The client instance.
  * @returns {void}
  */
-function ensureDestroyListener(client: UsingClient): void {
+function armDestroyListener(client: UsingClient): void {
     if (isArmed) return;
 
     isArmed = true;
@@ -413,8 +413,8 @@ export const QuizOps = {
         sessions.set(guildId, session);
 
         // Arm the shared listener so a game ends promptly if its player is torn down out-of-band (e.g. the bot is
-        // disconnected from voice → hoshimi's autoDestroy). One listener covers every guild; see ensureDestroyListener.
-        ensureDestroyListener(client);
+        // disconnected from voice → hoshimi's autoDestroy). One listener covers every guild; see armDestroyListener.
+        armDestroyListener(client);
 
         client.debug(`[Quiz] Started | guild: ${guildId} | rounds: ${total} | pool: ${pool.length}`);
 
