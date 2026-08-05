@@ -1,4 +1,4 @@
-import { LoadType, type PlayerStructure, type QueryResult, type SearchSources, type TrackStructure } from "hoshimi";
+import { EventNames, LoadType, type PlayerStructure, type QueryResult, type SearchSources, type TrackStructure } from "hoshimi";
 import type { AllGuildVoiceChannels, DefaultLocale, GuildMember, LocaleString, UsingClient } from "seyfert";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { clean, matches } from "#stelle/utils/functions/internal/quiz.js";
@@ -88,6 +88,12 @@ interface QuizSession {
      * @type {NodeJS.Timeout | null}
      */
     timer: NodeJS.Timeout | null;
+    /**
+     * Removes the game's `playerDestroy` listener from the manager. Called on every teardown so the hook doesn't
+     * outlive the game. Undefined until the listener is armed in {@link QuizOps.start}.
+     * @type {(() => void) | undefined}
+     */
+    dispose?: () => void;
 }
 
 /**
@@ -296,6 +302,7 @@ async function endRound(client: UsingClient, session: QuizSession, reason: "solv
  */
 async function endGame(client: UsingClient, session: QuizSession): Promise<void> {
     if (session.timer) clearTimeout(session.timer);
+    session.dispose?.();
     sessions.delete(session.guildId);
 
     client.debug(`[Quiz] Ended | guild: ${session.guildId} | rounds: ${session.total} | scorers: ${session.scores.size}`);
@@ -385,6 +392,20 @@ export const QuizOps = {
 
         sessions.set(guildId, session);
 
+        // The player can be torn down without going through the quiz (e.g. the bot is disconnected from voice →
+        // hoshimi's autoDestroy). Listen on the shared manager for that so the game ends promptly and notifies the
+        // channel. Registering it here — not in the lavalink `playerDestroy` event — keeps the handler in this
+        // module instance, so it sees this session; the lavalink event runs in a separate module graph with its
+        // own (empty) registry and could never find it.
+        const onDestroy = (destroyed: PlayerStructure): void => {
+            if (destroyed.guildId === guildId) void QuizOps.interrupt(client, guildId);
+        };
+
+        client.manager.on(EventNames.PlayerDestroy, onDestroy);
+        session.dispose = (): void => {
+            client.manager.off(EventNames.PlayerDestroy, onDestroy);
+        };
+
         client.debug(`[Quiz] Started | guild: ${guildId} | rounds: ${total} | pool: ${pool.length}`);
 
         await nextRound(client, session);
@@ -451,10 +472,7 @@ export const QuizOps = {
      */
     async interrupt(client: UsingClient, guildId: string): Promise<void> {
         const session: QuizSession | undefined = QuizOps.abort(guildId);
-        if (!session) {
-            client.debug(`[Quiz] interrupt: no session for '${guildId}' | sessions: ${sessions.size}`);
-            return;
-        }
+        if (!session) return;
 
         client.debug(`[Quiz] Interrupted (player gone) | guild: ${guildId}`);
 
@@ -474,6 +492,7 @@ export const QuizOps = {
         if (!session) return undefined;
 
         if (session.timer) clearTimeout(session.timer);
+        session.dispose?.();
 
         sessions.delete(guildId);
 
