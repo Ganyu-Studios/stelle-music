@@ -11,15 +11,9 @@ export default createLavalinkEvent({
     async run(client, player): Promise<void> {
         Sessions.delete(player.guildId);
 
-        // If a quiz was running on this player, tear its state down so a dangling timer can't keep advancing rounds.
-        const quiz = QuizOps.abort(player.guildId);
-        if (quiz) {
-            client.debug(`[Quiz] Aborted (player destroyed) | guild: ${player.guildId}`);
-
-            const messages = await PlayerOps.messages(client, player);
-            if (messages)
-                await client.messages.write(quiz.channelId, { content: messages.events.quiz.interrupted }).catch((): null => null);
-        }
+        // If a quiz was running on this player, tear its state down (so a dangling timer can't keep advancing rounds)
+        // and notify its channel that the game was interrupted.
+        await QuizOps.interrupt(client, player.guildId);
 
         const textId: string | undefined = player.textId ?? player.options.textId;
         if (!textId) return;

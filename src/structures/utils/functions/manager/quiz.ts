@@ -219,10 +219,16 @@ async function buildPool(client: UsingClient, player: PlayerStructure): Promise<
  * @returns {Promise<void>} A promise that resolves once the round is set up (or the game ended).
  */
 async function nextRound(client: UsingClient, session: QuizSession): Promise<void> {
+    // The player can vanish mid-game (e.g. the bot is disconnected from voice → hoshimi's autoDestroy). Don't play
+    // on a corpse: interrupt the game (dropping its state and notifying the channel) instead of advancing.
+    if (client.manager.getPlayer(session.guildId) !== session.player) return QuizOps.interrupt(client, session.guildId);
+
     session.index++;
+
     if (session.index > session.total) return endGame(client, session);
 
     const track: TrackStructure = session.pool[session.index - 1];
+
     session.current = { track, titleBy: null, artistBy: null };
 
     client.debug(
@@ -230,8 +236,8 @@ async function nextRound(client: UsingClient, session: QuizSession): Promise<voi
     );
 
     const { messages } = await ContextOps.locale(client, session.guildId);
-    await say(client, session.channelId, messages.events.quiz.roundStart({ round: session.index, total: session.total }));
 
+    await say(client, session.channelId, messages.events.quiz.roundStart({ round: session.index, total: session.total }));
     await session.player.play({ track }).catch((): null => null);
 
     session.timer = setTimeout((): void => {
@@ -249,6 +255,10 @@ async function nextRound(client: UsingClient, session: QuizSession): Promise<voi
  * @returns {Promise<void>} A promise that resolves once the next round (or the game end) is scheduled.
  */
 async function endRound(client: UsingClient, session: QuizSession, reason: "solved" | "timeout"): Promise<void> {
+    // A stale timer can fire after the game was aborted or replaced (e.g. its player was destroyed mid-round);
+    // ignore it so a dead session can't post a ghost round.
+    if (sessions.get(session.guildId) !== session) return;
+
     if (session.timer) {
         clearTimeout(session.timer);
         session.timer = null;
@@ -262,6 +272,7 @@ async function endRound(client: UsingClient, session: QuizSession, reason: "solv
     const { messages } = await ContextOps.locale(client, session.guildId);
 
     if (reason === "timeout") await say(client, session.channelId, messages.events.quiz.timeout);
+
     await say(
         client,
         session.channelId,
@@ -364,8 +375,8 @@ export const QuizOps = {
             guildId,
             channelId,
             player,
-            pool: pool.slice(0, total),
             total,
+            pool: pool.slice(0, total),
             index: 0,
             scores: new Map(),
             current: null,
@@ -430,6 +441,29 @@ export const QuizOps = {
     },
     /**
      *
+     * Interrupt a quiz whose player is gone (destroyed externally — e.g. the bot was disconnected from voice and
+     * hoshimi's autoDestroy tore the player down): drop its state and post the interrupted notice. The locale is
+     * resolved from the guild (not the player's data, which is already wiped by the time the player is destroyed),
+     * so the notice lands reliably. Idempotent — a no-op when no quiz is running.
+     * @param {UsingClient} client The client instance.
+     * @param {string} guildId The guild id.
+     * @returns {Promise<void>} A promise that resolves once the interruption is handled.
+     */
+    async interrupt(client: UsingClient, guildId: string): Promise<void> {
+        const session: QuizSession | undefined = QuizOps.abort(guildId);
+        if (!session) {
+            client.debug(`[Quiz] interrupt: no session for '${guildId}' | sessions: ${sessions.size}`);
+            return;
+        }
+
+        client.debug(`[Quiz] Interrupted (player gone) | guild: ${guildId}`);
+
+        const { messages } = await ContextOps.locale(client, guildId);
+
+        await say(client, session.channelId, messages.events.quiz.interrupted);
+    },
+    /**
+     *
      * Tear down a quiz's in-memory state (its round timer and session) without touching the player — for when the
      * player is already gone (destroyed externally), so a dangling timer can't keep advancing rounds on a dead player.
      * @param {string} guildId The guild id.
@@ -440,6 +474,7 @@ export const QuizOps = {
         if (!session) return undefined;
 
         if (session.timer) clearTimeout(session.timer);
+
         sessions.delete(guildId);
 
         return session;
