@@ -143,15 +143,15 @@ export type StartQuizResult = { ok: true; rounds: number } | { ok: false; reason
 const sessions: Map<string, QuizSession> = new Map();
 
 /**
- * Whether the shared `playerDestroy` listener has been armed. Armed once, lazily, on the first
+ * Whether the shared `playerDestroy` listener has been set. Set once, lazily, on the first
  * {@link QuizOps.start} (module scope has no client to register it earlier).
  * @type {boolean}
  */
-let isArmed: boolean = false;
+let isListening: boolean = false;
 
 /**
  *
- * Arm — once — a single manager `playerDestroy` listener that interrupts whichever guild's game owned the
+ * Set — once — a single manager `playerDestroy` listener that interrupts whichever guild's game owned the
  * destroyed player. One listener covers every game (rather than one per game, which would pile up and trip Node's
  * max-listeners warning). It's registered from this module instance — the one that runs {@link QuizOps.start} and
  * so holds the session registry — because the lavalink `playerDestroy` event runs in a separate module graph and
@@ -159,10 +159,10 @@ let isArmed: boolean = false;
  * @param {UsingClient} client The client instance.
  * @returns {void}
  */
-function armDestroyListener(client: UsingClient): void {
-    if (isArmed) return;
+function setDestroyListener(client: UsingClient): void {
+    if (isListening) return;
 
-    isArmed = true;
+    isListening = true;
 
     client.manager.on(EventNames.PlayerDestroy, (destroyed: PlayerStructure): void => {
         if (sessions.has(destroyed.guildId)) void QuizOps.interrupt(client, destroyed.guildId);
@@ -412,9 +412,9 @@ export const QuizOps = {
 
         sessions.set(guildId, session);
 
-        // Arm the shared listener so a game ends promptly if its player is torn down out-of-band (e.g. the bot is
-        // disconnected from voice → hoshimi's autoDestroy). One listener covers every guild; see armDestroyListener.
-        armDestroyListener(client);
+        // Set the shared listener so a game ends promptly if its player is torn down out-of-band (e.g. the bot is
+        // disconnected from voice → hoshimi's autoDestroy). One listener covers every guild; see setDestroyListener.
+        setDestroyListener(client);
 
         client.debug(`[Quiz] Started | guild: ${guildId} | rounds: ${total} | pool: ${pool.length}`);
 
