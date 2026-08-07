@@ -227,7 +227,6 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | MessageStru
         await interaction.deferUpdate();
 
         const isEnabled: boolean = !!(await player.data.get("lyricsEnabled"));
-
         if (isEnabled) {
             await sendLyricsUpdate({ interaction, embed, lyrics, track, player, messages, client, messageId: message.id });
 
@@ -238,9 +237,7 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | MessageStru
 
         try {
             await player.lyrics.subscribe(skipTrackSource);
-
             await sendLyricsUpdate({ interaction, embed, lyrics, track, player, messages, client, messageId: message.id });
-
             await player.data.set("lyricsEnabled", true);
         } catch {
             await interaction.followup({

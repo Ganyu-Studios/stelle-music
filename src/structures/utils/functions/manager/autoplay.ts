@@ -56,6 +56,7 @@ export async function autoplayFn(player: PlayerStructure, lastTrack: TrackStruct
     // A YouTube radio is a long ordered list — pick a random window so replaying the same seed doesn't always
     // queue the same run of tracks. A curated mix (Spotify / Deezer) is short, so we just take it from the top.
     let start: number = 0;
+
     if (kind === MixKind.Radio) start = Math.max(0, Math.floor(Math.random() * (filtered.length - trackLimit + 1)));
 
     await player.queue.add(filtered.slice(start, start + trackLimit));
