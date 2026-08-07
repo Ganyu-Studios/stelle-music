@@ -443,7 +443,7 @@ export class EmbedPaginator {
     public async edit(body: InteractionCreateBodyRequest | InteractionMessageUpdateBodyRequest): Promise<this> {
         if (!this.options.message) throw new InvalidMessage("I can't edit the message to an unknown pagination.");
 
-        await this.options.message.edit(body).catch((): null => null);
+        await this.options.ctx.editOrReply(body).catch((): null => null);
 
         return this;
     }
