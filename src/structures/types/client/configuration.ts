@@ -123,8 +123,10 @@ interface Images {
  */
 interface Quiz {
     /**
-     * The pool the quiz draws its random tracks from: each entry is either a URL (playlist or track) or a
-     * plain search query. All entries are resolved, flattened, de-duplicated and shuffled once per game.
+     * The candidate pools the quiz draws from: each entry is either a URL (playlist or track) or a plain search
+     * query. One entry is picked at random per game (so each game has a coherent theme that rotates across games),
+     * then resolved, de-duplicated and shuffled. A playlist contributes its own tracks; a single track/query is
+     * expanded into a related mix.
      * @type {string[]}
      */
     sources: string[];

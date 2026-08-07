@@ -205,34 +205,52 @@ async function resolveSource(player: PlayerStructure, entry: string, searchSourc
 
 /**
  *
- * Resolve the configured `quiz.sources` entries into a shuffled, de-duplicated pool of tracks, searched through
- * the game's player (see {@link resolveSource} for how each entry contributes).
+ * Shuffle an array in place (Fisher-Yates).
+ * @param {T[]} array The array to shuffle.
+ * @returns {T[]} The same array, shuffled.
+ */
+function shuffle<T>(array: T[]): T[] {
+    for (let i: number = array.length - 1; i > 0; i--) {
+        const j: number = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+
+    return array;
+}
+
+/**
+ *
+ * Build a game's track pool from a single, randomly-picked `quiz.sources` entry — so each game has a coherent theme
+ * that rotates across games (see {@link resolveSource} for how an entry contributes). Sources are tried in random
+ * order and the first that yields tracks wins, so one unresolvable entry doesn't sink the game; the winning entry's
+ * tracks are de-duplicated and shuffled.
  * @param {UsingClient} client The client instance.
  * @param {PlayerStructure} player The player to search through.
  * @returns {Promise<TrackStructure[]>} The shuffled track pool.
  */
 async function buildPool(client: UsingClient, player: PlayerStructure): Promise<TrackStructure[]> {
-    const { sources } = client.config.quiz;
     const searchSource = client.config.defaultSearchSource;
 
-    const results: TrackStructure[][] = await Promise.all(
-        sources.map((entry): Promise<TrackStructure[]> => resolveSource(player, entry, searchSource)),
-    );
-
-    const seen: Set<string> = new Set();
-    const pool: TrackStructure[] = results.flat().filter((track): boolean => {
-        if (seen.has(track.info.identifier)) return false;
-        seen.add(track.info.identifier);
-        return true;
-    });
-
-    // Fisher-Yates shuffle so each game draws a different order from the pool.
-    for (let i: number = pool.length - 1; i > 0; i--) {
-        const j: number = Math.floor(Math.random() * (i + 1));
-        [pool[i], pool[j]] = [pool[j], pool[i]];
+    let picked: string | undefined;
+    let tracks: TrackStructure[] = [];
+    for (const entry of shuffle([...client.config.quiz.sources])) {
+        tracks = await resolveSource(player, entry, searchSource);
+        if (tracks.length) {
+            picked = entry;
+            break;
+        }
     }
 
-    client.debug(`[Quiz] Pool built | sources: ${sources.length} | unique tracks: ${pool.length}`);
+    const seen: Set<string> = new Set();
+    const pool: TrackStructure[] = shuffle(
+        tracks.filter((track): boolean => {
+            if (seen.has(track.info.identifier)) return false;
+            seen.add(track.info.identifier);
+            return true;
+        }),
+    );
+
+    client.debug(`[Quiz] Pool built | source: ${picked ?? "none"} | unique tracks: ${pool.length}`);
 
     return pool;
 }
