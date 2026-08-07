@@ -13,6 +13,8 @@ import { HandleCommand } from "seyfert/lib/commands/handle.js";
 import type { HandleableCommand } from "seyfert/lib/commands/handler.js";
 import { ActivityType, ApplicationCommandType, type GatewayPresenceUpdateData, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
 import { Yuna } from "yunaforseyfert";
+import { StelleDatabase } from "#stelle/classes/database/Database.js";
+import { StelleManager } from "#stelle/classes/manager/Manager.js";
 import { StelleMiddlewares } from "#stelle/middlewares";
 import type { NonGlobalCommands, StelleConfiguration } from "#stelle/types";
 import { Configuration } from "#stelle/utils/data/configuration.js";
@@ -22,8 +24,6 @@ import { LoggerOps } from "#stelle/utils/functions/internal/logger.js";
 import { onBotPermissionsFail, onOptionsError, onPermissionsFail, onRunError } from "#stelle/utils/functions/internal/overrides.js";
 import { sendErrorReport } from "#stelle/utils/functions/internal/report.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
-import { StelleDatabase } from "./Database.js";
-import { StelleManager } from "./Manager.js";
 
 /**
  * Class representing the main client of the bot.

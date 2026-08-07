@@ -7,7 +7,7 @@ import { LoggerOps } from "#stelle/utils/functions/internal/logger.js";
 await Configuration.load();
 
 import { Logger } from "seyfert";
-import { Stelle } from "#stelle/classes/Stelle.js";
+import { Stelle } from "#stelle/classes/client/Stelle.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 Logger.customize(LoggerOps.custom);

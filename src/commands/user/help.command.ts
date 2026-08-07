@@ -15,7 +15,7 @@ import {
 } from "seyfert";
 import type { APIApplicationCommandOption, ApplicationCommandOptionType, LocaleString } from "seyfert/lib/types/index.js";
 import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
-import { EmbedPaginator, StelleStringMenu } from "#stelle/classes/EmbedPaginator.js";
+import { EmbedPaginator, StelleStringMenu } from "#stelle/classes/components/EmbedPaginator.js";
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js";

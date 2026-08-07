@@ -18,7 +18,7 @@ const { Configuration } = await import("#stelle/utils/data/configuration.js");
 // to build its `LimitedCollection`s, so stub just that instead of running the whole file loader in a test.
 Object.assign(Configuration, { cache: { size: 100, expire: 300_000 } });
 
-const { Cache } = await import("#stelle/classes/Cache.js");
+const { Cache } = await import("#stelle/classes/modules/Cache.js");
 const { LocaleController } = await import("#stelle/controllers/locale.js");
 const { PrefixController } = await import("#stelle/controllers/prefix.js");
 const { PlayerController } = await import("#stelle/controllers/player.js");

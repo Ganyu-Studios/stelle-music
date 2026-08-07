@@ -1,4 +1,4 @@
-import { Controller } from "#stelle/classes/Controller.js";
+import { Controller } from "#stelle/classes/database/Controller.js";
 import type { userPlaylist } from "#stelle/prisma";
 import type { Omit } from "#stelle/types";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";

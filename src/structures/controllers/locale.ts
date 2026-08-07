@@ -1,5 +1,5 @@
 import type { LocaleString } from "seyfert/lib/types/index.js";
-import { Controller } from "#stelle/classes/Controller.js";
+import { Controller } from "#stelle/classes/database/Controller.js";
 
 /**
  * Class representing the locale controller.

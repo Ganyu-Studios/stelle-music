@@ -1,5 +1,5 @@
 import type { SearchSources } from "hoshimi";
-import { Controller } from "#stelle/classes/Controller.js";
+import { Controller } from "#stelle/classes/database/Controller.js";
 
 /**
  * The interface of the guild player.

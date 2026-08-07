@@ -9,7 +9,7 @@ import {
 } from "seyfert";
 import type { APIEmbedField } from "seyfert/lib/types/index.js";
 import { Shortcut } from "yunaforseyfert";
-import { EmbedPaginator } from "#stelle/classes/EmbedPaginator.js";
+import { EmbedPaginator } from "#stelle/classes/components/EmbedPaginator.js";
 import { LoggerOps } from "#stelle/utils/functions/internal/logger.js";
 import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
 

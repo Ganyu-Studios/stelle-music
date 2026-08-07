@@ -1,4 +1,4 @@
-import { Controller } from "#stelle/classes/Controller.js";
+import { Controller } from "#stelle/classes/database/Controller.js";
 
 /**
  * Class representing the prefix controller.

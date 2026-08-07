@@ -1,6 +1,6 @@
 import type { UsingClient } from "seyfert";
+import type { Cache } from "#stelle/classes/modules/Cache.js";
 import type { Prisma, PrismaClient } from "#stelle/prisma";
-import type { Cache } from "./Cache.js";
 import type { PrismaService } from "./PrismaService.js";
 
 /**

@@ -12,7 +12,7 @@ import {
     type WebhookMessageStructure,
 } from "seyfert";
 import { MessageFlags } from "seyfert/lib/types/index.js";
-import { EmbedPaginator } from "#stelle/classes/EmbedPaginator.js";
+import { EmbedPaginator } from "#stelle/classes/components/EmbedPaginator.js";
 import type { TrackUser } from "#stelle/types";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
