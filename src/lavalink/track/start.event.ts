@@ -1,8 +1,7 @@
 import { EventNames } from "hoshimi";
 import { Embed, type MessageStructure } from "seyfert";
-import { StelleMeta } from "#stelle/utils/data/constants.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
-import { buildControls, updatePanel } from "#stelle/utils/functions/manager/panel.js";
+import { PanelOps } from "#stelle/utils/functions/manager/panel.js";
 import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
@@ -18,6 +17,13 @@ export default createLavalinkEvent({
         const voice = await PlayerOps.voice(client, player);
         if (!voice) return;
 
+        // In quiz mode the engine drives its own UI: set a neutral voice status and never reveal the track here.
+        if (await player.data.get("isQuiz")) {
+            if (voice.isVoice()) await voice.setVoiceStatus(messages.events.quiz.voiceStatus).catch((): null => null);
+
+            return;
+        }
+
         if (voice.isVoice())
             await voice
                 .setVoiceStatus(messages.events.voiceStatus.trackStart({ author: track.info.author, title: track.info.title }))
@@ -25,7 +31,7 @@ export default createLavalinkEvent({
 
         if (await player.data.get("isRequestChannel")) {
             // Persistent panel: edit the request-channel message in place instead of posting a new now-playing message.
-            await updatePanel(client, player.guildId, player, track);
+            await PanelOps.update(client, player.guildId, player, track);
         } else {
             const isAutoplay: boolean = (await player.data.get("enabledAutoplay")) ?? false;
 
@@ -45,7 +51,7 @@ export default createLavalinkEvent({
                 .setColor(client.config.color.extra)
                 .setTimestamp();
 
-            const components = buildControls(messages, { isAutoplay, loop: player.loop, paused: player.paused });
+            const components = PanelOps.controls(messages, { isAutoplay, loop: player.loop, paused: player.paused });
 
             const message: MessageStructure | null = await client.messages
                 .write(player.textId, { embeds: [embed], components })
@@ -53,9 +59,6 @@ export default createLavalinkEvent({
             if (message) await player.data.set("messageId", message.id);
         }
 
-        if (StelleMeta.Debug)
-            client.debugger?.info(
-                `[Lavalink] Track started | guild: ${player.guildId} | title: ${track.info.title} | author: ${track.info.author}`,
-            );
+        client.debug(`[Lavalink] Track started | guild: ${player.guildId} | title: ${track.info.title} | author: ${track.info.author}`);
     },
 });

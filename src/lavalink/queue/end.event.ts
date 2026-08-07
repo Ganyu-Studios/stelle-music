@@ -1,7 +1,6 @@
 import { EventNames } from "hoshimi";
 import { Embed } from "seyfert";
-import { StelleMeta } from "#stelle/utils/data/constants.js";
-import { resetPanel } from "#stelle/utils/functions/manager/panel.js";
+import { PanelOps } from "#stelle/utils/functions/manager/panel.js";
 import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
@@ -9,6 +8,9 @@ export default createLavalinkEvent({
     name: EventNames.QueueEnd,
     async run(client, player): Promise<void> {
         if (!(player.textId && player.voiceId)) return;
+
+        // In quiz mode the engine plays tracks directly and controls teardown; ignore natural queue-end between snippets.
+        if (await player.data.get("isQuiz")) return;
 
         // only unsubscribe if the queue is ended.
         await PlayerOps.lyrics(client, player, player.textId, { unsubscribe: true, clearEnabled: true });
@@ -24,7 +26,7 @@ export default createLavalinkEvent({
 
         if (await player.data.get("isRequestChannel")) {
             // Persistent panel: return it to idle instead of posting a one-off "queue ended" message.
-            await resetPanel(client, player.guildId);
+            await PanelOps.reset(client, player.guildId);
         } else {
             const embed = new Embed().setDescription(messages.events.playerEnd).setColor(client.config.color.success).setTimestamp();
 
@@ -34,9 +36,8 @@ export default createLavalinkEvent({
 
         const autoplay: boolean = !!(await player.data.get("enabledAutoplay"));
 
-        if (StelleMeta.Debug)
-            client.debugger?.info(
-                `[Lavalink] Queue ended | guild: ${player.guildId} | remaining: ${player.queue.tracks.length} | autoplay: ${autoplay}`,
-            );
+        client.debug(
+            `[Lavalink] Queue ended | guild: ${player.guildId} | remaining: ${player.queue.tracks.length} | autoplay: ${autoplay}`,
+        );
     },
 });

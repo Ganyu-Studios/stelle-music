@@ -11,7 +11,7 @@ process.env.REDIS_HOST ||= "127.0.0.1";
 process.env.REDIS_PORT ||= "6379";
 process.env.REDIS_PASSWORD ||= "test";
 
-const { RedisQueueStore } = await import("#stelle/classes/Store.js");
+const { RedisQueueStore } = await import("#stelle/classes/manager/Store.js");
 
 /**
  * Stands in for the pieces of `@redis/client` the store touches. `scanIterator` mirrors the v6 contract: it yields

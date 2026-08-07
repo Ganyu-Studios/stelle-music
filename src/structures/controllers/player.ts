@@ -1,5 +1,5 @@
 import type { SearchSources } from "hoshimi";
-import { Controller } from "#stelle/classes/Controller.js";
+import { Controller } from "#stelle/classes/database/Controller.js";
 
 /**
  * The interface of the guild player.
@@ -33,16 +33,16 @@ export class PlayerController extends Controller<"guildPlayer"> {
      */
     public async get(id: string): Promise<StoredPlayer> {
         const data = await this.cacheGet({
-            read: () => this.database.cache.getGuild(id)?.player,
+            read: () => this.cache.getGuild(id)?.player,
             write: (record): void => {
-                this.database.cache.guild(id).player = record;
+                this.cache.guild(id).player = record;
             },
             query: () => this.model.findUnique({ where: { guildId: id } }),
         });
 
         return {
-            defaultVolume: data?.defaultVolume ?? this.database.client.config.defaultVolume,
-            searchPlatform: (data?.searchPlatform as SearchSources) ?? this.database.client.config.defaultSearchSource,
+            defaultVolume: data?.defaultVolume ?? this.client.config.defaultVolume,
+            searchPlatform: (data?.searchPlatform as SearchSources) ?? this.client.config.defaultSearchSource,
         };
     }
 
@@ -56,7 +56,7 @@ export class PlayerController extends Controller<"guildPlayer"> {
     public set(guildId: string, data: Partial<StoredPlayer>): Promise<void> {
         return this.cacheSet({
             write: (record): void => {
-                this.database.cache.guild(guildId).player = record;
+                this.cache.guild(guildId).player = record;
             },
             query: () => this.model.upsert({ where: { guildId }, update: data, create: { guildId, ...data } }),
         });

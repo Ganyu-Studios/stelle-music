@@ -1,6 +1,5 @@
 import type { LavalinkPlayerVoice, NodeStructure, PlayerStructure } from "hoshimi";
 import type { UsingClient } from "seyfert";
-import { StelleMeta } from "#stelle/utils/data/constants.js";
 
 /**
  *
@@ -17,8 +16,7 @@ export async function connectListener(client: UsingClient, node: NodeStructure):
             for (const player of players) {
                 try {
                     if (!player.playing && !player.paused && !(player.queue.tracks.length + Number(!!player.queue.current))) {
-                        if (StelleMeta.Debug)
-                            client.debugger?.info(`[Lavalink] Destroying inactive player | node: ${node.id} | guild: ${player.guildId}`);
+                        client.debug(`[Lavalink] Destroying inactive player | node: ${node.id} | guild: ${player.guildId}`);
 
                         await player.destroy();
 
@@ -48,7 +46,7 @@ export async function connectListener(client: UsingClient, node: NodeStructure):
                             paused: player.paused,
                         });
 
-                    if (StelleMeta.Debug) client.debugger?.info(`[Lavalink] Player resumed | node: ${node.id} | guild: ${player.guildId}`);
+                    client.debug(`[Lavalink] Player resumed | node: ${node.id} | guild: ${player.guildId}`);
                 } catch (error) {
                     client.logger.error(`[Lavalink] Resume player failed | node: ${node.id} | guild: ${player.guildId} | error: ${error}`);
                 }

@@ -1,5 +1,5 @@
 import { type AnyContext, AttachmentBuilder, Embed, type MessageStructure } from "seyfert";
-import { WebhookClient } from "#stelle/classes/WebhookClient.js";
+import { WebhookClient } from "#stelle/classes/client/WebhookClient.js";
 import { Environment } from "#stelle/utils/data/configuration.js";
 import { StelleMeta } from "#stelle/utils/data/constants.js";
 import { logger } from "#stelle/utils/functions/internal/logger.js";

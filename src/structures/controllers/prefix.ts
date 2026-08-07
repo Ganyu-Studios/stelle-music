@@ -1,4 +1,4 @@
-import { Controller } from "#stelle/classes/Controller.js";
+import { Controller } from "#stelle/classes/database/Controller.js";
 
 /**
  * Class representing the prefix controller.
@@ -15,14 +15,14 @@ export class PrefixController extends Controller<"guildPrefix"> {
      */
     public async get(guildId: string): Promise<string> {
         const data = await this.cacheGet({
-            read: () => this.database.cache.getGuild(guildId)?.prefix,
+            read: () => this.cache.getGuild(guildId)?.prefix,
             write: (record): void => {
-                this.database.cache.guild(guildId).prefix = record;
+                this.cache.guild(guildId).prefix = record;
             },
             query: () => this.model.findUnique({ where: { guildId } }),
         });
 
-        return data?.prefix ?? this.database.client.config.defaultPrefix;
+        return data?.prefix ?? this.client.config.defaultPrefix;
     }
 
     /**
@@ -34,7 +34,7 @@ export class PrefixController extends Controller<"guildPrefix"> {
     public set(guildId: string, prefix: string): Promise<void> {
         return this.cacheSet({
             write: (record): void => {
-                this.database.cache.guild(guildId).prefix = record;
+                this.cache.guild(guildId).prefix = record;
             },
             query: () => this.model.upsert({ where: { guildId }, create: { guildId, prefix }, update: { prefix } }),
         });

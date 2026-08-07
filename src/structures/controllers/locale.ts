@@ -1,5 +1,5 @@
 import type { LocaleString } from "seyfert/lib/types/index.js";
-import { Controller } from "#stelle/classes/Controller.js";
+import { Controller } from "#stelle/classes/database/Controller.js";
 
 /**
  * Class representing the locale controller.
@@ -17,14 +17,14 @@ export class LocaleController extends Controller<"guildLocale"> {
      */
     public async get(guildId: string): Promise<LocaleString> {
         const data = await this.cacheGet({
-            read: () => this.database.cache.getGuild(guildId)?.locale,
+            read: () => this.cache.getGuild(guildId)?.locale,
             write: (record): void => {
-                this.database.cache.guild(guildId).locale = record;
+                this.cache.guild(guildId).locale = record;
             },
             query: () => this.model.findUnique({ where: { guildId } }),
         });
 
-        return (data?.locale ?? this.database.client.config.defaultLocale) as LocaleString;
+        return (data?.locale ?? this.client.config.defaultLocale) as LocaleString;
     }
 
     /**
@@ -37,7 +37,7 @@ export class LocaleController extends Controller<"guildLocale"> {
     public update(guildId: string, locale: string): Promise<void> {
         return this.cacheSet({
             write: (record): void => {
-                this.database.cache.guild(guildId).locale = record;
+                this.cache.guild(guildId).locale = record;
             },
             query: () => this.model.upsert({ where: { guildId }, create: { guildId, locale }, update: { locale } }),
         });

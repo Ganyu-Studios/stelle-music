@@ -118,6 +118,32 @@ interface Images {
     maxEntries: number;
 }
 
+/**
+ * The music quiz configuration.
+ */
+interface Quiz {
+    /**
+     * The candidate pools the quiz draws from: each entry is either a URL (playlist or track) or a plain search
+     * query. One entry is picked at random per game (so each game has a coherent theme that rotates across games),
+     * then resolved, de-duplicated and shuffled. A playlist contributes its own tracks; a single track/query is
+     * expanded into a related mix.
+     * @type {string[]}
+     */
+    sources: string[];
+    /**
+     * How many tracks (rounds) a single game runs for.
+     * @type {number}
+     * @default 10
+     */
+    rounds: number;
+    /**
+     * How long each track plays before the round advances. (In milliseconds)
+     * @type {number}
+     * @default ms("30s")
+     */
+    snippet: number;
+}
+
 interface Deleter {
     /**
      * Whether to delete the message when the track ends.
@@ -292,6 +318,11 @@ export interface InternalStelleConfiguration {
      * @type {Playlists}
      */
     playlists: Playlists;
+    /**
+     * The music quiz configuration.
+     * @type {Quiz}
+     */
+    quiz: Quiz;
 }
 
 /**

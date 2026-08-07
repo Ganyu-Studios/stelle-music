@@ -12,7 +12,7 @@ import {
     type WebhookMessageStructure,
 } from "seyfert";
 import { MessageFlags } from "seyfert/lib/types/index.js";
-import { EmbedPaginator } from "#stelle/classes/EmbedPaginator.js";
+import { EmbedPaginator } from "#stelle/classes/components/EmbedPaginator.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 const options = {

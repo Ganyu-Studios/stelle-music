@@ -1,26 +1,27 @@
 import type { UsingClient } from "seyfert";
+import { Cache } from "#stelle/classes/modules/Cache.js";
 import { LocaleController } from "#stelle/controllers/locale.js";
 import { PlayerController } from "#stelle/controllers/player.js";
 import { PlaylistController } from "#stelle/controllers/playlist.js";
 import { PrefixController } from "#stelle/controllers/prefix.js";
 import { RequestsController } from "#stelle/controllers/requests.js";
-import { PrismaClient } from "#stelle/prisma";
-import { Cache } from "./Cache.js";
-
-// cuz prisma do weird stuff
-const prismaClient = new PrismaClient();
+import type { PrismaClient } from "#stelle/prisma";
+import { PrismaService } from "./PrismaService.js";
 
 /**
  * Class representing the database.
+ *
+ * A thin aggregator: it owns the {@link PrismaService} and {@link Cache}, wires them into every controller, and
+ * delegates the connection lifecycle. Consumers keep using `client.database.<controller>` unchanged.
  * @class StelleDatabase
  */
 export class StelleDatabase {
     /**
-     * The database client instance.
-     * @type {PrismaClient}
+     * The Prisma service, owning the client and its connection lifecycle.
+     * @type {PrismaService}
      * @readonly
      */
-    readonly prisma: PrismaClient = prismaClient;
+    readonly prisma: PrismaService;
 
     /**
      * The database cache instance.
@@ -72,24 +73,36 @@ export class StelleDatabase {
     public readonly requests: RequestsController;
 
     /**
-     * Indicates whether the database is connected.
-     * @type {boolean}
-     * @default false
-     */
-    public connected: boolean = false;
-
-    /**
      * Creates an instance of the Database class.
      * @param {UsingClient} client The client instance.
      */
     constructor(client: UsingClient) {
         this.client = client;
+        this.prisma = new PrismaService(client);
 
-        this.locales = new LocaleController(this);
-        this.prefixes = new PrefixController(this);
-        this.players = new PlayerController(this);
-        this.playlist = new PlaylistController(this);
-        this.requests = new RequestsController(this);
+        this.locales = new LocaleController(this.prisma, this.cache, client);
+        this.prefixes = new PrefixController(this.prisma, this.cache, client);
+        this.players = new PlayerController(this.prisma, this.cache, client);
+        this.playlist = new PlaylistController(this.prisma, this.cache, client);
+        this.requests = new RequestsController(this.prisma, this.cache, client);
+    }
+
+    /**
+     * The raw Prisma client. Delegates to {@link PrismaService}; kept for callers reading `database.instance`.
+     * @type {PrismaClient}
+     * @readonly
+     */
+    public get instance(): PrismaClient {
+        return this.prisma.instance;
+    }
+
+    /**
+     * Indicates whether the database is connected.
+     * @type {boolean}
+     * @readonly
+     */
+    public get connected(): boolean {
+        return this.prisma.connected;
     }
 
     /**
@@ -97,34 +110,22 @@ export class StelleDatabase {
      * @returns {boolean} The connection status.
      */
     public isConnected(): boolean {
-        return this.connected;
+        return this.prisma.isConnected();
     }
 
     /**
      * Connect to the database.
      * @returns {Promise<void>} A promise that returns nothing, yay!
      */
-    public async connect(): Promise<void> {
-        await this.prisma
-            .$connect()
-            .then(() => {
-                this.connected = true;
-                this.client.logger.info("[Database] Connected");
-            })
-            .catch((error) => this.client.logger.error(`[Database] Connection failed | error: ${error}`));
+    public connect(): Promise<void> {
+        return this.prisma.connect();
     }
 
     /**
      * Disconnect from the database.
      * @returns {Promise<void>} A promise that returns nothing, yay!
      */
-    public async disconnect(): Promise<void> {
-        await this.prisma
-            .$disconnect()
-            .then(() => {
-                this.connected = false;
-                this.client.logger.info("[Database] Disconnected");
-            })
-            .catch((error) => this.client.logger.error(`[Database] Disconnection failed | error: ${error}`));
+    public disconnect(): Promise<void> {
+        return this.prisma.disconnect();
     }
 }

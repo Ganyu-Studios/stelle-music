@@ -1,5 +1,7 @@
+import type { UsingClient } from "seyfert";
+import type { Cache } from "#stelle/classes/modules/Cache.js";
 import type { Prisma, PrismaClient } from "#stelle/prisma";
-import type { StelleDatabase } from "./Database.js";
+import type { PrismaService } from "./PrismaService.js";
 
 /**
  * The model names type.
@@ -63,19 +65,39 @@ export interface CacheDeleteOptions {
  */
 export abstract class Controller<M extends ModelNames> {
     /**
-     * The database instance.
-     * @type {StelleDatabase}
+     * The Prisma service.
+     * @type {PrismaService}
      * @readonly
      * @protected
      */
-    protected readonly database: StelleDatabase;
+    protected readonly prisma: PrismaService;
+
+    /**
+     * The cache instance.
+     * @type {Cache}
+     * @readonly
+     * @protected
+     */
+    protected readonly cache: Cache;
+
+    /**
+     * The client instance.
+     * @type {UsingClient}
+     * @readonly
+     * @protected
+     */
+    protected readonly client: UsingClient;
 
     /**
      * Create a controller instance.
-     * @param {StelleDatabase} database The database instance.
+     * @param {PrismaService} prisma The Prisma service.
+     * @param {Cache} cache The cache instance.
+     * @param {UsingClient} client The client instance.
      */
-    public constructor(database: StelleDatabase) {
-        this.database = database;
+    public constructor(prisma: PrismaService, cache: Cache, client: UsingClient) {
+        this.prisma = prisma;
+        this.cache = cache;
+        this.client = client;
     }
 
     /**
@@ -94,7 +116,7 @@ export abstract class Controller<M extends ModelNames> {
      * @protected
      */
     protected get model(): PrismaClient[M] {
-        return this.database.prisma[this.modelName];
+        return this.prisma.model(this.modelName);
     }
 
     /**

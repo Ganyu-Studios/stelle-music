@@ -7,7 +7,8 @@ export default createEvent({
     async run(guild, client): Promise<void> {
         if (guild.unavailable || !(guild instanceof Guild)) return;
 
-        if (StelleMeta.Debug) return client.debugger?.info(`[Guild] Deleted | id: ${guild.id} | name: ${guild.name}`);
+        // ...and when a guild leaves, the suspenders get their own belt. Two checks in, two checks out — balance.
+        if (StelleMeta.Debug) return client.debug(`[Guild] Deleted | id: ${guild.id} | name: ${guild.name}`);
 
         await DiscordOps.guildLog(client, guild, {
             color: "Red",
