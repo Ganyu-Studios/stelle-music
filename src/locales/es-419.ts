@@ -18,7 +18,7 @@ export default {
             setprefix: ({ prefix }): string => `\`✅\` El **nuevo prefijo** para este servidor es: \`${prefix}\``,
             move: ({ textId, voiceId }): string => `\`✅\` Me movi al canal de voz <#${voiceId}> y canal de texto: <#${textId}>`,
             previous: ({ title, uri }): string => `\`✅\` La canción anterior [**${title}**](${uri}) ha sido añadida a la cola.`,
-            nowplaying: ({ userName, time }): string => `-# Pedido por: ${userName} en ${time}`,
+            nowplaying: ({ userName, time }): string => `-# Pedido por: ${userName} • Generado en ${time}`,
             stop: "`👋` Deteniendo y abandonando el canal...",
             shuffle: "`✅` La cola ha sido mezclada.",
             quiz: {
@@ -367,7 +367,7 @@ export default {
             requestChannel: {
                 empty: "`🎧` **Listo cuando quieras.**\nÚnete a un canal de voz y luego escribe aquí —sin comandos— y lo agrego a la cola.\n\n`🔎` **Búsqueda** — el título de una canción o el nombre de un artista\n`🔗` **Enlace** — Spotify, YouTube, SoundCloud y más\n`📋` **Playlist** — pega la URL de una playlist para cargarla completa\n\n`💡` Este panel se actualiza en vivo y los controles de abajo se activan cuando algo suena.",
                 title: ({ clientName }): string => `${clientName} - Canal de Peticiones`,
-                footer: ({ userName, time }): string => `Pedido por ${userName} • en ${time}`,
+                footer: ({ userName, time }): string => `Pedido por ${userName} • Generado en ${time}`,
                 queue: {
                     title: "`📋` **A continuación**",
                     entry: ({ position, title, requester }): string => `\`${position}.\` \`${title}\` — <@${requester}>`,

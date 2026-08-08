@@ -94,11 +94,11 @@ export default class ListSubcommand extends SubCommand {
 
         // One combined budget per page: slice 10 rows at a time, then re-group that slice by section so each
         // section present on the page gets its header (repeated when a section continues onto the next page).
-        const pageSize: number = 10;
+        const length: number = 10;
         const embeds: Embed[] = [];
 
-        for (let start: number = 0; start < rows.length; start += pageSize) {
-            const chunk: Row[] = rows.slice(start, start + pageSize);
+        for (let start: number = 0; start < rows.length; start += length) {
+            const chunk: Row[] = rows.slice(start, start + length);
             const blocks: string[] = [];
 
             let i: number = 0;

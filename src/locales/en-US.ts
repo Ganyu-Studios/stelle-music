@@ -74,7 +74,7 @@ export default {
                 `\`✅\` Moved to the voice channel <#${voiceId}> and the text channel: <#${textId}>`,
             previous: ({ title, uri }: IPrevious): string =>
                 `\`✅\` The previous track [**${title}**](${uri}) has been added to the queue.`,
-            nowplaying: ({ userName, time }: INowPlaying): string => `-# Requested by ${userName} in ${time}`,
+            nowplaying: ({ userName, time }: INowPlaying): string => `-# Requested by ${userName} • Generated in ${time}`,
             stop: "`👋` Stopping and leaving...",
             shuffle: "`✅` The queue has been shuffled.",
             quiz: {
@@ -429,7 +429,7 @@ export default {
             },
             requestChannel: {
                 title: ({ clientName }: IClientName): string => `${clientName} - Request Channel`,
-                footer: ({ userName, time }: INowPlaying): string => `Requested by ${userName} • in ${time}`,
+                footer: ({ userName, time }: INowPlaying): string => `Requested by ${userName} • Generated in ${time}`,
                 empty: "`🎧` **Ready when you are.**\nJoin a voice channel, then just type here — no command needed — and I'll queue it up.\n\n`🔎` **Search** — a song title or artist name\n`🔗` **Link** — Spotify, YouTube, SoundCloud & more\n`📋` **Playlist** — paste a playlist URL to load it all at once\n\n`💡` This panel updates live, and the controls below light up once something's playing.",
                 queue: {
                     title: "`📋` **Up next**",

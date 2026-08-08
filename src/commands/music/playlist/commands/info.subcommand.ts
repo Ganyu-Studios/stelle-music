@@ -49,7 +49,7 @@ export default class InfoSubcommand extends SubCommand {
 
         if (!playlist.tracks.length) return ctx.errorReply(messages.commands.playlist.noTracks, { ephemeral: true, content: "" });
 
-        const limit: number = 20;
+        const length: number = 20;
 
         const guild: Guild<"cached" | "api"> = await ctx.guild();
         const node: NodeStructure = client.manager.nodeManager.getLeastUsed();
@@ -66,13 +66,13 @@ export default class InfoSubcommand extends SubCommand {
                 }),
             );
 
-        if (tracks.length <= limit)
+        if (tracks.length <= length)
             return ctx.editOrReply({
                 content: "",
                 flags: MessageFlags.Ephemeral,
                 embeds: [
                     new Embed()
-                        .setDescription(messages.events.playerQueue({ tracks: tracks.slice(0, limit).join("\n") }))
+                        .setDescription(messages.events.playerQueue({ tracks: tracks.slice(0, length).join("\n") }))
                         .setColor(client.config.color.extra)
                         .setThumbnail(guild.iconURL())
                         .setTimestamp()
@@ -82,10 +82,10 @@ export default class InfoSubcommand extends SubCommand {
 
         const paginator: EmbedPaginator = new EmbedPaginator({ ctx });
 
-        for (let i: number = 0; i < tracks.length; i += limit) {
+        for (let i: number = 0; i < tracks.length; i += length) {
             paginator.addEmbed(
                 new Embed()
-                    .setDescription(messages.events.playerQueue({ tracks: tracks.slice(i, i + limit).join("\n") }))
+                    .setDescription(messages.events.playerQueue({ tracks: tracks.slice(i, i + length).join("\n") }))
                     .setColor(client.config.color.extra)
                     .setThumbnail(guild.iconURL())
                     .setTimestamp()
