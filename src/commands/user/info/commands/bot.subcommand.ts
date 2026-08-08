@@ -1,7 +1,6 @@
 import { ActionRow, Button, type ClientUser, Declare, Embed, type Guild, type GuildCommandContext, LocalesT, SubCommand } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 import { Shortcut } from "yunaforseyfert";
-import { Configuration } from "#stelle/utils/data/configuration.js";
 import { StelleMeta } from "#stelle/utils/data/constants.js";
 import { type GitInfo, getGitInfo } from "#stelle/utils/functions/internal/git.js";
 import { LoggerOps } from "#stelle/utils/functions/internal/logger.js";
@@ -19,7 +18,7 @@ export default class InfoBotSubcommand extends SubCommand {
 
         const me: ClientUser = await client.me.fetch();
         const guilds: Guild<"cached">[] = client.cache.guilds?.values() ?? [];
-        const git: GitInfo | null = await getGitInfo();
+        const git: GitInfo = await getGitInfo();
         const inline: boolean = false;
 
         const embed = new Embed()
@@ -54,10 +53,10 @@ export default class InfoBotSubcommand extends SubCommand {
                     inline,
                     name: messages.commands.info.bot.fields.git.name,
                     value: messages.commands.info.bot.fields.git.value({
-                        branch: git?.branch ?? "N/A",
-                        commit: git?.commit ?? "N/A",
-                        time: git?.time ?? "N/A",
-                        commitUrl: git?.commitUrl ?? Configuration.githubLink,
+                        branch: git.branch,
+                        commit: git.commit,
+                        time: git.time,
+                        commitUrl: git.commitUrl,
                     }),
                 },
             );

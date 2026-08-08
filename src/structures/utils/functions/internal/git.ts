@@ -17,9 +17,9 @@ const execAsync = promisify(exec);
 /**
  *
  * Fetches the current Git branch, commit hash, and commit time.
- * @returns {Promise<GitInfo | null>} An object containing Git information or null if an error occurs.
+ * @returns {Promise<GitInfo>} An object containing Git information.
  */
-export async function getGitInfo(): Promise<GitInfo | null> {
+export async function getGitInfo(): Promise<GitInfo> {
     try {
         const { stdout: branch } = await execAsync("git rev-parse --abbrev-ref HEAD");
         const { stdout: commit } = await execAsync("git rev-parse HEAD");
@@ -41,16 +41,16 @@ export async function getGitInfo(): Promise<GitInfo | null> {
         commitUrl = `${commitUrl}/commit/${commitHash}`;
 
         const date: Date = new Date(time.trim());
-        const divided: number = Math.floor(date.getTime() / 1e3);
+        const timestamp: number = Math.floor(date.getTime() / 1e3);
 
         return {
             date,
             branch: branch.trim(),
             commit: commitHash.slice(0, 7),
             commitUrl: commitUrl.trim(),
-            time: `<t:${divided}:S>`,
+            time: `<t:${timestamp}:S>`,
         };
     } catch {
-        return null;
+        return { branch: "unknown", commit: "unknown", commitUrl: "unknown", time: "unknown", date: new Date() };
     }
 }

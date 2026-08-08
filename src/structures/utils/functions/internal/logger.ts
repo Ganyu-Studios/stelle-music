@@ -127,8 +127,7 @@ export const LoggerOps = {
      * @returns {Promise<void>} A promise that resolves when the watermark is logged.
      */
     async watermark(): Promise<void> {
-        const git: GitInfo | null = await getGitInfo();
-        const info: GitInfo = git ?? { branch: "unknown", commit: "unknown", commitUrl: "unknown", time: "unknown", date: new Date() };
+        const git: GitInfo = await getGitInfo();
 
         console.info(
             customColor(`
@@ -140,9 +139,9 @@ export const LoggerOps = {
         ███████║   ██║   ███████╗███████╗███████╗███████╗
         ╚══════╝   ╚═╝   ╚══════╝╚══════╝╚══════╝╚══════╝
 		
-           ${italic(`Branch: ${info.branch}`)}
-           ${italic(`Commit: ${info.commit}`)}
-           ${italic(`Time: ${info.date}`)}
+           ${italic(`Current Branch: ${git.branch}`)}
+           ${italic(`Current Commit: ${git.commit}`)}
+           ${italic(`Commit Time: ${git.date}`)}
 		
 		   ${italic(`→   ${getRandomText()}`)}
     `),
