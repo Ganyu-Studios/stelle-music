@@ -49,53 +49,80 @@ export default class ListSubcommand extends SubCommand {
 
         if (!playlists.length) return ctx.errorReply(messages.commands.playlist.noPlaylist, { ephemeral: true, content: "" });
 
-        const limit: number = 20;
         const privatePlaylists = playlists.filter((playlist): boolean => isApplicable && playlist.userId === author.id && !playlist.public);
         const publicPlaylists = playlists.filter((playlist): boolean => playlist.public);
 
         const timestamp = (date: Date): number => Math.floor(date.getTime() / 1e3);
 
-        const formatPrivatePlaylist = (playlist: (typeof privatePlaylists)[number]): string =>
-            messages.commands.playlist.list.privateEntry({
-                id: playlist.playlistId,
-                name: UtilsOps.truncate(playlist.playlistName, 28),
-                tracks: playlist.tracks.length,
-                timestamp: timestamp(playlist.createdAt),
-            });
+        // Flatten both sections into a single ordered list (private first), each row tagged with its section and
+        // numbered within it. Numbering is per section and — since the list is built once — stays continuous even
+        // when a section spills across pages.
+        type Row = { section: "private" | "public"; content: string };
 
-        const formatPublicPlaylist = (playlist: (typeof publicPlaylists)[number]): string =>
-            messages.commands.playlist.list.publicEntry({
-                id: playlist.playlistId,
-                name: UtilsOps.truncate(playlist.playlistName, 28),
-                tracks: playlist.tracks.length,
-                userId: playlist.userId,
-                timestamp: timestamp(playlist.createdAt),
-            });
+        const rows: Row[] = [
+            ...privatePlaylists.map(
+                (playlist, index): Row => ({
+                    section: "private",
+                    content: messages.commands.playlist.list.entry.private({
+                        index: index + 1,
+                        id: playlist.playlistId,
+                        name: UtilsOps.truncate(playlist.playlistName, 28),
+                        tracks: playlist.tracks.length,
+                        timestamp: timestamp(playlist.createdAt),
+                    }),
+                }),
+            ),
+            ...publicPlaylists.map(
+                (playlist, index): Row => ({
+                    section: "public",
+                    content: messages.commands.playlist.list.entry.public({
+                        index: index + 1,
+                        id: playlist.playlistId,
+                        name: UtilsOps.truncate(playlist.playlistName, 28),
+                        tracks: playlist.tracks.length,
+                        userId: playlist.userId,
+                        timestamp: timestamp(playlist.createdAt),
+                    }),
+                }),
+            ),
+        ];
 
-        const privatePages: string[][] = UtilsOps.chunk(privatePlaylists.map(formatPrivatePlaylist), limit);
-        const publicPages: string[][] = UtilsOps.chunk(publicPlaylists.map(formatPublicPlaylist), limit);
-        const length: number = Math.max(privatePages.length, publicPages.length);
+        const header = (section: Row["section"]): string =>
+            section === "private"
+                ? `### ${messages.commands.playlist.list.private} (${privatePlaylists.length})`
+                : `### ${messages.commands.playlist.list.public} (${publicPlaylists.length})`;
 
-        const embeds: Embed[] = Array.from({ length }, (_, page: number): Embed => {
-            const sections: string[] = [];
+        // One combined budget per page: slice 10 rows at a time, then re-group that slice by section so each
+        // section present on the page gets its header (repeated when a section continues onto the next page).
+        const pageSize: number = 10;
+        const embeds: Embed[] = [];
 
-            if (isApplicable) {
-                const privatePage: string[] = privatePages[page] ?? [];
-                if (privatePage.length)
-                    sections.push(`### ${messages.commands.playlist.list.private} (${privatePlaylists.length})`, privatePage.join("\n"));
+        for (let start: number = 0; start < rows.length; start += pageSize) {
+            const chunk: Row[] = rows.slice(start, start + pageSize);
+            const blocks: string[] = [];
+
+            let i: number = 0;
+            while (i < chunk.length) {
+                const section: Row["section"] = chunk[i].section;
+                const entries: string[] = [];
+
+                while (i < chunk.length && chunk[i].section === section) {
+                    entries.push(chunk[i].content);
+                    i += 1;
+                }
+
+                blocks.push(`${header(section)}\n${entries.join("\n")}`);
             }
 
-            const publicPage: string[] = publicPages[page] ?? [];
-            if (publicPage.length)
-                sections.push(`### ${messages.commands.playlist.list.public} (${publicPlaylists.length})`, publicPage.join("\n"));
+            embeds.push(
+                new Embed()
+                    .setTitle(messages.commands.playlist.list.available)
+                    .setColor(client.config.color.extra)
+                    .setDescription(blocks.join("\n\n")),
+            );
+        }
 
-            return new Embed()
-                .setTitle(messages.commands.playlist.list.available)
-                .setColor(client.config.color.extra)
-                .setDescription(sections.join("\n\n"));
-        });
-
-        if (!embeds.length || embeds.length === 1)
+        if (embeds.length === 1)
             return ctx.editOrReply({
                 content: "",
                 flags: MessageFlags.Ephemeral,

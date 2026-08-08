@@ -65,12 +65,14 @@ export default {
                 noTracks: "`❌` **No se encontraron canciones** en esta playlist.",
                 list: {
                     available: "`📋` Playlists disponibles",
-                    private: "`📚` Playlists Privadas",
-                    public: "`📚` Playlists Públicas",
-                    privateEntry: ({ id, name, tracks, timestamp }): string =>
-                        `• \`${id}\` - **${name}** | \`${tracks}\` canciones | <t:${timestamp}:R>`,
-                    publicEntry: ({ id, name, tracks, userId, timestamp }): string =>
-                        `• \`${id}\` - **${name}** | <@${userId}> | \`${tracks}\` canciones | <t:${timestamp}:R>`,
+                    private: "`🔒` Privadas",
+                    public: "`🌐` Públicas",
+                    entry: {
+                        private: ({ index, id, name, tracks, timestamp }): string =>
+                            `\`${index}\` **${name}**\n-# \`🎵\` ${tracks} canciones • <t:${timestamp}:R> • \`${id}\``,
+                        public: ({ index, id, name, tracks, userId, timestamp }): string =>
+                            `\`${index}\` **${name}** — <@${userId}>\n-# \`🎵\` ${tracks} canciones • <t:${timestamp}:R> • \`${id}\``,
+                    },
                 },
                 manage: {
                     title: ({ name }): string => `\`🎵\` Gestionando Playlist: \`${name}\``,

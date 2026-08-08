@@ -122,12 +122,14 @@ export default {
                 noTracks: "`❌` **No tracks** were found in this playlist.",
                 list: {
                     available: "`📋` Available playlists",
-                    private: "`📚` Private Playlists",
-                    public: "`📚` Public Playlists",
-                    privateEntry: ({ id, name, tracks, timestamp }: IPlaylistEntry): string =>
-                        `• \`${id}\` - **${name}** | \`${tracks}\` tracks | <t:${timestamp}:R>`,
-                    publicEntry: ({ id, name, tracks, userId, timestamp }: IPublicPlaylistEntry): string =>
-                        `• \`${id}\` - **${name}** | <@${userId}> | \`${tracks}\` tracks | <t:${timestamp}:R>`,
+                    private: "`🔒` Private",
+                    public: "`🌐` Public",
+                    entry: {
+                        private: ({ index, id, name, tracks, timestamp }: IPlaylistEntry): string =>
+                            `\`${index}\` **${name}**\n-# \`🎵\` ${tracks} tracks • <t:${timestamp}:R> • \`${id}\``,
+                        public: ({ index, id, name, tracks, userId, timestamp }: IPublicPlaylistEntry): string =>
+                            `\`${index}\` **${name}** — <@${userId}>\n-# \`🎵\` ${tracks} tracks • <t:${timestamp}:R> • \`${id}\``,
+                    },
                 },
                 manage: {
                     title: ({ name }: IPlaylistName): string => `\`🎵\` Managing Playlist: \`${name}\``,
