@@ -20,5 +20,6 @@ minimumReleaseAgeExclude:
   - lint-staged@17.1.1 || 17.2.0 || 17.3.0
   - '@redis/client@6.2.0'
   - tsx@4.23.9
+  - '@types/node@26.2.0'
 
 packages: []
