@@ -37,6 +37,10 @@ export function parseTrackSelection(value: string, total: number): number[] {
             const end: number = endWildcard ? total : Number(endRaw);
 
             if (start < 1 || end < 1 || start > end) throw new Error("invalid-selection");
+            // Bound the range against `total` BEFORE expanding it: otherwise `1-99999999999` would try to build a
+            // Set of billions of entries, blocking the event loop and exhausting memory before the out-of-range
+            // check below is ever reached.
+            if (end > total) throw new RangeError("out-of-range");
 
             for (let index: number = start; index <= end; index += 1) selection.add(index);
 
