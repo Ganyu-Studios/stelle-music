@@ -1,4 +1,4 @@
-import type { AutocompleteInteraction, User } from "seyfert";
+import type { AutocompleteInteraction } from "seyfert";
 import type { userPlaylist } from "#stelle/prisma";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
@@ -37,22 +37,19 @@ export async function playlistAutocomplete(interaction: AutocompleteInteraction)
         return messages.commands.playlist.state[type];
     };
 
-    const playlists = await Promise.all(
-        data
-            .sort((a, b) => (a.public === b.public ? 0 : a.public ? -1 : 1))
-            .map(async (playlist) => {
-                const author: User = await client.users.fetch(playlist.userId);
-                return {
-                    value: playlist.playlistId,
-                    name: messages.events.autocomplete.loadPlaylist({
-                        name: playlist.playlistName,
-                        visibility: getVisibility(playlist.public),
-                        author: author.tag,
-                    }),
-                };
-            })
-            .slice(0, 25),
-    );
+    const playlists = data
+        .sort((a, b) => (a.public === b.public ? 0 : a.public ? -1 : 1))
+        .slice(0, 25)
+        .map((playlist) => ({
+            value: playlist.playlistId,
+            name: messages.events.autocomplete.loadPlaylist({
+                name: playlist.playlistName,
+                visibility: getVisibility(playlist.public),
+                // The owner's tag is snapshotted on the playlist (see create.subcommand), so no per-playlist user
+                // fetch is needed here. Legacy playlists without a stored author fall back to the raw id.
+                author: playlist.author?.tag ?? playlist.userId,
+            }),
+        }));
 
     if (!playlists.length) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noPlaylist));
 

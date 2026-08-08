@@ -49,6 +49,9 @@ export default class CreateSubCommand extends SubCommand {
             createdAt: new Date(),
             public: isPublic,
             playlistId: UtilsOps.createId({ length: 6, segments: 4, separator: "-", uppercase: true }),
+            // Snapshot the owner's display fields so the playlist autocomplete can render the tag without a
+            // per-playlist user fetch (which ratelimits once there are many playlists). The id lives in `userId`.
+            author: { username: author.username, tag: author.tag },
             tracks: [],
         });
 

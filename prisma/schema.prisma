@@ -57,6 +57,11 @@ type PlaylistTrack {
   requester PlaylistTrackRequester
 }
 
+type PlaylistUser {
+  username String
+  tag      String
+}
+
 model userPlaylist {
   id           String     @id @default(auto()) @map("_id") @db.ObjectId
   userId       String
@@ -64,5 +69,6 @@ model userPlaylist {
   playlistName String
   createdAt    DateTime   @default(now())
   public       Boolean    @default(false)
+  author       PlaylistUser?
   tracks       PlaylistTrack[]
 }
