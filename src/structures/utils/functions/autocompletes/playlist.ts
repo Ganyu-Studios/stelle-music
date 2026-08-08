@@ -19,10 +19,11 @@ export async function playlistAutocomplete(interaction: AutocompleteInteraction)
     const subCommand: string | null = interaction.options.getSubCommand();
     const isManageable: boolean = !!(subCommand && ["manage", "delete", "rename"].includes(subCommand));
 
-    const data: userPlaylist[] = await client.database.playlist.all(
-        (playlist): boolean =>
-            playlist.userId === user.id || (playlist.public && (!isManageable || playlist.userId === interaction.user.id)),
-    );
+    // Managing (manage/delete/rename) only ever targets your own playlists; loading/viewing can also reach public
+    // ones. Both are scoped and capped (Discord shows at most 25 choices) in the query — no whole-collection scan.
+    const data: userPlaylist[] = isManageable
+        ? await client.database.playlist.owned(user.id, 25)
+        : await client.database.playlist.loadable(user.id, 25);
 
     if (!data.length) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noPlaylist));
 
@@ -37,19 +38,17 @@ export async function playlistAutocomplete(interaction: AutocompleteInteraction)
         return messages.commands.playlist.state[type];
     };
 
-    const playlists = data
-        .sort((a, b) => (a.public === b.public ? 0 : a.public ? -1 : 1))
-        .slice(0, 25)
-        .map((playlist) => ({
-            value: playlist.playlistId,
-            name: messages.events.autocomplete.loadPlaylist({
-                name: playlist.playlistName,
-                visibility: getVisibility(playlist.public),
-                // The owner's tag is snapshotted on the playlist (see create.subcommand), so no per-playlist user
-                // fetch is needed here. Legacy playlists without a stored author fall back to the raw id.
-                author: playlist.author?.tag ?? playlist.userId,
-            }),
-        }));
+    // Already ordered (public first) and capped to 25 by the query above, so just map to choices.
+    const playlists = data.map((playlist) => ({
+        value: playlist.playlistId,
+        name: messages.events.autocomplete.loadPlaylist({
+            name: playlist.playlistName,
+            visibility: getVisibility(playlist.public),
+            // The owner's tag is snapshotted on the playlist (see create.subcommand), so no per-playlist user
+            // fetch is needed here. Legacy playlists without a stored author fall back to the raw id.
+            author: playlist.author?.tag ?? playlist.userId,
+        }),
+    }));
 
     if (!playlists.length) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noPlaylist));
 

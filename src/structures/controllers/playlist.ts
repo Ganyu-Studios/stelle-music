@@ -9,11 +9,6 @@ import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 type PlaylistData = Omit<userPlaylist, "id" | "userId">;
 
 /**
- * The type of the playlist filter function.
- */
-type PlaylistFilter = (data: userPlaylist) => boolean;
-
-/**
  * Class representing the playlist controller.
  * @class PlaylistController
  * @extends Controller<"userPlaylist">
@@ -117,16 +112,36 @@ export class PlaylistController extends Controller<"userPlaylist"> {
 
     /**
      *
-     * Get all playlists of a user from the database. This never reads the cache: the cache is a bounded, partial
-     * subset, so it can't authoritatively answer an "every playlist" query.
-     * @param {PlaylistFilter} [filter] The filter function to apply to the playlists.
-     * @returns {Promise<userPlaylist[]>} A promise that resolves to an array of playlists.
+     * Get the playlists a user can load — their own (public or private) plus every public one — ordered public
+     * first. The filter and the cap live in the query, so callers never pull the whole collection into memory to
+     * filter it in JS. Never reads the cache: it's a bounded, partial subset that can't answer a set query.
+     * @param {string} userId The user requesting the playlists.
+     * @param {number} [take] The maximum number of playlists to return (omit for no limit).
+     * @returns {Promise<userPlaylist[]>} A promise that resolves to the loadable playlists.
      */
-    public async all(filter?: PlaylistFilter): Promise<userPlaylist[]> {
-        const playlists = await this.model.findMany();
-        if (filter) return playlists.filter(filter);
+    public loadable(userId: string, take?: number): Promise<userPlaylist[]> {
+        return this.model.findMany({ where: { OR: [{ userId }, { public: true }] }, orderBy: { public: "desc" }, take });
+    }
 
-        return playlists;
+    /**
+     *
+     * Get every playlist owned by a user, ordered public first (see {@link loadable} for the no-cache rationale).
+     * @param {string} userId The owner id.
+     * @param {number} [take] The maximum number of playlists to return (omit for no limit).
+     * @returns {Promise<userPlaylist[]>} A promise that resolves to the user's playlists.
+     */
+    public owned(userId: string, take?: number): Promise<userPlaylist[]> {
+        return this.model.findMany({ where: { userId }, orderBy: { public: "desc" }, take });
+    }
+
+    /**
+     *
+     * Get the public playlists owned by a specific user (see {@link loadable} for the no-cache rationale).
+     * @param {string} userId The owner id.
+     * @returns {Promise<userPlaylist[]>} A promise that resolves to the user's public playlists.
+     */
+    public publicOf(userId: string): Promise<userPlaylist[]> {
+        return this.model.findMany({ where: { userId, public: true } });
     }
 
     /**

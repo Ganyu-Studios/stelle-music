@@ -41,11 +41,10 @@ export default class ListSubcommand extends SubCommand {
         const isSelf: boolean = !!target && target.id === author.id;
         const isApplicable: boolean = !target || isSelf;
 
+        // Scoped in the query: your own view lists your playlists plus every public one; a target's view lists only
+        // that user's public playlists. Either way, other users' private playlists never leave the database.
         const playlists = (
-            await client.database.playlist.all((playlist): boolean => {
-                if (isApplicable) return playlist.userId === author.id || playlist.public;
-                return playlist.userId === target?.id && playlist.public;
-            })
+            isApplicable ? await client.database.playlist.loadable(author.id) : await client.database.playlist.publicOf(target!.id)
         ).sort((a, b): number => Number(b.public) - Number(a.public) || b.createdAt.getTime() - a.createdAt.getTime());
 
         if (!playlists.length) return ctx.errorReply(messages.commands.playlist.noPlaylist, { ephemeral: true, content: "" });
