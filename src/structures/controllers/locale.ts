@@ -16,7 +16,7 @@ export class LocaleController extends Controller<"guildLocale"> {
      * @returns {Promise<LocaleString>} A promise that resolves to the locale string.
      */
     public async get(guildId: string): Promise<LocaleString> {
-        const data = await this.cacheGet({
+        const data = await this.fetch({
             read: () => this.cache.getGuild(guildId)?.locale,
             write: (record): void => {
                 this.cache.guild(guildId).locale = record;
@@ -35,7 +35,7 @@ export class LocaleController extends Controller<"guildLocale"> {
      * @returns {Promise<void>} A promise that resolves when the locale is updated.
      */
     public update(guildId: string, locale: string): Promise<void> {
-        return this.cacheSet({
+        return this.store({
             write: (record): void => {
                 this.cache.guild(guildId).locale = record;
             },

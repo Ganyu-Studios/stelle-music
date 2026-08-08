@@ -14,7 +14,7 @@ export class PrefixController extends Controller<"guildPrefix"> {
      * @returns {Promise<string>} The prefix for the guild.
      */
     public async get(guildId: string): Promise<string> {
-        const data = await this.cacheGet({
+        const data = await this.fetch({
             read: () => this.cache.getGuild(guildId)?.prefix,
             write: (record): void => {
                 this.cache.guild(guildId).prefix = record;
@@ -32,7 +32,7 @@ export class PrefixController extends Controller<"guildPrefix"> {
      * @returns {Promise<void>} A promise that resolves when the prefix is set.
      */
     public set(guildId: string, prefix: string): Promise<void> {
-        return this.cacheSet({
+        return this.store({
             write: (record): void => {
                 this.cache.guild(guildId).prefix = record;
             },

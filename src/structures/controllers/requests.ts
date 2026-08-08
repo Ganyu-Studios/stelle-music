@@ -20,7 +20,7 @@ export class RequestsController extends Controller<"guildRequestChannel"> {
      * @returns {Promise<guildRequestChannel | null>} The config, or null if the guild has no request channel.
      */
     public get(guildId: string): Promise<guildRequestChannel | null> {
-        return this.cacheGet({
+        return this.fetch({
             read: () => this.cache.getGuild(guildId)?.requests,
             write: (record): void => {
                 this.cache.guild(guildId).requests = record;
@@ -36,7 +36,7 @@ export class RequestsController extends Controller<"guildRequestChannel"> {
      * @returns {Promise<void>} A promise that resolves when the config is saved.
      */
     public set(guildId: string, data: RequestChannelData): Promise<void> {
-        return this.cacheSet({
+        return this.store({
             write: (record): void => {
                 this.cache.guild(guildId).requests = record;
             },
@@ -50,7 +50,7 @@ export class RequestsController extends Controller<"guildRequestChannel"> {
      * @returns {Promise<void>} A promise that resolves when the config is deleted.
      */
     public delete(guildId: string): Promise<void> {
-        return this.cacheDelete({
+        return this.remove({
             evict: (): void => {
                 this.cache.guild(guildId).requests = null;
             },

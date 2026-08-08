@@ -31,7 +31,7 @@ export class PlaylistController extends Controller<"userPlaylist"> {
     public get(playlistId: string, userId: string): Promise<userPlaylist | null> {
         // Clone on read: callers mutate the returned playlist (tracks, name) before persisting, so handing back the
         // cached object would poison the shared entry before the DB write lands.
-        return this.cacheGet({
+        return this.fetch({
             read: () => {
                 const cached = this.cache.playlists.get(playlistId);
                 return cached && cached.userId === userId ? cached : undefined;
@@ -56,7 +56,7 @@ export class PlaylistController extends Controller<"userPlaylist"> {
      */
     public getLoadable(playlistId: string, userId: string): Promise<userPlaylist | null> {
         // Clone on read: same rationale as get() — the loaded playlist's tracks are copied into a live queue.
-        return this.cacheGet({
+        return this.fetch({
             read: () => {
                 const cached = this.cache.playlists.get(playlistId);
                 return cached && (cached.userId === userId || cached.public) ? cached : undefined;
@@ -86,7 +86,7 @@ export class PlaylistController extends Controller<"userPlaylist"> {
         if ("id" in data) data = UtilsOps.omit(data, ["id"]);
         if ("userId" in data) data = UtilsOps.omit(data, ["userId"]);
 
-        return this.cacheSet({
+        return this.store({
             write: (record): void => {
                 this.cache.playlists.set(record.playlistId, record);
             },
@@ -107,7 +107,7 @@ export class PlaylistController extends Controller<"userPlaylist"> {
      * @returns {Promise<void>} A promise that resolves when the playlist is deleted.
      */
     public delete(userId: string, playlistId: string): Promise<void> {
-        return this.cacheDelete({
+        return this.remove({
             evict: (): void => {
                 this.cache.playlists.delete(playlistId);
             },

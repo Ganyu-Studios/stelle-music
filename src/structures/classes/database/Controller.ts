@@ -22,10 +22,10 @@ export function rethrowUnlessMissing(error: unknown): null {
 }
 
 /**
- * Options for a cache-first read (`cacheGet`).
+ * Options for a cache-first read (`fetch`).
  * @template T The record type.
  */
-export interface CacheGetOptions<T> {
+export interface FetchOptions<T> {
     /** Read the record from the cache: `undefined` is a miss, `null` is a negatively-cached "known absent". */
     read: () => T | null | undefined;
     /** Write a freshly read record (or `null`, to negatively cache an absent record) to the cache. */
@@ -37,10 +37,10 @@ export interface CacheGetOptions<T> {
 }
 
 /**
- * Options for a cache-backed write (`cacheSet`).
+ * Options for a cache-backed write (`store`).
  * @template T The record type.
  */
-export interface CacheSetOptions<T> {
+export interface StoreOptions<T> {
     /** Write the written record to the cache. */
     write: (data: T) => void;
     /** The database write to run. */
@@ -48,9 +48,9 @@ export interface CacheSetOptions<T> {
 }
 
 /**
- * Options for a cache-backed delete (`cacheDelete`).
+ * Options for a cache-backed delete (`remove`).
  */
-export interface CacheDeleteOptions {
+export interface RemoveOptions {
     /** Evict the record from the cache. */
     evict: () => void;
     /** The database delete to run. */
@@ -127,10 +127,10 @@ export abstract class Controller<M extends ModelNames> {
      * records and stop re-querying the database for default-state guilds/users (accessors over an unbounded store
      * simply drop the `null` in their `write`).
      * @template T The record type.
-     * @param {CacheGetOptions<T>} options The read/write/query accessors and clone flag.
+     * @param {FetchOptions<T>} options The read/write/query accessors and clone flag.
      * @returns {Promise<T | null>} The cached or freshly read record, or null.
      */
-    protected async cacheGet<T>({ read, write, query, clone = false }: CacheGetOptions<T>): Promise<T | null> {
+    protected async fetch<T>({ read, write, query, clone = false }: FetchOptions<T>): Promise<T | null> {
         const cached: T | null | undefined = read();
         if (cached !== undefined) return cached && clone ? structuredClone(cached) : cached;
 
@@ -143,10 +143,10 @@ export abstract class Controller<M extends ModelNames> {
     /**
      * Run a write that returns the record (e.g. an upsert) and write the result to the cache via `write`.
      * @template T The record type.
-     * @param {CacheSetOptions<T>} options The write accessor and database write.
+     * @param {StoreOptions<T>} options The write accessor and database write.
      * @returns {Promise<void>} A promise that resolves once the record is cached.
      */
-    protected async cacheSet<T>({ write, query }: CacheSetOptions<T>): Promise<void> {
+    protected async store<T>({ write, query }: StoreOptions<T>): Promise<void> {
         write(await query());
     }
 
@@ -154,10 +154,10 @@ export abstract class Controller<M extends ModelNames> {
      * Run a delete and, on success, evict the record from the cache via `evict`, swallowing only a "record not found"
      * (Prisma `P2025`) rejection and rethrowing anything else. The row is deleted first, then evicted, so a failing
      * delete surfaces instead of leaving the cache and database disagreeing silently.
-     * @param {CacheDeleteOptions} options The evict accessor and database delete.
+     * @param {RemoveOptions} options The evict accessor and database delete.
      * @returns {Promise<void>} A promise that resolves once the record is evicted.
      */
-    protected async cacheDelete({ evict, query }: CacheDeleteOptions): Promise<void> {
+    protected async remove({ evict, query }: RemoveOptions): Promise<void> {
         await query()
             .then((): void => evict())
             .catch(rethrowUnlessMissing);
