@@ -1,5 +1,5 @@
 import { EventNames } from "hoshimi";
-import { Embed, type MessageStructure } from "seyfert";
+import { Embed, LogLevels, type MessageStructure } from "seyfert";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { PanelOps } from "#stelle/utils/functions/manager/panel.js";
 import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
@@ -59,6 +59,9 @@ export default createLavalinkEvent({
             if (message) await player.data.set("messageId", message.id);
         }
 
-        client.debug(`[Lavalink] Track started | guild: ${player.guildId} | title: ${track.info.title} | author: ${track.info.author}`);
+        client.debug(
+            LogLevels.Debug,
+            `[Lavalink] Track started | guild: ${player.guildId} | title: ${track.info.title} | author: ${track.info.author}`,
+        );
     },
 });

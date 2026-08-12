@@ -6,6 +6,7 @@ import {
     EntryPointCommand,
     LimitedCollection,
     LimitedMemoryAdapter,
+    type LogLevels,
     type MessageStructure,
     SubCommand,
 } from "seyfert";
@@ -227,13 +228,19 @@ export class Stelle extends Client<true> {
     }
 
     /**
+     * Logs a message through the debug logger at the given level.
      *
-     * Log a debug message through the debugger, only when debug mode is enabled. Wraps the repeated
-     * `if (StelleMeta.Debug) client.debugger?.info(...)` pattern used across the codebase.
-     * @param {string} message The message to log.
+     * This targets {@link debugger} — the opt-in logger Seyfert only creates when the bot runs with `--debug` — not the
+     * always-on {@link logger}. It is a no-op outside debug mode: the `StelleMeta.Debug` flag short-circuits before the
+     * logger is touched, and the `this.debugger` guard covers the edge case where the flag is set but the logger was
+     * never created.
+     * @param {LogLevels} level The severity level for the entry.
+     * @param {...unknown} args The message(s) to log.
      * @returns {void}
      */
-    public debug(message: string): void {
-        if (StelleMeta.Debug) this.debugger?.info(message);
+    public debug(level: LogLevels, ...args: unknown[]): void {
+        if (!StelleMeta.Debug || !this.debugger) return;
+
+        this.debugger.rawLog(level, ...args);
     }
 }

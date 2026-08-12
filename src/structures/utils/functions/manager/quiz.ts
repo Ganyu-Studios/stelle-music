@@ -1,5 +1,5 @@
 import { EventNames, LoadType, type PlayerStructure, type QueryResult, type SearchSources, type TrackStructure } from "hoshimi";
-import type { AllGuildVoiceChannels, DefaultLocale, GuildMember, LocaleString, UsingClient } from "seyfert";
+import { type AllGuildVoiceChannels, type DefaultLocale, type GuildMember, type LocaleString, LogLevels, type UsingClient } from "seyfert";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { clean, matches } from "#stelle/utils/functions/internal/quiz.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
@@ -250,7 +250,7 @@ async function buildPool(client: UsingClient, player: PlayerStructure): Promise<
         }),
     );
 
-    client.debug(`[Quiz] Pool built | source: ${picked ?? "none"} | unique tracks: ${pool.length}`);
+    client.debug(LogLevels.Debug, `[Quiz] Pool built | source: ${picked ?? "none"} | unique tracks: ${pool.length}`);
 
     return pool;
 }
@@ -277,6 +277,7 @@ async function nextRound(client: UsingClient, session: QuizSession): Promise<voi
     session.current = { track, titleBy: null, artistBy: null };
 
     client.debug(
+        LogLevels.Debug,
         `[Quiz] Round ${session.index}/${session.total} | guild: ${session.guildId} | track: ${track.info.title} - ${track.info.author}`,
     );
 
@@ -343,7 +344,7 @@ async function endGame(client: UsingClient, session: QuizSession): Promise<void>
     if (session.timer) clearTimeout(session.timer);
     sessions.delete(session.guildId);
 
-    client.debug(`[Quiz] Ended | guild: ${session.guildId} | rounds: ${session.total} | scorers: ${session.scores.size}`);
+    client.debug(LogLevels.Info, `[Quiz] Ended | guild: ${session.guildId} | rounds: ${session.total} | scorers: ${session.scores.size}`);
 
     const { messages } = await ContextOps.locale(client, session.guildId);
     await say(client, session.channelId, QuizOps.leaderboard(messages, session.scores));
@@ -434,7 +435,7 @@ export const QuizOps = {
         // disconnected from voice → hoshimi's autoDestroy). One listener covers every guild; see setDestroyListener.
         setDestroyListener(client);
 
-        client.debug(`[Quiz] Started | guild: ${guildId} | rounds: ${total} | pool: ${pool.length}`);
+        client.debug(LogLevels.Info, `[Quiz] Started | guild: ${guildId} | rounds: ${total} | pool: ${pool.length}`);
 
         await nextRound(client, session);
 
@@ -502,7 +503,7 @@ export const QuizOps = {
         const session: QuizSession | undefined = QuizOps.abort(guildId);
         if (!session) return;
 
-        client.debug(`[Quiz] Interrupted (player gone) | guild: ${guildId}`);
+        client.debug(LogLevels.Warn, `[Quiz] Interrupted (player gone) | guild: ${guildId}`);
 
         const { messages } = await ContextOps.locale(client, guildId);
 

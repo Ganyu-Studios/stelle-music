@@ -1,5 +1,5 @@
 import type { LavalinkPlayerVoice, NodeStructure, PlayerStructure } from "hoshimi";
-import type { UsingClient } from "seyfert";
+import { LogLevels, type UsingClient } from "seyfert";
 
 /**
  *
@@ -16,7 +16,10 @@ export async function connectListener(client: UsingClient, node: NodeStructure):
             for (const player of players) {
                 try {
                     if (!player.playing && !player.paused && !(player.queue.tracks.length + Number(!!player.queue.current))) {
-                        client.debug(`[Lavalink] Destroying inactive player | node: ${node.id} | guild: ${player.guildId}`);
+                        client.debug(
+                            LogLevels.Debug,
+                            `[Lavalink] Destroying inactive player | node: ${node.id} | guild: ${player.guildId}`,
+                        );
 
                         await player.destroy();
 
@@ -46,7 +49,7 @@ export async function connectListener(client: UsingClient, node: NodeStructure):
                             paused: player.paused,
                         });
 
-                    client.debug(`[Lavalink] Player resumed | node: ${node.id} | guild: ${player.guildId}`);
+                    client.debug(LogLevels.Debug, `[Lavalink] Player resumed | node: ${node.id} | guild: ${player.guildId}`);
                 } catch (error) {
                     client.logger.error(`[Lavalink] Resume player failed | node: ${node.id} | guild: ${player.guildId} | error: ${error}`);
                 }

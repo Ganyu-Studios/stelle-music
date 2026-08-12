@@ -1,5 +1,6 @@
 import type { PlayerJSON } from "hoshimi";
 import { EventNames } from "hoshimi";
+import { LogLevels } from "seyfert";
 import type { NonOptionsNode, SessionJson, TrackUser } from "#stelle/types";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
@@ -61,6 +62,7 @@ export default createLavalinkEvent({
             });
 
             client.debug(
+                LogLevels.Debug,
                 `[Lavalink] Session updated | guild: ${newPlayer.guildId} | node: ${node.id} | voice: ${newJson.voiceId} | text: ${newJson.textId}`,
             );
         }

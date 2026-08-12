@@ -1,4 +1,5 @@
 import { EventNames } from "hoshimi";
+import { LogLevels } from "seyfert";
 import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
@@ -12,6 +13,7 @@ export default createLavalinkEvent({
         await player.data.delete("messageId");
 
         client.debug(
+            LogLevels.Debug,
             `[Lavalink] Track ended | guild: ${player.guildId} | title: ${track?.info?.title ?? "Unknown"} | author: ${track?.info?.author ?? "Unknown"}`,
         );
     },

@@ -1,4 +1,5 @@
 import { EventNames, type TrackStructure } from "hoshimi";
+import { LogLevels } from "seyfert";
 import { PanelOps } from "#stelle/utils/functions/manager/panel.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 
@@ -6,6 +7,7 @@ export default createLavalinkEvent({
     name: EventNames.QueueUpdate,
     async run(client, player): Promise<void> {
         client.debug(
+            LogLevels.Debug,
             `[Lavalink] Queue update | guild: ${player.guildId} | queue length: ${player.queue.tracks.length} | current track: ${player.queue.current?.info.title ?? "none"}`,
         );
 

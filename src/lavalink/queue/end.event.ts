@@ -1,5 +1,5 @@
 import { EventNames } from "hoshimi";
-import { Embed } from "seyfert";
+import { Embed, LogLevels } from "seyfert";
 import { PanelOps } from "#stelle/utils/functions/manager/panel.js";
 import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
@@ -37,6 +37,7 @@ export default createLavalinkEvent({
         const autoplay: boolean = !!(await player.data.get("enabledAutoplay"));
 
         client.debug(
+            LogLevels.Debug,
             `[Lavalink] Queue ended | guild: ${player.guildId} | remaining: ${player.queue.tracks.length} | autoplay: ${autoplay}`,
         );
     },
