@@ -178,6 +178,12 @@ interface TwentyFourSeven {
      * @default true
      */
     autoPause: boolean;
+    /**
+     * Whether to automatically reconnect a 24/7 player when the bot is disconnected from the voice channel.
+     * @type {boolean}
+     * @default true
+     */
+    autoReconnect: boolean;
 }
 
 interface Playlists {

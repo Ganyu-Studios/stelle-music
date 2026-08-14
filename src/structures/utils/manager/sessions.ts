@@ -1,7 +1,7 @@
-import type { NodeOptions } from "hoshimi";
+import type { NodeOptions, PlayerStructure } from "hoshimi";
 import MeowDB from "meowdb";
 import type { MakeRequired, RestOrArray } from "seyfert/lib/common/index.js";
-import type { StellePlayerJson } from "#stelle/types";
+import type { NonOptionsNode, SessionJson, StellePlayerJson } from "#stelle/types";
 import { StellePaths } from "#stelle/utils/data/constants.js";
 import { InvalidNodeSession } from "#stelle/utils/errors.js";
 import { ms } from "#stelle/utils/functions/internal/time.js";
@@ -102,6 +102,44 @@ export const Sessions = {
                 ...node,
                 sessionId: ids.get(node.id),
             };
+        });
+    },
+    /**
+     *
+     * Snapshot a player into its persisted session, so it can be recreated after a restart, node resume or a 24/7
+     * autoreconnect. Mirrors the shape read back by `resumeListener` and the destroy autoreconnect. Callers gate
+     * this on `config.sessions.enabled`.
+     * @param {PlayerStructure} player The player to persist.
+     * @returns {Promise<void>} A promise that resolves once the session is written.
+     */
+    async save(player: PlayerStructure): Promise<void> {
+        const json = player.toJSON();
+        if (json.queue?.current) json.queue.current.userData = {};
+
+        const base = UtilsOps.omit(json, [
+            "ping",
+            "createdTimestamp",
+            "lastPositionUpdate",
+            "paused",
+            "playing",
+            "queue",
+            "filters",
+            "node",
+        ]);
+        const node: NonOptionsNode = UtilsOps.omit(json.node, ["options"]);
+
+        this.set<SessionJson>(player.guildId, {
+            ...base,
+            messageId: await player.data.get("messageId"),
+            enabledAutoplay: await player.data.get("enabledAutoplay"),
+            localeString: await player.data.get("localeString"),
+            me: await player.data.get("me"),
+            lyricsId: await player.data.get("lyricsId"),
+            lyricsEnabled: await player.data.get("lyricsEnabled"),
+            is247: await player.data.get("is247"),
+            isAutoPause: await player.data.get("isAutoPause"),
+            isRequestChannel: await player.data.get("isRequestChannel"),
+            node,
         });
     },
 };
