@@ -73,6 +73,7 @@ export default createConfig({
     twentyfourseven: {
         autoPause: true,
         is247: false,
+        autoReconnect: true,
     },
     playlists: {
         userLimit: 25,
