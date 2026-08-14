@@ -27,11 +27,11 @@ importers:
         specifier: ^2.2.3
         version: 2.2.3
       seyfert:
-        specifier: 5.0.1-dev-30507709234.0
-        version: 5.0.1-dev-30507709234.0
+        specifier: 5.0.1-dev-31750231638.0
+        version: 5.0.1-dev-31750231638.0
       yunaforseyfert:
         specifier: ^1.2.3
-        version: 1.2.3(seyfert@5.0.1-dev-30507709234.0)
+        version: 1.2.3(seyfert@5.0.1-dev-31750231638.0)
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -584,8 +584,8 @@ packages:
     resolution: {integrity: sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg==}
     engines: {node: '>= 14.18.0'}
 
-  seyfert@5.0.1-dev-30507709234.0:
-    resolution: {integrity: sha512-FYmmMM2GvCOrtkYatLgFopZ2usR6N7fjqnNejNnNDIiyy+C7EvXJzZnN53D5tMeCmemZEA30m5CVjhGawSrPoA==}
+  seyfert@5.0.1-dev-31750231638.0:
+    resolution: {integrity: sha512-QJM8bxbYU1ebAm173vx72XJPWrhYv1YzcntNfQ3UDikS9jEpRrVsKPhuxNN0SPZaSUe7dUgq1cc2Sxvfg2XIXg==}
 
   string-argv@0.3.2:
     resolution: {integrity: sha512-aqD2Q0144Z+/RqG52NeHEkZauTAUWJO8c6yTftGJKO3Tja5tUgIfmIl6kExvhtxSDP7fXB6DvzkfMpCd/F3G+Q==}
@@ -1011,7 +1011,7 @@ snapshots:
 
   readdirp@4.1.2: {}
 
-  seyfert@5.0.1-dev-30507709234.0: {}
+  seyfert@5.0.1-dev-31750231638.0: {}
 
   string-argv@0.3.2: {}
 
@@ -1053,8 +1053,8 @@ snapshots:
   yaml@2.9.0:
     optional: true
 
-  yunaforseyfert@1.2.3(seyfert@5.0.1-dev-30507709234.0):
+  yunaforseyfert@1.2.3(seyfert@5.0.1-dev-31750231638.0):
     dependencies:
-      seyfert: 5.0.1-dev-30507709234.0
+      seyfert: 5.0.1-dev-31750231638.0
 
   zod@4.4.3: {}
