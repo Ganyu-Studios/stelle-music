@@ -73,15 +73,16 @@ export const PlayerOps = {
      * @returns {Promise<void>} A promise that resolves when the operation is complete.
      */
     async lyrics(client: UsingClient, player: PlayerStructure, textId: string, options: UnsubscribeOptions = {}): Promise<void> {
+        await player.data.delete("lyrics");
+
         const lyricsId: string | undefined = await player.data.get("lyricsId");
         if (!lyricsId) return;
 
-        await client.messages.delete(lyricsId, textId).catch((): null => null);
-
         if (options.unsubscribe && (await player.data.get("lyricsEnabled"))) await player.lyrics.unsubscribe();
 
+        await client.messages.delete(lyricsId, textId).catch((): null => null);
         await player.data.delete("lyricsId");
-        await player.data.delete("lyrics");
+
         if (options.clearEnabled) await player.data.delete("lyricsEnabled");
     },
 };
