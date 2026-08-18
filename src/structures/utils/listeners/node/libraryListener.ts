@@ -1,21 +1,24 @@
-import type { LavalinkPlayerVoice, NodeStructure, PlayerStructure } from "hoshimi";
+import type { LavalinkPlayerVoice, NodeStructure, PlayerStructure, TrackStructure } from "hoshimi";
 import { LogLevels, type UsingClient } from "seyfert";
 
 /**
  *
- * The listener for the `connected` event of the Lavalink node.
- * This event is emitted when the Lavalink node is connected.
+ * The function to make hoshimi handles the players when a node is connected.
  * @param {UsingClient} client The client instance.
  * @param {LavalinkNode} node The Lavalink node instance.
+ * @param {PlayerStructure[]} players The list of players to resume.
  * @returns {Promise<void>} Anything, this is a void function.
  */
-export async function connectListener(client: UsingClient, node: NodeStructure): Promise<void> {
+export async function libraryListener(client: UsingClient, node: NodeStructure, players: PlayerStructure[]): Promise<void> {
     if (client.config.sessions.resumePlayers) {
-        const players: PlayerStructure[] = [...client.manager.players.values()].filter((player): boolean => player.node.id === node.id);
+        client.debug(LogLevels.Debug, `[Lavalink] Node connected | node: ${node.id} | resuming players: ${players.length}`);
+
         if (players.length && !node.session.resuming) {
             for (const player of players) {
+                if (await player.data.get("internal_nodeChange")) continue;
+
                 try {
-                    if (!player.playing && !player.paused && !(player.queue.tracks.length + Number(!!player.queue.current))) {
+                    if (!player.isPlaying() && !player.queue.totalSize) {
                         client.debug(
                             LogLevels.Debug,
                             `[Lavalink] Destroying inactive player | node: ${node.id} | guild: ${player.guildId}`,
@@ -26,18 +29,21 @@ export async function connectListener(client: UsingClient, node: NodeStructure):
                         return;
                     }
 
-                    const messageId = await player.data.get("messageId");
-                    const channelId = player.textId ?? player.options.textId;
+                    const messageId: string | undefined = await player.data.get("messageId");
+                    const channelId: string | undefined = player.textId ?? player.options.textId;
 
                     if (messageId && channelId) await client.messages.delete(messageId, channelId).catch((): null => null);
 
-                    const track = player.queue.current;
+                    const track: TrackStructure | null = player.queue.current;
 
-                    await player.node.updatePlayer({
-                        guildId: player.guildId,
-                        playerOptions: { voice: player.voice as LavalinkPlayerVoice },
-                    });
+                    const voice: LavalinkPlayerVoice | null = player.voice.toNode();
+                    if (!voice) {
+                        client.debug(LogLevels.Debug, `[Lavalink] Skipping guild ${player.guildId} because voice data is incomplete.`);
 
+                        continue;
+                    }
+
+                    await player.updatePlayer({ playerOptions: { voice } });
                     await player.connect();
                     await player.queue.utils.sync({ override: false, syncCurrent: true });
 

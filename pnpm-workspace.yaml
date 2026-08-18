@@ -7,15 +7,15 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - 'hoshimi'
   - seyfert
-  - '@biomejs/biome@2.5.4 || 2.5.5 || 2.5.7 || 2.5.8'
-  - '@biomejs/cli-darwin-arm64@2.5.4 || 2.5.5 || 2.5.7 || 2.5.8'
-  - '@biomejs/cli-darwin-x64@2.5.4 || 2.5.5 || 2.5.7 || 2.5.8'
-  - '@biomejs/cli-linux-arm64-musl@2.5.4 || 2.5.5 || 2.5.7 || 2.5.8'
-  - '@biomejs/cli-linux-arm64@2.5.4 || 2.5.5 || 2.5.7 || 2.5.8'
-  - '@biomejs/cli-linux-x64-musl@2.5.4 || 2.5.5 || 2.5.7 || 2.5.8'
-  - '@biomejs/cli-linux-x64@2.5.4 || 2.5.5 || 2.5.7 || 2.5.8'
-  - '@biomejs/cli-win32-arm64@2.5.4 || 2.5.5 || 2.5.7 || 2.5.8'
-  - '@biomejs/cli-win32-x64@2.5.4 || 2.5.5 || 2.5.7 || 2.5.8'
+  - '@biomejs/biome@2.5.4 || 2.5.5 || 2.5.7 || 2.5.8 || 2.5.9'
+  - '@biomejs/cli-darwin-arm64@2.5.4 || 2.5.5 || 2.5.7 || 2.5.8 || 2.5.9'
+  - '@biomejs/cli-darwin-x64@2.5.4 || 2.5.5 || 2.5.7 || 2.5.8 || 2.5.9'
+  - '@biomejs/cli-linux-arm64-musl@2.5.4 || 2.5.5 || 2.5.7 || 2.5.8 || 2.5.9'
+  - '@biomejs/cli-linux-arm64@2.5.4 || 2.5.5 || 2.5.7 || 2.5.8 || 2.5.9'
+  - '@biomejs/cli-linux-x64-musl@2.5.4 || 2.5.5 || 2.5.7 || 2.5.8 || 2.5.9'
+  - '@biomejs/cli-linux-x64@2.5.4 || 2.5.5 || 2.5.7 || 2.5.8 || 2.5.9'
+  - '@biomejs/cli-win32-arm64@2.5.4 || 2.5.5 || 2.5.7 || 2.5.8 || 2.5.9'
+  - '@biomejs/cli-win32-x64@2.5.4 || 2.5.5 || 2.5.7 || 2.5.8 || 2.5.9'
   - yunaforseyfert@1.2.3
   - lint-staged@17.1.1 || 17.2.0 || 17.3.0
   - '@redis/client@6.2.0 || 6.2.1'

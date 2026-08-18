@@ -127,14 +127,21 @@ export class Stelle extends Client<true> {
     public async run(): Promise<void> {
         await LoggerOps.watermark();
 
-        this.commands.onCommand = (file): InstanceType<HandleableCommand> | false => {
-            const command =
+        this.commands.onCommand = (file, create): InstanceType<HandleableCommand> | false => {
+            let command: Command | SubCommand | ContextMenuCommand | EntryPointCommand;
+
+            if (
                 file instanceof Command ||
                 file instanceof SubCommand ||
                 file instanceof ContextMenuCommand ||
                 file instanceof EntryPointCommand
-                    ? file
-                    : new file();
+            ) {
+                command = file;
+            } else if (create) {
+                command = create(file, () => new file());
+            } else {
+                command = new file();
+            }
 
             if (command.type === ApplicationCommandType.PrimaryEntryPoint) return command;
             if (command.onlyDeveloper) (command as NonGlobalCommands).guildId = this.config.guildIds;
