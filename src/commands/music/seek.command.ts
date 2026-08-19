@@ -40,7 +40,7 @@ const options = {
     description: "Seek the current track.",
     integrationTypes: [ApplicationIntegrationType.GuildInstall],
     contexts: [InteractionContextType.Guild],
-    aliases: ["sk"],
+    aliases: ["se"],
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })
 @Options(options)
