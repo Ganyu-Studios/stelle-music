@@ -10,7 +10,7 @@ export default class PreviousTrackComponent extends ComponentCommand {
         const { messages } = await ctx.locale();
         const { player } = ctx.metadata.checkPlayer;
 
-        const track: TrackStructure | null = await player.queue.previous();
+        const track: TrackStructure | null = await player.queue.previous(true);
         if (!track) return ctx.errorReply(messages.events.noPrevious, { ephemeral: true });
 
         await player.queue.add(track);
