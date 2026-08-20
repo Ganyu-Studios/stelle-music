@@ -18,8 +18,8 @@ importers:
         specifier: ^17.4.2
         version: 17.4.2
       hoshimi:
-        specifier: 0.5.6-dev-32158979663.0
-        version: 0.5.6-dev-32158979663.0
+        specifier: 0.5.6-dev-32323522786.0
+        version: 0.5.6-dev-32323522786.0
       imagescript:
         specifier: ^1.3.1
         version: 1.3.1
@@ -516,8 +516,8 @@ packages:
     resolution: {integrity: sha512-L5bGsVkxJbJgdnwyuheIunkGatUF/zssUoxxjACCseZYAVbaqdh9Tsmmlkl8vYan09H7sbvKt4pS8GqKLBrEzA==}
     hasBin: true
 
-  hoshimi@0.5.6-dev-32158979663.0:
-    resolution: {integrity: sha512-BD5FJN772S1UGEWKATpqapzR7YqiX6xA0mEnTCWmRo284h9XSsaXjrrugyiywtNiWUNAweSsQiAJFjRq59rmRQ==}
+  hoshimi@0.5.6-dev-32323522786.0:
+    resolution: {integrity: sha512-8LkkdU8o/qdghVdkNq3jsJt4B24y7dtcwObHCtawu8Y92Ayre85nh2EnQ9R6O1HL5AyZfTY6+uNe5CZIEYniHQ==}
 
   husky@9.1.7:
     resolution: {integrity: sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==}
@@ -948,7 +948,7 @@ snapshots:
       nypm: 0.6.9
       pathe: 2.0.3
 
-  hoshimi@0.5.6-dev-32158979663.0:
+  hoshimi@0.5.6-dev-32323522786.0:
     dependencies:
       ws: 8.21.3
     transitivePeerDependencies:
