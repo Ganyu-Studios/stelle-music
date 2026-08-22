@@ -14,5 +14,5 @@ try {
     console.info("Done! Cleared.");
 } catch (error) {
     console.info(error);
-    process.exit(1);
+    process.exitCode = 1;
 }
