@@ -15,7 +15,7 @@ export default createLavalinkEvent({
             oldPlayer.voiceId !== newPlayerJson.voiceId ||
             oldPlayer.textId !== newPlayerJson.textId ||
             oldPlayer.options.selfDeaf !== newPlayerJson.options.selfDeaf ||
-            oldPlayer.options.selfMute !== newPlayerJson.options.selfDeaf ||
+            oldPlayer.options.selfMute !== newPlayerJson.options.selfMute ||
             oldPlayer.node.id !== newPlayerJson.node.id ||
             oldPlayer.node.sessionId !== newPlayerJson.node.sessionId
         ) {
