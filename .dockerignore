@@ -9,6 +9,9 @@ pnpm-debug.log*
 dist
 *.tgz
 
+# Prisma client (regenerated inside the image for the correct platform)
+src/generated
+
 # Runtime data
 pids
 *.pid
@@ -145,11 +148,9 @@ LICENSE
 # Development scripts
 scripts/
 
-# Logs (keep the logs directory structure but ignore log files)
-logs/*.log
-
-# Cache files
-cache/*.json
+# Runtime data (created in the container / mounted as volumes)
+logs
+cache
 
 # Development configurations that aren't needed in production
 biome.json

@@ -1,37 +1,79 @@
+name: stelle
+
 services:
+  # ---------------------------------------------------------------------------
+  # MongoDB — single-node replica set (Prisma requires a replica set).
+  # The healthcheck initiates the set on first run, then reports healthy.
+  # ---------------------------------------------------------------------------
+  mongo:
+    image: mongo:7
+    container_name: stelle-mongo
+    restart: unless-stopped
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mongosh",
+          "--quiet",
+          "--eval",
+          "try { rs.status().ok } catch (e) { rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: 'mongo:27017' }] }).ok }",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+      start_period: 30s
+
+  # ---------------------------------------------------------------------------
+  # Redis — queue store and secondary cache.
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: stelle-redis
+    restart: unless-stopped
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD:-stelle}", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-stelle}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ---------------------------------------------------------------------------
+  # Stelle — the bot. Waits for Mongo & Redis to be healthy before starting.
+  # Lavalink is NOT bundled: point your node(s) at your own Lavalink in the config.
+  # ---------------------------------------------------------------------------
   bot:
     build: .
     container_name: stelle-bot
     restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
-      # Discord Bot Configuration
-      - TOKEN=${TOKEN}
-      - ERRORS_WEBHOOK=${ERRORS_WEBHOOK}
-      
-      # Database Configuration (external MongoDB)
-      - DATABASE_URL=${DATABASE_URL}
-      
-      # Redis Configuration (external Redis)
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - REDIS_USERNAME=${REDIS_USERNAME}
-    
+      # Your secrets — put these in a .env file next to this compose file.
+      TOKEN: ${TOKEN:?set TOKEN in your .env}
+      ERRORS_WEBHOOK: ${ERRORS_WEBHOOK:?set ERRORS_WEBHOOK in your .env}
+      # Bundled services (overrides whatever is in .env).
+      DATABASE_URL: mongodb://mongo:27017/stelle?replicaSet=rs0&directConnection=true
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-stelle}
+      REDIS_USERNAME: default
+      REDIS_SECURE: "false"
     volumes:
-      # Persist logs
-      - ./logs:/app/logs
-      # Persist cache
-      - ./cache:/app/cache
-    
-    # If your bot needs to expose any ports (e.g., for webhooks or API)
-    # ports:
-    #   - "3000:3000"
-    
-    # Add any additional configuration as needed
-    # networks:
-    #   - stelle-network
+      # Persist the on-disk cache (sessions + rendered banners) and file logs.
+      # Named volumes (not bind mounts) so the non-root user can write to them.
+      - stelle-cache:/app/cache
+      - stelle-logs:/app/logs
 
-# If you want to add external services later, uncomment and configure:
-# networks:
-#   stelle-network:
-#     driver: bridge
+volumes:
+  mongo-data:
+  redis-data:
+  stelle-cache:
+  stelle-logs:
