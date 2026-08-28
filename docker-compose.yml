@@ -55,6 +55,11 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    # Lets the bot reach a Lavalink node running on the host machine via `host.docker.internal`
+    # (set your node `host` to `host.docker.internal` in the config). Auto-provided on Docker
+    # Desktop; this line makes it work on Linux hosts too. Harmless if your node is elsewhere.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       # Your secrets — put these in a .env file next to this compose file.
       TOKEN: ${TOKEN:?set TOKEN in your .env}
