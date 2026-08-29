@@ -118,12 +118,24 @@ export async function seedMix(player: PlayerStructure, seed: TrackStructure, req
                 ({ info }): string => info.identifier ?? info.uri?.split("/").reverse()?.[0] ?? info.uri?.split("/").reverse()?.[1],
             );
 
-            const mix: TrackStructure[] = await search({
+            // Spotify recommendations first: try to get a batch of related tracks from the Spotify API.
+            const recomms: TrackStructure[] = await search({
                 player,
                 requester,
                 query: `seed_tracks=${ids.join(",")}`,
                 source: SearchSources.SpotifyRecommendations,
             });
+
+            if (recomms.length) return { tracks: exclude(recomms, identifier), kind: MixKind.List };
+
+            // Spotify recommendations empty: try a Spotify track mix instead.
+            const mix: TrackStructure[] = await search({
+                player,
+                requester,
+                query: identifier,
+                source: SearchSources.SpotifyTrackMix,
+            });
+
             if (mix.length) return { tracks: exclude(mix, identifier), kind: MixKind.List };
 
             // Spotify mix empty: bridge to a YouTube radio via a title/artist lookup.
