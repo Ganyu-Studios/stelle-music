@@ -1,6 +1,6 @@
 import type { PlayerStructure, TrackResolvableStructure, TrackStructure } from "hoshimi";
 import type { TrackUser } from "#stelle/types";
-import { type Mix, MixKind, seedMix } from "#stelle/utils/functions/manager/radio.js";
+import { type Mix, MixKind, RadioOps } from "#stelle/utils/functions/manager/radio.js";
 
 /**
  * The maximum number of tracks to return.
@@ -48,7 +48,7 @@ export async function autoplayFn(player: PlayerStructure, lastTrack: TrackStruct
     const me: TrackUser | undefined = await player.data.get("me");
     if (!me) return;
 
-    const { tracks, kind }: Mix = await seedMix(player, lastTrack, me);
+    const { tracks, kind }: Mix = await RadioOps.mix(player, lastTrack, me);
 
     const filtered: TrackResolvableStructure[] = filter(player, lastTrack, tracks);
     if (!filtered.length) return;

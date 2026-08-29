@@ -4,7 +4,7 @@ import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { clean, matches } from "#stelle/utils/functions/internal/quiz.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
-import { type Mix, seedMix } from "#stelle/utils/functions/manager/radio.js";
+import { type Mix, RadioOps } from "#stelle/utils/functions/manager/radio.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 
 /**
@@ -185,7 +185,7 @@ async function say(client: UsingClient, channelId: string, content: string): Pro
  *
  * Resolve a single `quiz.sources` entry into its tracks. A playlist contributes all of its tracks; anything that
  * resolves to a single track (a track URL or a plain query's top hit) is expanded into a pool via a source-aware
- * mix (see {@link seedMix}), so one song still yields a full game.
+ * mix (see {@link RadioOps.mix}), so one song still yields a full game.
  * @param {PlayerStructure} player The player to search through.
  * @param {string} entry The source entry (URL or search query).
  * @param {SearchSources} searchSource The platform to search plain queries on.
@@ -198,7 +198,8 @@ async function resolveSource(player: PlayerStructure, entry: string, searchSourc
     if (result.loadType === LoadType.Playlist) return result.tracks;
 
     const seed: TrackStructure = result.tracks[0];
-    const { tracks }: Mix = await seedMix(player, seed, null);
+
+    const { tracks }: Mix = await RadioOps.mix(player, seed, null);
 
     return [seed, ...tracks];
 }
@@ -218,139 +219,141 @@ function shuffle<T>(array: T[]): T[] {
     return array;
 }
 
-/**
- *
- * Build a game's track pool from a single, randomly-picked `quiz.sources` entry — so each game has a coherent theme
- * that rotates across games (see {@link resolveSource} for how an entry contributes). Sources are tried in random
- * order and the first that yields tracks wins, so one unresolvable entry doesn't sink the game; the winning entry's
- * tracks are de-duplicated and shuffled.
- * @param {UsingClient} client The client instance.
- * @param {PlayerStructure} player The player to search through.
- * @returns {Promise<TrackStructure[]>} The shuffled track pool.
- */
-async function buildPool(client: UsingClient, player: PlayerStructure): Promise<TrackStructure[]> {
-    const searchSource = client.config.defaultSearchSource;
+const RoundOps = {
+    /**
+     *
+     * Build a game's track pool from a single, randomly-picked `quiz.sources` entry — so each game has a coherent theme
+     * that rotates across games (see {@link resolveSource} for how an entry contributes). Sources are tried in random
+     * order and the first that yields tracks wins, so one unresolvable entry doesn't sink the game; the winning entry's
+     * tracks are de-duplicated and shuffled.
+     * @param {UsingClient} client The client instance.
+     * @param {PlayerStructure} player The player to search through.
+     * @returns {Promise<TrackStructure[]>} The shuffled track pool.
+     */
+    async build(client: UsingClient, player: PlayerStructure): Promise<TrackStructure[]> {
+        const searchSource = client.config.defaultSearchSource;
 
-    let picked: string | undefined;
-    let tracks: TrackStructure[] = [];
-    for (const entry of shuffle([...client.config.quiz.sources])) {
-        tracks = await resolveSource(player, entry, searchSource);
-        if (tracks.length) {
-            picked = entry;
-            break;
+        let picked: string | undefined;
+        let tracks: TrackStructure[] = [];
+        for (const entry of shuffle([...client.config.quiz.sources])) {
+            tracks = await resolveSource(player, entry, searchSource);
+            if (tracks.length) {
+                picked = entry;
+                break;
+            }
         }
-    }
 
-    const seen: Set<string> = new Set();
-    const pool: TrackStructure[] = shuffle(
-        tracks.filter((track): boolean => {
-            if (seen.has(track.info.identifier)) return false;
-            seen.add(track.info.identifier);
-            return true;
-        }),
-    );
+        const seen: Set<string> = new Set();
+        const pool: TrackStructure[] = shuffle(
+            tracks.filter((track): boolean => {
+                if (seen.has(track.info.identifier)) return false;
+                seen.add(track.info.identifier);
+                return true;
+            }),
+        );
 
-    client.debug(LogLevels.Debug, `[Quiz] Pool built | source: ${picked ?? "none"} | unique tracks: ${pool.length}`);
+        client.debug(LogLevels.Debug, `[Quiz] Pool built | source: ${picked ?? "none"} | unique tracks: ${pool.length}`);
 
-    return pool;
-}
+        return pool;
+    },
+    /**
+     *
+     * Advance to the next round (or end the game when the pool is exhausted): announce it, play the track, and arm
+     * the snippet timer that ends the round on timeout.
+     * @param {UsingClient} client The client instance.
+     * @param {QuizSession} session The running session.
+     * @returns {Promise<void>} A promise that resolves once the round is set up (or the game ended).
+     */
+    async next(client: UsingClient, session: QuizSession): Promise<void> {
+        // The player can vanish mid-game (e.g. the bot is disconnected from voice → hoshimi's autoDestroy). Don't play
+        // on a corpse: interrupt the game (dropping its state and notifying the channel) instead of advancing.
+        if (client.manager.getPlayer(session.guildId) !== session.player) return QuizOps.interrupt(client, session.guildId);
 
-/**
- *
- * Advance to the next round (or end the game when the pool is exhausted): announce it, play the track, and arm
- * the snippet timer that ends the round on timeout.
- * @param {UsingClient} client The client instance.
- * @param {QuizSession} session The running session.
- * @returns {Promise<void>} A promise that resolves once the round is set up (or the game ended).
- */
-async function nextRound(client: UsingClient, session: QuizSession): Promise<void> {
-    // The player can vanish mid-game (e.g. the bot is disconnected from voice → hoshimi's autoDestroy). Don't play
-    // on a corpse: interrupt the game (dropping its state and notifying the channel) instead of advancing.
-    if (client.manager.getPlayer(session.guildId) !== session.player) return QuizOps.interrupt(client, session.guildId);
+        session.index++;
 
-    session.index++;
+        if (session.index > session.total) return this.drop(client, session);
 
-    if (session.index > session.total) return endGame(client, session);
+        const track: TrackStructure = session.pool[session.index - 1];
 
-    const track: TrackStructure = session.pool[session.index - 1];
+        session.current = { track, titleBy: null, artistBy: null };
 
-    session.current = { track, titleBy: null, artistBy: null };
+        client.debug(
+            LogLevels.Debug,
+            `[Quiz] Round ${session.index}/${session.total} | guild: ${session.guildId} | track: ${track.info.title} - ${track.info.author}`,
+        );
 
-    client.debug(
-        LogLevels.Debug,
-        `[Quiz] Round ${session.index}/${session.total} | guild: ${session.guildId} | track: ${track.info.title} - ${track.info.author}`,
-    );
+        const { messages } = await ContextOps.locale(client, session.guildId);
 
-    const { messages } = await ContextOps.locale(client, session.guildId);
+        await say(client, session.channelId, messages.events.quiz.roundStart({ round: session.index, total: session.total }));
+        await session.player.play({ track }).catch((): null => null);
 
-    await say(client, session.channelId, messages.events.quiz.roundStart({ round: session.index, total: session.total }));
-    await session.player.play({ track }).catch((): null => null);
+        session.timer = setTimeout((): void => {
+            void this.end(client, session, "timeout");
+        }, client.config.quiz.snippet);
+    },
+    /**
+     *
+     * End the current round: cancel the snippet timer, reveal the answer, and (after a short pause) advance. Guards
+     * against double-invocation by clearing `current` up front, so a late guess and the timer can't both fire it.
+     * @param {UsingClient} client The client instance.
+     * @param {QuizSession} session The running session.
+     * @param {"solved" | "timeout"} reason Why the round ended.
+     * @returns {Promise<void>} A promise that resolves once the next round (or the game end) is scheduled.
+     */
+    async end(client: UsingClient, session: QuizSession, reason: "solved" | "timeout"): Promise<void> {
+        // A stale timer can fire after the game was aborted or replaced (e.g. its player was destroyed mid-round);
+        // ignore it so a dead session can't post a ghost round.
+        if (sessions.get(session.guildId) !== session) return;
 
-    session.timer = setTimeout((): void => {
-        void endRound(client, session, "timeout");
-    }, client.config.quiz.snippet);
-}
+        if (session.timer) {
+            clearTimeout(session.timer);
+            session.timer = null;
+        }
 
-/**
- *
- * End the current round: cancel the snippet timer, reveal the answer, and (after a short pause) advance. Guards
- * against double-invocation by clearing `current` up front, so a late guess and the timer can't both fire it.
- * @param {UsingClient} client The client instance.
- * @param {QuizSession} session The running session.
- * @param {"solved" | "timeout"} reason Why the round ended.
- * @returns {Promise<void>} A promise that resolves once the next round (or the game end) is scheduled.
- */
-async function endRound(client: UsingClient, session: QuizSession, reason: "solved" | "timeout"): Promise<void> {
-    // A stale timer can fire after the game was aborted or replaced (e.g. its player was destroyed mid-round);
-    // ignore it so a dead session can't post a ghost round.
-    if (sessions.get(session.guildId) !== session) return;
+        const round: QuizRound | null = session.current;
+        if (!round) return;
 
-    if (session.timer) {
-        clearTimeout(session.timer);
-        session.timer = null;
-    }
+        session.current = null;
 
-    const round: QuizRound | null = session.current;
-    if (!round) return;
+        const { messages } = await ContextOps.locale(client, session.guildId);
 
-    session.current = null;
+        if (reason === "timeout") await say(client, session.channelId, messages.events.quiz.timeout);
 
-    const { messages } = await ContextOps.locale(client, session.guildId);
+        await say(
+            client,
+            session.channelId,
+            messages.events.quiz.reveal({ title: clean(round.track.info.title), artist: clean(round.track.info.author) }),
+        );
 
-    if (reason === "timeout") await say(client, session.channelId, messages.events.quiz.timeout);
+        await UtilsOps.wait(INTER_ROUND_DELAY);
 
-    await say(
-        client,
-        session.channelId,
-        messages.events.quiz.reveal({ title: clean(round.track.info.title), artist: clean(round.track.info.author) }),
-    );
+        // The game may have been stopped (or replaced) during the pause; only continue if this session is still live.
+        if (sessions.get(session.guildId) !== session) return;
 
-    await UtilsOps.wait(INTER_ROUND_DELAY);
+        await this.next(client, session);
+    },
+    /**
+     *
+     * End the game: drop the session, post the final leaderboard, and tear down the player.
+     * @param {UsingClient} client The client instance.
+     * @param {QuizSession} session The running session.
+     * @returns {Promise<void>} A promise that resolves once the game is finished.
+     */
+    async drop(client: UsingClient, session: QuizSession): Promise<void> {
+        if (session.timer) clearTimeout(session.timer);
+        sessions.delete(session.guildId);
 
-    // The game may have been stopped (or replaced) during the pause; only continue if this session is still live.
-    if (sessions.get(session.guildId) !== session) return;
+        client.debug(
+            LogLevels.Info,
+            `[Quiz] Ended | guild: ${session.guildId} | rounds: ${session.total} | scorers: ${session.scores.size}`,
+        );
 
-    await nextRound(client, session);
-}
+        const { messages } = await ContextOps.locale(client, session.guildId);
+        await say(client, session.channelId, QuizOps.leaderboard(messages, session.scores));
 
-/**
- *
- * End the game: drop the session, post the final leaderboard, and tear down the player.
- * @param {UsingClient} client The client instance.
- * @param {QuizSession} session The running session.
- * @returns {Promise<void>} A promise that resolves once the game is finished.
- */
-async function endGame(client: UsingClient, session: QuizSession): Promise<void> {
-    if (session.timer) clearTimeout(session.timer);
-    sessions.delete(session.guildId);
-
-    client.debug(LogLevels.Info, `[Quiz] Ended | guild: ${session.guildId} | rounds: ${session.total} | scorers: ${session.scores.size}`);
-
-    const { messages } = await ContextOps.locale(client, session.guildId);
-    await say(client, session.channelId, QuizOps.leaderboard(messages, session.scores));
-
-    await session.player.destroy().catch((): null => null);
-}
+        await session.player.destroy().catch((): null => null);
+    },
+};
 
 export const QuizOps = {
     /**
@@ -405,10 +408,11 @@ export const QuizOps = {
 
         // Build the pool through the player's node (mix sources resolve the same way autoplay's do); voice is only
         // joined once we know there are enough tracks, so a failed pool doesn't leave the bot idling in the channel.
-        const pool: TrackStructure[] = await buildPool(client, player);
+        const pool: TrackStructure[] = await RoundOps.build(client, player);
         const total: number = Math.min(rounds ?? client.config.quiz.rounds, pool.length);
         if (total < 1) {
             await player.destroy().catch((): null => null);
+
             return { ok: false, reason: "notEnoughTracks" };
         }
 
@@ -437,7 +441,7 @@ export const QuizOps = {
 
         client.debug(LogLevels.Info, `[Quiz] Started | guild: ${guildId} | rounds: ${total} | pool: ${pool.length}`);
 
-        await nextRound(client, session);
+        await RoundOps.next(client, session);
 
         return { ok: true, rounds: total };
     },
@@ -473,7 +477,7 @@ export const QuizOps = {
             await say(client, session.channelId, messages.events.quiz.guessed.artist({ user: userId }));
         }
 
-        if (round.titleBy && round.artistBy) await endRound(client, session, "solved");
+        if (round.titleBy && round.artistBy) await RoundOps.end(client, session, "solved");
     },
     /**
      *
