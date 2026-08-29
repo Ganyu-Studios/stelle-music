@@ -126,6 +126,7 @@ export const Sessions = {
             "filters",
             "node",
         ]);
+
         const node: NonOptionsNode = UtilsOps.omit(json.node, ["options"]);
 
         this.set<SessionJson>(player.guildId, {

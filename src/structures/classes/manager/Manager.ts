@@ -46,6 +46,9 @@ export class StelleManager extends Hoshimi {
             nodeOptions: {
                 sessionOptions: {
                     resumeFn: (...args): Promise<void> => libraryListener(client, ...args),
+                    resumable: client.config.sessions.enabled,
+                    timeout: client.config.sessions.resumeTime,
+                    byLibrary: client.config.sessions.resumePlayers,
                 },
                 moveOptions: {
                     move: true,
