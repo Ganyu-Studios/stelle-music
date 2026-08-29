@@ -22,6 +22,7 @@ export type {
     LavalinkEventRun,
 } from "./client/lavalink.js";
 export type * from "./client/locales.js";
+export * from "./client/nodelink.js";
 
 /**
  * The type of non-unique button styles like link and premium.
