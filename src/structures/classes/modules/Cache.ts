@@ -39,7 +39,7 @@ export class GuildBucket {
  * @returns {{ limit: number; expire: number; resetOnDemand: true }} The collection options.
  */
 function cacheOptions(): { limit: number; expire: number; resetOnDemand: true } {
-    return { limit: Configuration.cache.size, expire: Configuration.cache.expire, resetOnDemand: true };
+    return { limit: Configuration.cache.limit, expire: Configuration.cache.expire, resetOnDemand: true };
 }
 
 /**

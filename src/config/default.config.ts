@@ -57,7 +57,7 @@ export default createConfig({
         resumePlayers: true,
     },
     cache: {
-        size: 5,
+        limit: 5,
         expire: ms("5mins"),
     },
     images: {

@@ -1,5 +1,5 @@
 import type { NodeJSON, PlayerJSON } from "hoshimi";
-import type { Command, ContextMenuCommand, SubCommand, User } from "seyfert";
+import type { User } from "seyfert";
 import type { EmojiResolvable } from "seyfert/lib/common/index.js";
 import type { ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
@@ -257,11 +257,6 @@ export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
  * The options for non-command commands.
  */
 export type NonCommandOptions = Omit<Options, "category">;
-
-/**
- * The types for non-global commands.
- */
-export type NonGlobalCommands = Command | ContextMenuCommand | SubCommand;
 
 /**
  * The type of the Stelle version string.

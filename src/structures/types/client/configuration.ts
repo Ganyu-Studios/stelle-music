@@ -81,11 +81,11 @@ interface Sessions {
  */
 interface Cache {
     /**
-     * The maximum size of the cache.
+     * The maximum limit of the cache.
      * @type {number}
      * @default 5
      */
-    size: number;
+    limit: number;
     /**
      * The cache expiration time in milliseconds.
      * @type {number}
