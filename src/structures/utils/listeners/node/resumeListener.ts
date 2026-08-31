@@ -33,6 +33,9 @@ export async function resumeListener(client: UsingClient, node: NodeStructure, p
                 node: node.id,
             });
 
+            // set a internal flag to indicate that the player is being resumed, so that the track start event can be handled properly
+            await player.data.set("internal_isResumed", true);
+
             if (session.messageId) await player.data.set("messageId", session.messageId);
             if (session.enabledAutoplay) await player.data.set("enabledAutoplay", session.enabledAutoplay);
             if (session.me) await player.data.set("me", session.me);

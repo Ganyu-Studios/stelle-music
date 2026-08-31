@@ -1,5 +1,4 @@
 import { createClient, type RedisClientType } from "@redis/client";
-import { Structures } from "hoshimi";
 import { Client, LimitedCollection, LimitedMemoryAdapter, type LogLevels, type MessageStructure } from "seyfert";
 import { HandleCommand } from "seyfert/lib/commands/handle.js";
 import { ActivityType, type GatewayPresenceUpdateData, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
@@ -16,7 +15,6 @@ import { onBotPermissionsFail, onOptionsError, onPermissionsFail, onRunError } f
 import { sendErrorReport } from "#stelle/utils/functions/internal/report.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 import { type PluginsDefinition, plugins } from "#stelle/utils/plugins.js";
-import { HoshimiLyricsManager } from "../manager/LyricsManager.js";
 
 /**
  * Class representing the main client of the bot.
@@ -119,8 +117,6 @@ export class Stelle extends Client<PluginsDefinition, true> {
      */
     public async run(): Promise<void> {
         await LoggerOps.watermark();
-
-        Structures.LyricsManager = (...args) => new HoshimiLyricsManager(...args);
 
         this.setServices({
             middlewares: StelleMiddlewares,

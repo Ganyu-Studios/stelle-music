@@ -1,5 +1,5 @@
 import { EventNames } from "hoshimi";
-import { Embed, LogLevels, type MessageStructure } from "seyfert";
+import { type ActionRow, type Button, Embed, LogLevels, type MessageStructure } from "seyfert";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { PanelOps } from "#stelle/utils/functions/manager/panel.js";
 import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
@@ -8,8 +8,19 @@ import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 export default createLavalinkEvent({
     name: EventNames.TrackStart,
     async run(client, player, track): Promise<void> {
-        if (!(player.textId && player.voiceId)) return;
-        if (!track) return;
+        const isResumed: boolean | undefined = await player.data.get("internal_isResumed");
+        if (isResumed) {
+            client.debug(
+                LogLevels.Debug,
+                `[Lavalink] Track start event ignored | guild: ${player.guildId} | title: ${track?.info.title ?? "unknown"} | author: ${track?.info.author ?? "unknown"}`,
+            );
+
+            await player.data.delete("internal_isResumed");
+
+            return;
+        }
+
+        if (!(player.textId && player.voiceId) || !track) return;
 
         const messages = await PlayerOps.messages(client, player);
         if (!messages) return;
@@ -51,7 +62,7 @@ export default createLavalinkEvent({
                 .setColor(client.config.color.extra)
                 .setTimestamp();
 
-            const components = PanelOps.controls(messages, { isAutoplay, loop: player.loop, paused: player.paused });
+            const components: ActionRow<Button>[] = PanelOps.controls(messages, { isAutoplay, loop: player.loop, paused: player.paused });
 
             const message: MessageStructure | null = await client.messages
                 .write(player.textId, { embeds: [embed], components })

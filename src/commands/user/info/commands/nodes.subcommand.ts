@@ -1,3 +1,4 @@
+import { type NodeStructure, OpCodes, type Stats } from "hoshimi";
 import {
     Declare,
     Embed,
@@ -13,6 +14,53 @@ import { EmbedPaginator } from "#stelle/classes/components/EmbedPaginator.js";
 import { LoggerOps } from "#stelle/utils/functions/internal/logger.js";
 import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
 
+/**
+ * Default stats for a node.
+ * @type {Stats}
+ */
+const defaultStats: Stats = {
+    op: OpCodes.Stats,
+    players: 0,
+    playingPlayers: 0,
+    uptime: 0,
+    memory: {
+        allocated: 0,
+        free: 0,
+        reservable: 0,
+        used: 0,
+    },
+    frameStats: {
+        deficit: 0,
+        nulled: 0,
+        sent: 0,
+    },
+    cpu: {
+        cores: 0,
+        systemLoad: 0,
+        lavalinkLoad: 0,
+    },
+};
+
+/**
+ *
+ * Get the stats of a node.
+ * @param {NodeStructure} node The node structure to get the stats from.
+ * @returns {Stats} The stats of the node.
+ */
+function getStats(node: NodeStructure): Stats {
+    const stats: Stats | null = structuredClone(node.stats);
+    if (!stats) return defaultStats;
+
+    if (node.isNodelink() && "nodelinkLoad" in stats.cpu) {
+        const load: unknown = stats.cpu.nodelinkLoad;
+
+        if (typeof load !== "number" || Number.isNaN(load) || load < 0) stats.cpu.nodelinkLoad = 0;
+        else stats.cpu.lavalinkLoad = Number(stats.cpu.nodelinkLoad);
+    }
+
+    return stats;
+}
+
 @Declare({
     name: "nodes",
     description: "Get the status of all Stelle nodes.",
@@ -25,17 +73,21 @@ export default class InfoNodesSubcommand extends SubCommand {
         const { messages } = await ctx.locale();
 
         const limit = 25;
-        const fields: APIEmbedField[] = client.manager.nodeManager.nodes.map((node) => ({
-            name: `\`🔰\` ${node.id}`,
-            inline: true,
-            value: messages.commands.info.nodes.value({
-                state: messages.commands.info.nodes.states[node.state],
-                players: node.stats?.players ?? 0,
-                uptime: TimeFormat.toHumanize(node.stats?.uptime ?? 0),
-                memory: `${LoggerOps.memoryUsage(node.stats?.memory?.used ?? 0)} / ${LoggerOps.memoryUsage(node.stats?.memory?.allocated ?? 0)}`,
-                cpu: `${node.stats?.cpu?.lavalinkLoad.toFixed(2) ?? 0}% / ${node.stats?.cpu?.systemLoad.toFixed(2) ?? 0}% (Cores: ${node.stats?.cpu?.cores ?? 0})`,
-            }),
-        }));
+        const fields: APIEmbedField[] = client.manager.nodeManager.nodes.map((node) => {
+            const stats = getStats(node);
+
+            return {
+                name: `\`🔰\` ${node.id}`,
+                inline: true,
+                value: messages.commands.info.nodes.value({
+                    state: messages.commands.info.nodes.states[node.state],
+                    players: stats.players,
+                    uptime: TimeFormat.toHumanize(stats.uptime),
+                    memory: `${LoggerOps.memoryUsage(stats.memory.used)} / ${LoggerOps.memoryUsage(stats.memory.allocated)}`,
+                    cpu: `${stats.cpu.lavalinkLoad.toFixed(2)}% / ${stats.cpu.systemLoad.toFixed(2)}% (Cores: ${stats.cpu.cores})`,
+                }),
+            };
+        });
 
         if (!fields.length) return ctx.errorReply(messages.commands.info.nodes.noNodes);
 

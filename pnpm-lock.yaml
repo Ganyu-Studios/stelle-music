@@ -33,8 +33,8 @@ importers:
         specifier: ^1.2.3
         version: 1.2.3(seyfert@https://pkg.pr.new/seyfert@426)
       zod:
-        specifier: ^4.5.2
-        version: 4.5.2
+        specifier: ^4.5.4
+        version: 4.5.4
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.5.11
@@ -52,8 +52,8 @@ importers:
         specifier: 6.19.3
         version: 6.19.3(typescript@7.0.2)
       tsx:
-        specifier: ^4.23.12
-        version: 4.23.12
+        specifier: ^4.23.13
+        version: 4.23.13
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
@@ -596,8 +596,8 @@ packages:
     resolution: {integrity: sha512-QKAl9m8gWWGHV8jZcPeym6j+XULi6tOf1mT83WYJ4Lk2ytW/uwAWkrP0uFsdoYMdueVJ0qs26wZ+23xeB4ibNQ==}
     engines: {node: '>=18'}
 
-  tsx@4.23.12:
-    resolution: {integrity: sha512-FDf4L4sYzKtzWYhU/Xm0AQFdTjdIxNo9ElTf2mxXM6k8YMHXzYUe4yODVaXP4V9uMFbVg8c0qyBccK2OOxb45Q==}
+  tsx@4.23.13:
+    resolution: {integrity: sha512-BL5MGkRln6aDYhb0xbQlEAGw743BaZYWdbWtdJOBriYJboKgUUYCadFp2/FpBBZquBC/ezNBn7wMMPx7FDZUDw==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -632,8 +632,8 @@ packages:
     peerDependencies:
       seyfert: ^5.0.0
 
-  zod@4.5.2:
-    resolution: {integrity: sha512-XkYXCol10+ba/6F/cueWV+TezUeOqXW0hdeJt5CdXjTYeAgAQg5N03RQdJ80mhfFE72+pblvYMW4wy2Qp4Qbrg==}
+  zod@4.5.4:
+    resolution: {integrity: sha512-sC95tT5iHHH9gtpj6A81kh+NEaRAUFN+qlUPDUbRfOMvNf5QCBqsb3WgvnpVtK5Y+4UfA6KqufotuTvMGiTlsA==}
 
 snapshots:
 
@@ -1019,7 +1019,7 @@ snapshots:
 
   tinyexec@1.3.0: {}
 
-  tsx@4.23.12:
+  tsx@4.23.13:
     dependencies:
       esbuild: 0.28.2
     optionalDependencies:
@@ -1059,4 +1059,4 @@ snapshots:
     dependencies:
       seyfert: https://pkg.pr.new/seyfert@426
 
-  zod@4.5.2: {}
+  zod@4.5.4: {}
