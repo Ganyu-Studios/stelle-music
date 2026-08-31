@@ -122,10 +122,7 @@ export class Stelle extends Client<PluginsDefinition, true> {
             middlewares: StelleMiddlewares,
             cache: {
                 adapter: new LimitedMemoryAdapter({
-                    message: {
-                        expire: this.config.cache.expire,
-                        limit: this.config.cache.limit,
-                    },
+                    message: this.config.cache,
                 }),
                 disabledCache: {
                     bans: true,
@@ -134,7 +131,6 @@ export class Stelle extends Client<PluginsDefinition, true> {
                     roles: true,
                     overwrites: true,
                     presences: true,
-                    stageInstances: true,
                 },
             },
             handleCommand: class extends HandleCommand {
