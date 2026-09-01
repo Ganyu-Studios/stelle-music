@@ -1,4 +1,4 @@
-import { type NodeStructure, OpCodes, type Stats } from "hoshimi";
+import { OpCodes, type Stats } from "hoshimi";
 import {
     Declare,
     Embed,
@@ -41,26 +41,6 @@ const defaultStats: Stats = {
     },
 };
 
-/**
- *
- * Get the stats of a node.
- * @param {NodeStructure} node The node structure to get the stats from.
- * @returns {Stats} The stats of the node.
- */
-function getStats(node: NodeStructure): Stats {
-    const stats: Stats | null = structuredClone(node.stats);
-    if (!stats) return defaultStats;
-
-    if (node.isNodelink() && "nodelinkLoad" in stats.cpu) {
-        const load: unknown = stats.cpu.nodelinkLoad;
-
-        if (typeof load !== "number" || Number.isNaN(load) || load < 0) stats.cpu.nodelinkLoad = 0;
-        else stats.cpu.lavalinkLoad = Number(stats.cpu.nodelinkLoad);
-    }
-
-    return stats;
-}
-
 @Declare({
     name: "nodes",
     description: "Get the status of all Stelle nodes.",
@@ -74,7 +54,7 @@ export default class InfoNodesSubcommand extends SubCommand {
 
         const limit = 25;
         const fields: APIEmbedField[] = client.manager.nodeManager.nodes.map((node) => {
-            const stats = getStats(node);
+            const stats = node.stats ?? defaultStats;
 
             return {
                 name: `\`🔰\` ${node.id}`,
