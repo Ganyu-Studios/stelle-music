@@ -3,6 +3,7 @@ allowBuilds:
   '@prisma/engines': true
   esbuild: true
   prisma: true
+  'seyfert@git+https://github.com/tiramisulabs/seyfert.git': true
 
 minimumReleaseAgeExclude:
   - 'hoshimi'

@@ -10,9 +10,9 @@ const developerCommands = createPlugin({
     name: "developer-commands",
     register(api): void {
         api.handlers.transform(
-            (command): false | void | HandleableCommandInstance => {
-                if (command.onlyDeveloper && !(command instanceof EntryPointCommand)) {
-                    command.guildId = Configuration.guildIds;
+            (command): HandleableCommandInstance | void | false => {
+                if (!(command instanceof EntryPointCommand)) {
+                    if (command.onlyDeveloper) command.guildId = Configuration.guildIds;
 
                     if (command.skipRegister) {
                         logger.info(`[Command] Skipped command registration | name: ${command.name}`);
