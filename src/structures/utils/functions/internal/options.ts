@@ -23,12 +23,12 @@ export interface FormattedOption {
 
 /**
  *
- * Check if the option is required.
- * @param {string} option The command option.
+ * Wrap a type token in brackets that convey whether the option is required.
+ * @param {string} token The option type token.
  * @param {boolean} required If the option is required.
- * @returns {string} The formatted option.
+ * @returns {string} The bracketed token: `<token>` when required, `[token]` otherwise.
  */
-const isRequired = (option: string, required?: boolean): string => (required ? `<${option}>` : `[${option}]`);
+const bracket = (token: string, required?: boolean): string => (required ? `<${token}>` : `[${token}]`);
 
 /**
  *
@@ -45,22 +45,15 @@ export function getFormattedOptions(
     const result: FormattedOption[] = [];
 
     for (const option of options) {
-        switch (option.type) {
-            case ApplicationCommandOptionType.Subcommand:
-            case ApplicationCommandOptionType.SubcommandGroup: {
-                return getFormattedOptions(option.options, types);
-            }
-
-            default:
-                {
-                    result.push({
-                        option: `--${option.name} ${isRequired(types[option.type], option.required)}`,
-                        description: option.description,
-                        range: getRange(option),
-                    });
-                }
-                break;
+        if (option.type === ApplicationCommandOptionType.Subcommand || option.type === ApplicationCommandOptionType.SubcommandGroup) {
+            return getFormattedOptions(option.options, types);
         }
+
+        result.push({
+            option: `--${option.name} ${bracket(types[option.type], option.required)}`,
+            description: option.description,
+            range: rangeOf(option),
+        });
     }
 
     return result;
@@ -72,7 +65,7 @@ export function getFormattedOptions(
  * @param {APIApplicationCommandOption} option The option.
  * @returns {string} The range.
  */
-function getRange(option: APIApplicationCommandOption): string {
+function rangeOf(option: APIApplicationCommandOption): string {
     let text: string = "";
 
     switch (option.type) {
