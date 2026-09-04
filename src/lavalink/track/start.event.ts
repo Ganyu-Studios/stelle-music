@@ -10,12 +10,12 @@ export default createLavalinkEvent({
     async run(client, player, track): Promise<void> {
         const isResumed: boolean | undefined = await player.data.get("internal_isResumed");
         if (isResumed) {
+            await player.data.delete("internal_isResumed");
+
             client.debug(
                 LogLevels.Debug,
                 `[Lavalink] Track start event ignored | guild: ${player.guildId} | title: ${track?.info.title ?? "unknown"} | author: ${track?.info.author ?? "unknown"}`,
             );
-
-            await player.data.delete("internal_isResumed");
 
             return;
         }

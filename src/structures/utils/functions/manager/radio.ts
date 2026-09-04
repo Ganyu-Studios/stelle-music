@@ -71,8 +71,8 @@ export const RadioOps = {
      * @param {MixSearchOptions} options The search options.
      * @returns {Promise<TrackStructure[]>} The resulting tracks.
      */
-    async search({ player, query, source, requester }: MixSearchOptions): Promise<TrackStructure[]> {
-        const result: QueryResult | null = await player.search({ query, source, requester }).catch((): null => null);
+    async search({ player, ...options }: MixSearchOptions): Promise<TrackStructure[]> {
+        const result: QueryResult | null = await player.search(options).catch((): null => null);
 
         return result?.tracks ?? [];
     },
@@ -119,34 +119,34 @@ export const RadioOps = {
                 );
 
                 // Spotify recommendations first: try to get a batch of related tracks from the Spotify API.
-                const recomms: TrackStructure[] = await this.search({
+                const byIds: TrackStructure[] = await this.search({
                     player,
                     requester,
                     query: `seed_tracks=${ids.join(",")}`,
                     source: SearchSources.SpotifyRecommendations,
                 });
 
-                if (recomms.length) return { tracks: this.exclude(recomms, identifier), kind: MixKind.List };
+                if (byIds.length) return { tracks: this.exclude(byIds, identifier), kind: MixKind.List };
 
                 // Spotify recommendations empty: try a Spotify track mix instead.
-                const mix: TrackStructure[] = await this.search({
+                const byMix: TrackStructure[] = await this.search({
                     player,
                     requester,
                     query: identifier,
                     source: SearchSources.SpotifyTrackMix,
                 });
 
-                if (mix.length) return { tracks: this.exclude(mix, identifier), kind: MixKind.List };
+                if (byMix.length) return { tracks: this.exclude(byMix, identifier), kind: MixKind.List };
 
                 // Spotify mix empty: bridge to a YouTube radio via a title/artist lookup.
-                const matches: TrackStructure[] = await this.search({
+                const byMatches: TrackStructure[] = await this.search({
                     player,
                     requester,
                     query: `${title} by ${author}`,
                     source: SearchSources.Youtube,
                 });
 
-                const match: TrackStructure | undefined = matches.at(0);
+                const match: TrackStructure | undefined = byMatches.at(0);
                 if (match) {
                     const radio: TrackStructure[] = await this.radio(player, match.info.identifier, requester);
                     return { tracks: this.exclude(radio, match.info.identifier), kind: MixKind.Radio };
