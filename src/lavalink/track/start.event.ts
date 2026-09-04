@@ -8,18 +8,6 @@ import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 export default createLavalinkEvent({
     name: EventNames.TrackStart,
     async run(client, player, track): Promise<void> {
-        const isResumed: boolean | undefined = await player.data.get("internal_isResumed");
-        if (isResumed) {
-            await player.data.delete("internal_isResumed");
-
-            client.debug(
-                LogLevels.Debug,
-                `[Lavalink] Track start event ignored | guild: ${player.guildId} | title: ${track?.info.title ?? "unknown"} | author: ${track?.info.author ?? "unknown"}`,
-            );
-
-            return;
-        }
-
         if (!(player.textId && player.voiceId) || !track) return;
 
         const messages = await PlayerOps.messages(client, player);

@@ -21,7 +21,8 @@ export async function resumeListener(client: UsingClient, node: NodeStructure, p
             const session: SessionJson | undefined = Sessions.get<SessionJson>(data.guildId);
             if (!session) continue;
 
-            if (!data.state.connected) {
+            // If the node is not connected and the session is not 24/7, delete the session and skip to the next player.
+            if (!data.state.connected && !session.is247) {
                 Sessions.delete(data.guildId);
                 continue;
             }
@@ -32,11 +33,6 @@ export async function resumeListener(client: UsingClient, node: NodeStructure, p
                 volume: data.volume,
                 node: node.id,
             });
-
-            // set a internal flag to indicate that the player is being resumed, so that the track start event can be ignored
-            // for some reason, nodelink emits trackStart event when a player is resumed, making the now playing message to be sent again,
-            // so we set a flag to ignore the trackStart event when the player is resumed
-            await player.data.set("internal_isResumed", node.isNodelink());
 
             if (session.messageId) await player.data.set("messageId", session.messageId);
             if (session.enabledAutoplay) await player.data.set("enabledAutoplay", session.enabledAutoplay);
