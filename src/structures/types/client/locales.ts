@@ -8,6 +8,7 @@ export type IHelpMenuEmbed = { clientName: string; category: string };
 export type IVoiceStatus = { title: string; author: string };
 export type IClientName = { clientName: string };
 export type IHelp = { defaultPrefix: string; options: string };
+export type IHelpCommand = { category: string; cooldown: string; aliases?: string; options: string };
 export type IHelpMenu = { category: string };
 export type IMention = { clientName: string; defaultPrefix: string; commandName: string };
 export type IEngine = { engine: string; clientName: string };

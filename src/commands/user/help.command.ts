@@ -103,6 +103,9 @@ export default class HelpCommand extends Command {
             const command: ResolvableCommand | undefined = commands.find((command) => command.name === options.command);
             if (!command) return ctx.errorReply(messages.commands.help.noCommand, { ephemeral: true });
 
+            // Only chat commands carry aliases; context menu commands don't, so the line is omitted for them.
+            const aliases: string[] | undefined = command instanceof Command ? command.aliases : undefined;
+
             const embed: Embed = new Embed()
                 .setColor(client.config.color.success)
                 .setThumbnail(ctx.author.avatarURL())
@@ -113,7 +116,10 @@ export default class HelpCommand extends Command {
                     }),
                 )
                 .setDescription(
-                    messages.commands.help.selectMenu.options.description({
+                    messages.commands.help.command({
+                        category: getAlias(command.category),
+                        cooldown: TimeFormat.toHumanize((command.cooldown ?? 3) * 1000),
+                        aliases: aliases?.length ? aliases.map((alias): string => `\`${alias}\``).join(", ") : undefined,
                         options: parseCommand(command, messages.events.optionTypes, localeString),
                     }),
                 );
