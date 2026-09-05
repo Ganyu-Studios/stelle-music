@@ -53,16 +53,25 @@ export const ComponentOps = {
                 return component;
             };
 
-            const updateButtons = (components: APIActionRowComponentTypes[]): APIActionRowComponentTypes[] =>
+            const updateComponents = (components: APIActionRowComponentTypes[]): APIActionRowComponentTypes[] =>
                 components.map((component): APIActionRowComponentTypes => {
-                    if (component.type !== ComponentType.Button) return component;
-                    return updateButton(component);
+                    if (component.type === ComponentType.Button) return updateButton(component);
+
+                    // Text inputs only live in modals, never in message rows, and have no `disabled` field.
+                    if (component.type === ComponentType.TextInput) return component;
+
+                    // Non-button row components (e.g. select menus) only support the blanket disable toggle; label,
+                    // style and emoji are button-only, so they're skipped here. Without this, a select-menu row (like
+                    // the help category picker) would stay enabled after the collector idles out.
+                    if (options?.disabled) component.disabled = options.disabled;
+
+                    return component;
                 });
 
             if (topLevel.type === ComponentType.ActionRow) {
                 const row: APIActionRowComponent<APIActionRowComponentTypes> = {
                     ...topLevel,
-                    components: updateButtons(topLevel.components),
+                    components: updateComponents(topLevel.components),
                 };
 
                 return new ActionRow<Button>(row);
@@ -75,7 +84,7 @@ export const ComponentOps = {
                         if (nested.type === ComponentType.ActionRow) {
                             return {
                                 ...nested,
-                                components: updateButtons(nested.components),
+                                components: updateComponents(nested.components),
                             };
                         }
 
