@@ -103,11 +103,9 @@ export default class HelpCommand extends Command {
             const command: ResolvableCommand | undefined = commands.find((command) => command.name === options.command);
             if (!command) return ctx.errorReply(messages.commands.help.noCommand, { ephemeral: true });
 
-            // Only chat commands carry aliases; context menu commands don't, so the line is omitted for them.
+            // Only chat commands carry aliases; context menu commands don't. Fall back to the "not specified" text
+            // when the command has none.
             const aliases: string[] | undefined = command instanceof Command ? command.aliases : undefined;
-            const aliasesLine: string = aliases?.length
-                ? messages.commands.help.command.aliases({ aliases: aliases.map((alias): string => `\`${alias}\``).join(", ") })
-                : "";
 
             const embed: Embed = new Embed()
                 .setColor(client.config.color.success)
@@ -119,10 +117,12 @@ export default class HelpCommand extends Command {
                     }),
                 )
                 .setDescription(
-                    messages.commands.help.command.base({
+                    messages.commands.help.command({
                         category: getAlias(command.category),
                         cooldown: TimeFormat.toHumanize((command.cooldown ?? 3) * 1000),
-                        aliases: aliasesLine,
+                        aliases: aliases?.length
+                            ? aliases.map((alias): string => `\`${alias}\``).join(", ")
+                            : messages.commands.help.noAliases,
                         options: parseCommand(command, messages.events.optionTypes, localeString),
                     }),
                 );

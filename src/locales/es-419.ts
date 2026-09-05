@@ -196,11 +196,9 @@ export default {
                 description: ({ defaultPrefix }): string =>
                     `\`📦\` ¡Hola! Aquí está la información sobre mis comandos y cosas.\n\`📜\` Selecciona la categoría de comando de tu elección.\n\n-# Puedes buscar un comando específico escribiendo: \`${defaultPrefix} help <comando>\``,
                 noCommand: "`❌` **No se encontró** ningún comando para esta búsqueda...",
-                command: {
-                    base: ({ category, cooldown, aliases, options }): string =>
-                        `\`📂\` **Categoría** · ${category}\n\`⏱️\` **Enfriamiento** · ${cooldown}${aliases}\n\n-# * **Opcional []**\n-# * **Requerido <>**\n\n${options}`,
-                    aliases: ({ aliases }): string => `\n\`🔀\` **Alias** · ${aliases}`,
-                },
+                command: ({ category, cooldown, aliases, options }): string =>
+                    `\`📂\` **Categoría** · ${category}\n\`⏱️\` **Enfriamiento** · ${cooldown}\n\`🔀\` **Alias** · ${aliases}\n\n-# * **Opcional []**\n-# * **Requerido <>**\n\n${options}`,
+                noAliases: "No especificado",
                 selectMenu: {
                     description: ({ category }): string => `Selecciona la categoría ${category}.`,
                     placeholder: "Selecciona una categoría de comando.",
