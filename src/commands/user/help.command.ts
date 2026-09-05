@@ -13,7 +13,12 @@ import {
     SubCommand,
     type WebhookMessageStructure,
 } from "seyfert";
-import type { APIApplicationCommandOption, ApplicationCommandOptionType, LocaleString } from "seyfert/lib/types/index.js";
+import type {
+    APIApplicationCommandOption,
+    APIApplicationCommandOptionChoice,
+    ApplicationCommandOptionType,
+    LocaleString,
+} from "seyfert/lib/types/index.js";
 import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { EmbedPaginator, StelleStringMenu } from "#stelle/classes/components/EmbedPaginator.js";
 import { StelleCategory } from "#stelle/types";
@@ -27,6 +32,18 @@ import { AutocompleteNoticeValue, UtilsOps } from "#stelle/utils/functions/inter
  */
 type ResolvableCommand = Command | ContextMenuCommand;
 
+/**
+ * The custom id of the help panel's category select menu.
+ * @type {string}
+ */
+const HELP_MENU_ID: string = "guild-helpMenu";
+
+/**
+ * How many commands are listed per paginator page.
+ * @type {number}
+ */
+const PER_PAGE: number = 5;
+
 const options = {
     command: createStringOption({
         autocomplete(interaction): Promise<void> {
@@ -35,32 +52,22 @@ const options = {
 
             const commands: ResolvableCommand[] = client.commands.values.filter((command): boolean => !command.guildId);
             const input: string = interaction.getInput();
-            if (!input.length) {
-                return interaction.respond(
-                    commands
-                        .map((command): { name: string; value: string } => {
-                            const description: string = command.description_localizations?.[interaction.locale] ?? command.description;
 
-                            return {
-                                name: `${command.name} - ${UtilsOps.truncate(description, 124)} (${TimeFormat.toHumanize((command.cooldown ?? 3) * 1000)})`,
-                                value: command.name,
-                            };
-                        })
-                        .slice(0, 25),
-                );
-            }
+            const toChoice = (command: ResolvableCommand): APIApplicationCommandOptionChoice<string> => {
+                const description: string = command.description_localizations?.[interaction.locale] ?? command.description;
+
+                return {
+                    name: `${command.name} - ${UtilsOps.truncate(description, 124)} (${TimeFormat.toHumanize((command.cooldown ?? 3) * 1000)})`,
+                    value: command.name,
+                };
+            };
+
+            if (!input.length) return interaction.respond(commands.map(toChoice).slice(0, 25));
 
             const command: ResolvableCommand | undefined = commands.find((command) => command.name === input);
             if (!command) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noCommand));
 
-            const description: string = command.description_localizations?.[interaction.locale] ?? command.description;
-
-            return interaction.respond([
-                {
-                    name: `${command.name} - ${UtilsOps.truncate(description, 124)} (${TimeFormat.toHumanize((command.cooldown ?? 3) * 1000)})`,
-                    value: command.name,
-                },
-            ]);
+            return interaction.respond([toChoice(command)]);
         },
         description: "The command to get help for.",
         locales: {
@@ -86,102 +93,98 @@ export default class HelpCommand extends Command {
 
         if (options.command === AutocompleteNoticeValue) return ctx.errorReply(messages.commands.help.noCommand, { ephemeral: true });
 
+        const localeString: LocaleString = await ctx.localeString();
         const commands: ResolvableCommand[] = client.commands.values.filter((command): boolean => !command.guildId);
-        const categoryList: number[] = commands
-            .map((command): number => Number(command.category))
-            .filter((item, index, commands): boolean => commands.indexOf(item) === index);
 
-        const getAlias = (category: StelleCategory): string => messages.commands.help.aliases[category];
+        const getAlias = (category: StelleCategory = StelleCategory.Unknown): string => messages.commands.help.aliases[category];
 
-        const localeString = await ctx.localeString();
+        // A specific command was requested: render just its detail card.
+        if (options.command) {
+            const command: ResolvableCommand | undefined = commands.find((command) => command.name === options.command);
+            if (!command) return ctx.errorReply(messages.commands.help.noCommand, { ephemeral: true });
 
-        if (!options.command) {
-            const paginator: EmbedPaginator = new EmbedPaginator({ ctx, disabled: true });
-            const row: ActionRow<StelleStringMenu> = new ActionRow<StelleStringMenu>().addComponents(
-                new StelleStringMenu()
-                    .setPlaceholder(messages.commands.help.selectMenu.placeholder)
-                    .setCustomId("guild-helpMenu")
-                    .setOptions(
-                        categoryList.map(
-                            (category): StringSelectOption =>
-                                new StringSelectOption()
-                                    .setLabel(getAlias(category))
-                                    .setValue(category.toString())
-                                    .setDescription(messages.commands.help.selectMenu.description({ category: getAlias(category) }))
-                                    .setEmoji("📚"),
-                        ),
-                    )
-                    .setRun((interaction, setPage) => {
-                        const category: number = Number(interaction.values[0]);
-                        const commands: ResolvableCommand[] = client.commands.values.filter(
-                            (command): boolean => command.category === category,
-                        );
-
-                        paginator.setEmbeds([]).setDisabled(false);
-
-                        for (let i: number = 0; i < commands.length; i += 5) {
-                            const commandList: ResolvableCommand[] = commands.slice(i, i + 5);
-
-                            paginator.addEmbed(
-                                new Embed()
-                                    .setColor(client.config.color.success)
-                                    .setThumbnail(ctx.author.avatarURL())
-                                    .setTitle(
-                                        messages.commands.help.selectMenu.options.title({
-                                            category: getAlias(category),
-                                            clientName: client.me.username,
-                                        }),
-                                    )
-                                    .setDescription(
-                                        messages.commands.help.selectMenu.options.description({
-                                            options: commandList
-                                                .map((command): string => parseCommand(command, messages.events.optionTypes, localeString))
-                                                .join("\n\n"),
-                                        }),
-                                    ),
-                            );
-                        }
-
-                        return setPage(0);
+            const embed: Embed = new Embed()
+                .setColor(client.config.color.success)
+                .setThumbnail(ctx.author.avatarURL())
+                .setTitle(
+                    messages.commands.help.selectMenu.options.title({
+                        category: getAlias(command.category),
+                        clientName: client.me.username,
                     }),
-            );
-
-            await paginator
-                .setRows([row])
-                .addEmbed(
-                    new Embed()
-                        .setColor(client.config.color.success)
-                        .setTitle(messages.commands.help.title({ clientName: client.me.username }))
-                        .setDescription(
-                            messages.commands.help.description({
-                                defaultPrefix: client.config.defaultPrefix,
-                            }),
-                        ),
                 )
-                .reply();
+                .setDescription(
+                    messages.commands.help.selectMenu.options.description({
+                        options: parseCommand(command, messages.events.optionTypes, localeString),
+                    }),
+                );
 
-            return;
+            return ctx.editOrReply({ embeds: [embed] });
         }
 
-        const command: ResolvableCommand | undefined = commands.find((command) => command.name === options.command);
-        if (!command) return ctx.errorReply(messages.commands.help.noCommand, { ephemeral: true });
+        // No command given: category picker + paginated command cards.
+        const categories: number[] = commands
+            .map((command): number => Number(command.category))
+            .filter((item, index, categories): boolean => categories.indexOf(item) === index);
 
-        const embed: Embed = new Embed()
-            .setColor(client.config.color.success)
-            .setThumbnail(ctx.author.avatarURL())
-            .setTitle(
-                messages.commands.help.selectMenu.options.title({
-                    category: getAlias(command.category ?? StelleCategory.Unknown),
-                    clientName: client.me.username,
-                }),
+        const paginator: EmbedPaginator = new EmbedPaginator({ ctx, disabled: true });
+
+        const menu: StelleStringMenu = new StelleStringMenu()
+            .setPlaceholder(messages.commands.help.selectMenu.placeholder)
+            .setCustomId(HELP_MENU_ID)
+            .setOptions(
+                categories.map(
+                    (category): StringSelectOption =>
+                        new StringSelectOption()
+                            .setLabel(getAlias(category))
+                            .setValue(category.toString())
+                            .setDescription(messages.commands.help.selectMenu.description({ category: getAlias(category) }))
+                            .setEmoji("📚"),
+                ),
             )
-            .setDescription(
-                messages.commands.help.selectMenu.options.description({
-                    options: parseCommand(command, messages.events.optionTypes, localeString),
-                }),
-            );
+            .setRun((interaction, setPage) => {
+                const category: number = Number(interaction.values[0]);
+                const inCategory: ResolvableCommand[] = client.commands.values.filter((command): boolean => command.category === category);
 
-        await ctx.editOrReply({ embeds: [embed] });
+                paginator.setEmbeds([]).setDisabled(false);
+
+                for (let i: number = 0; i < inCategory.length; i += PER_PAGE) {
+                    paginator.addEmbed(
+                        new Embed()
+                            .setColor(client.config.color.success)
+                            .setThumbnail(ctx.author.avatarURL())
+                            .setTitle(
+                                messages.commands.help.selectMenu.options.title({
+                                    category: getAlias(category),
+                                    clientName: client.me.username,
+                                }),
+                            )
+                            .setDescription(
+                                messages.commands.help.selectMenu.options.description({
+                                    options: inCategory
+                                        .slice(i, i + PER_PAGE)
+                                        .map((command): string => parseCommand(command, messages.events.optionTypes, localeString))
+                                        .join("\n\n"),
+                                }),
+                            ),
+                    );
+                }
+
+                return setPage(0);
+            });
+
+        await paginator
+            .setRows([new ActionRow<StelleStringMenu>().addComponents(menu)])
+            .addEmbed(
+                new Embed()
+                    .setColor(client.config.color.success)
+                    .setTitle(messages.commands.help.title({ clientName: client.me.username }))
+                    .setDescription(
+                        messages.commands.help.description({
+                            defaultPrefix: client.config.defaultPrefix,
+                        }),
+                    ),
+            )
+            .reply();
     }
 }
 
