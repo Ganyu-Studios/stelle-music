@@ -1,0 +1,262 @@
+import { LoopMode, type PlayerStructure, type TrackStructure } from "hoshimi";
+import { ActionRow, AttachmentBuilder, Button, type DefaultLocale, Embed, type UsingClient } from "seyfert";
+import { ButtonStyle } from "seyfert/lib/types/index.js";
+import { StelleMusic } from "#stelle/utils/data/constants.js";
+import { ContextOps } from "#stelle/utils/functions/internal/context.js";
+import { ImageOps } from "#stelle/utils/functions/internal/image.js";
+import { ms } from "#stelle/utils/functions/internal/time.js";
+import { TrackOps } from "#stelle/utils/functions/internal/track.js";
+import { UtilsOps } from "../internal/utils.js";
+
+/**
+ * The messages tree of a resolved locale.
+ */
+type Messages = DefaultLocale["messages"];
+
+/**
+ * How many upcoming queue entries the panel lists.
+ * @type {number}
+ */
+const QUEUE_PREVIEW: number = 10;
+
+/**
+ * The state used to render the player control buttons.
+ */
+interface ControlsState {
+    /**
+     * Whether the player is in autoplay mode.
+     * @type {boolean}
+     */
+    isAutoplay: boolean;
+    /**
+     * The current loop mode of the player.
+     * @type {LoopMode}
+     */
+    loop: LoopMode;
+    /**
+     * Whether the player is currently paused.
+     * @type {boolean}
+     */
+    paused: boolean;
+    /**
+     * Whether the buttons should be disabled (e.g., when the panel is idle).
+     * @type {boolean}
+     */
+    disabled?: boolean;
+}
+
+/**
+ * The rendered body of the request-channel panel.
+ */
+interface PanelBody {
+    /**
+     * The embeds to write/edit into the panel.
+     * @type {Embed[]}
+     */
+    embeds: Embed[];
+    /**
+     * The components to write/edit into the panel.
+     * @type {ActionRow<Button>[]}
+     */
+    components: ActionRow<Button>[];
+    /**
+     * The attachments to write/edit into the panel.
+     * @type {AttachmentBuilder[]}
+     */
+    files: AttachmentBuilder[];
+}
+
+/**
+ * Guilds whose panel is currently rendered in its idle state. Used to short-circuit redundant idle redraws:
+ * a normal stop flushes both `queue/end` and `player/destroy`, each calling {@link PanelOps.reset}, which would
+ * otherwise redraw and re-edit the exact same idle panel (and burn a Discord API call) twice in a row.
+ * In-memory only — after a restart the first idle reset simply renders once, which is harmless.
+ * @type {Set<string>}
+ */
+const idlePanels: Set<string> = new Set();
+
+export const PanelOps = {
+    /**
+     *
+     * Build the two rows of player control buttons shared by the ephemeral now-playing message and the persistent
+     * request-channel panel. The custom ids match the component handlers in `src/components`.
+     * @param {Messages} messages The resolved locale messages.
+     * @param {ControlsState} state The button state (autoplay / loop / paused / disabled).
+     * @returns {ActionRow<Button>[]} The two control rows.
+     */
+    controls(messages: Messages, state: ControlsState): ActionRow<Button>[] {
+        const { isAutoplay, loop, paused, disabled = false } = state;
+        const { components } = messages.events.trackStart;
+
+        return [
+            new ActionRow<Button>().addComponents(
+                new Button().setCustomId("player-stopPlayer").setStyle(ButtonStyle.Danger).setLabel(components.stop).setDisabled(disabled),
+                new Button()
+                    .setCustomId("player-skipTrack")
+                    .setStyle(ButtonStyle.Secondary)
+                    .setLabel(components.skip)
+                    .setDisabled(disabled),
+                new Button()
+                    .setCustomId("player-previousTrack")
+                    .setStyle(ButtonStyle.Secondary)
+                    .setLabel(components.previous)
+                    .setDisabled(disabled),
+                new Button()
+                    .setCustomId("player-lyricsShow")
+                    .setStyle(ButtonStyle.Secondary)
+                    .setLabel(components.lyrics)
+                    .setDisabled(disabled),
+                new Button()
+                    .setCustomId("player-guildQueue")
+                    .setStyle(ButtonStyle.Primary)
+                    .setLabel(components.queue)
+                    .setDisabled(disabled),
+            ),
+            new ActionRow<Button>().addComponents(
+                new Button()
+                    .setCustomId("player-toggleAutoplay")
+                    .setStyle(ButtonStyle.Primary)
+                    .setLabel(components.autoplay({ type: messages.commands.autoplay.autoplayType[StelleMusic.AutoplayState(isAutoplay)] }))
+                    .setDisabled(disabled),
+                new Button()
+                    .setCustomId("player-toggleLoop")
+                    .setStyle(ButtonStyle.Secondary)
+                    .setLabel(components.loop({ type: messages.commands.loop.loopType[loop] }))
+                    .setDisabled(disabled),
+                new Button()
+                    .setCustomId("player-pauseTrack")
+                    .setStyle(ButtonStyle.Primary)
+                    .setLabel(components.states[StelleMusic.PauseState(paused)])
+                    .setDisabled(disabled),
+            ),
+        ];
+    },
+    /**
+     *
+     * Build the persistent request-channel panel body. With a `track` it renders the now-playing state (big artwork,
+     * the now-playing block reused from the ephemeral message, and an up-next queue preview); without it, the idle
+     * state (prompt + disabled controls).
+     * @param {UsingClient} client The client instance.
+     * @param {Messages} messages The resolved locale messages.
+     * @param {PlayerStructure} [player] The guild player, when active.
+     * @param {TrackStructure} [track] The current track, when active.
+     * @returns {Promise<PanelBody>} The embeds + components to write/edit into the panel.
+     */
+    async build(client: UsingClient, messages: Messages, player?: PlayerStructure, track?: TrackStructure): Promise<PanelBody> {
+        const start: number = Date.now();
+
+        const embed = new Embed()
+            .setTitle(messages.events.requestChannel.title({ clientName: client.me.username }))
+            .setColor(client.config.color.extra);
+
+        if (player && track) {
+            const isAutoplay: boolean = (await player.data.get("enabledAutoplay")) ?? false;
+
+            const nowPlaying: string = messages.events.trackStart.embed({
+                duration: TrackOps.duration(track, messages),
+                requester: track.requester.id,
+                title: track.info.title,
+                url: track.info.uri,
+                volume: player.volume,
+                author: track.info.author,
+                size: player.queue.tracks.length,
+            });
+
+            const upNext: string[] = player.queue.tracks.slice(0, QUEUE_PREVIEW).map((entry, index): string =>
+                messages.events.requestChannel.queue.entry({
+                    position: index + 1,
+                    title: entry.info.title,
+                    requester: entry.requester.id,
+                }),
+            );
+
+            const queue: string = upNext.length ? `\n\n${messages.events.requestChannel.queue.title}\n${upNext.join("\n")}` : "";
+
+            embed.setDescription(`${nowPlaying}${queue}`).setTimestamp();
+
+            const banner = await ImageOps.banner({
+                identifier: track.info.identifier,
+                albumURL: track.info.artworkUrl ?? undefined,
+                name: UtilsOps.truncate(UtilsOps.sanitize(track.info.title), 50),
+                artist: UtilsOps.truncate(UtilsOps.sanitize(track.info.author), 50),
+            });
+
+            const attachment: AttachmentBuilder = new AttachmentBuilder().setFile("buffer", banner).setName("panel-banner.png");
+
+            embed.setImage("attachment://panel-banner.png");
+            embed.setFooter({
+                text: messages.events.requestChannel.footer({ userName: track.requester.tag, time: ms(Date.now() - start) }),
+            });
+
+            return {
+                embeds: [embed],
+                files: [attachment],
+                components: PanelOps.controls(messages, { isAutoplay, loop: player.loop, paused: player.paused }),
+            };
+        }
+
+        embed.setDescription(messages.events.requestChannel.empty);
+
+        const banner = await ImageOps.empty({
+            avatarURL: client.me.avatarURL(),
+            title: messages.events.requestChannel.banner.title({ clientName: client.me.username }),
+            prompt: messages.events.requestChannel.banner.prompt,
+            footer: messages.events.requestChannel.banner.footer,
+        });
+
+        const attachment: AttachmentBuilder = new AttachmentBuilder().setFile("buffer", banner).setName("panel-banner.png");
+
+        embed.setImage("attachment://panel-banner.png");
+
+        return {
+            embeds: [embed],
+            files: [attachment],
+            components: PanelOps.controls(messages, { isAutoplay: false, loop: LoopMode.Off, paused: false, disabled: true }),
+        };
+    },
+    /**
+     *
+     * Edit the guild's persistent panel to reflect the given state (or idle when no track). No-op when the guild has
+     * no request channel configured. If the stored panel message is gone, it is re-posted and the stored id refreshed.
+     * @param {UsingClient} client The client instance.
+     * @param {string} guildId The guild id.
+     * @param {PlayerStructure} [player] The guild player, when active.
+     * @param {TrackStructure} [track] The current track, when active.
+     * @returns {Promise<void>} A promise that resolves once the panel is updated.
+     */
+    async update(client: UsingClient, guildId: string, player?: PlayerStructure, track?: TrackStructure): Promise<void> {
+        const isIdle: boolean = !(player && track);
+
+        // Nothing changed since the last idle render: skip the rebuild and the edit entirely.
+        if (isIdle && idlePanels.has(guildId)) return;
+
+        const config = await client.database.requests.get(guildId);
+        if (!config) return;
+
+        const { messages } = await ContextOps.locale(client, guildId);
+        const body: PanelBody = await PanelOps.build(client, messages, player, track);
+
+        let updated = await client.messages.edit(config.messageId, config.channelId, body).catch((): null => null);
+        if (!updated) {
+            // The panel message was deleted out from under us: re-post it and persist the new id.
+            updated = await client.messages.write(config.channelId, body).catch((): null => null);
+            if (updated) await client.database.requests.set(guildId, { channelId: config.channelId, messageId: updated.id });
+        }
+
+        // Remember the rendered state so the next idle reset can be short-circuited (only once it actually landed).
+        if (updated) {
+            if (isIdle) idlePanels.add(guildId);
+            else idlePanels.delete(guildId);
+        }
+    },
+    /**
+     *
+     * Reset the guild's persistent panel to its idle state (no track playing).
+     * @param {UsingClient} client The client instance.
+     * @param {string} guildId The guild id.
+     * @returns {Promise<void>} A promise that resolves once the panel is reset.
+     */
+    reset(client: UsingClient, guildId: string): Promise<void> {
+        return PanelOps.update(client, guildId);
+    },
+};

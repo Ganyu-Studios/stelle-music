@@ -1,0 +1,84 @@
+name: stelle
+
+services:
+  # ---------------------------------------------------------------------------
+  # MongoDB — single-node replica set (Prisma requires a replica set).
+  # The healthcheck initiates the set on first run, then reports healthy.
+  # ---------------------------------------------------------------------------
+  mongo:
+    image: mongo:7
+    container_name: stelle-mongo
+    restart: unless-stopped
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mongosh",
+          "--quiet",
+          "--eval",
+          "try { rs.status().ok } catch (e) { rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: 'mongo:27017' }] }).ok }",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+      start_period: 30s
+
+  # ---------------------------------------------------------------------------
+  # Redis — queue store and secondary cache.
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: stelle-redis
+    restart: unless-stopped
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD:-stelle}", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-stelle}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ---------------------------------------------------------------------------
+  # Stelle — the bot. Waits for Mongo & Redis to be healthy before starting.
+  # Lavalink is NOT bundled: point your node(s) at your own Lavalink in the config.
+  # ---------------------------------------------------------------------------
+  bot:
+    build: .
+    container_name: stelle-bot
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    # Lets the bot reach a Lavalink node running on the host machine via `host.docker.internal`
+    # (set your node `host` to `host.docker.internal` in the config). Auto-provided on Docker
+    # Desktop; this line makes it work on Linux hosts too. Harmless if your node is elsewhere.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      # Your secrets — put these in a .env file next to this compose file.
+      TOKEN: ${TOKEN:?set TOKEN in your .env}
+      ERRORS_WEBHOOK: ${ERRORS_WEBHOOK:?set ERRORS_WEBHOOK in your .env}
+      # Bundled services (overrides whatever is in .env).
+      DATABASE_URL: mongodb://mongo:27017/stelle?replicaSet=rs0&directConnection=true
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-stelle}
+      REDIS_USERNAME: default
+      REDIS_SECURE: "false"
+    volumes:
+      # Persist the on-disk cache (sessions + rendered banners) and file logs.
+      # Named volumes (not bind mounts) so the non-root user can write to them.
+      - stelle-cache:/app/cache
+      - stelle-logs:/app/logs
+
+volumes:
+  mongo-data:
+  redis-data:
+  stelle-cache:
+  stelle-logs:

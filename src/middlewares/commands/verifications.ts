@@ -1,48 +1,29 @@
-import { type AnyContext, createMiddleware, type MiddlewareContext } from "seyfert";
-
-import { EmbedColors } from "seyfert/lib/common/index.js";
-import { MessageFlags } from "seyfert/lib/types/index.js";
+import { type AnyContext, createMiddleware, type Guild, type GuildMember, type MiddlewareContext } from "seyfert";
 
 /**
  * Check if the command is only for developers or guild owner.
  * @type {MiddlewareContext<void, AnyContext>}
  */
-export const checkVerifications: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, next, pass }) => {
+export const checkVerifications: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, next, stop }) => {
     const { client, author, command } = context;
     const { developerIds } = client.config;
 
-    const { messages } = await context.getLocale();
+    const { messages } = await context.locale();
 
     if (command.onlyDeveloper && !developerIds.includes(author.id)) {
-        await context.editOrReply({
-            flags: MessageFlags.Ephemeral,
-            embeds: [
-                {
-                    description: messages.events.onlyDeveloper,
-                    color: EmbedColors.Red,
-                },
-            ],
-        });
+        await context.errorReply(messages.events.onlyDeveloper, { ephemeral: true });
 
-        return pass();
+        return stop();
     }
 
-    if (context.inGuild()) {
-        const guild = await context.guild();
-        const member = context.member;
+    if (command.onlyGuildOwner && context.inGuild()) {
+        const guild: Guild<"cached" | "api"> = await context.guild();
+        const owner: GuildMember | null = await guild.fetchOwner().catch(() => null);
 
-        if (command.onlyGuildOwner && guild.ownerId !== member.id) {
-            await context.editOrReply({
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        description: messages.events.onlyGuildOwner,
-                        color: EmbedColors.Red,
-                    },
-                ],
-            });
+        if (!owner || owner.id !== author.id) {
+            await context.errorReply(messages.events.onlyGuildOwner, { ephemeral: true });
 
-            return pass();
+            return stop();
         }
 
         return next();

@@ -1,5 +1,5 @@
+import { LoopMode, State } from "hoshimi";
 import type { DefaultLocale } from "seyfert";
-
 import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types";
 
@@ -14,20 +14,140 @@ export default {
     },
     messages: {
         commands: {
-            nowplaying: ({ title, url, author, requester, bar, duration, position }): string =>
-                `\`📻\` Ahora: [\`${title}\`](${url}) - \`${author}\`\n\`👤\` **Solicitado por**: <@${requester}>\n \n\`🕛\` ${bar} | \`${position}\` - \`(${duration})\``,
+            join: ({ channelId }): string => `\`✅\` Me uní al canal de voz <#${channelId}>.`,
             setprefix: ({ prefix }): string => `\`✅\` El **nuevo prefijo** para este servidor es: \`${prefix}\``,
-            skip: ({ amount }): string => `\`✅\` Saltando la cantidad de: \`${amount} canciones\`.`,
             move: ({ textId, voiceId }): string => `\`✅\` Me movi al canal de voz <#${voiceId}> y canal de texto: <#${textId}>`,
             previous: ({ title, uri }): string => `\`✅\` La canción anterior [**${title}**](${uri}) ha sido añadida a la cola.`,
+            nowplaying: ({ userName, time }): string => `-# Pedido por: ${userName} • Generado en ${time}`,
             stop: "`👋` Deteniendo y abandonando el canal...",
             shuffle: "`✅` La cola ha sido mezclada.",
+            quiz: {
+                notInVoice: "`❌` Debes estar en un canal de voz para iniciar un quiz.",
+                alreadyRunning: "`❌` Ya hay un quiz musical en curso en este servidor.",
+                busy: "`❌` Ya estoy reproduciendo música en este servidor. Detén el reproductor antes de iniciar un quiz.",
+                notEnoughTracks: "`❌` No pude juntar suficientes canciones para el quiz. Revisa la fuente configurada.",
+                started: ({ rounds }): string =>
+                    `\`🎶\` **¡Quiz musical iniciado!** \`${rounds}\` rondas — entra al voice y adivina el título y el artista.`,
+                noQuiz: "`❌` No hay ningún quiz en curso en este servidor.",
+                stopped: "`👋` El quiz musical fue detenido.",
+            },
+            skip: {
+                amount: ({ amount }): string => `\`✅\` Se han saltado: \`${amount} canciones\`.`,
+                invalidAmount: ({ amount }): string =>
+                    `\`❌\` La cantidad que especificaste es inválida. La cola solo tiene \`${amount} canciones\`.`,
+            },
+            pause: {
+                success: "`✅` El reproductor ha sido pausado.",
+                alreadyPaused: "`❌` El reproductor ya está pausado.",
+            },
+            resume: {
+                success: "`✅` El reproductor ha sido reanudado.",
+                alreadyPlaying: "`❌` El reproductor ya está reproduciendo.",
+            },
+            is247: {
+                enabled: ({ is247, autoPause }): string => `\`✅\` El modo 24/7 ahora está \`${is247}\` con auto-pausa \`${autoPause}\``,
+                enabledType: {
+                    enabled: "Activado",
+                    disabled: "Desactivado",
+                },
+            },
+            playlist: {
+                created: ({ name, state }): string =>
+                    `\`✅\` La playlist \`${name}\` ha sido creada correctamente.\n\`📋\` **Visibilidad**: \`${state}\``,
+                loaded: ({ name }): string => `\`✅\` La playlist \`${name}\` ha sido cargada correctamente.`,
+                renamed: ({ name }): string => `\`✅\` La playlist fue renombrada a \`${name}\` correctamente.`,
+                deleted: ({ name }): string => `\`✅\` La playlist \`${name}\` ha sido eliminada exitosamente.`,
+                limitReached: ({ amount }): string =>
+                    `\`❌\` Ya alcanzaste el límite de playlists para tu cuenta. Máximo permitido: \`${amount}\`.`,
+                trackLimit: ({ amount }): string =>
+                    `\`❌\` No puedes agregar más canciones a esta playlist. Máximo de canciones permitidas: \`${amount}\`.`,
+                noPlaylist: "`❌` **No se encontraron playlists** con ese query.",
+                noTracks: "`❌` **No se encontraron canciones** en esta playlist.",
+                list: {
+                    available: "`📋` Playlists disponibles",
+                    private: "`🔒` Privadas",
+                    public: "`🌐` Públicas",
+                    entry: {
+                        private: ({ index, id, name, tracks, timestamp }): string =>
+                            `\`${index}\` **${name}**\n-# \`🎵\` ${tracks} canciones • <t:${timestamp}:R> • \`${id}\``,
+                        public: ({ index, id, name, tracks, userId, timestamp }): string =>
+                            `\`${index}\` **${name}** — <@${userId}>\n-# \`🎵\` ${tracks} canciones • <t:${timestamp}:R> • \`${id}\``,
+                    },
+                },
+                manage: {
+                    title: ({ name }): string => `\`🎵\` Gestionando Playlist: \`${name}\``,
+                    description:
+                        "`📦` Aquí puedes gestionar tu playlist de forma rápida y sencilla.\n`📜` Guarda canciones cuando quieras, elimínalas cuando lo necesites y mantén todo ordenado.\n\n`⚠️` __Mientras más canciones agregues, más puede tardar en cargar la playlist.__\n\n-# Selecciona una acción para gestionar tu playlist.",
+                    loadSection: {
+                        title: "### Carga Rápida",
+                        description: "Inicia la reproducción de esta playlist al instante en tu canal de voz actual.",
+                    },
+                    options: {
+                        toggle: ({ state }): string => `Hacer ${state}`,
+                        save: "Guardar",
+                        delete: "Eliminar",
+                        info: "Info",
+                        load: "Cargar",
+                    },
+                    delete: {
+                        outOfRange: ({ tracks }): string =>
+                            `\`❌\` Uno o más números de canción están fuera de la playlist actual. Solo tiene \`${tracks} canciones\`.`,
+                        deleted: ({ amount }): string => `\`✅\` Se eliminaron exitosamente **${amount} canción(es)** de tu playlist.`,
+                        description:
+                            "`📢` Introduce los números de las canciones que quieres eliminar.\n`📌` Usa comas, rangos o rangos con comodín como `1, 3, 5-7, 11-*`.\n`⚠️` Usa el botón de Info si quieres revisar la lista completa primero.",
+                        invalidSelection:
+                            "`❌` La selección que ingresaste no es válida. Usa números de canción o rangos como `1, 3-5, 11-*`.",
+                        modal: {
+                            title: "Eliminar canciones",
+                            label: {
+                                label: "Eliminar canciones por número",
+                                description: "Introduce uno o más números de canción o rangos. Ejemplo: 1, 3, 5-7, 11-*",
+                                component: "1, 3, 5-7, 11-*",
+                            },
+                        },
+                    },
+                    save: {
+                        saved: ({ type, amount }) => `\`✅\` Guardado exitosamente **${amount} canción(es)** de **${type}** a tu playlist.`,
+                        noResults: "`❌` No se encontraron canciones de la URL proporcionada.",
+                        invalidUrl: "`❌` La URL que ingresaste no es válida.",
+                        description: "`📢` Selecciona una de las opciones de abajo para guardar canciones en tu playlist.",
+                        alreadyExists: "`❌` Las **canciones** que estás intentando guardar ya existen en tu playlist.",
+                        modal: {
+                            title: "Guardar desde URL",
+                            label: {
+                                label: "Guardar desde URL",
+                                description: "Introduce la URL de una canción o playlist para guardar canciones desde allí.",
+                                component: "Introduce la URL de la canción o playlist aquí...",
+                            },
+                        },
+                        options: {
+                            current: "Canción Actual",
+                            queue: "Cola Actual",
+                            url: "Desde URL",
+                        },
+                        saveType: {
+                            current: "canción actual",
+                            queue: "cola actual",
+                            url: "URL",
+                        },
+                    },
+                },
+                state: {
+                    public: "Pública",
+                    private: "Privada",
+                },
+            },
             lyrics: {
                 noLyrics: "`❌` **No se encontraron letras** para esta canción...",
-                close: "Cerrar",
+                synced: "`✅` Las letras han sido sincronizadas con la canción actual.",
+                error: "`❌` Algo inesperado ocurrió mientras se intentaba obtener las letras de esta canción, por favor intenta de nuevo en un momento.",
+                components: {
+                    close: "Cerrar",
+                    sync: "Sincronizar",
+                },
                 embed: {
-                    title: ({ title }): string => `\`📜\` Letrs para: ${title}`,
-                    description: ({ lines, provider, author }): string => `-# Proveido por: ${provider}\nPor: ${author}\n\n${lines}`,
+                    title: ({ title }): string => `\`📜\` Letras para: ${title}`,
+                    description: ({ lines, provider, author }): string => `-# Provisto por: ${provider}\nPor: ${author}\n\n${lines}`,
                     footer: ({ userName }): string => `Pedido por: ${userName}`,
                 },
             },
@@ -39,23 +159,46 @@ export default {
                     repository: "Repositorio de Github",
                     fields: {
                         info: {
-                            name: "`📋` Info",
                             value: ({ guilds, users, players }): string =>
                                 `\`📦\` Servidores: \`${guilds}\`\n\`👤\` Usuarios: \`${users}\`\n\`🎤\` Reproductores: \`${players}\``,
+                            name: "`📋` Info",
                         },
                         system: {
+                            value: ({ memory, uptime, version }): string =>
+                                `\`🧠\` Memoria: \`${memory}\`\n\`📜\` Version: \`v${version}\`\n\`🕛\` Tiempo de Encendido: <t:${uptime}:R>`,
                             name: "`📋` Sistema",
-                            value: ({ memory, uptime, version, beta }): string =>
-                                `\`🧠\` Memoria: \`${memory}\`\n\`📜\` Version: \`v${version}\`\n\`🕛\` Tiempo de Encendido: <t:${uptime}:R>\n\`🧪\` Beta: \`${beta}\``,
                         },
+                        git: {
+                            value: ({ branch, commit, time, commitUrl }): string =>
+                                `\`🌳\` Rama: \`${branch}\`\n\`📦\` Commit: [\`${commit}\`](${commitUrl})\n\`⏱️\` Tiempo: ${time}`,
+                            name: "`📋` Git",
+                        },
+                    },
+                },
+                nodes: {
+                    value: ({ state, uptime, players, memory, cpu }): string =>
+                        `\`📘\` Estado: \`${state}\`\n\`🕛\` Tiempo de actividad: \`${uptime}\`\n\`🎤\` Reproductores: \`${players}\`\n\`🪭\` Uso: \`${memory}\`\n\`📦\` CPU: \`${cpu}\``,
+                    description: "`📋` Lista de los nodos de Stelle.",
+                    noNodes: "`❌` No hay nodos disponibles por el momento.",
+                    states: {
+                        [State.Connected]: "🟢 Conectado.",
+                        [State.Disconnected]: "🔴 Desconectado.",
+                        [State.Connecting]: "🟡 Conectando...",
+                        [State.Idle]: "⚪ Inactivo.",
+                        [State.Reconnecting]: "🟠 Reconectando...",
+                        [State.Reconnected]: "🟢 Reconectado.",
+                        [State.Destroyed]: "⚫ Destruído.",
                     },
                 },
             },
             help: {
-                noCommand: "`❌` **No se encontró** ningún comando para esta búsqueda...",
                 title: ({ clientName }): string => `${clientName} - Menú de Ayuda`,
                 description: ({ defaultPrefix }): string =>
                     `\`📦\` ¡Hola! Aquí está la información sobre mis comandos y cosas.\n\`📜\` Selecciona la categoría de comando de tu elección.\n\n-# Puedes buscar un comando específico escribiendo: \`${defaultPrefix} help <comando>\``,
+                noCommand: "`❌` **No se encontró** ningún comando para esta búsqueda...",
+                command: ({ category, cooldown, aliases, options }): string =>
+                    `\`📂\` **Categoría** · ${category}\n\`⏱️\` **Enfriamiento** · ${cooldown}\n\`🔀\` **Alias** · ${aliases}\n\n-# * **Opcional []**\n-# * **Requerido <>**\n\n${options}`,
+                noAliases: "No especificado",
                 selectMenu: {
                     description: ({ category }): string => `Selecciona la categoría ${category}.`,
                     placeholder: "Selecciona una categoría de comando.",
@@ -81,10 +224,17 @@ export default {
                     `\`❌\` El idioma : \`${locale}\` es inválido.\n\`📢\` **Idiomas disponibles**: \`${available}\``,
                 newLocale: ({ locale }): string => `\`✅\` El idioma de **Stelle** ahora es: \`${locale}\``,
             },
+            setrequest: {
+                set: ({ channelId }): string => `\`✅\` El canal de peticiones ahora es <#${channelId}>.`,
+                disabled: "`✅` El canal de peticiones ha sido desactivado.",
+                alreadyDisabled: "`❌` No hay un canal de peticiones configurado.",
+                createFailed: "`❌` No pude crear el canal de peticiones. Revisa mis permisos.",
+                postFailed: "`❌` No pude publicar el panel en ese canal. Revisa mis permisos.",
+            },
             ping: {
-                message: "`🪶` Calculando...",
                 response: ({ wsPing, clientPing, shardPing, shardId }): string =>
                     `\`🌐\` Pong! (**Cliente**: \`${wsPing}ms\` - **API**: \`${clientPing}ms\` - **Fragmento (${shardId})**: \`${shardPing}ms\`)`,
+                message: "`🪶` Calculando...",
             },
             play: {
                 undetermined: "Indeterminado",
@@ -100,9 +250,9 @@ export default {
             loop: {
                 toggled: ({ type }): string => `\`✅\` El **modo de bucle** ahora es: \`${type}\``,
                 loopType: {
-                    off: "Desactivado",
-                    queue: "Cola",
-                    track: "Canción",
+                    [LoopMode.Off]: "Desactivado",
+                    [LoopMode.Queue]: "Cola",
+                    [LoopMode.Track]: "Canción",
                 },
             },
             autoplay: {
@@ -110,16 +260,6 @@ export default {
                 autoplayType: {
                     enabled: "Activado",
                     disabled: "Desactivado",
-                },
-            },
-            nodes: {
-                value: ({ state, uptime, players, memory, cpu }): string =>
-                    `\`📘\` Estado: \`${state}\`\n\`🕛\` Tiempo de actividad: \`${uptime}\`\n\`🎤\` Reproductores: \`${players}\`\n\`🪭\` Uso: \`${memory}\`\n\`📦\` CPU: \`${cpu}\``,
-                description: "`📋` Lista de los nodos de Stelle.",
-                noNodes: "`❌` No hay nodos disponibles por el momento.",
-                states: {
-                    connected: "🟢 Conectado.",
-                    disconnected: "🔴 Desconectado.",
                 },
             },
             volume: {
@@ -140,7 +280,7 @@ export default {
         events: {
             inCooldown: ({ time }): string => `\`❌\` Necesitas esperar: <t:${time}:R> (<t:${time}:t>) para usar esto.`,
             noSameVoice: ({ channelId }): string => `\`❌\` No estás en el **mismo canal de voz** que yo. (<#${channelId}>)`,
-            noCollector: ({ userId }): string => `\`❌\` Solo el usuario: <@${userId}> puede usar esto.`,
+            onlyUser: ({ userId }): string => `\`❌\` Solo el usuario: <@${userId}> puede usar esto.`,
             invalidOptions: ({ options, list }): string =>
                 `\`❌\` Opciones o argumentos del comando inválidos.\n- **Requerido**: \`<>\`\n- **Opcional**: \`[]\`\n\n\`📋\` **Uso**:\n ${options}\n\`📢\` **Opciones Disponibles**:\n${list}`,
             playerQueue: ({ tracks }): string => `\`📋\` Aquí está la cola completa del servidor: \n\n${tracks}`,
@@ -149,6 +289,7 @@ export default {
                 `\`📢\` Hey! Mi nombre es: **${clientName}** y mi prefijo es: \`${defaultPrefix}\` y **/** también!\n\`📋\` Si tu quieres ver mis comandos, escribe: \`${defaultPrefix} ${commandName}\` o /${commandName}.`,
             noMembers: ({ clientName }): string => `\`🎧\` ${clientName} está sola en el **canal de voz**... Abandonando el canal.`,
             hasMembers: ({ clientName }): string => `\`🎧\` ${clientName} dejó de estar sola... Resumiendo.`,
+            is247Enabled: "`✅` El modo 24/7 está activado... Me quedaré en el canal de voz hasta que me digas que me vaya.",
             onlyDeveloper: "`❌` Solo el **dueño del bot** puede usar esto.",
             onlyGuildOwner: "`❌` Solo el **dueño del servidor** puede usar esto.",
             noCommand: "`❌` No tengo el comando necesitado *todavía*, intenta de nuevo en un momento.",
@@ -158,11 +299,15 @@ export default {
             noPrevious: "`❌` No hubo una canción antes de esta.",
             noTracks: "`❌` No hay más canciones en la cola.",
             noQuery: "`❌` Introduce el nombre o el URL para reproducir.",
+            noSameGuild: "`❌` El canal debe estar en este servidor.",
+            invalidInput: "`❌` La entrada proporcionada no es válida (no puede ser un URL u otro formato inválido).",
             playerEnd: "`🔰` La cola ha terminado... Esperando más canciones.",
             moreTracks: "`❌` Para habilitar **esto** `una o más canciones` son requeridas.",
             commandError:
                 "`❌` Algo inesperado ocurrió durante la ejecución del comando.\n`📢` Si el problema persiste, reporta el problema.",
             autocomplete: {
+                loadPlaylist: ({ name, visibility, author }): string => `Nombre: ${name} - Estado: ${visibility} | por ${author}`,
+                noPlaylist: "Stelle - No se encontraron playlists.",
                 noAnything: "Stelle - Algo ocurrió intentando usar este autocompletado.",
                 noNodes: "Stelle - No estoy conectada a ninguno de mis nodos.",
                 noVoiceChannel: "Stelle - No estás en un canal de voz... Únete a uno para reproducir música.",
@@ -189,6 +334,22 @@ export default {
                 trackStart: ({ title, author }): string => `${title} por ${author}`,
                 queueEnd: "La cola está vacía.",
             },
+            quiz: {
+                voiceStatus: "🎧 Quiz musical en curso...",
+                roundStart: ({ round, total }): string => `\`🎧\` **Ronda ${round}/${total}** — ¡adivina el **título** y el **artista**!`,
+                guessed: {
+                    title: ({ user }): string => `\`✅\` ¡<@${user}> acertó el **título**!`,
+                    artist: ({ user }): string => `\`✅\` ¡<@${user}> acertó el **artista**!`,
+                },
+                timeout: "`⏱️` ¡Se acabó el tiempo!",
+                reveal: ({ title, artist }): string => `\`🎵\` Era **${title}** de **${artist}**.`,
+                leaderboard: {
+                    title: "`🏆` **Puntajes finales**",
+                    entry: ({ position, user, points }): string => `\`${position}.\` <@${user}> — \`${points}\` pts`,
+                },
+                noScores: "`🤷` Nadie puntuó esta vez.",
+                interrupted: "`🛑` El quiz musical fue interrumpido.",
+            },
             trackStart: {
                 embed: ({ duration, requester, title, url, volume, author, size }): string =>
                     `\`📻\` Reproduciendo ahora [\`${title}\`](${url})\n\n\`🎤\` **Autor**: \`${author}\`\n\`🕛\` **Duración**: \`${duration}\`\n\`🔊\` **Volumen**: \`${volume}%\`\n\`👤\` **Solicitado por**: <@${requester}>\n\n\`📋\` **En cola**: \`${size} canciones\``,
@@ -200,10 +361,24 @@ export default {
                     previous: "Anterior",
                     queue: "Cola",
                     lyrics: "Letra",
-                    paused: {
+                    states: {
                         resume: "Resumir",
                         pause: "Pausar",
                     },
+                },
+            },
+            requestChannel: {
+                empty: "`🎧` **Listo cuando quieras.**\nÚnete a un canal de voz y luego escribe aquí —sin comandos— y lo agrego a la cola.\n\n`🔎` **Búsqueda** — el título de una canción o el nombre de un artista\n`🔗` **Enlace** — Spotify, YouTube, SoundCloud y más\n`📋` **Playlist** — pega la URL de una playlist para cargarla completa\n\n`💡` Este panel se actualiza en vivo y los controles de abajo se activan cuando algo suena.",
+                title: ({ clientName }): string => `${clientName} - Canal de Peticiones`,
+                footer: ({ userName, time }): string => `Pedido por ${userName} • Generado en ${time}`,
+                queue: {
+                    title: "`📋` **A continuación**",
+                    entry: ({ position, title, requester }): string => `\`${position}.\` \`${title}\` — <@${requester}>`,
+                },
+                banner: {
+                    title: ({ clientName }): string => `${clientName} PETICIONES`,
+                    prompt: "Únete a un canal de voz y envía el nombre o URL de una canción",
+                    footer: "STELLE  MUSIC  BOT",
                 },
             },
             permissions: {
@@ -257,17 +432,13 @@ export default {
                     CreateGuildExpressions: "Crear Expresiones del Servidor",
                     SendPolls: "Enviar Encuestas",
                     UseExternalApps: "Usar Aplicaciones Externas",
+                    BypassSlowmode: "Omitir Modo Lento",
+                    PinMessages: "Fijar Mensajes",
+                    SetVoiceChannelStatus: "Establecer Estado del Canal de Voz",
                 },
-                user: {
+                embed: {
+                    channel: ({ channelId }): string => `\`📢\` ¡Oye! Me faltan algunos permisos en el canal: <#${channelId}>`,
                     description: "`📢` ¡Oye! Te faltan algunos permisos para hacer esto.",
-                    field: "`📋` Permisos Faltantes",
-                },
-                bot: {
-                    description: "`📢` ¡Oye! Me faltan algunos permisos para hacer esto.",
-                    field: "`📋` Permisos Faltantes",
-                },
-                channel: {
-                    description: ({ channelId }): string => `\`📢\` ¡Oye! Me faltan algunos permisos en el canal: <#${channelId}>`,
                     field: "`📋` Permisos Faltantes",
                 },
             },
@@ -285,10 +456,6 @@ export default {
         ping: {
             name: "latencia",
             description: "Obten la latencia de Stelle.",
-        },
-        nodes: {
-            name: "nodos",
-            description: "Obten el estado de todos los nodos de Stelle.",
         },
         setlocale: {
             name: "idioma",
@@ -340,10 +507,8 @@ export default {
             name: "saltar",
             description: "Salta la canción actual.",
             option: {
-                to: {
-                    name: "cantidad",
-                    description: "Salta una cantidad especifica de canciones.",
-                },
+                name: "cantidad",
+                description: "Salta una cantidad especifica de canciones.",
             },
         },
         queue: {
@@ -364,6 +529,50 @@ export default {
             option: {
                 name: "prefijo",
                 description: "Introduce el prefijo nuevo.",
+            },
+        },
+        setrequest: {
+            name: "peticiones",
+            description: "Gestiona el canal de peticiones de canciones.",
+            commands: {
+                setup: {
+                    name: "establecer",
+                    description: "Establece (o crea) el canal de peticiones.",
+                    options: {
+                        channel: {
+                            name: "canal",
+                            description: "El canal a usar. Si se omite, se crea uno nuevo.",
+                        },
+                    },
+                },
+                disable: {
+                    name: "desactivar",
+                    description: "Desactiva el canal de peticiones.",
+                },
+            },
+        },
+        quiz: {
+            name: "quiz",
+            description: "Juega un quiz musical de adivinanzas.",
+            commands: {
+                start: {
+                    name: "iniciar",
+                    description: "Inicia un quiz musical.",
+                    options: {
+                        rounds: {
+                            name: "rondas",
+                            description: "Cuántas rondas jugar. Por defecto usa la cantidad configurada.",
+                        },
+                    },
+                },
+                stop: {
+                    name: "detener",
+                    description: "Detén el quiz musical en curso.",
+                },
+                leaderboard: {
+                    name: "tabla",
+                    description: "Muestra los puntajes actuales del quiz.",
+                },
             },
         },
         default: {
@@ -408,7 +617,95 @@ export default {
                     name: "bot",
                     description: "Obtén la información de la bot.",
                 },
+                nodes: {
+                    name: "nodos",
+                    description: "Obten el estado de todos los nodos de Stelle.",
+                },
             },
+        },
+        join: {
+            name: "unir",
+            description: "Une el bot a un canal de voz.",
+        },
+        lyrics: {
+            name: "letras",
+            description: "Muestra las letras de la canción actual.",
+        },
+        playlist: {
+            name: "playlist",
+            description: "Administra tus playlists de música.",
+            commands: {
+                create: {
+                    name: "crear",
+                    description: "Crea una nueva playlist de música.",
+                    options: {
+                        name: {
+                            name: "nombre",
+                            description: "El nombre de la playlist a crear.",
+                        },
+                        public: {
+                            name: "publica",
+                            description: "Si la playlist debe ser pública o privada.",
+                        },
+                    },
+                },
+                load: {
+                    name: "cargar",
+                    description: "Carga una playlist de música.",
+                    option: {
+                        name: "id",
+                        description: "El id de la playlist a cargar.",
+                    },
+                },
+                list: {
+                    name: "lista",
+                    description: "Muestra las playlists disponibles.",
+                    option: {
+                        name: "usuario",
+                        description: "El usuario del que se mostrarán las playlists públicas.",
+                    },
+                },
+                info: {
+                    name: "info",
+                    description: "Muestra información sobre una playlist de música.",
+                    option: {
+                        name: "id",
+                        description: "El id de la playlist de la que se mostrará información.",
+                    },
+                },
+                rename: {
+                    name: "renombrar",
+                    description: "Renombra una playlist de música.",
+                    option: {
+                        name: "nombre",
+                        description: "El nuevo nombre de la playlist.",
+                    },
+                },
+                delete: {
+                    name: "eliminar",
+                    description: "Elimina una playlist de música.",
+                },
+                manage: {
+                    name: "gestionar",
+                    description: "Gestiona una playlist de música.",
+                },
+            },
+        },
+        twentyforseven: {
+            name: "247",
+            description: "Alterna el modo 24/7 para la bot.",
+            option: {
+                name: "autopause",
+                description: "Si se debe auto-pausar el reproductor cuando todos salen del canal de voz.",
+            },
+        },
+        pause: {
+            name: "pausar",
+            description: "Pausa el reproductor.",
+        },
+        resume: {
+            name: "reanudar",
+            description: "Reanuda el reproductor.",
         },
     },
 } satisfies DefaultLocale;

@@ -4,10 +4,7 @@
  * @extends {Error}
  */
 export class InvalidEnvValue extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "Stelle [InvalidEnvValue]";
-    }
+    override name: string = "Stelle [InvalidEnvValue]";
 }
 
 /**
@@ -16,10 +13,7 @@ export class InvalidEnvValue extends Error {
  * @extends {Error}
  */
 export class InvalidComponentRun extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "Stelle [InvalidComponentRun]";
-    }
+    override name: string = "Stelle [InvalidComponentRun]";
 }
 
 /**
@@ -28,10 +22,7 @@ export class InvalidComponentRun extends Error {
  * @extends {Error}
  */
 export class InvalidEmbedsLength extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "Stelle [InvalidEmbedsLength]";
-    }
+    override name: string = "Stelle [InvalidEmbedsLength]";
 }
 
 /**
@@ -40,10 +31,7 @@ export class InvalidEmbedsLength extends Error {
  * @extends {Error}
  */
 export class InvalidMessage extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "Stelle [InvalidMessage]";
-    }
+    override name: string = "Stelle [InvalidMessage]";
 }
 
 /**
@@ -52,10 +40,7 @@ export class InvalidMessage extends Error {
  * @extends {Error}
  */
 export class InvalidPageNumber extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "Stelle [InvalidPageNumber]";
-    }
+    override name: string = "Stelle [InvalidPageNumber]";
 }
 
 /**
@@ -64,10 +49,7 @@ export class InvalidPageNumber extends Error {
  * @extends {Error}
  */
 export class InvalidNodeSession extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "Stelle [InvalidSession]";
-    }
+    override name: string = "Stelle [InvalidSession]";
 }
 
 /**
@@ -76,10 +58,7 @@ export class InvalidNodeSession extends Error {
  * @extends {Error}
  */
 export class InvalidRow extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "Stelle [InvalidRow]";
-    }
+    override name: string = "Stelle [InvalidRow]";
 }
 
 /**
@@ -88,10 +67,7 @@ export class InvalidRow extends Error {
  * @extends {Error}
  */
 export class InvalidComponentType extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "Stelle [InvalidComponentType]";
-    }
+    override name: string = "Stelle [InvalidComponentType]";
 }
 
 /**
@@ -100,10 +76,7 @@ export class InvalidComponentType extends Error {
  * @extends {Error}
  */
 export class InvalidQueue extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "Stelle [InvalidQueue]";
-    }
+    override name: string = "Stelle [InvalidQueue]";
 }
 
 /**
@@ -112,8 +85,14 @@ export class InvalidQueue extends Error {
  * @extends {Error}
  */
 export class InvalidConfiguration extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "Stelle [InvalidConfiguration]";
-    }
+    override name: string = "Stelle [InvalidConfiguration]";
+}
+
+/**
+ * Error thrown when an invalid webhook URL is provided.
+ * @class InvalidWebhookURL
+ * @extends {Error}
+ */
+export class InvalidWebhookURL extends Error {
+    override name: string = "Stelle [InvalidWebhookURL]";
 }

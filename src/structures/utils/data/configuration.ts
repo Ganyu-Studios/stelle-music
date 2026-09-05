@@ -1,10 +1,25 @@
 import { join } from "node:path";
-import { pathToFileURL } from "node:url";
-import type { LoadableStelleConfiguration, StelleConfiguration, StelleEnvironment } from "#stelle/types";
+import { z } from "zod";
+import type { InternalStelleConfiguration, StelleConfiguration } from "#stelle/types";
 import { InvalidConfiguration } from "#stelle/utils/errors.js";
+import { UtilsOps } from "../functions/internal/utils.js";
 
-// extract the environment variables from the .env file
-const { TOKEN, DATABASE_URL, ERRORS_WEBHOOK, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, REDIS_USERNAME } = process.env;
+const envSchema = z.object({
+    TOKEN: z.string(),
+    DATABASE_URL: z.string(),
+    ERRORS_WEBHOOK: z.string(),
+    REDIS_HOST: z.string(),
+    REDIS_PORT: z.coerce.number(),
+    REDIS_PASSWORD: z.string(),
+    REDIS_USERNAME: z.string().default("default"),
+    REDIS_SECURE: z.coerce.boolean().default(true),
+});
+
+/**
+ * The environment variables schema.
+ * @type {z.infer<typeof envSchema>}
+ */
+export type StelleEnvironment = z.infer<typeof envSchema>;
 
 /**
  * The flag to check if the configuration is initialized.
@@ -17,69 +32,67 @@ let isInitialized: boolean = false;
  * @type {StelleConfiguration}
  */
 //@ts-expect-error The configuration is dynamically loaded.
-export const Configuration: LoadableStelleConfiguration = {
+export const Configuration: StelleConfiguration = {
     async load(): Promise<void> {
         if (isInitialized) return;
 
         // *cries in cocogoat*
         const { BaseClient } = await import("seyfert/lib/client/base.js");
 
-        const directory: string = await BaseClient.prototype.getRC().then((i) => i.locations.config);
+        const directory: string = await BaseClient.prototype.getRC().then((i): string => i.locations.config);
         const filenames: string[] = ["local.config", "default.config"];
-        const extensions: string[] = [".js", ".ts"];
-
-        let isFound: boolean = false;
+        const extensions: string[] = [".ts", ".js"];
 
         for (const filename of filenames) {
             for (const ext of extensions) {
-                const file = join(directory, `${filename}${ext}`);
+                const file: string = join(directory, `${filename}${ext}`);
 
-                const i: StelleConfiguration | null = await import(`${pathToFileURL(file)}`)
-                    .then((i) => i.default ?? i)
-                    .catch((error) => {
-                        if (error.stack.includes("ERR_MODULE_NOT_FOUND"))
-                            throw new InvalidConfiguration(
-                                `The config file '${filename}' does not exist. Please create it or check the path.`,
-                            );
-
-                        throw error;
-                    });
+                const i: StelleConfiguration | null = await UtilsOps.dynamicImport<StelleConfiguration>(file).catch((error) => {
+                    if (error.stack.includes("ERR_MODULE_NOT_FOUND")) return null;
+                    throw error;
+                });
 
                 if (!i || (typeof i === "object" && !Object.keys(i).length)) continue;
 
                 Object.assign(this, i);
-                isFound = true;
-
-                break;
+                isInitialized = true;
+                return;
             }
-
-            if (isFound) break;
         }
 
-        if (!isFound)
-            throw new InvalidConfiguration(`No config file found in '/config/' with any of the filenames: \n- ${filenames.join("\n- ")}`);
+        throw new InvalidConfiguration(`No config file found in '/config/' with any of the filenames: \n- ${filenames.join("\n- ")}`);
+    },
+    async reload(): Promise<void> {
+        if (!isInitialized) return;
 
-        isInitialized = true;
+        isInitialized = false;
+
+        await this.load();
     },
 };
 
 /**
  * Creates a new configuration object.
- * @param {StelleConfiguration} data The configuration data.
- * @returns {StelleConfiguration} The new configuration object.
+ * @param {InternalStelleConfiguration} data The configuration data.
+ * @returns {InternalStelleConfiguration} The new configuration object.
  */
-export const createConfig = (data: StelleConfiguration): StelleConfiguration => data;
+export const createConfig = (data: InternalStelleConfiguration): InternalStelleConfiguration => data;
 
 /**
  * The environment variables.
  * @type {StelleEnvironment}
  */
-export const Environment: StelleEnvironment = {
-    Token: TOKEN,
-    DatabaseUrl: DATABASE_URL,
-    ErrorsWebhook: ERRORS_WEBHOOK,
-    RedisHost: REDIS_HOST ?? "localhost",
-    RedisPort: Number(REDIS_PORT ?? 6379),
-    RedisPassword: REDIS_PASSWORD,
-    RedisUsername: REDIS_USERNAME ?? "default",
-};
+export const Environment: StelleEnvironment = envSchema
+    .catch(({ issues }): never => {
+        const message: string = issues
+            .map(
+                (issue): string =>
+                    `❌ Stelle [${issue.path?.join(".") ?? "UNKNOWN"}]: Invalid input: expected ${issue.expected}, received ${issue.received}`,
+            )
+            .join("\n");
+
+        console.info(message);
+
+        throw new Error("Invalid environment variables.");
+    })
+    .parse(process.env);

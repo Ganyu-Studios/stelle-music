@@ -1,6 +1,6 @@
-import type { LavalinkNodeOptions, SearchPlatform } from "lavalink-client";
+import type { NodeOptions, SearchSources } from "hoshimi";
 import type { PermissionStrings } from "seyfert";
-import type { LocaleString } from "seyfert/lib/types/index.js";
+import type { Locale, LocaleString } from "seyfert/lib/types/index.js";
 
 /**
  * The colors configuration interface.
@@ -63,9 +63,9 @@ interface Sessions {
      */
     enabled: boolean;
     /**
-     * The node session resume time.
+     * The node session resume time. (In seconds)
      * @type {number}
-     * @default ms("1min")
+     * @default 60
      */
     resumeTime: number;
     /**
@@ -81,29 +81,148 @@ interface Sessions {
  */
 interface Cache {
     /**
-     * The maximum size of the cache.
+     * The maximum limit of the cache.
      * @type {number}
      * @default 5
      */
-    size: number;
+    limit: number;
+    /**
+     * The cache expiration time in milliseconds.
+     * @type {number}
+     * @default ms("5mins")
+     */
+    expire: number;
+}
+
+/**
+ * The rendered-image (banner) disk cache configuration.
+ */
+interface Images {
+    /**
+     * Whether to cache rendered now-playing banners on disk.
+     * @type {boolean}
+     * @default true
+     */
+    enabled: boolean;
+    /**
+     * How long a cached banner stays valid, refreshed on each hit. (In milliseconds)
+     * @type {number}
+     * @default ms("24h")
+     */
+    ttl: number;
+    /**
+     * The maximum number of cached banners kept on disk (least-recently-used are evicted first).
+     * @type {number}
+     * @default 100
+     */
+    maxEntries: number;
+}
+
+/**
+ * The music quiz configuration.
+ */
+interface Quiz {
+    /**
+     * The candidate pools the quiz draws from: each entry is either a URL (playlist or track) or a plain search
+     * query. One entry is picked at random per game (so each game has a coherent theme that rotates across games),
+     * then resolved, de-duplicated and shuffled. A playlist contributes its own tracks; a single track/query is
+     * expanded into a related mix.
+     * @type {string[]}
+     */
+    sources: string[];
+    /**
+     * How many tracks (rounds) a single game runs for.
+     * @type {number}
+     * @default 10
+     */
+    rounds: number;
+    /**
+     * How long each track plays before the round advances. (In milliseconds)
+     * @type {number}
+     * @default ms("30s")
+     */
+    snippet: number;
+}
+
+interface Deleter {
+    /**
+     * Whether to delete the message when the track ends.
+     * @type {boolean}
+     * @default false
+     */
+    onTrackEnd: boolean;
+    /**
+     * Whether to delete the message when the track is skipped.
+     * @type {boolean}
+     * @default false
+     */
+    onTrackSkip: boolean;
+    /**
+     * Whether to delete the message when the player is stopped.
+     * @type {boolean}
+     * @default false
+     */
+    onPlayerStop: boolean;
+}
+
+interface TwentyFourSeven {
+    /**
+     * Whether the bot should stay 24/7 in the voice channel.
+     * @type {boolean}
+     * @default false
+     */
+    is247: boolean;
+    /**
+     * Whether to auto-pause the player when twentyforseven is enabled.
+     * @type {boolean}
+     * @default true
+     */
+    autoPause: boolean;
+    /**
+     * Whether to automatically reconnect a 24/7 player when the bot is disconnected from the voice channel.
+     * @type {boolean}
+     * @default true
+     */
+    autoReconnect: boolean;
+}
+
+interface Playlists {
+    /**
+     * The maximum amount of playlists each user can create.
+     * @type {number}
+     * @default 25
+     */
+    userLimit: number;
+    /**
+     * The maximum amount of tracks in a playlist.
+     * @type {number}
+     * @default 100
+     */
+    trackLimit: number;
 }
 
 /**
  * The configuration interface.
  */
-export interface StelleConfiguration {
+export interface InternalStelleConfiguration {
     /**
      * The default locale.
      * @default "en-US"
      * @type {LocaleString}
      */
-    defaultLocale: LocaleString;
+    defaultLocale: LocaleString | Locale;
     /**
      * The default prefix used to use text commands.
      * @type {string}
      * @default "stelle"
      */
     defaultPrefix: string;
+    /**
+     * The default presence update interval in milliseconds.
+     * @type {number}
+     * @default ms("25s")
+     */
+    presenceInterval: number;
     /**
      * The prefixes used to use text commands.
      * @type {string[]}
@@ -122,9 +241,9 @@ export interface StelleConfiguration {
     developerIds: string[];
     /**
      * The lavalink nodes list.
-     * @type {LavalinkNodeOptions[]}
+     * @type {NodeOptions[]}
      */
-    nodes: LavalinkNodeOptions[];
+    nodes: NodeOptions[];
     /**
      * The bot invite link.
      * @type {string}
@@ -136,7 +255,7 @@ export interface StelleConfiguration {
      */
     githubLink: string;
     /**
-     * The default player lyrics enabled.
+     * The default lyrics lines to show.
      * @type {number}
      * @default 10
      */
@@ -149,10 +268,10 @@ export interface StelleConfiguration {
     defaultVolume: number;
     /**
      * The default player search engine.
-     * @type {SearchPlatform}
+     * @type {SearchSources}
      * @default "spotify"
      */
-    defaultSearchPlatform: SearchPlatform;
+    defaultSearchSource: SearchSources;
     /**
      * The disconnect time in milliseconds. (Use the time formatter)
      * @type {number}
@@ -184,56 +303,46 @@ export interface StelleConfiguration {
      * @type {Cache}
      */
     cache: Cache;
+    /**
+     * The rendered-image (banner) disk cache configuration.
+     * @type {Images}
+     */
+    images: Images;
+    /**
+     * The deleter message configuration.
+     * @type {Deleter}
+     */
+    deleter: Deleter;
+    /**
+     * Whether the bot should stay 24/7 in the voice channel.
+     * @type {boolean}
+     * @default false
+     */
+    twentyfourseven: TwentyFourSeven;
+    /**
+     * The playlists configuration.
+     * @type {Playlists}
+     */
+    playlists: Playlists;
+    /**
+     * The music quiz configuration.
+     * @type {Quiz}
+     */
+    quiz: Quiz;
 }
 
 /**
  * The loadable configuration interface.
  */
-export interface LoadableStelleConfiguration extends StelleConfiguration {
+export interface StelleConfiguration extends InternalStelleConfiguration {
     /**
      * Loads the configuration.
      * @returns {Promise<void>} A promise that resolves when the configuration is loaded.
      */
     load(): Promise<void>;
-}
-
-/**
- * The environment variables interface.
- */
-export interface StelleEnvironment {
     /**
-     * The bot token.
-     * @type {string}
+     * Reloads the configuration.
+     * @returns {Promise<void>} A promise that resolves when the configuration is reloaded.
      */
-    Token?: string;
-    /**
-     * The database URL.
-     * @type {string}
-     */
-    DatabaseUrl?: string;
-    /**
-     * The errors webhook URL.
-     * @type {string}
-     */
-    ErrorsWebhook?: string;
-    /**
-     * The Redis host.
-     * @type {string}
-     */
-    RedisHost?: string;
-    /**
-     * The Redis port.
-     * @type {number}
-     */
-    RedisPort?: number;
-    /**
-     * The Redis password.
-     * @type {string}
-     */
-    RedisPassword?: string;
-    /**
-     * The Redis username.
-     * @type {string}
-     */
-    RedisUsername?: string;
+    reload(): Promise<void>;
 }

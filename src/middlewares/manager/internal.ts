@@ -1,120 +1,84 @@
-import { type AnyContext, createMiddleware, type MiddlewareContext } from "seyfert";
+import type { PlayerStructure } from "hoshimi";
+import { type AnyContext, createMiddleware, type DefaultLocale, type MiddlewareContext } from "seyfert";
 
-import { EmbedColors } from "seyfert/lib/common/index.js";
-import { MessageFlags } from "seyfert/lib/types/index.js";
+/**
+ * Create a middleware that guards a command based on the guild player state.
+ * @param {(player: PlayerStructure) => boolean | Promise<boolean>} check Predicate that returns `true` when the player passes the guard.
+ * @param {(messages: DefaultLocale["messages"]) => string} message Locale accessor for the error shown when the guard fails.
+ * @returns {MiddlewareContext<void, AnyContext>} The player guard middleware.
+ */
+const createPlayerGuard = (
+    check: (player: PlayerStructure) => boolean | Promise<boolean>,
+    message: (messages: DefaultLocale["messages"]) => string,
+): MiddlewareContext<void, AnyContext> =>
+    createMiddleware<void>(async ({ context, stop, next }) => {
+        if (!context.inGuild()) return next();
+
+        const player: PlayerStructure | undefined = context.client.manager.getPlayer(context.guildId);
+        if (!player) return stop();
+
+        if (await check(player)) return next();
+
+        const { messages } = await context.locale();
+        await context.errorReply(message(messages), { ephemeral: true });
+
+        return stop();
+    });
 
 /**
  * Check if the bot is connected to any lavalink node.
  * @type {MiddlewareContext<void, AnyContext>}
  */
-export const checkNodes: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, pass, next }) => {
+export const checkNodes: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, stop, next }) => {
     if (!context.inGuild()) return next();
 
-    const { messages } = await context.getLocale();
+    const { messages } = await context.locale();
     const { client } = context;
 
-    if (!client.manager.useable) {
-        await context.editOrReply({
-            flags: MessageFlags.Ephemeral,
-            embeds: [
-                {
-                    description: messages.events.noNodes,
-                    color: EmbedColors.Red,
-                },
-            ],
-        });
+    if (!client.manager.isUsable()) {
+        await context.errorReply(messages.events.noNodes, { ephemeral: true });
 
-        return pass();
+        return stop();
     }
 
     return next();
 });
 
 /**
- * Check if the player exists.
- * @type {MiddlewareContext<void, AnyContext>}
+ * Check if the player exists and hand it down to the command through the middleware metadata.
+ * @type {MiddlewareContext<{ player: PlayerStructure }, AnyContext>}
  */
-export const checkPlayer: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, pass, next }) => {
-    if (!context.inGuild()) return next();
+export const checkPlayer: MiddlewareContext<{ player: PlayerStructure }, AnyContext> = createMiddleware<{ player: PlayerStructure }>(
+    async ({ context, stop, next }) => {
+        // A player can only exist within a guild.
+        if (!context.inGuild()) return stop();
 
-    const { client } = context;
-    const { messages } = await context.getLocale();
+        const player: PlayerStructure | undefined = context.client.manager.getPlayer(context.guildId);
+        if (!player) {
+            const { messages } = await context.locale();
+            await context.errorReply(messages.events.noPlayer, { ephemeral: true });
 
-    const player = client.manager.getPlayer(context.guildId);
-    if (!player) {
-        await context.editOrReply({
-            flags: MessageFlags.Ephemeral,
-            embeds: [
-                {
-                    description: messages.events.noPlayer,
-                    color: EmbedColors.Red,
-                },
-            ],
-        });
+            return stop();
+        }
 
-        return pass();
-    }
-
-    return next();
-});
+        return next({ player });
+    },
+);
 
 /**
- * Check if the queue has tracks.
+ * Check if the queue has tracks (or autoplay is enabled).
  * @type {MiddlewareContext<void, AnyContext>}
  */
-export const checkQueue: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, pass, next }) => {
-    if (!context.inGuild()) return next();
-
-    const { client } = context;
-    const { messages } = await context.getLocale();
-
-    const player = client.manager.getPlayer(context.guildId);
-    if (!player) return pass();
-
-    const isAutoplay = !!player.get<boolean | undefined>("enabledAutoplay");
-    if (!(isAutoplay || player.queue.tracks.length)) {
-        await context.editOrReply({
-            flags: MessageFlags.Ephemeral,
-            embeds: [
-                {
-                    description: messages.events.noTracks,
-                    color: EmbedColors.Red,
-                },
-            ],
-        });
-
-        return pass();
-    }
-
-    return next();
-});
+export const checkQueue: MiddlewareContext<void, AnyContext> = createPlayerGuard(
+    async (player): Promise<boolean> => !!(await player.data.get("enabledAutoplay")) || player.queue.tracks.length > 0,
+    (messages): string => messages.events.noTracks,
+);
 
 /**
- * Check if the queue has more than one track.
+ * Check if the queue has at least one track (queued or currently playing).
  * @type {MiddlewareContext<void, AnyContext>}
  */
-export const checkTracks: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, pass, next }) => {
-    if (!context.inGuild()) return next();
-
-    const { client } = context;
-    const { messages } = await context.getLocale();
-
-    const player = client.manager.getPlayer(context.guildId);
-    if (!player) return pass();
-
-    if (!(player.queue.tracks.length + Number(!!player.queue.current) >= 1)) {
-        await context.editOrReply({
-            flags: MessageFlags.Ephemeral,
-            embeds: [
-                {
-                    description: messages.events.moreTracks,
-                    color: EmbedColors.Red,
-                },
-            ],
-        });
-
-        return pass();
-    }
-
-    return next();
-});
+export const checkTracks: MiddlewareContext<void, AnyContext> = createPlayerGuard(
+    (player): boolean => player.queue.totalSize >= 1,
+    (messages): string => messages.events.moreTracks,
+);

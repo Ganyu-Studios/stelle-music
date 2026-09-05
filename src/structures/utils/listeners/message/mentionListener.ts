@@ -1,26 +1,27 @@
-import type { Message, UsingClient } from "seyfert";
+import type { MessageStructure, UsingClient } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
+import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 
 /**
  *
  * The listener for the `messageCreate` event of the client.
  * This listener is triggered when the bot is mentioned in a message.
  * @param {UsingClient} client The client instance.
- * @param {Message} message The message instance.
+ * @param {MessageStructure} message The message instance.
  * @returns {Promise<void>} The promise, with fun!
  */
-export async function mentionListener(client: UsingClient, message: Message): Promise<void> {
+export async function mentionListener(client: UsingClient, message: MessageStructure): Promise<void> {
     const { guildId, content } = message;
 
     if (!guildId) return;
 
     const mentionRegex = new RegExp(`^<@!?${client.me.id}>( |)$`);
     if (content.match(mentionRegex)) {
-        const { messages } = client.t(await client.database.getLocale(guildId)).get();
+        const { messages } = await ContextOps.locale(client, guildId);
 
         const command = client.commands.values.find((command) => command.name === "help");
         if (!command) {
-            await message.react("❌").catch(() => null);
+            await message.react("❌").catch((): null => null);
             await message.reply({
                 allowed_mentions: {
                     replied_user: true,
@@ -36,7 +37,7 @@ export async function mentionListener(client: UsingClient, message: Message): Pr
             return;
         }
 
-        await message.react("🌟").catch(() => null);
+        await message.react("🌟").catch((): null => null);
         await message.reply({
             allowed_mentions: {
                 replied_user: true,

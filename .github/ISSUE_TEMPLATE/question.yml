@@ -1,0 +1,62 @@
+name: ❓ Question
+description: Ask a question about Stelle
+title: "[QUESTION] "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question about Stelle? Please check the [wiki](https://github.com/Ganyu-Studios/stelle-music/wiki) first, and if you can't find your answer there, ask here!
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Prerequisites
+      description: Please confirm the following before asking your question
+      options:
+        - label: I have checked the [wiki](https://github.com/Ganyu-Studios/stelle-music/wiki)
+          required: true
+        - label: I have searched existing issues for similar questions
+          required: true
+        - label: This is a question about Stelle specifically
+          required: true
+
+  - type: dropdown
+    id: question-type
+    attributes:
+      label: Question Category
+      description: What is your question about?
+      options:
+        - General usage
+        - Music commands
+        - Bot setup/self-hosting
+        - Permissions and roles
+        - Troubleshooting
+        - Feature availability
+        - Development/contributing
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What would you like to know?
+      placeholder: "How do I..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Provide any additional context that might help answer your question
+      placeholder: "I'm trying to... and I expected... but instead..."
+
+  - type: textarea
+    id: attempted-solutions
+    attributes:
+      label: What have you tried?
+      description: Have you already tried anything to solve this yourself?
+      placeholder: "I tried looking at... and attempted..."
