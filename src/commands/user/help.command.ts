@@ -105,6 +105,9 @@ export default class HelpCommand extends Command {
 
             // Only chat commands carry aliases; context menu commands don't, so the line is omitted for them.
             const aliases: string[] | undefined = command instanceof Command ? command.aliases : undefined;
+            const aliasesLine: string = aliases?.length
+                ? messages.commands.help.command.aliases({ aliases: aliases.map((alias): string => `\`${alias}\``).join(", ") })
+                : "";
 
             const embed: Embed = new Embed()
                 .setColor(client.config.color.success)
@@ -116,10 +119,10 @@ export default class HelpCommand extends Command {
                     }),
                 )
                 .setDescription(
-                    messages.commands.help.command({
+                    messages.commands.help.command.base({
                         category: getAlias(command.category),
                         cooldown: TimeFormat.toHumanize((command.cooldown ?? 3) * 1000),
-                        aliases: aliases?.length ? aliases.map((alias): string => `\`${alias}\``).join(", ") : undefined,
+                        aliases: aliasesLine,
                         options: parseCommand(command, messages.events.optionTypes, localeString),
                     }),
                 );

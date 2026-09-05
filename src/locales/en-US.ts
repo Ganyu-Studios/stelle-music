@@ -15,6 +15,7 @@ import {
     type IEngine,
     type IHelp,
     type IHelpCommand,
+    type IHelpCommandAliases,
     type IHelpMenu,
     type IHelpMenuEmbed,
     type ILocale,
@@ -256,8 +257,11 @@ export default {
                 description: ({ defaultPrefix }: IDefaultPrefix): string =>
                     `\`📦\` Hello! Here is the information about my commands and stuff.\n\`📜\` Select the command category of your choice.\n\n-# You can search a specific command by typing: \`${defaultPrefix} help <command>\``,
                 noCommand: "`❌` **No command** was found for this search...",
-                command: ({ category, cooldown, aliases, options }: IHelpCommand): string =>
-                    `\`📂\` **Category** · ${category}\n\`⏱️\` **Cooldown** · ${cooldown}${aliases ? `\n\`🔀\` **Aliases** · ${aliases}` : ""}\n\n-# * **Optional []**\n-# * **Required <>**\n\n${options}`,
+                command: {
+                    base: ({ category, cooldown, aliases, options }: IHelpCommand): string =>
+                        `\`📂\` **Category** · ${category}\n\`⏱️\` **Cooldown** · ${cooldown}${aliases}\n\n-# * **Optional []**\n-# * **Required <>**\n\n${options}`,
+                    aliases: ({ aliases }: IHelpCommandAliases): string => `\n\`🔀\` **Aliases** · ${aliases}`,
+                },
                 selectMenu: {
                     description: ({ category }: IHelpMenu): string => `Select the ${category} category.`,
                     placeholder: "Select a command category.",
