@@ -41,11 +41,13 @@ const filter = (player: PlayerStructure, lastTrack: TrackStructure, tracks: Trac
  * @returns {Promise<void>} A promise... that does nothing.
  */
 export async function autoplayFn(player: PlayerStructure, lastTrack: TrackStructure | null): Promise<void> {
-    if (!lastTrack) return;
+    
+    const [autoplay, requester] = await Promise.all([player.data.get('enabledAutoplay'), player.data.get('me')]);
+    const isEnabled: boolean = Boolean(autoplay);
+    
+    if (!lastTrack || !isEnabled) return;
 
-    if (!(await player.data.get("enabledAutoplay"))) return;
-
-    const me: TrackUser | undefined = await player.data.get("me");
+    const me: TrackUser | undefined = requester
     if (!me) return;
 
     const { tracks, kind }: Mix = await RadioOps.mix(player, lastTrack, me);
