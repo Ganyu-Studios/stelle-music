@@ -1,5 +1,4 @@
 import type { PlayerStructure, TrackResolvableStructure, TrackStructure } from "hoshimi";
-import type { TrackUser } from "#stelle/types";
 import { type Mix, MixKind, RadioOps } from "#stelle/utils/functions/manager/radio.js";
 
 /**
@@ -41,12 +40,11 @@ const filter = (player: PlayerStructure, lastTrack: TrackStructure, tracks: Trac
  * @returns {Promise<void>} A promise... that does nothing.
  */
 export async function autoplayFn(player: PlayerStructure, lastTrack: TrackStructure | null): Promise<void> {
-    if (!lastTrack) return;
+    const [autoplay, me] = await Promise.all([player.data.get("enabledAutoplay"), player.data.get("me")]);
 
-    if (!(await player.data.get("enabledAutoplay"))) return;
+    const isEnabled: boolean = Boolean(autoplay);
 
-    const me: TrackUser | undefined = await player.data.get("me");
-    if (!me) return;
+    if (!lastTrack || !isEnabled || !me) return;
 
     const { tracks, kind }: Mix = await RadioOps.mix(player, lastTrack, me);
 
