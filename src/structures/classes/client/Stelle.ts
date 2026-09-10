@@ -1,8 +1,6 @@
 import { createClient, type RedisClientType } from "@redis/client";
 import { Client, LimitedCollection, LimitedMemoryAdapter, type LogLevels, type MessageStructure } from "seyfert";
-import { HandleCommand } from "seyfert/lib/commands/handle.js";
 import { ActivityType, type GatewayPresenceUpdateData, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
-import { Yuna } from "yunaforseyfert";
 import { StelleDatabase } from "#stelle/classes/database/Database.js";
 import { StelleManager } from "#stelle/classes/manager/Manager.js";
 import { StelleMiddlewares } from "#stelle/middlewares";
@@ -132,22 +130,6 @@ export class Stelle extends Client<PluginsDefinition, true> {
                     overwrites: true,
                     presences: true,
                 },
-            },
-            handleCommand: class extends HandleCommand {
-                override argsParser = Yuna.parser({
-                    logResult: StelleMeta.Debug,
-                    syntax: {
-                        namedOptions: ["-", "--"],
-                    },
-                });
-
-                override resolveCommandFromContent = Yuna.resolver({
-                    client: this.client,
-                    logResult: StelleMeta.Debug,
-                    afterPrepare: (metadata): void => {
-                        if (StelleMeta.Debug) this.client.logger.debug(`[Client] Commands prepared | count: ${metadata.commands.length}`);
-                    },
-                });
             },
             langs: {
                 default: this.config.defaultLocale,
