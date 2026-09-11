@@ -39,8 +39,8 @@ const yunaParser = Yuna.plugin({
     },
     resolver: {
         logResult: StelleMeta.Debug,
-        afterPrepare: (metadata): void => {
-            if (StelleMeta.Debug) logger.debug(`[Client] Commands prepared | count: ${metadata.commands.length}`);
+        afterPrepare(metadata): void {
+            if (StelleMeta.Debug) this.logger.debug(`[Client] Commands prepared | count: ${metadata.commands.length}`);
         },
     },
 });
