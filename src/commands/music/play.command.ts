@@ -20,14 +20,14 @@ import { ApplicationIntegrationType, InteractionContextType, MessageFlags } from
 import { StelleCategory } from "#stelle/types";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
-import { onAutocompleteError } from "#stelle/utils/functions/internal/overrides.js";
+import { OverridesOps } from "#stelle/utils/functions/internal/overrides.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { AutocompleteNoticeValue, UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 import { playQuery } from "#stelle/utils/functions/manager/play.js";
 
 const options = {
     query: createStringOption({
-        onAutocompleteError,
+        onAutocompleteError: OverridesOps.autocompleteError,
         description: "Enter the track name or url.",
         required: true,
         locales: {

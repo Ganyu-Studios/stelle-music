@@ -16,45 +16,6 @@ const FEAT_TAIL: RegExp = /\b(feat|ft|featuring|prod|with)\b.*$/i;
 
 /**
  *
- * Tidy a raw title/artist for display: drop bracketed qualifiers (`(Official Video)`, `[Remastered]`, and the
- * CJK/full-width `【…】`「…」（…） variants), the `song / artist` tail, and `cover …` / `feat. …` tails, while keeping
- * the original casing and script (so a Japanese title stays readable). Falls back to the raw text if it strips to
- * nothing.
- * @param {string} text The raw title or artist.
- * @returns {string} The tidied text.
- */
-export function clean(text: string): string {
-    const tidied: string = text
-        .replace(/[([{（【「『〔《][^)\]}）】」』〕》]*[)\]}）】」』〕》]/gu, " ")
-        .replace(/\s\/\s.*$/u, " ")
-        .replace(/\bcover\b.*$/iu, " ")
-        .replace(FEAT_TAIL, " ")
-        .replace(/\s+/g, " ")
-        .trim();
-
-    return tidied || text.trim();
-}
-
-/**
- *
- * Normalize a title or artist for fuzzy comparison: {@link clean} it, strip diacritics, lowercase, expand `&`,
- * and drop punctuation, keeping unicode letters/numbers (so CJK titles survive as matchable tokens instead of
- * normalizing to an empty, never-matchable string). The result is a bag of lowercase words separated by spaces.
- * @param {string} text The raw title or artist.
- * @returns {string} The normalized comparison string.
- */
-export function normalize(text: string): string {
-    return UtilsOps.sanitize(clean(text))
-        .toLowerCase()
-        .replace(/&/g, " and ")
-        .replace(/['’`´"]/g, "")
-        .replace(/[^\p{L}\p{N}]+/gu, " ")
-        .replace(/\s+/g, " ")
-        .trim();
-}
-
-/**
- *
  * The Levenshtein edit distance between two strings (number of single-character insertions, deletions, or
  * substitutions). Uses a single rolling row, so it is O(a·b) time and O(b) space.
  * @param {string} a The first string.
@@ -99,34 +60,79 @@ function ratio(a: string, b: string): number {
 }
 
 /**
- *
- * Whether `guess` should be accepted as a match for `target` (a track title or artist). Both are normalized,
- * then a match is any of: an exact normalized equality, a similarity ratio at or above {@link MATCH_THRESHOLD}
- * (tolerating typos and minor variants), or a multi-word guess whose every word appears in the target (so a
- * specific subphrase like `bohemian rhapsody` matches `Bohemian Rhapsody (Remastered 2011)`).
- * @param {string} guess The user's guess.
- * @param {string} target The track title or artist to match against.
- * @returns {boolean} True if the guess is close enough to count.
+ * Fuzzy title/artist matching for the music quiz: tidying raw metadata, normalizing it for comparison, and
+ * deciding whether a guess is close enough to count.
  */
-export function matches(guess: string, target: string): boolean {
-    const g: string = normalize(guess);
-    const t: string = normalize(target);
+export const MatchOps = {
+    /**
+     *
+     * Tidy a raw title/artist for display: drop bracketed qualifiers (`(Official Video)`, `[Remastered]`, and the
+     * CJK/full-width `【…】`「…」（…） variants), the `song / artist` tail, and `cover …` / `feat. …` tails, while keeping
+     * the original casing and script (so a Japanese title stays readable). Falls back to the raw text if it strips to
+     * nothing.
+     * @param {string} text The raw title or artist.
+     * @returns {string} The tidied text.
+     */
+    clean(text: string): string {
+        const tidied: string = text
+            .replace(/[([{（【「『〔《][^)\]}）】」』〕》]*[)\]}）】」』〕》]/gu, " ")
+            .replace(/\s\/\s.*$/u, " ")
+            .replace(/\bcover\b.*$/iu, " ")
+            .replace(FEAT_TAIL, " ")
+            .replace(/\s+/g, " ")
+            .trim();
 
-    if (!g || !t) return false;
-    if (g === t) return true;
-    if (ratio(g, t) >= MATCH_THRESHOLD) return true;
+        return tidied || text.trim();
+    },
 
-    const guessWords: string[] = g.split(" ");
-    const targetWords: string[] = t.split(" ");
-    const guessSet: Set<string> = new Set(guessWords);
-    const targetSet: Set<string> = new Set(targetWords);
+    /**
+     *
+     * Normalize a title or artist for fuzzy comparison: {@link MatchOps.clean} it, strip diacritics, lowercase, expand
+     * `&`, and drop punctuation, keeping unicode letters/numbers (so CJK titles survive as matchable tokens instead of
+     * normalizing to an empty, never-matchable string). The result is a bag of lowercase words separated by spaces.
+     * @param {string} text The raw title or artist.
+     * @returns {string} The normalized comparison string.
+     */
+    normalize(text: string): string {
+        return UtilsOps.sanitize(this.clean(text))
+            .toLowerCase()
+            .replace(/&/g, " and ")
+            .replace(/['’`´"]/g, "")
+            .replace(/[^\p{L}\p{N}]+/gu, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+    },
 
-    // A specific multi-word guess that is a subphrase of the target (guards single common words by accident).
-    if (guessWords.length >= 2 && guessWords.every((word): boolean => targetSet.has(word))) return true;
+    /**
+     *
+     * Whether `guess` should be accepted as a match for `target` (a track title or artist). Both are normalized,
+     * then a match is any of: an exact normalized equality, a similarity ratio at or above {@link MATCH_THRESHOLD}
+     * (tolerating typos and minor variants), or a multi-word guess whose every word appears in the target (so a
+     * specific subphrase like `bohemian rhapsody` matches `Bohemian Rhapsody (Remastered 2011)`).
+     * @param {string} guess The user's guess.
+     * @param {string} target The track title or artist to match against.
+     * @returns {boolean} True if the guess is close enough to count.
+     */
+    matches(guess: string, target: string): boolean {
+        const g: string = this.normalize(guess);
+        const t: string = this.normalize(target);
 
-    // The guess contains the whole target — the user typed the title and artist together, or added extra words.
-    // Requires a non-trivial target so a short common word can't match just by appearing in a long guess.
-    if (t.length >= 4 && targetWords.every((word): boolean => guessSet.has(word))) return true;
+        if (!g || !t) return false;
+        if (g === t) return true;
+        if (ratio(g, t) >= MATCH_THRESHOLD) return true;
 
-    return false;
-}
+        const guessWords: string[] = g.split(" ");
+        const targetWords: string[] = t.split(" ");
+        const guessSet: Set<string> = new Set(guessWords);
+        const targetSet: Set<string> = new Set(targetWords);
+
+        // A specific multi-word guess that is a subphrase of the target (guards single common words by accident).
+        if (guessWords.length >= 2 && guessWords.every((word): boolean => targetSet.has(word))) return true;
+
+        // The guess contains the whole target — the user typed the title and artist together, or added extra words.
+        // Requires a non-trivial target so a short common word can't match just by appearing in a long guess.
+        if (t.length >= 4 && targetWords.every((word): boolean => guessSet.has(word))) return true;
+
+        return false;
+    },
+} as const;

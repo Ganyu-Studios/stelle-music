@@ -59,7 +59,8 @@ export const StellePaths: ConstantsPaths = {
         return join(process.cwd(), StellePaths.CacheDirectory, StellePaths.CommandsFile);
     },
     GetOutDirectory(): OutputDirectory {
-        return StelleMeta.Dev ? "src" : "dist";
+        if (StelleMeta.Dev) return "src";
+        return "dist";
     },
     GetBannersDirectory(): string {
         return join(process.cwd(), StellePaths.CacheDirectory, StellePaths.BannersDirectory);
@@ -137,10 +138,12 @@ export const StellePresence: ConstantsPresence = {
  */
 export const StelleMusic: ConstantsMusic = {
     AutoplayState(state): AutoplayState {
-        return state ? "enabled" : "disabled";
+        if (state) return "enabled";
+        return "disabled";
     },
     PauseState(state): PausedState {
-        return state ? "resume" : "pause";
+        if (state) return "resume";
+        return "pause";
     },
     LoopMode(mode, alt): LoopMode {
         const states: Record<LoopMode, LoopMode> = {
@@ -170,11 +173,13 @@ export const StelleRedis: ConstantsRedis = {
         const password: string = Environment.REDIS_PASSWORD;
         const username: string = Environment.REDIS_USERNAME;
 
-        const protocol: "rediss" | "redis" = Environment.REDIS_SECURE ? "rediss" : "redis";
+        let protocol: "rediss" | "redis" = "redis";
+        if (Environment.REDIS_SECURE) protocol = "rediss";
 
         return `${protocol}://${username}:${password}@${host}:${port}`;
     },
     GetNamespace(): string {
-        return StelleMeta.Dev ? "internal" : "stellequeue";
+        if (StelleMeta.Dev) return "internal";
+        return "stellequeue";
     },
 };

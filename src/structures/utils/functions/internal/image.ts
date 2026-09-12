@@ -453,13 +453,16 @@ export const ImageOps = {
 
         const dominant: number = albumImage.dominantColor();
         const opaque: boolean = isOpaque(Image.colorToRGB(dominant));
-        const mainColor: number = opaque ? ImageColors.Text : ImageColors.Base;
+        let mainColor: number = ImageColors.Base;
+        if (opaque) mainColor = ImageColors.Text;
 
-        const borderType: "w" | "b" = opaque ? "w" : "b";
+        let borderType: "w" | "b" = "b";
+        if (opaque) borderType = "w";
         const borderBuffer: Buffer<ArrayBuffer> = await readFile(join(imagesPath, `border_${borderType}.png`));
         const borderImage: Image = await Image.decode(borderBuffer);
 
-        const layoutColor: number = opaque ? ImageColors.SubText : ImageColors.Surface;
+        let layoutColor: number = ImageColors.Surface;
+        if (opaque) layoutColor = ImageColors.SubText;
         const fontSize: number = getFontSizeByLength(artist, 940, 51.5, 25);
 
         const trackText: Image = await Image.renderText(font, getFontSizeByLength(name, 940, 65.3, 25), name, mainColor);
@@ -588,8 +591,10 @@ export const ImageOps = {
 
         const dominant: number = albumImage.dominantColor();
         const opaque: boolean = isOpaque(Image.colorToRGB(dominant));
-        const mainColor: number = opaque ? ImageColors.Text : ImageColors.Base;
-        const layoutColor: number = opaque ? ImageColors.SubText : ImageColors.Surface;
+        let mainColor: number = ImageColors.Base;
+        if (opaque) mainColor = ImageColors.Text;
+        let layoutColor: number = ImageColors.Surface;
+        if (opaque) layoutColor = ImageColors.SubText;
 
         const textMaxWidth: number = WIDTH - (MARGIN + ART_SIZE + 50) - MARGIN;
         const trackText: Image = await renderFitted(font, name, textMaxWidth, 54, 24, mainColor);

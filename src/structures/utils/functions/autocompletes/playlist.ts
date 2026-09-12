@@ -34,7 +34,8 @@ export async function playlistAutocomplete(interaction: AutocompleteInteraction)
      * @returns {string} The visibility of the playlist.
      */
     const getVisibility = (isPublic: boolean): string => {
-        const type = isPublic ? "public" : "private";
+        let type: "public" | "private" = "private";
+        if (isPublic) type = "public";
         return messages.commands.playlist.state[type];
     };
 

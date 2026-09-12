@@ -170,7 +170,8 @@ export const PanelOps = {
                 }),
             );
 
-            const queue: string = upNext.length ? `\n\n${messages.events.requestChannel.queue.title}\n${upNext.join("\n")}` : "";
+            let queue = "";
+            if (upNext.length) queue = `\n\n${messages.events.requestChannel.queue.title}\n${upNext.join("\n")}`;
 
             embed.setDescription(`${nowPlaying}${queue}`).setTimestamp();
 

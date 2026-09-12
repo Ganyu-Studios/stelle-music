@@ -33,8 +33,10 @@ export function parseTrackSelection(value: string, total: number): number[] {
             if (!startWildcard && !/^\d+$/.test(startRaw)) throw new Error("invalid-selection");
             if (!endWildcard && !/^\d+$/.test(endRaw)) throw new Error("invalid-selection");
 
-            const start: number = startWildcard ? 1 : Number(startRaw);
-            const end: number = endWildcard ? total : Number(endRaw);
+            let start: number = Number(startRaw);
+            if (startWildcard) start = 1;
+            let end: number = Number(endRaw);
+            if (endWildcard) end = total;
 
             if (start < 1 || end < 1 || start > end) throw new Error("invalid-selection");
             // Bound the range against `total` BEFORE expanding it: otherwise `1-99999999999` would try to build a

@@ -29,7 +29,8 @@ export class PlaylistController extends Controller<"userPlaylist"> {
         return this.fetch({
             read: () => {
                 const cached = this.cache.playlists.get(playlistId);
-                return cached && cached.userId === userId ? cached : undefined;
+                if (cached && cached.userId === userId) return cached;
+                return undefined;
             },
             write: (record): void => {
                 // Global collection addressed by playlistId, but the query is scoped by owner: cache only a hit, never a
@@ -54,7 +55,8 @@ export class PlaylistController extends Controller<"userPlaylist"> {
         return this.fetch({
             read: () => {
                 const cached = this.cache.playlists.get(playlistId);
-                return cached && (cached.userId === userId || cached.public) ? cached : undefined;
+                if (cached && (cached.userId === userId || cached.public)) return cached;
+                return undefined;
             },
             write: (record): void => {
                 if (record) this.cache.playlists.set(record.playlistId, record);

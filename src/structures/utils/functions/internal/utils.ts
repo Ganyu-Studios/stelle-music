@@ -107,7 +107,8 @@ export const UtilsOps = {
             }
         }
 
-        return uppercase ? result.toUpperCase() : result;
+        if (uppercase) return result.toUpperCase();
+        return result;
     },
     /**
      *
@@ -140,7 +141,8 @@ export const UtilsOps = {
      * @returns {string} The truncated text.
      */
     truncate(text: string, length: number = 240): string {
-        return text.length > length ? `${text.slice(0, length - 3)}...` : text;
+        if (text.length > length) return `${text.slice(0, length - 3)}...`;
+        return text;
     },
     /**
      *
