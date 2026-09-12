@@ -1,7 +1,7 @@
 import { EventNames, LoadType, type PlayerStructure, type QueryResult, type SearchSources, type TrackStructure } from "hoshimi";
 import { type AllGuildVoiceChannels, type DefaultLocale, type GuildMember, type LocaleString, LogLevels, type UsingClient } from "seyfert";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
-import { clean, matches } from "#stelle/utils/functions/internal/quiz.js";
+import { MatchOps } from "#stelle/utils/functions/internal/quiz.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 import { type Mix, RadioOps } from "#stelle/utils/functions/manager/radio.js";
@@ -322,7 +322,7 @@ const RoundOps = {
         await say(
             client,
             session.channelId,
-            messages.events.quiz.reveal({ title: clean(round.track.info.title), artist: clean(round.track.info.author) }),
+            messages.events.quiz.reveal({ title: MatchOps.clean(round.track.info.title), artist: MatchOps.clean(round.track.info.author) }),
         );
 
         await UtilsOps.wait(INTER_ROUND_DELAY);
@@ -465,13 +465,13 @@ export const QuizOps = {
             session.scores.set(userId, (session.scores.get(userId) ?? 0) + 1);
         };
 
-        if (!round.titleBy && matches(content, round.track.info.title)) {
+        if (!round.titleBy && MatchOps.matches(content, round.track.info.title)) {
             round.titleBy = userId;
             award();
             await say(client, session.channelId, messages.events.quiz.guessed.title({ user: userId }));
         }
 
-        if (!round.artistBy && matches(content, round.track.info.author)) {
+        if (!round.artistBy && MatchOps.matches(content, round.track.info.author)) {
             round.artistBy = userId;
             award();
             await say(client, session.channelId, messages.events.quiz.guessed.artist({ user: userId }));

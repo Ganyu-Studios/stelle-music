@@ -9,7 +9,7 @@ import { Configuration } from "#stelle/utils/data/configuration.js";
 import { StelleMeta, StellePaths, StelleRedis, StelleText } from "#stelle/utils/data/constants.js";
 import { StelleContext } from "#stelle/utils/functions/internal/context.js";
 import { LoggerOps } from "#stelle/utils/functions/internal/logger.js";
-import { onBotPermissionsFail, onOptionsError, onPermissionsFail, onRunError } from "#stelle/utils/functions/internal/overrides.js";
+import { OverridesOps } from "#stelle/utils/functions/internal/overrides.js";
 import { sendErrorReport } from "#stelle/utils/functions/internal/report.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 import { type PluginsDefinition, plugins } from "#stelle/utils/plugins.js";
@@ -81,7 +81,7 @@ export class Stelle extends Client<PluginsDefinition, true> {
             },
             components: {
                 defaults: {
-                    onRunError,
+                    onRunError: OverridesOps.runError,
                 },
             },
             commands: {
@@ -97,10 +97,10 @@ export class Stelle extends Client<PluginsDefinition, true> {
                     content: `<a:typing:1214253750093488149> **${client.me.username}** ${StelleText.Think()}`,
                 }),
                 defaults: {
-                    onBotPermissionsFail,
-                    onOptionsError,
-                    onPermissionsFail,
-                    onRunError,
+                    onBotPermissionsFail: OverridesOps.botPermissions,
+                    onOptionsError: OverridesOps.options,
+                    onPermissionsFail: OverridesOps.permissions,
+                    onRunError: OverridesOps.runError,
                 },
             },
         });

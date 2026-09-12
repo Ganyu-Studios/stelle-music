@@ -18,13 +18,7 @@ import type { CreateComponentCollectorResult } from "seyfert/lib/components/hand
 import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
 import { ManageButtonCustomIds, ManageButtonIdentifiers } from "#stelle/types";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
-import {
-    playlistInfoHandler,
-    playlistLoadHandler,
-    playlistTrackDeleteHandler,
-    playlistTrackSaveHandler,
-    playlistVisibilityToggleHandler,
-} from "#stelle/utils/functions/components/playlist.js";
+import { PlaylistOps } from "#stelle/utils/functions/components/playlist.js";
 import { ComponentOps } from "#stelle/utils/functions/internal/components.js";
 import { ms } from "#stelle/utils/functions/internal/time.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
@@ -149,11 +143,11 @@ export default class ManageSubcommand extends SubCommand {
             if (!interaction.isButton()) return;
 
             const playlistHandlers = {
-                [ManageButtonIdentifiers.TrackSave]: playlistTrackSaveHandler,
-                [ManageButtonIdentifiers.TrackDelete]: playlistTrackDeleteHandler,
-                [ManageButtonIdentifiers.Info]: playlistInfoHandler,
-                [ManageButtonIdentifiers.Load]: playlistLoadHandler,
-                [ManageButtonIdentifiers.ToggleVisibility]: playlistVisibilityToggleHandler,
+                [ManageButtonIdentifiers.TrackSave]: PlaylistOps.save,
+                [ManageButtonIdentifiers.TrackDelete]: PlaylistOps.remove,
+                [ManageButtonIdentifiers.Info]: PlaylistOps.info,
+                [ManageButtonIdentifiers.Load]: PlaylistOps.load,
+                [ManageButtonIdentifiers.ToggleVisibility]: PlaylistOps.toggle,
             };
 
             await playlistHandlers[interaction.customId as ManageButtonIdentifiers](ctx, interaction, playlist);
