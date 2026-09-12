@@ -132,12 +132,16 @@ export abstract class Controller<M extends ModelNames> {
      */
     protected async fetch<T>({ read, write, query, clone = false }: FetchOptions<T>): Promise<T | null> {
         const cached: T | null | undefined = read();
-        if (cached !== undefined) return cached && clone ? structuredClone(cached) : cached;
+        if (cached !== undefined) {
+            if (cached && clone) return structuredClone(cached);
+            return cached;
+        }
 
         const data: T | null = await query();
         write(data);
 
-        return data && clone ? structuredClone(data) : data;
+        if (data && clone) return structuredClone(data);
+        return data;
     }
 
     /**

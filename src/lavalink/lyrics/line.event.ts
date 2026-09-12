@@ -46,7 +46,8 @@ export default createLavalinkEvent({
             .slice(start, end)
             .map((l, i): string => {
                 if (!l.line.length) l.line = "...";
-                return i + start === index ? `**${l.line}**` : `-# ${l.line}`;
+                if (i + start === index) return `**${l.line}**`;
+                return `-# ${l.line}`;
             })
             .join("\n");
 

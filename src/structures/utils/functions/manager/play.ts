@@ -109,7 +109,8 @@ export async function playQuery(options: PlayQueryOptions): Promise<PlayQueryRes
     if (!(await player.data.get("me"))) await player.data.set("me", TrackOps.requesterFn(client.me));
     if (isRequestChannel) await player.data.set("isRequestChannel", true);
 
-    const autoplayIndex: number | undefined = (await player.data.get("enabledAutoplay")) ? 0 : undefined;
+    let autoplayIndex: number | undefined;
+    if (await player.data.get("enabledAutoplay")) autoplayIndex = 0;
 
     switch (loadType) {
         case LoadType.Track:

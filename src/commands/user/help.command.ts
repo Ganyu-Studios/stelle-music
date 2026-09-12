@@ -105,7 +105,8 @@ export default class HelpCommand extends Command {
 
             // Only chat commands carry aliases; context menu commands don't. Fall back to the "not specified" text
             // when the command has none.
-            const aliases: string[] | undefined = command instanceof Command ? command.aliases : undefined;
+            let aliases: string[] | undefined;
+            if (command instanceof Command) aliases = command.aliases;
 
             const embed: Embed = new Embed()
                 .setColor(client.config.color.success)

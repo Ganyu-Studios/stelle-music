@@ -31,7 +31,8 @@ export default class CreateSubCommand extends SubCommand {
         const playlistName: string = ctx.options.name;
         const isPublic: boolean = ctx.options.public ?? false;
 
-        const type: "public" | "private" = isPublic ? "public" : "private";
+        let type: "public" | "private" = "private";
+        if (isPublic) type = "public";
 
         const { client, author } = ctx;
         const { messages } = await ctx.locale();

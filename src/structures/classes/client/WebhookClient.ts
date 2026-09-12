@@ -138,7 +138,8 @@ export class WebhookClient {
     public async writeMessage(data: MessageWebhookMethodWriteParams): Promise<APIMessage | undefined> {
         const { files, ...body } = data.body;
 
-        const transformedFiles: RawFile[] | undefined = files ? await resolveFiles(files) : undefined;
+        let transformedFiles: RawFile[] | undefined;
+        if (files) transformedFiles = await resolveFiles(files);
         const transformedBody: RESTPostAPIWebhookWithTokenJSONBody = transformMessageBody<RESTPostAPIWebhookWithTokenJSONBody>(
             body,
             transformedFiles,
@@ -162,7 +163,8 @@ export class WebhookClient {
     public async editMessage(data: MessageWebhookMethodEditParams): Promise<APIMessage> {
         const { files, ...body } = data.body;
 
-        const transformedFiles: RawFile[] | undefined = files ? await resolveFiles(files) : undefined;
+        let transformedFiles: RawFile[] | undefined;
+        if (files) transformedFiles = await resolveFiles(files);
         const transformedBody: RESTPostAPIWebhookWithTokenJSONBody = transformMessageBody<RESTPostAPIWebhookWithTokenJSONBody>(
             body,
             transformedFiles,

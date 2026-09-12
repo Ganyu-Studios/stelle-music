@@ -258,7 +258,8 @@ export class EmbedPaginator {
             flags: ephemeral ? MessageFlags.Ephemeral : undefined,
         };
 
-        this.options.message = await (followup ? this.options.ctx.followup(body) : this.options.ctx.editOrReply(body, true));
+        if (followup) this.options.message = await this.options.ctx.followup(body);
+        else this.options.message = await this.options.ctx.editOrReply(body, true);
 
         const collector: CreateComponentCollectorResult = this.options.message.createComponentCollector({
             idle: this.options.time,

@@ -58,7 +58,8 @@ export default class ManageSubcommand extends SubCommand {
          * @returns {string} The visibility of the playlist.
          */
         const getVisibility = (isPublic: boolean): string => {
-            const type: "public" | "private" = isPublic ? "public" : "private";
+            let type: "public" | "private" = "private";
+            if (isPublic) type = "public";
             return messages.commands.playlist.state[type];
         };
 
@@ -70,7 +71,8 @@ export default class ManageSubcommand extends SubCommand {
                 ),
             );
 
-        const style: ButtonStyle = playlist.public ? ButtonStyle.Danger : ButtonStyle.Success;
+        let style: ButtonStyle = ButtonStyle.Success;
+        if (playlist.public) style = ButtonStyle.Danger;
         const label: string = messages.commands.playlist.manage.options.toggle({
             state: getVisibility(!playlist.public),
         });
