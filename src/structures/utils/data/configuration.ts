@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { z } from "zod";
 import type { InternalStelleConfiguration, StelleConfiguration } from "#stelle/types";
-import { InvalidConfiguration } from "#stelle/utils/errors.js";
+import { InvalidConfiguration, InvalidEnvironment } from "#stelle/utils/errors.js";
 import { UtilsOps } from "../functions/internal/utils.js";
 
 const envSchema = z.object({
@@ -93,6 +93,6 @@ export const Environment: StelleEnvironment = envSchema
 
         console.info(message);
 
-        throw new Error("Invalid environment variables.");
+        throw new InvalidEnvironment("Invalid environment variables.");
     })
     .parse(process.env);

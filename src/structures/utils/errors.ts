@@ -1,10 +1,10 @@
 /**
  * Error thrown when an invalid environment value is provided.
- * @class InvalidEnvValue
+ * @class InvalidEnvironment
  * @extends {Error}
  */
-export class InvalidEnvValue extends Error {
-    override name: string = "Stelle [InvalidEnvValue]";
+export class InvalidEnvironment extends Error {
+    override name: string = "Stelle [InvalidEnvironment]";
 }
 
 /**
