@@ -22,6 +22,6 @@ minimumReleaseAgeExclude:
   - '@redis/client@6.2.0 || 6.2.1'
   - tsx@4.23.9 || 4.23.13
   - '@types/node@26.2.0'
-  - zod@4.5.2 || 4.6.1 || 4.6.2
+  - zod@4.5.2 || 4.6.1 || 4.6.2 || 4.6.4
 
 packages: []
