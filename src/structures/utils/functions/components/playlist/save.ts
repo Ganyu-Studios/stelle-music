@@ -50,7 +50,7 @@ export async function playlistTrackSave(
             flags: MessageFlags.Ephemeral,
             embeds: [
                 {
-                    description: messages.events.noPlayer,
+                    description: messages.events.no.player,
                     color: EmbedColors.Red,
                 },
             ],

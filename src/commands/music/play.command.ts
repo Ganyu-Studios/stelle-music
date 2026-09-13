@@ -40,22 +40,22 @@ const options = {
             const localeString: string = interaction.user.locale ?? client.config.defaultLocale;
             const t: DefaultLocale = client.t(localeString).get();
 
-            if (!(guildId && member)) return interaction.respond(UtilsOps.autocomplete(t.messages.events.autocomplete.noGuild));
+            if (!(guildId && member)) return interaction.respond(UtilsOps.autocomplete(t.messages.events.autocomplete.no.guild));
 
             const { searchPlatform: source } = await client.database.players.get(guildId);
             const { messages } = await ContextOps.locale(client, guildId);
 
-            if (!client.manager.isUsable()) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noNodes));
+            if (!client.manager.isUsable()) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.no.nodes));
 
             const voice: VoiceState | null = await member.voice().catch((): null => null);
-            if (!voice) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noVoiceChannel));
+            if (!voice) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.no.voiceChannel));
 
             const query: string = interaction.getInput();
-            if (!query) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noQuery));
+            if (!query) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.no.query));
 
             const { tracks }: QueryResult = await client.manager.search({ query, source, requester: null });
 
-            if (!tracks.length) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noTracks));
+            if (!tracks.length) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.no.tracks));
 
             await interaction.respond(
                 tracks.slice(0, 25).map((track) => {

@@ -11,7 +11,7 @@ export const checkVerifications: MiddlewareContext<void, AnyContext> = createMid
     const { messages } = await context.locale();
 
     if (command.onlyDeveloper && !developerIds.includes(author.id)) {
-        await context.errorReply(messages.events.onlyDeveloper, { ephemeral: true });
+        await context.errorReply(messages.events.only.developer, { ephemeral: true });
 
         return stop();
     }
@@ -21,7 +21,7 @@ export const checkVerifications: MiddlewareContext<void, AnyContext> = createMid
         const owner: GuildMember | null = await guild.fetchOwner().catch(() => null);
 
         if (!owner || owner.id !== author.id) {
-            await context.errorReply(messages.events.onlyGuildOwner, { ephemeral: true });
+            await context.errorReply(messages.events.only.guildOwner, { ephemeral: true });
 
             return stop();
         }

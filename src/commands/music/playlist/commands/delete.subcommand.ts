@@ -36,7 +36,7 @@ export default class DeleteSubcommand extends SubCommand {
         const { id } = ctx.options;
 
         const playlist = await client.database.playlist.get(id, ctx.author.id);
-        if (!playlist) return ctx.errorReply(messages.commands.playlist.noPlaylist, { ephemeral: true, content: "" });
+        if (!playlist) return ctx.errorReply(messages.commands.playlist.no.playlist, { ephemeral: true, content: "" });
 
         await client.database.playlist.delete(ctx.author.id, id);
         await ctx.successReply(messages.commands.playlist.deleted({ name: playlist.playlistName }), { ephemeral: true, content: "" });

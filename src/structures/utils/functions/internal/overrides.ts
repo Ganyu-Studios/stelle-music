@@ -79,7 +79,7 @@ export const OverridesOps = {
         const { messages } = await ContextOps.locale(interaction.client, interaction.guildId);
 
         await sendErrorReport({ error });
-        await interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noAnything));
+        await interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.no.anything));
     },
 
     /**
@@ -122,7 +122,7 @@ export const OverridesOps = {
             .setColor("Red")
             .setThumbnail(ctx.author.avatarURL())
             .setDescription(
-                messages.events.invalidOptions({
+                messages.events.invalid.options({
                     options: Formatter.codeBlock(options.map(({ option }) => option).join(" "), "js"),
                     list: options
                         .map(({ option, description, range }): string =>

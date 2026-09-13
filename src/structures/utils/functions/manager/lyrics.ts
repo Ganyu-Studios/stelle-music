@@ -216,7 +216,7 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | MessageStru
                 embeds: [
                     {
                         color: EmbedColors.Red,
-                        description: messages.events.onlyUser({ userId: ctx.author.id }),
+                        description: messages.events.only.user({ userId: ctx.author.id }),
                     },
                 ],
             });

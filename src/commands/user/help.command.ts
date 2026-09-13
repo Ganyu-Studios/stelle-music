@@ -65,7 +65,7 @@ const options = {
             if (!input.length) return interaction.respond(commands.map(toChoice).slice(0, 25));
 
             const command: ResolvableCommand | undefined = commands.find((command) => command.name === input);
-            if (!command) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noCommand));
+            if (!command) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.no.command));
 
             return interaction.respond([toChoice(command)]);
         },

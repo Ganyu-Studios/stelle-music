@@ -25,7 +25,7 @@ export async function playlistAutocomplete(interaction: AutocompleteInteraction)
         ? await client.database.playlist.owned(user.id, 25)
         : await client.database.playlist.loadable(user.id, 25);
 
-    if (!data.length) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noPlaylist));
+    if (!data.length) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.no.playlist));
 
     /**
      *
@@ -51,7 +51,7 @@ export async function playlistAutocomplete(interaction: AutocompleteInteraction)
         }),
     }));
 
-    if (!playlists.length) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.noPlaylist));
+    if (!playlists.length) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.no.playlist));
 
     return interaction.respond(playlists);
 }

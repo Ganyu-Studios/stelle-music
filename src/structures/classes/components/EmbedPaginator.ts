@@ -269,7 +269,7 @@ export class EmbedPaginator {
                     flags: MessageFlags.Ephemeral,
                     embeds: [
                         {
-                            description: messages.events.onlyUser({ userId: this.options.ctx.author.id }),
+                            description: messages.events.only.user({ userId: this.options.ctx.author.id }),
                             color: EmbedColors.Red,
                         },
                     ],

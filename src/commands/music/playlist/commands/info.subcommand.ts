@@ -45,9 +45,9 @@ export default class InfoSubcommand extends SubCommand {
         const { id } = ctx.options;
 
         const playlist = await client.database.playlist.get(id, ctx.author.id);
-        if (!playlist) return ctx.errorReply(messages.commands.playlist.noPlaylist, { ephemeral: true, content: "" });
+        if (!playlist) return ctx.errorReply(messages.commands.playlist.no.playlist, { ephemeral: true, content: "" });
 
-        if (!playlist.tracks.length) return ctx.errorReply(messages.commands.playlist.noTracks, { ephemeral: true, content: "" });
+        if (!playlist.tracks.length) return ctx.errorReply(messages.commands.playlist.no.tracks, { ephemeral: true, content: "" });
 
         const length: number = 20;
 
@@ -72,7 +72,7 @@ export default class InfoSubcommand extends SubCommand {
                 flags: MessageFlags.Ephemeral,
                 embeds: [
                     new Embed()
-                        .setDescription(messages.events.playerQueue({ tracks: tracks.slice(0, length).join("\n") }))
+                        .setDescription(messages.events.player.queue({ tracks: tracks.slice(0, length).join("\n") }))
                         .setColor(client.config.color.extra)
                         .setThumbnail(guild.iconURL())
                         .setTimestamp()
@@ -85,7 +85,7 @@ export default class InfoSubcommand extends SubCommand {
         for (let i: number = 0; i < tracks.length; i += length) {
             paginator.addEmbed(
                 new Embed()
-                    .setDescription(messages.events.playerQueue({ tracks: tracks.slice(i, i + length).join("\n") }))
+                    .setDescription(messages.events.player.queue({ tracks: tracks.slice(i, i + length).join("\n") }))
                     .setColor(client.config.color.extra)
                     .setThumbnail(guild.iconURL())
                     .setTimestamp()

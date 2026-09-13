@@ -28,7 +28,7 @@ export default createLavalinkEvent({
             // Persistent panel: return it to idle instead of posting a one-off "queue ended" message.
             await PanelOps.reset(client, player.guildId);
         } else {
-            const embed = new Embed().setDescription(messages.events.playerEnd).setColor(client.config.color.success).setTimestamp();
+            const embed = new Embed().setDescription(messages.events.player.end).setColor(client.config.color.success).setTimestamp();
 
             await client.messages.write(player.textId, { embeds: [embed] }).catch((): null => null);
             await player.data.delete("messageId");

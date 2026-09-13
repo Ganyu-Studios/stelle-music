@@ -102,7 +102,7 @@ export const PlaylistOps = {
                     flags: MessageFlags.Ephemeral,
                     embeds: [
                         {
-                            description: messages.events.onlyUser({ userId: ctx.author.id }),
+                            description: messages.events.only.user({ userId: ctx.author.id }),
                             color: EmbedColors.Red,
                         },
                     ],
@@ -184,7 +184,7 @@ export const PlaylistOps = {
                 flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
-                        description: messages.events.noNodes,
+                        description: messages.events.no.nodes,
                         color: EmbedColors.Red,
                     },
                 ],
@@ -196,7 +196,7 @@ export const PlaylistOps = {
                 flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
-                        description: messages.commands.playlist.noTracks,
+                        description: messages.commands.playlist.no.tracks,
                         color: EmbedColors.Red,
                     },
                 ],
@@ -212,7 +212,7 @@ export const PlaylistOps = {
                 flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
-                        description: messages.events.noVoiceChannel,
+                        description: messages.events.no.voiceChannel,
                         color: EmbedColors.Red,
                     },
                 ],
@@ -225,7 +225,7 @@ export const PlaylistOps = {
                 flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
-                        description: messages.events.noVoiceChannel,
+                        description: messages.events.no.voiceChannel,
                         color: EmbedColors.Red,
                     },
                 ],
@@ -237,7 +237,7 @@ export const PlaylistOps = {
                 flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
-                        description: messages.events.noSameVoice({ channelId: bot.channelId! }),
+                        description: messages.events.no.sameVoice({ channelId: bot.channelId! }),
                         color: EmbedColors.Red,
                     },
                 ],
@@ -332,7 +332,7 @@ export const PlaylistOps = {
                 flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
-                        description: messages.commands.playlist.noTracks,
+                        description: messages.commands.playlist.no.tracks,
                         color: EmbedColors.Red,
                     },
                 ],
@@ -442,7 +442,7 @@ export const PlaylistOps = {
                 flags: MessageFlags.Ephemeral,
                 embeds: [
                     new Embed()
-                        .setDescription(messages.events.playerQueue({ tracks: tracks.slice(0, limit).join("\n") }))
+                        .setDescription(messages.events.player.queue({ tracks: tracks.slice(0, limit).join("\n") }))
                         .setColor(ctx.client.config.color.extra)
                         .setThumbnail(guild.iconURL())
                         .setTimestamp()
@@ -455,7 +455,7 @@ export const PlaylistOps = {
             for (let i: number = 0; i < tracks.length; i += limit) {
                 paginator.addEmbed(
                     new Embed()
-                        .setDescription(messages.events.playerQueue({ tracks: tracks.slice(i, i + limit).join("\n") }))
+                        .setDescription(messages.events.player.queue({ tracks: tracks.slice(i, i + limit).join("\n") }))
                         .setColor(ctx.client.config.color.extra)
                         .setThumbnail(guild.iconURL())
                         .setTimestamp()

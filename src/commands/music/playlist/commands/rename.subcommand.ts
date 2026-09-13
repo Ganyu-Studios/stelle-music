@@ -45,9 +45,9 @@ export default class RenameSubcommand extends SubCommand {
         const { id, name } = ctx.options;
 
         const playlist = await client.database.playlist.get(id, ctx.author.id);
-        if (!playlist) return ctx.errorReply(messages.commands.playlist.noPlaylist, { ephemeral: true, content: "" });
+        if (!playlist) return ctx.errorReply(messages.commands.playlist.no.playlist, { ephemeral: true, content: "" });
 
-        if (UtilsOps.isUrl(name)) return ctx.errorReply(messages.events.invalidInput, { ephemeral: true, content: "" });
+        if (UtilsOps.isUrl(name)) return ctx.errorReply(messages.events.invalid.input, { ephemeral: true, content: "" });
 
         playlist.playlistName = name;
 

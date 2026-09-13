@@ -49,7 +49,7 @@ export default class ManageSubcommand extends SubCommand {
         const { id } = ctx.options;
 
         const playlist = await client.database.playlist.get(id, ctx.author.id);
-        if (!playlist) return ctx.errorReply(messages.commands.playlist.noPlaylist, { ephemeral: true, content: "" });
+        if (!playlist) return ctx.errorReply(messages.commands.playlist.no.playlist, { ephemeral: true, content: "" });
 
         /**
          *
@@ -128,7 +128,7 @@ export default class ManageSubcommand extends SubCommand {
                     flags: MessageFlags.Ephemeral,
                     embeds: [
                         {
-                            description: messages.events.onlyUser({ userId: ctx.author.id }),
+                            description: messages.events.only.user({ userId: ctx.author.id }),
                             color: EmbedColors.Red,
                         },
                     ],

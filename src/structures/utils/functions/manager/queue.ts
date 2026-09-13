@@ -32,7 +32,7 @@ export async function displayQueue(ctx: AnyContext): Promise<void> {
             flags: MessageFlags.Ephemeral,
             embeds: [
                 new Embed()
-                    .setDescription(messages.events.playerQueue({ tracks: tracks.slice(0, limit).join("\n") }))
+                    .setDescription(messages.events.player.queue({ tracks: tracks.slice(0, limit).join("\n") }))
                     .setColor(client.config.color.extra)
                     .setThumbnail(guild.iconURL())
                     .setTimestamp()
@@ -45,7 +45,7 @@ export async function displayQueue(ctx: AnyContext): Promise<void> {
         for (let i: number = 0; i < tracks.length; i += limit) {
             paginator.addEmbed(
                 new Embed()
-                    .setDescription(messages.events.playerQueue({ tracks: tracks.slice(i, i + limit).join("\n") }))
+                    .setDescription(messages.events.player.queue({ tracks: tracks.slice(i, i + limit).join("\n") }))
                     .setColor(client.config.color.extra)
                     .setThumbnail(guild.iconURL())
                     .setTimestamp()
