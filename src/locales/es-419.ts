@@ -292,7 +292,7 @@ export default {
             commandError:
                 "`❌` Algo inesperado ocurrió durante la ejecución del comando.\n`📢` Si el problema persiste, reporta el problema.",
             no: {
-                sameVoice: ({ channelId }): string => `\`❌\` No estás en el **mismo canal de voz** que yo. (<#${channelId}>)`,
+                sharedVoice: ({ channelId }): string => `\`❌\` No estás en el **mismo canal de voz** que yo. (<#${channelId}>)`,
                 members: ({ clientName }): string => `\`🎧\` ${clientName} está sola en el **canal de voz**... Abandonando el canal.`,
                 command: "`❌` No tengo el comando necesitado *todavía*, intenta de nuevo en un momento.",
                 voiceChannel: "`❌` No estás en un **canal de voz**... Únete a uno para reproducir música.",
@@ -301,7 +301,7 @@ export default {
                 previous: "`❌` No hubo una canción antes de esta.",
                 tracks: "`❌` No hay más canciones en la cola.",
                 query: "`❌` Introduce el nombre o el URL para reproducir.",
-                sameGuild: "`❌` El canal debe estar en este servidor.",
+                guildMatch: "`❌` El canal debe estar en este servidor.",
             },
             invalid: {
                 options: ({ options, list }): string =>
@@ -324,7 +324,7 @@ export default {
                     anything: "Stelle - Algo ocurrió intentando usar este autocompletado.",
                     nodes: "Stelle - No estoy conectada a ninguno de mis nodos.",
                     voiceChannel: "Stelle - No estás en un canal de voz... Únete a uno para reproducir música.",
-                    sameVoice: "Stelle - No estás en el mismo canal de voz que yo.",
+                    sharedVoice: "Stelle - No estás en el mismo canal de voz que yo.",
                     query: "Stelle - Introduce el nombre o el URL para reproducir.",
                     tracks: "Stelle - No encontre la canción. Introduce otro nombre o el URL.",
                     guild: "Stelle - Este autocomplete solo puede ser usado en servidores.",

@@ -59,7 +59,7 @@ export default class JoinCommand extends Command {
         const { defaultVolume } = await client.database.players.get(ctx.guildId);
 
         const channel: AllGuildVoiceChannels = options.voice ?? voice;
-        if (channel.guildId !== ctx.guildId) return ctx.errorReply(messages.events.no.sameGuild, { content: "" });
+        if (channel.guildId !== ctx.guildId) return ctx.errorReply(messages.events.no.guildMatch, { content: "" });
 
         const player = client.manager.createPlayer({
             guildId: ctx.guildId,

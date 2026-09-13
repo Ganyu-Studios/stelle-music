@@ -237,7 +237,7 @@ export const PlaylistOps = {
                 flags: MessageFlags.Ephemeral,
                 embeds: [
                     {
-                        description: messages.events.no.sameVoice({ channelId: bot.channelId! }),
+                        description: messages.events.no.sharedVoice({ channelId: bot.channelId! }),
                         color: EmbedColors.Red,
                     },
                 ],

@@ -353,7 +353,8 @@ export default {
             moreTracks: "`❌` In order to enable **this** `one or more tracks` are required.",
             commandError: "`❌` Something unexpected ocurred during the execution.\n`📢` If the problem persists, report the issue.",
             no: {
-                sameVoice: ({ channelId }: IChannel): string => `\`❌\` You are not in the **same voice channel** as me. (<#${channelId}>)`,
+                sharedVoice: ({ channelId }: IChannel): string =>
+                    `\`❌\` You are not in the **same voice channel** as me. (<#${channelId}>)`,
                 members: ({ clientName }: IClientName): string =>
                     `\`🎧\` ${clientName} is alone in the **voice channel**... Leaving the channel.`,
                 command: "`❌` I don't have the required command *yet*, try again in a moment.",
@@ -363,7 +364,7 @@ export default {
                 previous: "`❌` There is no previous track to add.",
                 tracks: "`❌` There are no more tracks in the queue.",
                 query: "`❌` Enter a track name or URL to play it.",
-                sameGuild: "`❌` The channel must be in this guild.",
+                guildMatch: "`❌` The channel must be in this guild.",
             },
             invalid: {
                 options: ({ options, list }: IOptions): string =>
@@ -387,7 +388,7 @@ export default {
                     anything: "Stelle - Something unexpected happened using this autocomplete.",
                     nodes: "Stelle - I'm not connected to any of my nodes.",
                     voiceChannel: "Stelle - You are not in a voice channel... Join to play music.",
-                    sameVoice: "Stelle - You are not in the same voice channel as me.",
+                    sharedVoice: "Stelle - You are not in the same voice channel as me.",
                     query: "Stelle - Enter a track name or URL to play it.",
                     tracks: "Stelle - No tracks was found. Enter another track name or URL.",
                     guild: "Stelle - This autocomplete only can be used in a guild.",

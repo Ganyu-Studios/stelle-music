@@ -29,7 +29,7 @@ export const checkBotVoiceChannel: MiddlewareContext<void, AnyContext> = createM
 
     const bot: VoiceState | null = await me.voice().catch((): null => null);
     if (bot && bot.channelId !== state.channelId) {
-        await context.errorReply(messages.events.no.sameVoice({ channelId: bot.channelId! }), { ephemeral: true });
+        await context.errorReply(messages.events.no.sharedVoice({ channelId: bot.channelId! }), { ephemeral: true });
 
         return stop();
     }
