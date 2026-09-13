@@ -47,9 +47,9 @@ export default class LoadSubcommand extends SubCommand {
         const { messages } = await ctx.locale();
 
         const playlist = await client.database.playlist.getLoadable(id, ctx.author.id);
-        if (!playlist) return ctx.errorReply(messages.commands.playlist.noPlaylist, { content: "" });
+        if (!playlist) return ctx.errorReply(messages.commands.playlist.no.playlist, { content: "" });
 
-        if (!playlist.tracks.length) return ctx.errorReply(messages.commands.playlist.noTracks, { content: "" });
+        if (!playlist.tracks.length) return ctx.errorReply(messages.commands.playlist.no.tracks, { content: "" });
 
         if (!member) return;
 

@@ -47,7 +47,7 @@ export default class QuizStartSubCommand extends SubCommand {
 
         const state: VoiceState | null = await member.voice().catch((): null => null);
         const voice: AllGuildVoiceChannels | null | undefined = await state?.channel().catch((): null => null);
-        if (!voice) return ctx.errorReply(messages.commands.quiz.notInVoice, { ephemeral: true });
+        if (!voice) return ctx.errorReply(messages.commands.quiz.not.inVoice, { ephemeral: true });
 
         await ctx.deferReply();
 
@@ -64,7 +64,7 @@ export default class QuizStartSubCommand extends SubCommand {
             const reasons: Record<typeof result.reason, string> = {
                 alreadyRunning: messages.commands.quiz.alreadyRunning,
                 busy: messages.commands.quiz.busy,
-                notEnoughTracks: messages.commands.quiz.notEnoughTracks,
+                notEnoughTracks: messages.commands.quiz.not.enoughTracks,
             };
 
             return ctx.editOrReply({ content: reasons[result.reason], flags: MessageFlags.Ephemeral });

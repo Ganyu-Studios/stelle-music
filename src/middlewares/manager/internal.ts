@@ -36,7 +36,7 @@ export const checkNodes: MiddlewareContext<void, AnyContext> = createMiddleware<
     const { client } = context;
 
     if (!client.manager.isUsable()) {
-        await context.errorReply(messages.events.noNodes, { ephemeral: true });
+        await context.errorReply(messages.events.no.nodes, { ephemeral: true });
 
         return stop();
     }
@@ -56,7 +56,7 @@ export const checkPlayer: MiddlewareContext<{ player: PlayerStructure }, AnyCont
         const player: PlayerStructure | undefined = context.client.manager.getPlayer(context.guildId);
         if (!player) {
             const { messages } = await context.locale();
-            await context.errorReply(messages.events.noPlayer, { ephemeral: true });
+            await context.errorReply(messages.events.no.player, { ephemeral: true });
 
             return stop();
         }
@@ -71,7 +71,7 @@ export const checkPlayer: MiddlewareContext<{ player: PlayerStructure }, AnyCont
  */
 export const checkQueue: MiddlewareContext<void, AnyContext> = createPlayerGuard(
     async (player): Promise<boolean> => !!(await player.data.get("enabledAutoplay")) || player.queue.tracks.length > 0,
-    (messages): string => messages.events.noTracks,
+    (messages): string => messages.events.no.tracks,
 );
 
 /**

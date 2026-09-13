@@ -47,14 +47,14 @@ export async function requestListener(client: UsingClient, message: MessageStruc
     const { messages } = await ContextOps.locale(client, guildId);
 
     if (!client.manager.isUsable()) {
-        await sendTemporary(client, channelId, messages.events.noNodes);
+        await sendTemporary(client, channelId, messages.events.no.nodes);
         return true;
     }
 
     const state: VoiceState | null = await member.voice().catch((): null => null);
     const voice: AllGuildVoiceChannels | undefined = await state?.channel();
     if (!voice) {
-        await sendTemporary(client, channelId, messages.events.noVoiceChannel);
+        await sendTemporary(client, channelId, messages.events.no.voiceChannel);
         return true;
     }
 

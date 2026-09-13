@@ -79,14 +79,16 @@ export default {
             stop: "`👋` Stopping and leaving...",
             shuffle: "`✅` The queue has been shuffled.",
             quiz: {
-                notInVoice: "`❌` You must be in a voice channel to start a quiz.",
                 alreadyRunning: "`❌` A music quiz is already running in this server.",
                 busy: "`❌` I'm already playing music in this server. Stop the player before starting a quiz.",
-                notEnoughTracks: "`❌` I couldn't gather enough tracks for the quiz. Check the configured source.",
                 started: ({ rounds }: IQuizStarted): string =>
                     `\`🎶\` **Music quiz started!** \`${rounds}\` rounds — hop in voice and guess the title and artist!`,
                 noQuiz: "`❌` There is no quiz running in this server.",
                 stopped: "`👋` The music quiz has been stopped.",
+                not: {
+                    inVoice: "`❌` You must be in a voice channel to start a quiz.",
+                    enoughTracks: "`❌` I couldn't gather enough tracks for the quiz. Check the configured source.",
+                },
             },
             skip: {
                 amount: ({ amount }: IAmount): string => `\`✅\` Skipped the amount of: \`${amount} tracks\`.`,
@@ -119,8 +121,10 @@ export default {
                     `\`❌\` You already reached the playlist limit for your account. Maximum allowed: \`${amount}\`.`,
                 trackLimit: ({ amount }: IAmount): string =>
                     `\`❌\` You cannot add more tracks to this playlist. Maximum allowed tracks: \`${amount}\`.`,
-                noPlaylist: "`❌` **No playlists** were found with this query.",
-                noTracks: "`❌` **No tracks** were found in this playlist.",
+                no: {
+                    playlist: "`❌` **No playlists** were found with this query.",
+                    tracks: "`❌` **No tracks** were found in this playlist.",
+                },
                 list: {
                     available: "`📋` Available playlists",
                     private: "`🔒` Private",
@@ -340,45 +344,56 @@ export default {
         },
         events: {
             inCooldown: ({ time }: ICooldown): string => `\`❌\` You need to wait: <t:${time}:R> (<t:${time}:t>) to use this.`,
-            invalidOptions: ({ options, list }: IOptions): string =>
-                `\`❌\` Invalid command options or arguments.\n-# - **Required**: \`<>\`\n-# - **Optional**: \`[]\`\n\n\`📋\` **Usage**:\n ${options}\n\`📢\` **Options Available**:\n${list}`,
-            noSameVoice: ({ channelId }: IChannel): string => `\`❌\` You are not in the **same voice channel** as me. (<#${channelId}>)`,
-            onlyUser: ({ userId }: IUser): string => `\`❌\` Only the user: <@${userId}> can use this.`,
-            noMembers: ({ clientName }: IClientName): string =>
-                `\`🎧\` ${clientName} is alone in the **voice channel**... Leaving the channel.`,
-            playerQueue: ({ tracks }: ITracks): string => `\`📋\` Here is the full server queue: \n\n${tracks}`,
             channelEmpty: ({ type, clientName }: ITypeName): string =>
                 `\`🎧\` ${clientName} is alone in the **voice channel**... Pausing and waiting **${type}**.`,
             mention: ({ clientName, defaultPrefix, commandName }: IMention): string =>
                 `\`📢\` Hey! My name is: **${clientName}** and my prefix is: \`${defaultPrefix}\` and **/** too!\n\`📋\` If you want to see my commands, type: \`${defaultPrefix} ${commandName}\` or /${commandName}.`,
             hasMembers: ({ clientName }: IClientName): string => `\`🎧\` ${clientName} is not alone anymore... Resuming.`,
             is247Enabled: "`✅` The 24/7 mode is enabled... I will stay in the voice channel until you tell me to leave.",
-            onlyDeveloper: "`❌` Only the **bot developer** can use this.",
-            onlyGuildOwner: "`❌` Only the **guild owner** can use this.",
-            noCommand: "`❌` I don't have the required command *yet*, try again in a moment.",
-            noVoiceChannel: "`❌` You are not in a **voice channel**... Join to play music.",
-            noNodes: "`❌` I'm not connected to any of my nodes.",
-            noPlayer: "`❌` Nothing is playing right now...",
-            noPrevious: "`❌` There is no previous track to add.",
-            noTracks: "`❌` There are no more tracks in the queue.",
-            noQuery: "`❌` Enter a track name or URL to play it.",
-            noSameGuild: "`❌` The channel must be in this guild.",
-            invalidInput: "`❌` The provided input is not valid (cannot be a URL or any other invalid format).",
-            playerEnd: "`🔰` The queue has finished... Waiting for more tracks.",
             moreTracks: "`❌` In order to enable **this** `one or more tracks` are required.",
             commandError: "`❌` Something unexpected ocurred during the execution.\n`📢` If the problem persists, report the issue.",
+            no: {
+                sharedVoice: ({ channelId }: IChannel): string =>
+                    `\`❌\` You are not in the **same voice channel** as me. (<#${channelId}>)`,
+                members: ({ clientName }: IClientName): string =>
+                    `\`🎧\` ${clientName} is alone in the **voice channel**... Leaving the channel.`,
+                command: "`❌` I don't have the required command *yet*, try again in a moment.",
+                voiceChannel: "`❌` You are not in a **voice channel**... Join to play music.",
+                nodes: "`❌` I'm not connected to any of my nodes.",
+                player: "`❌` Nothing is playing right now...",
+                previous: "`❌` There is no previous track to add.",
+                tracks: "`❌` There are no more tracks in the queue.",
+                query: "`❌` Enter a track name or URL to play it.",
+                guildMatch: "`❌` The channel must be in this guild.",
+            },
+            invalid: {
+                options: ({ options, list }: IOptions): string =>
+                    `\`❌\` Invalid command options or arguments.\n-# - **Required**: \`<>\`\n-# - **Optional**: \`[]\`\n\n\`📋\` **Usage**:\n ${options}\n\`📢\` **Options Available**:\n${list}`,
+                input: "`❌` The provided input is not valid (cannot be a URL or any other invalid format).",
+            },
+            only: {
+                user: ({ userId }: IUser): string => `\`❌\` Only the user: <@${userId}> can use this.`,
+                developer: "`❌` Only the **bot developer** can use this.",
+                guildOwner: "`❌` Only the **guild owner** can use this.",
+            },
+            player: {
+                queue: ({ tracks }: ITracks): string => `\`📋\` Here is the full server queue: \n\n${tracks}`,
+                end: "`🔰` The queue has finished... Waiting for more tracks.",
+            },
             autocomplete: {
                 loadPlaylist: ({ name, visibility, author }: IAutocompletePlaylist): string =>
                     `Name: ${name} - State: ${visibility} | by ${author}`,
-                noPlaylist: "Stelle - No playlists found.",
-                noAnything: "Stelle - Something unexpected happened using this autocomplete.",
-                noNodes: "Stelle - I'm not connected to any of my nodes.",
-                noVoiceChannel: "Stelle - You are not in a voice channel... Join to play music.",
-                noSameVoice: "Stelle - You are not in the same voice channel as me.",
-                noQuery: "Stelle - Enter a track name or URL to play it.",
-                noTracks: "Stelle - No tracks was found. Enter another track name or URL.",
-                noGuild: "Stelle - This autocomplete only can be used in a guild.",
-                noCommand: "Stelle - Invalid command name.",
+                no: {
+                    playlist: "Stelle - No playlists found.",
+                    anything: "Stelle - Something unexpected happened using this autocomplete.",
+                    nodes: "Stelle - I'm not connected to any of my nodes.",
+                    voiceChannel: "Stelle - You are not in a voice channel... Join to play music.",
+                    sharedVoice: "Stelle - You are not in the same voice channel as me.",
+                    query: "Stelle - Enter a track name or URL to play it.",
+                    tracks: "Stelle - No tracks was found. Enter another track name or URL.",
+                    guild: "Stelle - This autocomplete only can be used in a guild.",
+                    command: "Stelle - Invalid command name.",
+                },
             },
             optionTypes: {
                 [ApplicationCommandOptionType.Subcommand]: "subcommand",

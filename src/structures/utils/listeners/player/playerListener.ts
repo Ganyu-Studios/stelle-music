@@ -72,7 +72,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
             embeds: [
                 {
                     color: EmbedColors.Yellow,
-                    description: messages.events.noMembers({
+                    description: messages.events.no.members({
                         clientName: client.me.username,
                     }),
                 },
@@ -88,7 +88,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
             embeds: [
                 {
                     color: EmbedColors.Yellow,
-                    description: messages.events.noMembers({
+                    description: messages.events.no.members({
                         clientName: client.me.username,
                     }),
                 },
@@ -118,7 +118,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
                 embeds: [
                     {
                         color: EmbedColors.Yellow,
-                        description: messages.events.noMembers({
+                        description: messages.events.no.members({
                             clientName: client.me.username,
                         }),
                     },

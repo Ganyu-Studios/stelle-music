@@ -37,7 +37,7 @@ export default class CreateSubCommand extends SubCommand {
         const { client, author } = ctx;
         const { messages } = await ctx.locale();
 
-        if (UtilsOps.isUrl(playlistName)) return ctx.errorReply(messages.events.invalidInput, { ephemeral: true, content: "" });
+        if (UtilsOps.isUrl(playlistName)) return ctx.errorReply(messages.events.invalid.input, { ephemeral: true, content: "" });
 
         const userPlaylistAmount: number = await client.database.playlist.countByUser(author.id);
         const playlistLimit: number = client.config.playlists.userLimit;

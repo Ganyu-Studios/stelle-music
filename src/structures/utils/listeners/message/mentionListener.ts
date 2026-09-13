@@ -29,7 +29,7 @@ export async function mentionListener(client: UsingClient, message: MessageStruc
                 embeds: [
                     {
                         color: EmbedColors.Red,
-                        description: messages.events.noCommand,
+                        description: messages.events.no.command,
                     },
                 ],
             });

@@ -22,14 +22,16 @@ export default {
             stop: "`👋` Deteniendo y abandonando el canal...",
             shuffle: "`✅` La cola ha sido mezclada.",
             quiz: {
-                notInVoice: "`❌` Debes estar en un canal de voz para iniciar un quiz.",
                 alreadyRunning: "`❌` Ya hay un quiz musical en curso en este servidor.",
                 busy: "`❌` Ya estoy reproduciendo música en este servidor. Detén el reproductor antes de iniciar un quiz.",
-                notEnoughTracks: "`❌` No pude juntar suficientes canciones para el quiz. Revisa la fuente configurada.",
                 started: ({ rounds }): string =>
                     `\`🎶\` **¡Quiz musical iniciado!** \`${rounds}\` rondas — entra al voice y adivina el título y el artista.`,
                 noQuiz: "`❌` No hay ningún quiz en curso en este servidor.",
                 stopped: "`👋` El quiz musical fue detenido.",
+                not: {
+                    inVoice: "`❌` Debes estar en un canal de voz para iniciar un quiz.",
+                    enoughTracks: "`❌` No pude juntar suficientes canciones para el quiz. Revisa la fuente configurada.",
+                },
             },
             skip: {
                 amount: ({ amount }): string => `\`✅\` Se han saltado: \`${amount} canciones\`.`,
@@ -61,8 +63,10 @@ export default {
                     `\`❌\` Ya alcanzaste el límite de playlists para tu cuenta. Máximo permitido: \`${amount}\`.`,
                 trackLimit: ({ amount }): string =>
                     `\`❌\` No puedes agregar más canciones a esta playlist. Máximo de canciones permitidas: \`${amount}\`.`,
-                noPlaylist: "`❌` **No se encontraron playlists** con ese query.",
-                noTracks: "`❌` **No se encontraron canciones** en esta playlist.",
+                no: {
+                    playlist: "`❌` **No se encontraron playlists** con ese query.",
+                    tracks: "`❌` **No se encontraron canciones** en esta playlist.",
+                },
                 list: {
                     available: "`📋` Playlists disponibles",
                     private: "`🔒` Privadas",
@@ -279,43 +283,53 @@ export default {
         },
         events: {
             inCooldown: ({ time }): string => `\`❌\` Necesitas esperar: <t:${time}:R> (<t:${time}:t>) para usar esto.`,
-            noSameVoice: ({ channelId }): string => `\`❌\` No estás en el **mismo canal de voz** que yo. (<#${channelId}>)`,
-            onlyUser: ({ userId }): string => `\`❌\` Solo el usuario: <@${userId}> puede usar esto.`,
-            invalidOptions: ({ options, list }): string =>
-                `\`❌\` Opciones o argumentos del comando inválidos.\n- **Requerido**: \`<>\`\n- **Opcional**: \`[]\`\n\n\`📋\` **Uso**:\n ${options}\n\`📢\` **Opciones Disponibles**:\n${list}`,
-            playerQueue: ({ tracks }): string => `\`📋\` Aquí está la cola completa del servidor: \n\n${tracks}`,
             channelEmpty: ({ type }): string => `\`🎧\` Stelle está sola en el **canal de voz**... Pausando y esperando **${type}**.`,
             mention: ({ clientName, defaultPrefix, commandName }): string =>
                 `\`📢\` Hey! Mi nombre es: **${clientName}** y mi prefijo es: \`${defaultPrefix}\` y **/** también!\n\`📋\` Si tu quieres ver mis comandos, escribe: \`${defaultPrefix} ${commandName}\` o /${commandName}.`,
-            noMembers: ({ clientName }): string => `\`🎧\` ${clientName} está sola en el **canal de voz**... Abandonando el canal.`,
             hasMembers: ({ clientName }): string => `\`🎧\` ${clientName} dejó de estar sola... Resumiendo.`,
             is247Enabled: "`✅` El modo 24/7 está activado... Me quedaré en el canal de voz hasta que me digas que me vaya.",
-            onlyDeveloper: "`❌` Solo el **dueño del bot** puede usar esto.",
-            onlyGuildOwner: "`❌` Solo el **dueño del servidor** puede usar esto.",
-            noCommand: "`❌` No tengo el comando necesitado *todavía*, intenta de nuevo en un momento.",
-            noVoiceChannel: "`❌` No estás en un **canal de voz**... Únete a uno para reproducir música.",
-            noNodes: "`❌` No estoy conectada a ninguno de mis nodos.",
-            noPlayer: "`❌` No estoy reproduciendo nada ahora mismo...",
-            noPrevious: "`❌` No hubo una canción antes de esta.",
-            noTracks: "`❌` No hay más canciones en la cola.",
-            noQuery: "`❌` Introduce el nombre o el URL para reproducir.",
-            noSameGuild: "`❌` El canal debe estar en este servidor.",
-            invalidInput: "`❌` La entrada proporcionada no es válida (no puede ser un URL u otro formato inválido).",
-            playerEnd: "`🔰` La cola ha terminado... Esperando más canciones.",
             moreTracks: "`❌` Para habilitar **esto** `una o más canciones` son requeridas.",
             commandError:
                 "`❌` Algo inesperado ocurrió durante la ejecución del comando.\n`📢` Si el problema persiste, reporta el problema.",
+            no: {
+                sharedVoice: ({ channelId }): string => `\`❌\` No estás en el **mismo canal de voz** que yo. (<#${channelId}>)`,
+                members: ({ clientName }): string => `\`🎧\` ${clientName} está sola en el **canal de voz**... Abandonando el canal.`,
+                command: "`❌` No tengo el comando necesitado *todavía*, intenta de nuevo en un momento.",
+                voiceChannel: "`❌` No estás en un **canal de voz**... Únete a uno para reproducir música.",
+                nodes: "`❌` No estoy conectada a ninguno de mis nodos.",
+                player: "`❌` No estoy reproduciendo nada ahora mismo...",
+                previous: "`❌` No hubo una canción antes de esta.",
+                tracks: "`❌` No hay más canciones en la cola.",
+                query: "`❌` Introduce el nombre o el URL para reproducir.",
+                guildMatch: "`❌` El canal debe estar en este servidor.",
+            },
+            invalid: {
+                options: ({ options, list }): string =>
+                    `\`❌\` Opciones o argumentos del comando inválidos.\n- **Requerido**: \`<>\`\n- **Opcional**: \`[]\`\n\n\`📋\` **Uso**:\n ${options}\n\`📢\` **Opciones Disponibles**:\n${list}`,
+                input: "`❌` La entrada proporcionada no es válida (no puede ser un URL u otro formato inválido).",
+            },
+            only: {
+                user: ({ userId }): string => `\`❌\` Solo el usuario: <@${userId}> puede usar esto.`,
+                developer: "`❌` Solo el **dueño del bot** puede usar esto.",
+                guildOwner: "`❌` Solo el **dueño del servidor** puede usar esto.",
+            },
+            player: {
+                queue: ({ tracks }): string => `\`📋\` Aquí está la cola completa del servidor: \n\n${tracks}`,
+                end: "`🔰` La cola ha terminado... Esperando más canciones.",
+            },
             autocomplete: {
                 loadPlaylist: ({ name, visibility, author }): string => `Nombre: ${name} - Estado: ${visibility} | por ${author}`,
-                noPlaylist: "Stelle - No se encontraron playlists.",
-                noAnything: "Stelle - Algo ocurrió intentando usar este autocompletado.",
-                noNodes: "Stelle - No estoy conectada a ninguno de mis nodos.",
-                noVoiceChannel: "Stelle - No estás en un canal de voz... Únete a uno para reproducir música.",
-                noSameVoice: "Stelle - No estás en el mismo canal de voz que yo.",
-                noQuery: "Stelle - Introduce el nombre o el URL para reproducir.",
-                noTracks: "Stelle - No encontre la canción. Introduce otro nombre o el URL.",
-                noGuild: "Stelle - Este autocomplete solo puede ser usado en servidores.",
-                noCommand: "Stelle - Nombre de comando inválido.",
+                no: {
+                    playlist: "Stelle - No se encontraron playlists.",
+                    anything: "Stelle - Algo ocurrió intentando usar este autocompletado.",
+                    nodes: "Stelle - No estoy conectada a ninguno de mis nodos.",
+                    voiceChannel: "Stelle - No estás en un canal de voz... Únete a uno para reproducir música.",
+                    sharedVoice: "Stelle - No estás en el mismo canal de voz que yo.",
+                    query: "Stelle - Introduce el nombre o el URL para reproducir.",
+                    tracks: "Stelle - No encontre la canción. Introduce otro nombre o el URL.",
+                    guild: "Stelle - Este autocomplete solo puede ser usado en servidores.",
+                    command: "Stelle - Nombre de comando inválido.",
+                },
             },
             optionTypes: {
                 [ApplicationCommandOptionType.Subcommand]: "subcomando",

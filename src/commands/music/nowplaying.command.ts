@@ -39,7 +39,7 @@ export default class NowPlayingCommand extends Command {
         const { player } = ctx.metadata.checkPlayer;
 
         const track: TrackStructure | null = player.queue.current;
-        if (!track) return ctx.errorReply(messages.events.noPlayer);
+        if (!track) return ctx.errorReply(messages.events.no.player);
 
         await ctx.deferReply();
 

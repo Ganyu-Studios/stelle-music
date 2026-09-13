@@ -47,7 +47,7 @@ export default class ListSubcommand extends SubCommand {
             isApplicable ? await client.database.playlist.loadable(author.id) : await client.database.playlist.publicOf(target!.id)
         ).sort((a, b): number => Number(b.public) - Number(a.public) || b.createdAt.getTime() - a.createdAt.getTime());
 
-        if (!playlists.length) return ctx.errorReply(messages.commands.playlist.noPlaylist, { ephemeral: true, content: "" });
+        if (!playlists.length) return ctx.errorReply(messages.commands.playlist.no.playlist, { ephemeral: true, content: "" });
 
         const privatePlaylists = playlists.filter((playlist): boolean => isApplicable && playlist.userId === author.id && !playlist.public);
         const publicPlaylists = playlists.filter((playlist): boolean => playlist.public);
