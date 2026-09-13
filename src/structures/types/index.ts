@@ -1,18 +1,28 @@
-import type { PlayerJson } from "lavalink-client";
-import type { Command, ContextMenuCommand, SubCommand, User } from "seyfert";
+import type { NodeJSON, PlayerJSON } from "hoshimi";
+import type { User } from "seyfert";
 import type { EmojiResolvable } from "seyfert/lib/common/index.js";
-import type { APIUser, ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
+import type { ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
-export type { LoadableStelleConfiguration, StelleConfiguration, StelleEnvironment } from "./client/configuration.js";
-export type { AutoplayState, PausedState, StelleConstants, WorkingDirectory } from "./client/constants.js";
-
-export {
-    type LavalinkEvent,
-    type LavalinkEventRun,
-    type LavalinkEvents,
-    type LavalinkEventType,
-    LavalinkEventTypes,
+export * from "./client/components.js";
+export type { InternalStelleConfiguration, StelleConfiguration } from "./client/configuration.js";
+export type {
+    AutoplayState,
+    ConstantsMeta,
+    ConstantsMusic,
+    ConstantsPaths,
+    ConstantsPresence,
+    ConstantsRedis,
+    ConstantsText,
+    OutputDirectory,
+    PausedState,
+} from "./client/constants.js";
+export type { ImageData } from "./client/image.js";
+export type {
+    LavalinkEvent,
+    LavalinkEventRun,
 } from "./client/lavalink.js";
+export type * from "./client/locales.js";
+export * from "./client/nodelink.js";
 
 /**
  * The type of non-unique button styles like link and premium.
@@ -46,24 +56,6 @@ export enum StelleCategory {
 }
 
 /**
- * The enum of the database cache keys.
- */
-export enum CacheKeys {
-    /**
-     * The guild player key.
-     */
-    Player = "guild:player",
-    /**
-     * The guild locale key.
-     */
-    Locale = "guild:locale",
-    /**
-     * The guild prefix key.
-     */
-    Prefix = "guild:prefix",
-}
-
-/**
  * The type of the command options.
  */
 export interface Options {
@@ -92,6 +84,11 @@ export interface Options {
      * @default StelleCategory.Unknown
      */
     category?: StelleCategory;
+    /**
+     * Skip registering the command.
+     * @default false
+     */
+    skipRegister?: boolean;
 }
 
 /**
@@ -107,62 +104,136 @@ export interface EditButtonOptions {
      * The style of the button.
      * @type {NonUniqueButtonStyles}
      */
-    style?: NonUniqueButtonStyles;
+    style: NonUniqueButtonStyles;
     /**
      * The label of the button.
      * @type {string}
      */
-    label?: string;
+    label: string;
     /**
      * The emoji of the button.
      * @type {EmojiResolvable}
      */
-    emoji?: EmojiResolvable;
+    emoji: EmojiResolvable;
+    /**
+     * Whatever the button is disabled or not.
+     * @type {boolean}
+     */
+    disabled: boolean;
 }
 
 /**
  * The type of the api user.
  */
-export type StelleUser = APIUser & {
-    tag: string;
-};
+export type TrackUser = Omit<
+    Plain<User>,
+    | "client"
+    | "avatarDecorationData"
+    | "banner"
+    | "createdAt"
+    | "discriminator"
+    | "flags"
+    | "publicFlags"
+    | "accentColor"
+    | "system"
+    | "verified"
+    | "email"
+    | "mfaEnabled"
+    | "primaryGuild"
+    | "premiumType"
+    | "locale"
+    | "name"
+    | "createdTimestamp"
+    | "globalName"
+    | "avatar"
+    | "bot"
+>;
 
 /**
  * The type of the player session.
  */
-export type StellePlayerJson = Omit<
-    PlayerJson,
-    "ping" | "createdTimeStamp" | "lavalinkVolume" | "equalizer" | "lastPositionChange" | "paused" | "playing" | "queue" | "filters"
->;
+export interface StellePlayerJson
+    extends Omit<PlayerJSON, "ping" | "createdTimestamp" | "lastPositionUpdate" | "paused" | "playing" | "queue" | "filters" | "node"> {
+    node: NonOptionsNode;
+}
+
+/**
+ * The type of the node without options, since the options are not serializable and not needed in the session.
+ */
+export type NonOptionsNode = Omit<NodeJSON, "options">;
 
 /**
  * The type of the session.
  */
-export type SessionJson = StellePlayerJson & {
+export interface SessionJson extends StellePlayerJson {
     /**
      * The message id of the track start message.
+     * @type {string | undefined}
      */
     messageId?: string;
     /**
      * Whatever the autoplay is enabled or not.
+     * @type {boolean | undefined}
      */
     enabledAutoplay?: boolean;
     /**
      * The client user object.
+     * @type {TrackUser | undefined}
      */
-    me?: StelleUser;
+    me?: TrackUser;
     /**
      * The locale string of the guild.
+     * @type {string | undefined}
      */
     localeString?: string;
     /**
      * The lyrics message id.
+     * @type {string | undefined}
      */
     lyricsId?: string;
     /**
      * Whatever the lyrics is enabled or not.
+     * @type {boolean | undefined}
      */
     lyricsEnabled?: boolean;
+    /**
+     * Whatever the 24/7 mode is enabled or not.
+     * @type {boolean | undefined}
+     */
+    is247?: boolean;
+    /**
+     * Whatever the auto-pause in 24/7 mode is enabled or not.
+     * @type {boolean | undefined}
+     */
+    isAutoPause?: boolean;
+    /**
+     * Whatever the player was created from a request channel or not.
+     * @type {boolean | undefined}
+     */
+    isRequestChannel?: boolean;
+}
+
+/**
+ * The metadata for the webhook.
+ */
+export interface WebhookMetadata {
+    /**
+     * The id of the webhook.
+     * @type {string}
+     */
+    id: string;
+    /**
+     * The token of the webhook.
+     * @type {string}
+     */
+    token: string;
+}
+
+/**
+ * The type to get the plain object without functions.
+ */
+export type Plain<T> = {
+    [K in keyof T as T[K] extends Function ? never : K]: T[K];
 };
 
 /**
@@ -189,11 +260,6 @@ export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type NonCommandOptions = Omit<Options, "category">;
 
 /**
- * The types for non-global commands.
+ * The type of the Stelle version string.
  */
-export type NonGlobalCommands = Command | ContextMenuCommand | SubCommand;
-
-/**
- * The type of the user without the client.
- */
-export type CustomUser<T extends User = User> = Omit<T, "client">;
+export type StelleVersion = `${string} v${string}`;
