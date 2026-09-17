@@ -1,5 +1,4 @@
 import { createIntegerOption, Declare, type GuildCommandContext, LocalesT, Options, SubCommand } from "seyfert";
-import { Shortcut } from "yunaforseyfert";
 
 const options = {
     volume: createIntegerOption({
