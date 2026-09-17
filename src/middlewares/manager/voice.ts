@@ -6,11 +6,9 @@ import {
     type MiddlewareContext,
     type VoiceState,
 } from "seyfert";
-import { EmbedColors, type PermissionStrings } from "seyfert/lib/common/index.js";
-import type { PermissionsBitField } from "seyfert/lib/structures/extra/Permissions.js";
-import { MessageFlags } from "seyfert/lib/types/index.js";
+import type { PermissionStrings } from "seyfert/lib/common/index.js";
 import type { PermissionNames } from "#stelle/types";
-import { DiscordOps } from "#stelle/utils/functions/internal/discord.js";
+import { PermissionOps } from "#stelle/utils/functions/internal/permissions.js";
 
 /**
  * Check if the bot is in a voice channel and if is the same as the author.
@@ -71,36 +69,16 @@ export const checkVoicePermissions: MiddlewareContext<void, AnyContext> = create
     const channel: AllGuildVoiceChannels | null | undefined = await state.channel().catch((): null => null);
     if (!channel) return stop();
 
-    const { stagePermissions, voicePermissions } = context.client.config.permissions;
-    const { messages } = await context.locale();
-
     const me: GuildMember | null | undefined = await context.me().catch((): null => null);
-    if (!me) return;
+    if (!me) return stop();
 
-    const permissions: PermissionsBitField = await context.client.channels.memberPermissions(channel.id, me);
-    const missings: PermissionStrings = permissions.keys(permissions.missings(channel.isStage() ? stagePermissions : voicePermissions));
+    const { stagePermissions, voicePermissions } = context.client.config.permissions;
+    const required: PermissionStrings = channel.isStage() ? stagePermissions : voicePermissions;
 
+    const missings: PermissionNames[] = await PermissionOps.missing(context.client, channel.id, me, required);
     if (missings.length) {
-        const keys: PermissionNames[] = DiscordOps.permissions(missings);
-
-        await context.editOrReply({
-            content: "",
-            flags: MessageFlags.Ephemeral,
-            embeds: [
-                {
-                    description: messages.events.permissions.embed.channel({
-                        channelId: channel.id,
-                    }),
-                    color: EmbedColors.Red,
-                    fields: [
-                        {
-                            name: messages.events.permissions.embed.field,
-                            value: keys.map((p): string => `- ${messages.events.permissions.list[p]}`).join("\n"),
-                        },
-                    ],
-                },
-            ],
-        });
+        const { messages } = await context.locale();
+        await context.editOrReply(PermissionOps.message(messages, channel.id, missings));
 
         return stop();
     }

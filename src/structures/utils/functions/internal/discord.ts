@@ -1,7 +1,6 @@
 import { Embed, type Guild, type UsingClient } from "seyfert";
-import type { ColorResolvable, PermissionStrings } from "seyfert/lib/common/index.js";
-import { PermissionsBitField } from "seyfert/lib/structures/extra/Permissions.js";
-import type { PermissionNames, WebhookMetadata } from "#stelle/types";
+import type { ColorResolvable } from "seyfert/lib/common/index.js";
+import type { WebhookMetadata } from "#stelle/types";
 
 /**
  * The interface for the guild log options.
@@ -63,14 +62,5 @@ export const DiscordOps = {
             );
 
         await client.messages.write(client.config.channels.guildsId, { embeds: [embed] });
-    },
-    /**
-     *
-     * Return the permission names from the given permission strings.
-     * @param {PermissionStrings} permissions The permission strings.
-     * @returns {PermissionNames[]} The permission names.
-     */
-    permissions(permissions: PermissionStrings): PermissionNames[] {
-        return new PermissionsBitField(permissions.map((p): bigint => PermissionsBitField.resolve(p))).keys();
     },
 };

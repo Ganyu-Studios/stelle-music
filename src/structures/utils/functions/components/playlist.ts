@@ -17,14 +17,13 @@ import {
 } from "seyfert";
 import { EmbedColors, type PermissionStrings } from "seyfert/lib/common/index.js";
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
-import type { PermissionsBitField } from "seyfert/lib/structures/extra/Permissions.js";
 import { ButtonStyle, MessageFlags, TextInputStyle } from "seyfert/lib/types/index.js";
 import { EmbedPaginator } from "#stelle/classes/components/EmbedPaginator.js";
 import type { userPlaylist } from "#stelle/prisma";
 import type { PermissionNames } from "#stelle/types";
 import { ManageButtonIdentifiers, SaveButtonCustomIds, SaveButtonIdentifiers, type TrackUser } from "#stelle/types";
 import { ComponentOps } from "#stelle/utils/functions/internal/components.js";
-import { DiscordOps } from "#stelle/utils/functions/internal/discord.js";
+import { PermissionOps } from "#stelle/utils/functions/internal/permissions.js";
 import { ms } from "#stelle/utils/functions/internal/time.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
@@ -244,31 +243,10 @@ export const PlaylistOps = {
             });
 
         const { stagePermissions, voicePermissions } = ctx.client.config.permissions;
-        const permissions: PermissionsBitField = await ctx.client.channels.memberPermissions(voice.id, me);
-        const missings: PermissionStrings = permissions.keys(permissions.missings(voice.isStage() ? stagePermissions : voicePermissions));
+        const required: PermissionStrings = voice.isStage() ? stagePermissions : voicePermissions;
 
-        if (missings.length) {
-            const keys: PermissionNames[] = DiscordOps.permissions(missings);
-
-            return interaction.editOrReply({
-                content: "",
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    {
-                        description: messages.events.permissions.embed.channel({
-                            channelId: voice.id,
-                        }),
-                        color: EmbedColors.Red,
-                        fields: [
-                            {
-                                name: messages.events.permissions.embed.field,
-                                value: keys.map((p): string => `- ${messages.events.permissions.list[p]}`).join("\n"),
-                            },
-                        ],
-                    },
-                ],
-            });
-        }
+        const missings: PermissionNames[] = await PermissionOps.missing(ctx.client, voice.id, me, required);
+        if (missings.length) return interaction.editOrReply(PermissionOps.message(messages, voice.id, missings));
 
         await interaction.deferReply(MessageFlags.Ephemeral);
 

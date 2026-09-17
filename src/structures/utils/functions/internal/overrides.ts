@@ -12,7 +12,7 @@ import type { PermissionNames } from "#stelle/types";
 import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js";
 import { sendErrorReport } from "#stelle/utils/functions/internal/report.js";
 import { ContextOps } from "./context.js";
-import { DiscordOps } from "./discord.js";
+import { PermissionOps } from "./permissions.js";
 import { UtilsOps } from "./utils.js";
 
 /**
@@ -27,7 +27,7 @@ async function permissionsFail(
 ): Promise<MessageStructure | WebhookMessageStructure | void> {
     const { messages } = await ctx.locale();
 
-    const keys: PermissionNames[] = DiscordOps.permissions(permissions);
+    const missings: PermissionNames[] = PermissionOps.names(permissions);
 
     return ctx.editOrReply({
         content: "",
@@ -39,7 +39,7 @@ async function permissionsFail(
                 fields: [
                     {
                         name: messages.events.permissions.embed.field,
-                        value: keys.map((p): string => `- ${messages.events.permissions.list[p]}`).join("\n"),
+                        value: missings.map((p): string => `- ${messages.events.permissions.list[p]}`).join("\n"),
                     },
                 ],
             },
