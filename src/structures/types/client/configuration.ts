@@ -50,6 +50,11 @@ interface Permissions {
      * @default ["MuteMembers"]
      */
     stagePermissions: PermissionStrings;
+    /**
+     * The text channel permissions.
+     * @default ["ViewChannel", "SendMessages", "EmbedLinks"]
+     */
+    textPermissions: PermissionStrings;
 }
 
 /**

@@ -50,6 +50,7 @@ export default createConfig({
     permissions: {
         stagePermissions: [PermissionFlagsBits.MuteMembers],
         voicePermissions: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect, PermissionFlagsBits.Speak],
+        textPermissions: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
     },
     sessions: {
         enabled: true,
