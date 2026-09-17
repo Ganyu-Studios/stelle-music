@@ -3,7 +3,7 @@ import { ButtonStyle } from "seyfert/lib/types/index.js";
 import { StelleMusic } from "#stelle/utils/data/constants.js";
 import { ComponentOps } from "#stelle/utils/functions/internal/components.js";
 
-@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkActivePlayer"])
 export default class PauseTrackComponent extends ComponentCommand {
     override componentType = "Button" as const;
     override customId = "player-pauseTrack";

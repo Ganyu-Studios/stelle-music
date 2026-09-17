@@ -82,3 +82,15 @@ export const checkTracks: MiddlewareContext<void, AnyContext> = createPlayerGuar
     (player): boolean => player.queue.totalSize >= 1,
     (messages): string => messages.events.moreTracks,
 );
+
+/**
+ * Check if the player is actively playing something (playing or paused).
+ *
+ * `checkPlayer` only guarantees a player *exists* — after `join` an idle player has no current track, so commands that
+ * act on playback (pause, resume, loop, volume, ...) would otherwise run on nothing and even crash the node on resume.
+ * @type {MiddlewareContext<void, AnyContext>}
+ */
+export const checkActivePlayer: MiddlewareContext<void, AnyContext> = createPlayerGuard(
+    (player): boolean => player.playing || player.paused,
+    (messages): string => messages.events.no.player,
+);

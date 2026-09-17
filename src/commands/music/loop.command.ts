@@ -39,7 +39,7 @@ const options = {
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })
 @Options(options)
 @LocalesT("locales.loop.name", "locales.loop.description")
-@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkActivePlayer"])
 export default class LoopCommand extends Command {
     public override async run(ctx: GuildCommandContext<typeof options, "checkPlayer">): Promise<void> {
         const { options } = ctx;

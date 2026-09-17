@@ -2,7 +2,7 @@ import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfe
 import { StelleMusic } from "#stelle/utils/data/constants.js";
 import { ComponentOps } from "#stelle/utils/functions/internal/components.js";
 
-@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkActivePlayer"])
 export default class ToggleLoopComponent extends ComponentCommand {
     override componentType = "Button" as const;
     override customId = "player-toggleLoop";

@@ -26,7 +26,7 @@ const options = {
 })
 @Options(options)
 @LocalesT("locales.skip.name", "locales.skip.description")
-@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkActivePlayer", "checkQueue"])
 export default class SkipCommand extends Command {
     public override async run(ctx: GuildCommandContext<typeof options, "checkPlayer">): Promise<void> {
         const { options } = ctx;

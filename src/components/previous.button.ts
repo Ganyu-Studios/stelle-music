@@ -1,7 +1,7 @@
 import type { TrackStructure } from "hoshimi";
 import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
 
-@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkActivePlayer"])
 export default class PreviousTrackComponent extends ComponentCommand {
     override componentType = "Button" as const;
     override customId = "player-previousTrack";

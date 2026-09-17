@@ -31,7 +31,7 @@ import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })
 @LocalesT("locales.nowplaying.name", "locales.nowplaying.description")
-@Middlewares(["checkNodes", "checkPlayer"])
+@Middlewares(["checkNodes", "checkPlayer", "checkActivePlayer"])
 export default class NowPlayingCommand extends Command {
     public override async run(ctx: GuildCommandContext<{}, "checkPlayer">): Promise<MessageStructure | WebhookMessageStructure | void> {
         const { messages } = await ctx.locale();

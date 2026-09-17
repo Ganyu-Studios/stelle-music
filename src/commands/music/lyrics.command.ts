@@ -13,7 +13,7 @@ import { displayLyrics } from "#stelle/utils/functions/manager/lyrics.js";
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })
 @LocalesT("locales.lyrics.name", "locales.lyrics.description")
-@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkActivePlayer"])
 export default class LyricsCommand extends Command {
     public override async run(ctx: GuildCommandContext): Promise<void> {
         await displayLyrics(ctx);

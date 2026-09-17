@@ -45,7 +45,7 @@ const options = {
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })
 @Options(options)
 @LocalesT("locales.seek.name", "locales.seek.description")
-@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkActivePlayer"])
 export default class SeekCommand extends Command {
     public override async run(
         ctx: GuildCommandContext<typeof options, "checkPlayer">,

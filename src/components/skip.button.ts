@@ -1,7 +1,7 @@
 import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
 import { ComponentOps } from "#stelle/utils/functions/internal/components.js";
 
-@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkQueue"])
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkActivePlayer", "checkQueue"])
 export default class SkipTrackComponent extends ComponentCommand {
     override componentType = "Button" as const;
     override customId = "player-skipTrack";

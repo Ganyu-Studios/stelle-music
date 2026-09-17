@@ -12,7 +12,7 @@ import { StelleOptions } from "#stelle/utils/decorator.js";
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })
 @LocalesT("locales.stop.name", "locales.stop.description")
-@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer"])
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkActivePlayer"])
 export default class StopCommand extends Command {
     public override async run(ctx: GuildCommandContext<{}, "checkPlayer">): Promise<void> {
         const { messages } = await ctx.locale();
