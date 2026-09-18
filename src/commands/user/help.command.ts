@@ -21,7 +21,7 @@ import type {
 } from "seyfert/lib/types/index.js";
 import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { EmbedPaginator, StelleStringMenu } from "#stelle/classes/components/EmbedPaginator.js";
-import { StelleCategory } from "#stelle/types";
+import { StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js";
 import { TimeFormat } from "#stelle/utils/functions/internal/time.js";

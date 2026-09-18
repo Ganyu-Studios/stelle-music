@@ -1,6 +1,6 @@
 import { Embed, type Guild, type UsingClient } from "seyfert";
 import type { ColorResolvable } from "seyfert/lib/common/index.js";
-import type { WebhookMetadata } from "#stelle/types";
+import type { WebhookMetadata } from "#stelle/types/index.js";
 
 /**
  * The interface for the guild log options.

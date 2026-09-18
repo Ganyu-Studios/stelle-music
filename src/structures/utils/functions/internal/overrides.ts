@@ -8,12 +8,12 @@ import {
 } from "seyfert";
 import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
-import type { PermissionNames } from "#stelle/types";
+import type { PermissionNames } from "#stelle/types/index.js";
+import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js";
+import { PermissionOps } from "#stelle/utils/functions/internal/permissions.js";
 import { sendErrorReport } from "#stelle/utils/functions/internal/report.js";
-import { ContextOps } from "./context.js";
-import { PermissionOps } from "./permissions.js";
-import { UtilsOps } from "./utils.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  * Builds the "missing permissions" embed reply shared by the user- and bot-permission handlers.

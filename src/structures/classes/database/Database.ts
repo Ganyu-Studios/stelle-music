@@ -1,4 +1,5 @@
 import type { UsingClient } from "seyfert";
+import { PrismaService } from "#stelle/classes/database/PrismaService.js";
 import { Cache } from "#stelle/classes/modules/Cache.js";
 import { LocaleController } from "#stelle/controllers/locale.js";
 import { PlayerController } from "#stelle/controllers/player.js";
@@ -6,7 +7,6 @@ import { PlaylistController } from "#stelle/controllers/playlist.js";
 import { PrefixController } from "#stelle/controllers/prefix.js";
 import { RequestsController } from "#stelle/controllers/requests.js";
 import type { PrismaClient } from "#stelle/prisma";
-import { PrismaService } from "./PrismaService.js";
 
 /**
  * Class representing the database.

@@ -1,6 +1,6 @@
 import type { UsingClient } from "seyfert";
+import type { ModelNames } from "#stelle/classes/database/Controller.js";
 import { PrismaClient } from "#stelle/prisma";
-import type { ModelNames } from "./Controller.js";
 
 /**
  * Owns the Prisma client and its connection lifecycle. Replaces the module-global client so the instance, its

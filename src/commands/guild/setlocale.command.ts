@@ -10,7 +10,7 @@ import {
     type WebhookMessageStructure,
 } from "seyfert";
 import { ApplicationIntegrationType, InteractionContextType, PermissionFlagsBits } from "seyfert/lib/types/index.js";
-import { StelleCategory } from "#stelle/types";
+import { StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
 const options = {

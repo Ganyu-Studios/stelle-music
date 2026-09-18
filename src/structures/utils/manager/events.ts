@@ -1,5 +1,5 @@
 import type { HoshimiEvents } from "hoshimi";
-import type { LavalinkEvent, LavalinkEventRun } from "#stelle/types";
+import type { LavalinkEvent, LavalinkEventRun } from "#stelle/types/index.js";
 
 /**
  * Class representing a lavalink event.

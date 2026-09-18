@@ -13,7 +13,7 @@ import {
     type WebhookMessageStructure,
 } from "seyfert";
 import { ApplicationIntegrationType, ChannelType, InteractionContextType } from "seyfert/lib/types/index.js";
-import { StelleCategory } from "#stelle/types";
+import { StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 

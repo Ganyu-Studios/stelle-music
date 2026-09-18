@@ -3,8 +3,8 @@ import { Client, LimitedCollection, LimitedMemoryAdapter, type LogLevels, type M
 import { ActivityType, type GatewayPresenceUpdateData, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
 import { StelleDatabase } from "#stelle/classes/database/Database.js";
 import { StelleManager } from "#stelle/classes/manager/Manager.js";
-import { StelleMiddlewares } from "#stelle/middlewares";
-import type { StelleConfiguration } from "#stelle/types";
+import { StelleMiddlewares } from "#stelle/middlewares/index.js";
+import type { StelleConfiguration } from "#stelle/types/index.js";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 import { StelleMeta, StellePaths, StelleRedis, StelleText } from "#stelle/utils/data/constants.js";
 import { StelleContext } from "#stelle/utils/functions/internal/context.js";

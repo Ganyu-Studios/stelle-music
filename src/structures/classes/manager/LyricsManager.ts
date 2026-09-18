@@ -1,5 +1,5 @@
 import { type LyricsLine, LyricsManager, type LyricsResult, type PlayerStructure, RestRoutes, type TrackStructure } from "hoshimi";
-import type { NodelinkLyrics } from "#stelle/types";
+import type { NodelinkLyrics } from "#stelle/types/index.js";
 
 /**
  * Class representing a lyrics manager for Hoshimi with Nodelink support.

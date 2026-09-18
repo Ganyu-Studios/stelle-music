@@ -1,6 +1,6 @@
 import { DestroyReasons, EventNames } from "hoshimi";
 import { type AllChannels, LogLevels, type UsingClient } from "seyfert";
-import type { SessionJson } from "#stelle/types";
+import type { SessionJson } from "#stelle/types/index.js";
 import { PanelOps } from "#stelle/utils/functions/manager/panel.js";
 import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";

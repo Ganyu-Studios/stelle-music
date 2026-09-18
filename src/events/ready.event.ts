@@ -1,5 +1,5 @@
 import { createEvent } from "seyfert";
-import type { StelleVersion } from "#stelle/types";
+import type { StelleVersion } from "#stelle/types/index.js";
 import { StelleMeta, StellePaths } from "#stelle/utils/data/constants.js";
 import { changePresence } from "#stelle/utils/functions/internal/presence.js";
 

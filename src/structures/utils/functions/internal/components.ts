@@ -18,7 +18,7 @@ import {
     ButtonStyle,
     ComponentType,
 } from "seyfert/lib/types/index.js";
-import type { EditButtonOptions, StelleConfiguration } from "#stelle/types";
+import type { EditButtonOptions, StelleConfiguration } from "#stelle/types/index.js";
 import { InvalidRow } from "#stelle/utils/errors.js";
 
 export const ComponentOps = {

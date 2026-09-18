@@ -25,7 +25,7 @@ import type {
     RESTPatchAPIWebhookWithTokenResult,
     RESTPostAPIWebhookWithTokenJSONBody,
 } from "seyfert/lib/types/index.js";
-import type { WebhookMetadata } from "#stelle/types";
+import type { WebhookMetadata } from "#stelle/types/index.js";
 import { InvalidWebhookURL } from "#stelle/utils/errors.js";
 import { DiscordOps } from "#stelle/utils/functions/internal/discord.js";
 

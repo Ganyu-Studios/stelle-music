@@ -1,7 +1,7 @@
 import { Logger } from "seyfert";
 import { gray, italic, LogLevels, red, rgb24, yellow } from "seyfert/lib/common/index.js";
 import { Configuration } from "#stelle/utils/data/configuration.js";
-import { type GitInfo, getGitInfo } from "./git.js";
+import { type GitInfo, getGitInfo } from "#stelle/utils/functions/internal/git.js";
 
 /**
  * The color function type used for coloring log messages.

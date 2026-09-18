@@ -1,7 +1,7 @@
 import type { TrackRequester, TrackStructure } from "hoshimi";
 import { type DefaultLocale, User } from "seyfert";
-import { TimeFormat } from "./time.js";
-import { UtilsOps } from "./utils.js";
+import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 export const TrackOps = {
     /**

@@ -1,10 +1,10 @@
 import { Hoshimi, SearchSources } from "hoshimi";
 import type { UsingClient } from "seyfert";
+import { RedisQueueStore } from "#stelle/classes/manager/Store.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { autoplayFn } from "#stelle/utils/functions/manager/autoplay.js";
 import { libraryListener } from "#stelle/utils/listeners/node/libraryListener.js";
 import { LavalinkHandler } from "#stelle/utils/manager/handler.js";
-import { RedisQueueStore } from "./Store.js";
 
 /**
  * Class representing the lavalink manager of the bot.

@@ -7,7 +7,7 @@ import {
     type VoiceState,
 } from "seyfert";
 import type { PermissionStrings } from "seyfert/lib/common/index.js";
-import type { PermissionNames } from "#stelle/types";
+import type { PermissionNames } from "#stelle/types/index.js";
 import { PermissionOps } from "#stelle/utils/functions/internal/permissions.js";
 
 /**
