@@ -2,7 +2,7 @@ import type { Stats } from "node:fs";
 import { mkdir, readdir, readFile, stat, unlink, utimes, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { Image } from "imagescript";
-import type { ImageData } from "#stelle/types";
+import type { ImageData } from "#stelle/types/index.js";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 import { StellePaths } from "#stelle/utils/data/constants.js";
 

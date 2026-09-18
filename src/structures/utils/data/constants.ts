@@ -13,8 +13,8 @@ import type {
     ConstantsText,
     OutputDirectory,
     PausedState,
-} from "#stelle/types";
-import { Environment } from "./configuration.js";
+} from "#stelle/types/index.js";
+import { Environment } from "#stelle/utils/data/configuration.js";
 
 /**
  * The type of the package.json file.

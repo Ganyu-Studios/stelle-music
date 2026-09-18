@@ -56,7 +56,7 @@ import {
     type PausedState,
     type PermissionNames,
     StelleCategory,
-} from "#stelle/types";
+} from "#stelle/types/index.js";
 
 /**
  * The English locale for Stelle.

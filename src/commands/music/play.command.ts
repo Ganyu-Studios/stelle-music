@@ -17,7 +17,7 @@ import {
 } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { ApplicationIntegrationType, InteractionContextType, MessageFlags } from "seyfert/lib/types/index.js";
-import { StelleCategory } from "#stelle/types";
+import { StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { OverridesOps } from "#stelle/utils/functions/internal/overrides.js";

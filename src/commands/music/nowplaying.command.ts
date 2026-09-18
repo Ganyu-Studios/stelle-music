@@ -16,7 +16,7 @@ import {
     type WebhookMessageStructure,
 } from "seyfert";
 import { ApplicationIntegrationType, InteractionContextType, MessageFlags } from "seyfert/lib/types/index.js";
-import { StelleCategory } from "#stelle/types";
+import { StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { ImageOps } from "#stelle/utils/functions/internal/image.js";
 import { ms, TimeFormat } from "#stelle/utils/functions/internal/time.js";

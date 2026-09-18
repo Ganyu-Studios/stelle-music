@@ -3,8 +3,8 @@ import type { User } from "seyfert";
 import type { EmojiResolvable } from "seyfert/lib/common/index.js";
 import type { ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
-export * from "./client/components.js";
-export type { InternalStelleConfiguration, StelleConfiguration } from "./client/configuration.js";
+export * from "#stelle/types/client/components.js";
+export type { InternalStelleConfiguration, StelleConfiguration } from "#stelle/types/client/configuration.js";
 export type {
     AutoplayState,
     ConstantsMeta,
@@ -15,14 +15,14 @@ export type {
     ConstantsText,
     OutputDirectory,
     PausedState,
-} from "./client/constants.js";
-export type { ImageData } from "./client/image.js";
+} from "#stelle/types/client/constants.js";
+export type { ImageData } from "#stelle/types/client/image.js";
 export type {
     LavalinkEvent,
     LavalinkEventRun,
-} from "./client/lavalink.js";
-export type * from "./client/locales.js";
-export * from "./client/nodelink.js";
+} from "#stelle/types/client/lavalink.js";
+export type * from "#stelle/types/client/locales.js";
+export * from "#stelle/types/client/nodelink.js";
 
 /**
  * The type of non-unique button styles like link and premium.

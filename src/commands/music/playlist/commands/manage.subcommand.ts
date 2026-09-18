@@ -16,7 +16,7 @@ import {
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
 import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
-import { ManageButtonCustomIds, ManageButtonIdentifiers } from "#stelle/types";
+import { ManageButtonCustomIds, ManageButtonIdentifiers } from "#stelle/types/index.js";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
 import { PlaylistOps } from "#stelle/utils/functions/components/playlist.js";
 import { ComponentOps } from "#stelle/utils/functions/internal/components.js";

@@ -1,7 +1,7 @@
-import { checkCooldown } from "./commands/cooldowns.js";
-import { checkVerifications } from "./commands/verifications.js";
-import { checkActivePlayer, checkNodes, checkPlayer, checkQueue, checkTracks } from "./manager/internal.js";
-import { checkBotVoiceChannel, checkVoiceChannel, checkVoicePermissions } from "./manager/voice.js";
+import { checkCooldown } from "#stelle/middlewares/commands/cooldowns.js";
+import { checkVerifications } from "#stelle/middlewares/commands/verifications.js";
+import { checkActivePlayer, checkNodes, checkPlayer, checkQueue, checkTracks } from "#stelle/middlewares/manager/internal.js";
+import { checkBotVoiceChannel, checkVoiceChannel, checkVoicePermissions } from "#stelle/middlewares/manager/voice.js";
 
 /**
  * The global middlewares of the client.

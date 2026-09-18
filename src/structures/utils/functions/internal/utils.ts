@@ -5,7 +5,7 @@ import { pathToFileURL } from "node:url";
 import { inspect as nodeInspect } from "node:util";
 import type { AnyContext, UsingClient } from "seyfert";
 import type { APIApplicationCommandOptionChoice } from "seyfert/lib/types/index.js";
-import type { Omit, Plain, Prettify } from "#stelle/types";
+import type { Omit, Plain, Prettify } from "#stelle/types/index.js";
 
 /**
  * The sentinel value used by informative autocomplete choices ({@link UtilsOps.autocomplete}); command

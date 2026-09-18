@@ -1,6 +1,6 @@
 import { LoadType, type PlayerStructure, type QueryResult, type TrackStructure } from "hoshimi";
 import type { AllGuildVoiceChannels, GuildMember, LocaleString, UsingClient } from "seyfert";
-import type { TrackUser } from "#stelle/types";
+import type { TrackUser } from "#stelle/types/index.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 

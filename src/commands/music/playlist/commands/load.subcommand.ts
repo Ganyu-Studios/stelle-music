@@ -13,7 +13,7 @@ import {
     type VoiceState,
     type WebhookMessageStructure,
 } from "seyfert";
-import type { TrackUser } from "#stelle/types";
+import type { TrackUser } from "#stelle/types/index.js";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";

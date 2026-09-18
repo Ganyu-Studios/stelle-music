@@ -2,7 +2,7 @@ import type { DefaultLocale, GuildMember, UsingClient } from "seyfert";
 import { EmbedColors, type PermissionStrings } from "seyfert/lib/common/index.js";
 import { PermissionsBitField } from "seyfert/lib/structures/extra/Permissions.js";
 import { MessageFlags } from "seyfert/lib/types/index.js";
-import type { PermissionNames } from "#stelle/types";
+import type { PermissionNames } from "#stelle/types/index.js";
 
 export const PermissionOps = {
     /**

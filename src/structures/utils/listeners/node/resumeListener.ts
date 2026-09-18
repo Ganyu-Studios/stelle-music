@@ -1,6 +1,6 @@
 import { type LavalinkPlayer, type NodeStructure, StorageError } from "hoshimi";
 import { LogLevels, type UsingClient } from "seyfert";
-import type { SessionJson } from "#stelle/types";
+import type { SessionJson } from "#stelle/types/index.js";
 import { Sessions } from "#stelle/utils/manager/sessions.js";
 
 /**

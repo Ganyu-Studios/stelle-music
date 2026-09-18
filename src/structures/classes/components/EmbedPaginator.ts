@@ -20,7 +20,7 @@ import {
 } from "seyfert/lib/common/index.js";
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
 import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
-import { type Omit, PaginatorButtonCustomIds, PaginatorButtonIdentifiers } from "#stelle/types";
+import { type Omit, PaginatorButtonCustomIds, PaginatorButtonIdentifiers } from "#stelle/types/index.js";
 import { InvalidComponentRun, InvalidEmbedsLength, InvalidMessage, InvalidPageNumber } from "#stelle/utils/errors.js";
 import { ComponentOps } from "#stelle/utils/functions/internal/components.js";
 import { ms } from "#stelle/utils/functions/internal/time.js";

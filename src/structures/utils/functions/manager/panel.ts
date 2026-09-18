@@ -6,7 +6,7 @@ import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { ImageOps } from "#stelle/utils/functions/internal/image.js";
 import { ms } from "#stelle/utils/functions/internal/time.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
-import { UtilsOps } from "../internal/utils.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  * The messages tree of a resolved locale.

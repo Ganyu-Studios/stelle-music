@@ -1,8 +1,8 @@
 import type { HoshimiEvents } from "hoshimi";
 import type { UsingClient } from "seyfert";
 import { BaseHandler } from "seyfert/lib/common/index.js";
-import { UtilsOps } from "../functions/internal/utils.js";
-import type { Lavalink } from "./events.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
+import type { Lavalink } from "#stelle/utils/manager/events.js";
 
 /**
  * The event parameters of the lavalink events.

@@ -1,7 +1,7 @@
 import type { NodeOptions, PlayerStructure } from "hoshimi";
 import MeowDB from "meowdb";
 import type { MakeRequired, RestOrArray } from "seyfert/lib/common/index.js";
-import type { NonOptionsNode, SessionJson, StellePlayerJson } from "#stelle/types";
+import type { NonOptionsNode, SessionJson, StellePlayerJson } from "#stelle/types/index.js";
 import { StellePaths } from "#stelle/utils/data/constants.js";
 import { InvalidNodeSession } from "#stelle/utils/errors.js";
 import { ms } from "#stelle/utils/functions/internal/time.js";

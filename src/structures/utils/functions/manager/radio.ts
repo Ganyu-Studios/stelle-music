@@ -1,5 +1,5 @@
 import { type PlayerStructure, type QueryResult, SearchSources, SourceNames, type TrackStructure } from "hoshimi";
-import type { TrackUser } from "#stelle/types";
+import type { TrackUser } from "#stelle/types/index.js";
 
 /**
  * How a seeded mix's tracks are meant to be consumed.

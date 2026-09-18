@@ -1,4 +1,4 @@
-import { UtilsOps } from "./utils.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  * The similarity ratio (0..1) at or above which a guess is accepted as a match. Tuned against the cases in

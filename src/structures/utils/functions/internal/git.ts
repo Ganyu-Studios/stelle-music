@@ -1,6 +1,6 @@
 import { exec } from "node:child_process";
 import { promisify } from "node:util";
-import type { IBotInfoGitField, Prettify } from "#stelle/types";
+import type { IBotInfoGitField, Prettify } from "#stelle/types/index.js";
 
 /**
  * The type of the Git information.

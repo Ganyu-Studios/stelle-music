@@ -1,8 +1,8 @@
 import { join } from "node:path";
 import { z } from "zod";
-import type { InternalStelleConfiguration, StelleConfiguration } from "#stelle/types";
+import type { InternalStelleConfiguration, StelleConfiguration } from "#stelle/types/index.js";
 import { InvalidConfiguration, InvalidEnvironment } from "#stelle/utils/errors.js";
-import { UtilsOps } from "../functions/internal/utils.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 const envSchema = z.object({
     TOKEN: z.string(),
