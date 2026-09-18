@@ -1,4 +1,3 @@
-import type { LyricsResult } from "hoshimi";
 import type { ParseClient, ParseGlobalMiddlewares, ParseLocales } from "seyfert";
 import type { Stelle } from "#stelle/classes/client/Stelle.js";
 import type English from "#stelle/locales/en-US.js";
