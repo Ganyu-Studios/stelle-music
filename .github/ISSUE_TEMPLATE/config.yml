@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🌟 Stelle Support Server
+    url: https://discord.com/invite/4JmKY8wgB6
+    about: Join our Discord server for real-time support and community discussion
+  - name: 📚 Wiki & Documentation
+    url: https://github.com/Ganyu-Studios/stelle-music/wiki
+    about: Check the wiki for comprehensive documentation and guides
+  - name: 💬 Discussions
+    url: https://github.com/Ganyu-Studios/stelle-music/discussions
+    about: General discussions, ideas, and community topics
