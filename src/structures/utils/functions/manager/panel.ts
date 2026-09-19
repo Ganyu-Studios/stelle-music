@@ -1,5 +1,5 @@
 import { LoopMode, type PlayerStructure, type TrackStructure } from "hoshimi";
-import { ActionRow, AttachmentBuilder, Button, type DefaultLocale, Embed, type UsingClient } from "seyfert";
+import { ActionRow, AttachmentBuilder, Button, type DefaultLocale, Embed, type MessageStructure, type UsingClient } from "seyfert";
 import { ButtonStyle } from "seyfert/lib/types/index.js";
 import { StelleMusic } from "#stelle/utils/data/constants.js";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
@@ -18,6 +18,18 @@ type Messages = DefaultLocale["messages"];
  * @type {number}
  */
 const QUEUE_PREVIEW: number = 10;
+
+/**
+ * The Discord epoch (2015-01-01) used to derive a message's timestamp from its snowflake id.
+ * @type {number}
+ */
+const DISCORD_EPOCH: number = 1420070400000;
+
+/**
+ * The bulk-delete age window. Discord rejects bulk-deleting messages older than 14 days; a margin avoids edge rejections.
+ * @type {number}
+ */
+const BULK_DELETE_MAX_AGE: number = 13 * 24 * 60 * 60 * 1000;
 
 /**
  * The state used to render the player control buttons.
@@ -257,7 +269,39 @@ export const PanelOps = {
      * @param {string} guildId The guild id.
      * @returns {Promise<void>} A promise that resolves once the panel is reset.
      */
-    reset(client: UsingClient, guildId: string): Promise<void> {
-        return PanelOps.update(client, guildId);
+    async reset(client: UsingClient, guildId: string): Promise<void> {
+        await PanelOps.update(client, guildId);
+        await PanelOps.purge(client, guildId);
+    },
+    /**
+     *
+     * Clear the request channel of every message except the panel, leaving it showing only the persistent panel.
+     * No-op when the guild has no request channel. Best-effort: missing permissions or too-old messages are ignored.
+     * @param {UsingClient} client The client instance.
+     * @param {string} guildId The guild id.
+     * @returns {Promise<void>} A promise that resolves once the channel is cleared.
+     */
+    async purge(client: UsingClient, guildId: string): Promise<void> {
+        const config = await client.database.requests.get(guildId);
+        if (!config) return;
+
+        const recent: MessageStructure[] = await client.messages.list(config.channelId, { limit: 100 }).catch((): [] => []);
+
+        // Never touch the panel, and only bulk-delete messages young enough for Discord to accept.
+        const cutoff: number = Date.now() - BULK_DELETE_MAX_AGE;
+        const ids: string[] = recent
+            .filter((message): boolean => message.id !== config.messageId && Number(BigInt(message.id) >> 22n) + DISCORD_EPOCH > cutoff)
+            .map((message): string => message.id);
+
+        if (!ids.length) return;
+
+        // bulk-delete requires at least two messages; fall back to a single delete for one.
+        if (ids.length === 1) {
+            await client.messages.delete(ids[0], config.channelId).catch((): null => null);
+
+            return;
+        }
+
+        await client.messages.purge(ids, config.channelId, "Request channel cleanup").catch((): null => null);
     },
 };

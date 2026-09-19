@@ -55,11 +55,7 @@ export default createLavalinkEvent({
 
         Sessions.delete(player.guildId);
 
-        // Reset the request-channel panel to idle on every destroy. PanelOps.reset reads the request config from the
-        // database and no-ops when the guild has none, so it must not be gated on `player.data` (unreliable here) nor
-        // sit behind the voice/text early-returns below — `disconnect()` clears `player.voiceId` during destroy, which
-        // used to short-circuit past this and leave a stale panel (e.g. when the bot left an empty channel).
-        await PanelOps.reset(client, player.guildId);
+        if (await player.data.get("isRequestChannel")) await PanelOps.reset(client, player.guildId);
 
         const textId: string | undefined = player.textId ?? player.options.textId;
         if (!textId) return;
