@@ -32,6 +32,12 @@ import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 
 export { SaveType } from "#stelle/utils/functions/components/playlist/save.js";
 
+const saveType: Record<SaveButtonIdentifiers, SaveType> = {
+    [SaveButtonIdentifiers.CurrentTrack]: SaveType.Current,
+    [SaveButtonIdentifiers.CurrentQueue]: SaveType.Queue,
+    [SaveButtonIdentifiers.FromURL]: SaveType.URL,
+} as const;
+
 /**
  * The playlist manage-panel button handlers (save, visibility toggle, load, delete, info), grouped as
  * a single namespace for the `/playlist manage` component collector.
@@ -112,15 +118,7 @@ export const PlaylistOps = {
         collector.run(SaveButtonCustomIds, async (interaction): Promise<void> => {
             if (!interaction.isButton()) return;
 
-            const saveType: Record<SaveButtonIdentifiers, SaveType> = {
-                [SaveButtonIdentifiers.CurrentTrack]: SaveType.Current,
-                [SaveButtonIdentifiers.CurrentQueue]: SaveType.Queue,
-                [SaveButtonIdentifiers.FromURL]: SaveType.URL,
-            } as const;
-
-            const type: SaveType = saveType[interaction.customId as SaveButtonIdentifiers];
-
-            await playlistTrackSave(ctx, interaction, playlist, type);
+            await playlistTrackSave(ctx, interaction, playlist, saveType[interaction.customId as SaveButtonIdentifiers]);
         });
     },
 
@@ -150,7 +148,9 @@ export const PlaylistOps = {
         };
 
         let style: ButtonStyle = ButtonStyle.Success;
+
         if (playlist.public) style = ButtonStyle.Danger;
+
         const label: string = messages.commands.playlist.manage.options.toggle({
             state: getVisibility(!playlist.public),
         });
