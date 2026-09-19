@@ -92,12 +92,11 @@ export default class ListSubcommand extends SubCommand {
                 ? `### ${messages.commands.playlist.list.private} (${privatePlaylists.length})`
                 : `### ${messages.commands.playlist.list.public} (${publicPlaylists.length})`;
 
-        // One combined budget per page: slice 10 rows at a time, then re-group that slice by section so each
-        // section present on the page gets its header (repeated when a section continues onto the next page).
         const length: number = 10;
-        const embeds: Embed[] = [];
 
-        for (let start: number = 0; start < rows.length; start += length) {
+        // One embed for the slice of rows starting at `start`: slice 10 rows, then re-group that slice by section so
+        // each section present on the page gets its header (repeated when a section continues onto the next page).
+        const page = (start: number): Embed => {
             const chunk: Row[] = rows.slice(start, start + length);
             const blocks: string[] = [];
 
@@ -114,22 +113,18 @@ export default class ListSubcommand extends SubCommand {
                 blocks.push(`${header(section)}\n${entries.join("\n")}`);
             }
 
-            embeds.push(
-                new Embed()
-                    .setTitle(messages.commands.playlist.list.available)
-                    .setColor(client.config.color.extra)
-                    .setDescription(blocks.join("\n\n")),
-            );
-        }
+            return new Embed()
+                .setTitle(messages.commands.playlist.list.available)
+                .setColor(client.config.color.extra)
+                .setDescription(blocks.join("\n\n"));
+        };
 
-        if (embeds.length === 1)
-            return ctx.editOrReply({
-                content: "",
-                flags: MessageFlags.Ephemeral,
-                embeds: [embeds[0]],
-            });
+        // A single page needs no paginator controls.
+        if (rows.length <= length) return ctx.editOrReply({ content: "", flags: MessageFlags.Ephemeral, embeds: [page(0)] });
 
-        const paginator: EmbedPaginator = new EmbedPaginator({ ctx, embeds });
+        const paginator: EmbedPaginator = new EmbedPaginator({ ctx });
+
+        for (let start: number = 0; start < rows.length; start += length) paginator.addEmbed(page(start));
 
         await paginator.reply({ ephemeral: true });
     }
