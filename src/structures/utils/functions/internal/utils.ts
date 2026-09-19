@@ -131,7 +131,7 @@ export const UtilsOps = {
         client.database?.disconnect();
         client.gateway?.disconnectAll();
 
-        process.exit(0);
+        process.exitCode = 0;
     },
     /**
      *
