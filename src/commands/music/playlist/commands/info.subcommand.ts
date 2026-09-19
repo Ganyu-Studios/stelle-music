@@ -66,32 +66,21 @@ export default class InfoSubcommand extends SubCommand {
                 }),
             );
 
-        if (tracks.length <= length)
-            return ctx.editOrReply({
-                content: "",
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    new Embed()
-                        .setDescription(messages.events.player.queue({ tracks: tracks.slice(0, length).join("\n") }))
-                        .setColor(client.config.color.extra)
-                        .setThumbnail(guild.iconURL())
-                        .setTimestamp()
-                        .setAuthor({ name: ctx.author.tag, iconUrl: ctx.author.avatarURL() }),
-                ],
-            });
+        // One embed for the slice of tracks starting at `start`.
+        const page = (start: number): Embed =>
+            new Embed()
+                .setDescription(messages.events.player.queue({ tracks: tracks.slice(start, start + length).join("\n") }))
+                .setColor(client.config.color.extra)
+                .setThumbnail(guild.iconURL())
+                .setTimestamp()
+                .setAuthor({ name: ctx.author.tag, iconUrl: ctx.author.avatarURL() });
+
+        // A single page needs no paginator controls.
+        if (tracks.length <= length) return ctx.editOrReply({ content: "", flags: MessageFlags.Ephemeral, embeds: [page(0)] });
 
         const paginator: EmbedPaginator = new EmbedPaginator({ ctx });
 
-        for (let i: number = 0; i < tracks.length; i += length) {
-            paginator.addEmbed(
-                new Embed()
-                    .setDescription(messages.events.player.queue({ tracks: tracks.slice(i, i + length).join("\n") }))
-                    .setColor(client.config.color.extra)
-                    .setThumbnail(guild.iconURL())
-                    .setTimestamp()
-                    .setAuthor({ name: ctx.author.tag, iconUrl: ctx.author.avatarURL() }),
-            );
-        }
+        for (let i: number = 0; i < tracks.length; i += length) paginator.addEmbed(page(i));
 
         await paginator.reply({ ephemeral: true });
     }

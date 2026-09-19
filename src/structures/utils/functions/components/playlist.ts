@@ -414,34 +414,25 @@ export const PlaylistOps = {
 
         if (!(await interaction.replied) && !interaction.deferred) await interaction.deferUpdate();
 
+        // One embed for the slice of tracks starting at `start`.
+        const page = (start: number): Embed =>
+            new Embed()
+                .setDescription(messages.events.player.queue({ tracks: tracks.slice(start, start + limit).join("\n") }))
+                .setColor(ctx.client.config.color.extra)
+                .setThumbnail(guild.iconURL())
+                .setTimestamp()
+                .setAuthor({ name: ctx.author.tag, iconUrl: ctx.author.avatarURL() });
+
+        // A single page needs no paginator controls.
         if (tracks.length <= limit) {
-            await interaction.followup({
-                content: "",
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    new Embed()
-                        .setDescription(messages.events.player.queue({ tracks: tracks.slice(0, limit).join("\n") }))
-                        .setColor(ctx.client.config.color.extra)
-                        .setThumbnail(guild.iconURL())
-                        .setTimestamp()
-                        .setAuthor({ name: ctx.author.tag, iconUrl: ctx.author.avatarURL() }),
-                ],
-            });
-        } else {
-            const paginator: EmbedPaginator = new EmbedPaginator({ ctx });
-
-            for (let i: number = 0; i < tracks.length; i += limit) {
-                paginator.addEmbed(
-                    new Embed()
-                        .setDescription(messages.events.player.queue({ tracks: tracks.slice(i, i + limit).join("\n") }))
-                        .setColor(ctx.client.config.color.extra)
-                        .setThumbnail(guild.iconURL())
-                        .setTimestamp()
-                        .setAuthor({ name: ctx.author.tag, iconUrl: ctx.author.avatarURL() }),
-                );
-            }
-
-            await paginator.reply({ ephemeral: true, followup: true });
+            await interaction.followup({ content: "", flags: MessageFlags.Ephemeral, embeds: [page(0)] });
+            return;
         }
+
+        const paginator: EmbedPaginator = new EmbedPaginator({ ctx });
+
+        for (let i: number = 0; i < tracks.length; i += limit) paginator.addEmbed(page(i));
+
+        await paginator.reply({ ephemeral: true, followup: true });
     },
 } as const;
