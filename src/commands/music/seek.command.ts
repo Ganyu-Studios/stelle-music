@@ -15,6 +15,24 @@ import { StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { ms, TimeFormat } from "#stelle/utils/functions/internal/time.js";
 
+/**
+ * Parse a raw seek input (`2min`, `1h 30m`) into milliseconds.
+ *
+ * Returns null when nothing in the input parses to a positive position.
+ * `ms()` yields 0 for unrecognized text instead of NaN, so without this
+ * guard typos like `abc` or formats we don't support like `1:30` would
+ * silently seek to the start of the track.
+ */
+export function parseSeekInput(raw: string): number | null {
+    const tokens: string[] = raw.split(/\s*,\s*|\s+/).filter(Boolean);
+    if (!tokens.length) return null;
+
+    const result: number = tokens.map((token): number => ms(token)).reduce((a, b): number => a + b, 0);
+    if (Number.isNaN(result) || !Number.isFinite(result) || result <= 0) return null;
+
+    return result;
+}
+
 const options = {
     time: createStringOption({
         description: "Enter the time. (Ex: 2min)",
@@ -24,11 +42,9 @@ const options = {
             description: "locales.seek.option.description",
         },
         value: ({ value }, ok: OKFunction<number | string>) => {
-            const time: string[] = value.split(/\s*,\s*|\s+/);
-            const milis: number[] = time.map((x): number => ms(x));
-            const result: number = milis.reduce((a, b): number => a + b, 0);
+            const result = parseSeekInput(value);
 
-            if (Number.isNaN(result)) return ok(value);
+            if (result === null) return ok(value);
 
             return ok(result);
         },
