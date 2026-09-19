@@ -32,6 +32,12 @@ import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 
 export { SaveType } from "#stelle/utils/functions/components/playlist/save.js";
 
+const saveType: Record<SaveButtonIdentifiers, SaveType> = {
+    [SaveButtonIdentifiers.CurrentTrack]: SaveType.Current,
+    [SaveButtonIdentifiers.CurrentQueue]: SaveType.Queue,
+    [SaveButtonIdentifiers.FromURL]: SaveType.URL,
+} as const;
+
 /**
  * The playlist manage-panel button handlers (save, visibility toggle, load, delete, info), grouped as
  * a single namespace for the `/playlist manage` component collector.
@@ -112,15 +118,7 @@ export const PlaylistOps = {
         collector.run(SaveButtonCustomIds, async (interaction): Promise<void> => {
             if (!interaction.isButton()) return;
 
-            const saveType: Record<SaveButtonIdentifiers, SaveType> = {
-                [SaveButtonIdentifiers.CurrentTrack]: SaveType.Current,
-                [SaveButtonIdentifiers.CurrentQueue]: SaveType.Queue,
-                [SaveButtonIdentifiers.FromURL]: SaveType.URL,
-            } as const;
-
-            const type: SaveType = saveType[interaction.customId as SaveButtonIdentifiers];
-
-            await playlistTrackSave(ctx, interaction, playlist, type);
+            await playlistTrackSave(ctx, interaction, playlist, saveType[interaction.customId as SaveButtonIdentifiers]);
         });
     },
 
@@ -150,7 +148,9 @@ export const PlaylistOps = {
         };
 
         let style: ButtonStyle = ButtonStyle.Success;
+
         if (playlist.public) style = ButtonStyle.Danger;
+
         const label: string = messages.commands.playlist.manage.options.toggle({
             state: getVisibility(!playlist.public),
         });
@@ -414,34 +414,25 @@ export const PlaylistOps = {
 
         if (!(await interaction.replied) && !interaction.deferred) await interaction.deferUpdate();
 
+        // One embed for the slice of tracks starting at `start`.
+        const page = (start: number): Embed =>
+            new Embed()
+                .setDescription(messages.events.player.queue({ tracks: tracks.slice(start, start + limit).join("\n") }))
+                .setColor(ctx.client.config.color.extra)
+                .setThumbnail(guild.iconURL())
+                .setTimestamp()
+                .setAuthor({ name: ctx.author.tag, iconUrl: ctx.author.avatarURL() });
+
+        // A single page needs no paginator controls.
         if (tracks.length <= limit) {
-            await interaction.followup({
-                content: "",
-                flags: MessageFlags.Ephemeral,
-                embeds: [
-                    new Embed()
-                        .setDescription(messages.events.player.queue({ tracks: tracks.slice(0, limit).join("\n") }))
-                        .setColor(ctx.client.config.color.extra)
-                        .setThumbnail(guild.iconURL())
-                        .setTimestamp()
-                        .setAuthor({ name: ctx.author.tag, iconUrl: ctx.author.avatarURL() }),
-                ],
-            });
-        } else {
-            const paginator: EmbedPaginator = new EmbedPaginator({ ctx });
-
-            for (let i: number = 0; i < tracks.length; i += limit) {
-                paginator.addEmbed(
-                    new Embed()
-                        .setDescription(messages.events.player.queue({ tracks: tracks.slice(i, i + limit).join("\n") }))
-                        .setColor(ctx.client.config.color.extra)
-                        .setThumbnail(guild.iconURL())
-                        .setTimestamp()
-                        .setAuthor({ name: ctx.author.tag, iconUrl: ctx.author.avatarURL() }),
-                );
-            }
-
-            await paginator.reply({ ephemeral: true, followup: true });
+            await interaction.followup({ content: "", flags: MessageFlags.Ephemeral, embeds: [page(0)] });
+            return;
         }
+
+        const paginator: EmbedPaginator = new EmbedPaginator({ ctx });
+
+        for (let i: number = 0; i < tracks.length; i += limit) paginator.addEmbed(page(i));
+
+        await paginator.reply({ ephemeral: true, followup: true });
     },
 } as const;

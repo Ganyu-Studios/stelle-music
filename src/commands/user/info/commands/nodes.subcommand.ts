@@ -71,30 +71,21 @@ export default class InfoNodesSubcommand extends SubCommand {
 
         if (!fields.length) return ctx.errorReply(messages.commands.info.nodes.noNodes);
 
-        if (fields.length < limit) {
-            await ctx.editOrReply({
-                embeds: [
-                    new Embed()
-                        .setDescription(messages.commands.info.nodes.description)
-                        .setColor(client.config.color.success)
-                        .addFields(fields.slice(0, limit))
-                        .setTimestamp(),
-                ],
-            });
-        } else {
-            const paginator: EmbedPaginator = new EmbedPaginator({ ctx });
+        // One embed for the slice of node fields starting at `start`.
+        const page = (start: number): Embed =>
+            new Embed()
+                .setDescription(messages.commands.info.nodes.description)
+                .setColor(client.config.color.success)
+                .addFields(fields.slice(start, start + limit))
+                .setTimestamp();
 
-            for (let i = 0; i < fields.length; i += limit) {
-                paginator.addEmbed(
-                    new Embed()
-                        .setDescription(messages.commands.info.nodes.description)
-                        .setColor(client.config.color.success)
-                        .addFields(fields.slice(i, i + limit))
-                        .setTimestamp(),
-                );
-            }
+        // A single page needs no paginator controls.
+        if (fields.length <= limit) return ctx.editOrReply({ embeds: [page(0)] });
 
-            await paginator.reply();
-        }
+        const paginator: EmbedPaginator = new EmbedPaginator({ ctx });
+
+        for (let i = 0; i < fields.length; i += limit) paginator.addEmbed(page(i));
+
+        await paginator.reply();
     }
 }
