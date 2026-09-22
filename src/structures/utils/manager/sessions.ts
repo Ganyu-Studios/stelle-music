@@ -116,21 +116,25 @@ export const Sessions = {
         const json = player.toJSON();
         if (json.queue?.current) json.queue.current.userData = {};
 
-        const base = UtilsOps.omit(json, [
-            "ping",
-            "createdTimestamp",
-            "lastPositionUpdate",
-            "paused",
-            "playing",
-            "queue",
-            "filters",
-            "node",
+        const base = UtilsOps.pick(json, [
+            "voice",
+            "options",
+            "guildId",
+            "volume",
+            "selfDeaf",
+            "selfMute",
+            "loop",
+            "voiceId",
+            "textId",
+            "lastPosition",
+            "position",
         ]);
 
-        const node: NonOptionsNode = UtilsOps.omit(json.node, ["options"]);
+        const node: NonOptionsNode = UtilsOps.pick(json.node, ["id", "sessionId"]);
 
         this.set<SessionJson>(player.guildId, {
             ...base,
+            node,
             messageId: await player.data.get("messageId"),
             enabledAutoplay: await player.data.get("enabledAutoplay"),
             localeString: await player.data.get("localeString"),
@@ -140,7 +144,6 @@ export const Sessions = {
             is247: await player.data.get("is247"),
             isAutoPause: await player.data.get("isAutoPause"),
             isRequestChannel: await player.data.get("isRequestChannel"),
-            node,
         });
     },
 };
