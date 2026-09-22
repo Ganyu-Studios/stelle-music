@@ -14,34 +14,7 @@ export const TrackOps = {
     requesterFn<T = TrackRequester>(requester: TrackRequester): T {
         if (requester instanceof User)
             return {
-                ...UtilsOps.omit(requester as User & Record<string, unknown>, [
-                    "client",
-                    "avatarDecorationData",
-                    "banner",
-                    "createdAt",
-                    "discriminator",
-                    "flags",
-                    "publicFlags",
-                    "accentColor",
-                    "system",
-                    "verified",
-                    "email",
-                    "mfaEnabled",
-                    "primaryGuild",
-                    "premiumType",
-                    "locale",
-                    "name",
-                    "createdTimestamp",
-                    "globalName",
-                    "avatar",
-                    "displayNameStyles",
-                    "collectibles",
-                    "clan",
-                    "bot",
-                    "application",
-                    "bannerColor",
-                    "bio",
-                ]),
+                ...UtilsOps.pick(requester, ["id", "username"]),
                 tag: requester.bot ? requester.username : requester.tag,
             } as T;
 

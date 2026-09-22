@@ -147,6 +147,7 @@ export type TrackUser = Omit<
     | "globalName"
     | "avatar"
     | "bot"
+    | "collectibles"
 >;
 
 /**

@@ -177,6 +177,18 @@ export const UtilsOps = {
     },
     /**
      *
+     * Pick only the given keys from an object and convert to plain object without functions.
+     * @param {T} obj The object to pick keys from.
+     * @param {K[]} keys The keys to keep.
+     * @returns {Plain<Pick<T, K>>} The object with only the keys and without functions.
+     */
+    pick<T extends object, K extends readonly (keyof T)[]>(obj: T, keys: K): Prettify<Plain<Pick<T, K[number]>>> {
+        return Object.fromEntries(Object.entries(obj as Record<string, unknown>).filter(([key]) => keys.includes(key as keyof T))) as Plain<
+            Pick<T, K[number]>
+        >;
+    },
+    /**
+     *
      * Import a file dynamically.
      * @param {string} path The path to the file.
      * @returns {Promise<T>} The imported file.
