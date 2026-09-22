@@ -59,20 +59,14 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
         return;
     }
 
-    if (
-        isChannel &&
-        isEmpty &&
-        !player.playing &&
-        !player.paused &&
-        !(player.queue.tracks.length + Number(!!player.queue.current)) &&
-        player.connected
-    ) {
+    // Only joined, doing nothing (idle + no current/queued track): leave with a dedicated "nothing was playing" notice.
+    if (isChannel && isEmpty && player.isIdle() && !player.queue.totalSize && player.connected) {
         await player.destroy();
         await client.messages.write(player.textId, {
             embeds: [
                 {
                     color: EmbedColors.Yellow,
-                    description: messages.events.no.members({
+                    description: messages.events.no.idle({
                         clientName: client.me.username,
                     }),
                 },

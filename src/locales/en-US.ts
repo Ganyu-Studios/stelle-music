@@ -357,6 +357,8 @@ export default {
                     `\`❌\` You are not in the **same voice channel** as me. (<#${channelId}>)`,
                 members: ({ clientName }: IClientName): string =>
                     `\`🎧\` ${clientName} is alone in the **voice channel**... Leaving the channel.`,
+                idle: ({ clientName }: IClientName): string =>
+                    `\`🎧\` ${clientName} was alone with **nothing playing**... Leaving the channel.`,
                 command: "`❌` I don't have the required command *yet*, try again in a moment.",
                 voiceChannel: "`❌` You are not in a **voice channel**... Join to play music.",
                 nodes: "`❌` I'm not connected to any of my nodes.",

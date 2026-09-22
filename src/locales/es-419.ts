@@ -294,6 +294,7 @@ export default {
             no: {
                 sharedVoice: ({ channelId }): string => `\`❌\` No estás en el **mismo canal de voz** que yo. (<#${channelId}>)`,
                 members: ({ clientName }): string => `\`🎧\` ${clientName} está sola en el **canal de voz**... Abandonando el canal.`,
+                idle: ({ clientName }): string => `\`🎧\` ${clientName} estaba sola y **sin reproducir nada**... Abandonando el canal.`,
                 command: "`❌` No tengo el comando necesitado *todavía*, intenta de nuevo en un momento.",
                 voiceChannel: "`❌` No estás en un **canal de voz**... Únete a uno para reproducir música.",
                 nodes: "`❌` No estoy conectada a ninguno de mis nodos.",
