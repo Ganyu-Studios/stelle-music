@@ -1,0 +1,108 @@
+name: ⚡ Performance Issue
+description: Report performance problems or optimization suggestions
+title: "[PERFORMANCE] "
+labels: ["performance", "needs-investigation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a performance issue! This helps us keep Stelle running smoothly for everyone.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Prerequisites
+      description: Please confirm the following before submitting this performance issue
+      options:
+        - label: I have searched existing issues to ensure this hasn't been reported before
+          required: true
+        - label: This is specifically a performance-related issue (slow response, high resource usage, etc.)
+          required: true
+        - label: I have observed this issue multiple times
+          required: true
+
+  - type: dropdown
+    id: performance-type
+    attributes:
+      label: Performance Issue Type
+      description: What type of performance issue are you experiencing?
+      options:
+        - Slow command response
+        - High CPU usage
+        - High memory usage
+        - Bot lag/freezing
+        - Slow music loading
+        - Database query issues
+        - Network/connectivity issues
+        - Other performance issue
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Performance Issue Description
+      description: Describe the performance problem in detail
+      placeholder: "The bot takes a long time to..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this performance issue?
+      placeholder: |
+        1. Use command '...'
+        2. Wait for response
+        3. Notice slow performance
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      description: Where are you experiencing this performance issue?
+      options:
+        - Official bot invite
+        - Self-hosted instance
+        - Development environment
+    validations:
+      required: true
+
+  - type: input
+    id: server-size
+    attributes:
+      label: Server Size
+      description: Approximate number of members in the Discord server
+      placeholder: "~500 members"
+
+  - type: textarea
+    id: timing
+    attributes:
+      label: Performance Metrics
+      description: How long does the operation take? What would you expect?
+      placeholder: |
+        - Actual response time: 15 seconds
+        - Expected response time: 2-3 seconds
+        - Commands affected: /play, /queue
+
+  - type: textarea
+    id: system-info
+    attributes:
+      label: System Information (Self-hosted only)
+      description: For self-hosted instances, provide system information
+      placeholder: |
+        - OS: Ubuntu 20.04
+        - CPU: Intel i5-8400
+        - RAM: 8GB
+        - Node.js version: v22.11.0
+        - Stelle version: 0.3.8-BLAZER
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other context about the performance issue
+      placeholder: "This started happening after... Resource usage screenshots..."
