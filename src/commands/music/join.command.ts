@@ -55,6 +55,8 @@ export default class JoinCommand extends Command {
         const voice: AllGuildVoiceChannels | undefined = await state.channel();
         if (!voice) return;
 
+        const localeString = await ctx.localeString();
+
         const { messages } = await ctx.locale();
         const { defaultVolume } = await client.database.players.get(ctx.guildId);
 
@@ -70,6 +72,8 @@ export default class JoinCommand extends Command {
         });
 
         await joinVoiceChannel(player, voice, me);
+
+        if (!(await player.data.get("localeString"))) await player.data.set("localeString", localeString);
 
         await ctx.successReply(messages.commands.join({ channelId: channel.id }), { ephemeral: true, content: "" });
     }
