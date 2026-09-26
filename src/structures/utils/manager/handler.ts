@@ -15,6 +15,11 @@ type LavalinkEventParameters = HoshimiEvents[keyof HoshimiEvents];
 type LavalinkEventNames = keyof HoshimiEvents;
 
 /**
+ * The type of a lavalink event run listener.
+ */
+type Listener = (...args: LavalinkEventParameters) => void;
+
+/**
  * Class representing the lavalink handler.
  * @extends BaseHandler
  * @class LavalinkHandler
@@ -27,6 +32,13 @@ export class LavalinkHandler extends BaseHandler {
      * @type {Map<string, Lavalink>}
      */
     readonly values: Map<LavalinkEventNames, Lavalink> = new Map<LavalinkEventNames, Lavalink>();
+
+    /**
+     * The lavalink event run listeners collection.
+     * Stores the `run` function reference for each event.
+     * @type {Map<LavalinkEventNames, Listener>}
+     */
+    private readonly listeners: Map<LavalinkEventNames, Listener> = new Map<LavalinkEventNames, Listener>();
 
     /**
      * The client instance.
@@ -77,6 +89,7 @@ export class LavalinkHandler extends BaseHandler {
             else this.client.manager.on(event.name, run);
 
             this.values.set(event.name, event);
+            this.listeners.set(event.name, run);
         }
     }
 
@@ -87,22 +100,33 @@ export class LavalinkHandler extends BaseHandler {
      */
     public async reload(name: LavalinkEventNames): Promise<void> {
         const oldEvent: Lavalink | undefined = this.values.get(name);
-        if (!oldEvent?.filepath) return;
 
-        // don't ask... just... don't ask.
-        this.client.manager.removeListener(oldEvent.name, oldEvent.run as never);
-        // i hate this so much, but it's the only way to make it work.
+        /**
+         * The old lavalink event run listener.
+         * Used to remove the previously registered listener.
+         */
+        const oldListener: Listener | undefined = this.listeners.get(name);
+
+        if (!oldEvent?.filepath || !oldListener) return;
+
+        this.client.manager.removeListener(oldEvent.name, oldListener);
+
         const newEvent: Lavalink = await UtilsOps.dynamicImport<Lavalink>(oldEvent.filepath);
         if (!newEvent) return;
 
         newEvent.filepath = oldEvent.filepath;
 
+        /**
+         * The new lavalink event run listener.
+         * Registered as the event listener and stored for future reloads.
+         */
         const run = (...args: LavalinkEventParameters) => newEvent.run(this.client, ...args);
 
         if (newEvent.once) this.client.manager.once(newEvent.name, run);
         else this.client.manager.on(newEvent.name, run);
 
         this.values.set(newEvent.name, newEvent);
+        this.listeners.set(newEvent.name, run);
     }
 
     /**
