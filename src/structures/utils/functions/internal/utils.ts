@@ -128,11 +128,13 @@ export const UtilsOps = {
     cleanup(client: UsingClient): void {
         client.logger.info("[Client] Shutdown requested");
 
-        client.database?.disconnect();
         client.gateway?.disconnectAll();
+        client.database?.disconnect();
+        if (client.redis.isOpen) client.redis.quit();
 
         process.exitCode = 0;
     },
+
     /**
      *
      * Truncate text to a specified length, adding ellipsis if needed.
