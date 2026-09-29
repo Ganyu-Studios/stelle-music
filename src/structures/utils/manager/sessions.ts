@@ -132,18 +132,32 @@ export const Sessions = {
 
         const node: NonOptionsNode = UtilsOps.pick(json.node, ["id", "sessionId"]);
 
+        // These player.data reads are independent, so fetch them concurrently instead of nine awaits in series.
+        const [messageId, enabledAutoplay, localeString, me, lyricsId, lyricsEnabled, is247, isAutoPause, isRequestChannel] =
+            await Promise.all([
+                player.data.get("messageId"),
+                player.data.get("enabledAutoplay"),
+                player.data.get("localeString"),
+                player.data.get("me"),
+                player.data.get("lyricsId"),
+                player.data.get("lyricsEnabled"),
+                player.data.get("is247"),
+                player.data.get("isAutoPause"),
+                player.data.get("isRequestChannel"),
+            ]);
+
         this.set<SessionJson>(player.guildId, {
             ...base,
             node,
-            messageId: await player.data.get("messageId"),
-            enabledAutoplay: await player.data.get("enabledAutoplay"),
-            localeString: await player.data.get("localeString"),
-            me: await player.data.get("me"),
-            lyricsId: await player.data.get("lyricsId"),
-            lyricsEnabled: await player.data.get("lyricsEnabled"),
-            is247: await player.data.get("is247"),
-            isAutoPause: await player.data.get("isAutoPause"),
-            isRequestChannel: await player.data.get("isRequestChannel"),
+            messageId,
+            enabledAutoplay,
+            localeString,
+            me,
+            lyricsId,
+            lyricsEnabled,
+            is247,
+            isAutoPause,
+            isRequestChannel,
         });
     },
 };
