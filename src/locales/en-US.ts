@@ -244,6 +244,7 @@ export default {
                         `\`📘\` State: \`${state}\`\n\`🕛\` Uptime: \`${uptime}\`\n\`🎤\` Players: \`${players}\`\n\`🪭\` Usage: \`${memory}\`\n\`📦\` CPU: \`${cpu}\``,
                     description: "`📋` List of all Stelle nodes.",
                     noNodes: "`❌` No nodes available at the moment.",
+                    refresh: "Refresh",
                     states: {
                         [State.Connected]: "🟢 Connected.",
                         [State.Disconnected]: "🔴 Disconnected.",

@@ -1,18 +1,42 @@
 import { OpCodes, type Stats } from "hoshimi";
 import {
+    ActionRow,
+    Button,
+    type ButtonInteraction,
     Declare,
+    type DefaultLocale,
     Embed,
     type GuildCommandContext,
     LocalesT,
     type MessageStructure,
     SubCommand,
+    type UsingClient,
     type WebhookMessageStructure,
 } from "seyfert";
-import type { APIEmbedField } from "seyfert/lib/types/index.js";
+import { EmbedColors } from "seyfert/lib/common/index.js";
+import { type APIEmbedField, ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
 import { Shortcut } from "yunaforseyfert";
 import { EmbedPaginator } from "#stelle/classes/components/EmbedPaginator.js";
 import { LoggerOps } from "#stelle/utils/functions/internal/logger.js";
-import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
+import { ms, TimeFormat } from "#stelle/utils/functions/internal/time.js";
+
+/**
+ * How many node fields fit in a single embed (Discord's field limit).
+ * @type {number}
+ */
+const LIMIT: number = 25;
+
+/**
+ * The custom id of the node-stats refresh button.
+ * @type {string}
+ */
+const REFRESH_ID: string = "info-nodes-refresh";
+
+/**
+ * How long the refresh button stays active without interaction before it's disabled.
+ * @type {number}
+ */
+const IDLE_TIME: number = ms("2min");
 
 /**
  * Default stats for a node.
@@ -41,6 +65,49 @@ const defaultStats: Stats = {
     },
 };
 
+/**
+ *
+ * Build the node fields fresh from the nodes' current stats. Called on every render so a refresh reflects live values.
+ * @param {UsingClient} client The client instance.
+ * @param {DefaultLocale["messages"]} messages The resolved locale messages.
+ * @returns {APIEmbedField[]} One inline field per node.
+ */
+function renderFields(client: UsingClient, messages: DefaultLocale["messages"]): APIEmbedField[] {
+    return client.manager.nodeManager.nodes.map((node): APIEmbedField => {
+        const stats = node.stats ?? defaultStats;
+
+        return {
+            name: `\`🔰\` ${node.id}`,
+            inline: true,
+            value: messages.commands.info.nodes.value({
+                state: messages.commands.info.nodes.states[node.state],
+                players: stats.players,
+                uptime: TimeFormat.toHumanize(stats.uptime),
+                memory: `${LoggerOps.memoryUsage(stats.memory.used)} / ${LoggerOps.memoryUsage(stats.memory.allocated)}`,
+                cpu: `${stats.cpu.lavalinkLoad.toFixed(2)}% / ${stats.cpu.systemLoad.toFixed(2)}% (Cores: ${stats.cpu.cores})`,
+            }),
+        };
+    });
+}
+
+/**
+ *
+ * Build the refresh button row.
+ * @param {DefaultLocale["messages"]} messages The resolved locale messages.
+ * @param {boolean} [disabled] Whether the button should be disabled (e.g., after the collector idles out).
+ * @returns {ActionRow<Button>} The row with the refresh button.
+ */
+function refreshRow(messages: DefaultLocale["messages"], disabled: boolean = false): ActionRow<Button> {
+    return new ActionRow<Button>().addComponents(
+        new Button()
+            .setCustomId(REFRESH_ID)
+            .setStyle(ButtonStyle.Secondary)
+            .setLabel(messages.commands.info.nodes.refresh)
+            .setEmoji("🔄")
+            .setDisabled(disabled),
+    );
+}
+
 @Declare({
     name: "nodes",
     description: "Get the status of all Stelle nodes.",
@@ -52,40 +119,48 @@ export default class InfoNodesSubcommand extends SubCommand {
         const { client } = ctx;
         const { messages } = await ctx.locale();
 
-        const limit = 25;
-        const fields: APIEmbedField[] = client.manager.nodeManager.nodes.map((node) => {
-            const stats = node.stats ?? defaultStats;
+        const total: number = client.manager.nodeManager.nodes.size;
+        if (!total) return ctx.errorReply(messages.commands.info.nodes.noNodes);
 
-            return {
-                name: `\`🔰\` ${node.id}`,
-                inline: true,
-                value: messages.commands.info.nodes.value({
-                    state: messages.commands.info.nodes.states[node.state],
-                    players: stats.players,
-                    uptime: TimeFormat.toHumanize(stats.uptime),
-                    memory: `${LoggerOps.memoryUsage(stats.memory.used)} / ${LoggerOps.memoryUsage(stats.memory.allocated)}`,
-                    cpu: `${stats.cpu.lavalinkLoad.toFixed(2)}% / ${stats.cpu.systemLoad.toFixed(2)}% (Cores: ${stats.cpu.cores})`,
-                }),
-            };
-        });
-
-        if (!fields.length) return ctx.errorReply(messages.commands.info.nodes.noNodes);
-
-        // One embed for the slice of node fields starting at `start`.
+        // One embed for the slice of node fields starting at `start`, rebuilt from fresh stats each call.
         const page = (start: number): Embed =>
             new Embed()
                 .setDescription(messages.commands.info.nodes.description)
                 .setColor(client.config.color.success)
-                .addFields(fields.slice(start, start + limit))
+                .addFields(renderFields(client, messages).slice(start, start + LIMIT))
                 .setTimestamp();
 
-        // A single page needs no paginator controls.
-        if (fields.length <= limit) return ctx.editOrReply({ embeds: [page(0)] });
+        // More than one page's worth of nodes: fall back to the paginator (no live refresh there).
+        if (total > LIMIT) {
+            const paginator: EmbedPaginator = new EmbedPaginator({ ctx });
 
-        const paginator: EmbedPaginator = new EmbedPaginator({ ctx });
+            for (let i = 0; i < total; i += LIMIT) paginator.addEmbed(page(i));
 
-        for (let i = 0; i < fields.length; i += limit) paginator.addEmbed(page(i));
+            await paginator.reply();
 
-        await paginator.reply();
+            return;
+        }
+
+        // Single page: render with a refresh button and re-render fresh stats on each click until the collector idles.
+        const message = await ctx.editOrReply({ embeds: [page(0)], components: [refreshRow(messages)] }, true);
+
+        const collector = message.createComponentCollector({
+            idle: IDLE_TIME,
+            filter: (interaction): boolean => interaction.user.id === ctx.author.id,
+            onPass: async (interaction): Promise<void> => {
+                await interaction.editOrReply({
+                    flags: MessageFlags.Ephemeral,
+                    embeds: [{ description: messages.events.only.user({ userId: ctx.author.id }), color: EmbedColors.Red }],
+                });
+            },
+            onStop: async (): Promise<void> => {
+                await message.edit({ components: [refreshRow(messages, true)] }).catch((): null => null);
+            },
+        });
+
+        collector.run<ButtonInteraction>(REFRESH_ID, async (interaction): Promise<void> => {
+            await interaction.deferUpdate();
+            await interaction.editOrReply({ embeds: [page(0)], components: [refreshRow(messages)] });
+        });
     }
 }
