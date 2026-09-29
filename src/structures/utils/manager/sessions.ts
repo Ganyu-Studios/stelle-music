@@ -49,6 +49,20 @@ const ids: Map<string, string> = new Map<string, string>(
 );
 
 /**
+ *
+ * Compare two sessions ignoring the volatile playback position (`lastPosition`/`position`) — it changes on every
+ * playerUpdate but is restored from the live node payload on resume, never from the session.
+ * @param {SessionJson} a The stored session.
+ * @param {SessionJson} b The freshly built session.
+ * @returns {boolean} Whether their persisted state is identical.
+ */
+function samePersistedSession(a: SessionJson, b: SessionJson): boolean {
+    const keys = ["lastPosition", "position"] as const;
+
+    return UtilsOps.deepEqual(UtilsOps.omit(a, keys), UtilsOps.omit(b, keys));
+}
+
+/**
  * Utility to manage Lavalink node sessions.
  */
 export const Sessions = {
@@ -146,7 +160,7 @@ export const Sessions = {
                 player.data.get("isRequestChannel"),
             ]);
 
-        this.set<SessionJson>(player.guildId, {
+        const session: SessionJson = {
             ...base,
             node,
             messageId,
@@ -158,6 +172,14 @@ export const Sessions = {
             is247,
             isAutoPause,
             isRequestChannel,
-        });
+        };
+
+        // playerUpdate fires on every position tick, but resume restores the position from the live node payload
+        // (not the session), so persisting a position-only change is wasted synchronous file I/O (MeowDB rewrites the
+        // whole sessions file on every set). Skip the write unless a persisted field actually changed.
+        const stored: SessionJson | undefined = this.get<SessionJson>(player.guildId);
+        if (stored && samePersistedSession(stored, session)) return;
+
+        this.set<SessionJson>(player.guildId, session);
     },
 };

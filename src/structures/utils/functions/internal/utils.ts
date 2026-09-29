@@ -191,6 +191,33 @@ export const UtilsOps = {
     },
     /**
      *
+     * Deeply compare two values for structural equality. Objects match regardless of key order; arrays are compared in
+     * order; `undefined`-valued keys count as absent (JSON semantics, so a value round-tripped through `JSON.parse`
+     * still matches the object it was built from). Functions and other non-plain values fall back to `===`.
+     * @param {unknown} a The first value.
+     * @param {unknown} b The second value.
+     * @returns {boolean} Whether the two values are deeply equal.
+     */
+    deepEqual(a: unknown, b: unknown): boolean {
+        if (a === b) return true;
+        if (typeof a !== "object" || a === null || typeof b !== "object" || b === null) return false;
+
+        if (Array.isArray(a) || Array.isArray(b)) {
+            if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+            return a.every((item, index): boolean => UtilsOps.deepEqual(item, b[index]));
+        }
+
+        const aObj = a as Record<string, unknown>;
+        const bObj = b as Record<string, unknown>;
+
+        const aKeys: string[] = Object.keys(aObj).filter((key): boolean => aObj[key] !== undefined);
+        const bKeys: string[] = Object.keys(bObj).filter((key): boolean => bObj[key] !== undefined);
+        if (aKeys.length !== bKeys.length) return false;
+
+        return aKeys.every((key): boolean => UtilsOps.deepEqual(aObj[key], bObj[key]));
+    },
+    /**
+     *
      * Import a file dynamically.
      * @param {string} path The path to the file.
      * @returns {Promise<T>} The imported file.
