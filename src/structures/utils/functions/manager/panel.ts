@@ -58,6 +58,20 @@ interface ControlsState {
 }
 
 /**
+ * Options for {@link PanelOps.build}.
+ */
+interface BuildOptions {
+    /**
+     * Reuse the already-uploaded banner instead of re-rendering it: the returned body omits `files` so the edit keeps
+     * the existing attachment, and the embed still references `attachment://panel-banner.png`. Only valid when the
+     * panel already shows this exact track.
+     * @type {boolean}
+     * @default false
+     */
+    keepBanner?: boolean;
+}
+
+/**
  * The rendered body of the request-channel panel.
  */
 interface PanelBody {
@@ -72,10 +86,10 @@ interface PanelBody {
      */
     components: ActionRow<Button>[];
     /**
-     * The attachments to write/edit into the panel.
+     * The attachments to write/edit into the panel. Omitted when reusing the already-uploaded banner (see `keepBanner`).
      * @type {AttachmentBuilder[]}
      */
-    files: AttachmentBuilder[];
+    files?: AttachmentBuilder[];
 }
 
 /**
@@ -86,6 +100,14 @@ interface PanelBody {
  * @type {Set<string>}
  */
 const idlePanels: Set<string> = new Set();
+
+/**
+ * The track identifier currently rendered on each guild's panel banner. Lets {@link PanelOps.update} detect a
+ * queue-only change (same track, different up-next) and edit just the embed while keeping the already-uploaded banner
+ * instead of re-rendering and re-uploading an identical image. Cleared whenever the panel goes idle.
+ * @type {Map<string, string>}
+ */
+const renderedTracks: Map<string, string> = new Map();
 
 export const PanelOps = {
     /**
@@ -154,7 +176,13 @@ export const PanelOps = {
      * @param {TrackStructure} [track] The current track, when active.
      * @returns {Promise<PanelBody>} The embeds + components to write/edit into the panel.
      */
-    async build(client: UsingClient, messages: Messages, player?: PlayerStructure, track?: TrackStructure): Promise<PanelBody> {
+    async build(
+        client: UsingClient,
+        messages: Messages,
+        player?: PlayerStructure,
+        track?: TrackStructure,
+        options: BuildOptions = {},
+    ): Promise<PanelBody> {
         const start: number = Date.now();
 
         const embed = new Embed()
@@ -186,6 +214,20 @@ export const PanelOps = {
             if (upNext.length) queue = `\n\n${messages.events.requestChannel.queue.title}\n${upNext.join("\n")}`;
 
             embed.setDescription(`${nowPlaying}${queue}`).setTimestamp();
+            embed.setImage("attachment://panel-banner.png");
+            embed.setFooter({
+                text: messages.events.requestChannel.footer({ userName: track.requester.tag, time: ms(Date.now() - start) }),
+            });
+
+            const components: ActionRow<Button>[] = PanelOps.controls(messages, {
+                isAutoplay,
+                loop: player.loop,
+                paused: player.paused,
+            });
+
+            // Same track as the panel already shows: reuse the uploaded banner (omit files so Discord keeps the
+            // existing attachment) instead of re-rendering and re-uploading an identical image.
+            if (options.keepBanner) return { embeds: [embed], components };
 
             const banner = await ImageOps.banner({
                 identifier: track.info.identifier,
@@ -196,16 +238,7 @@ export const PanelOps = {
 
             const attachment: AttachmentBuilder = new AttachmentBuilder().setFile("buffer", banner).setName("panel-banner.png");
 
-            embed.setImage("attachment://panel-banner.png");
-            embed.setFooter({
-                text: messages.events.requestChannel.footer({ userName: track.requester.tag, time: ms(Date.now() - start) }),
-            });
-
-            return {
-                embeds: [embed],
-                files: [attachment],
-                components: PanelOps.controls(messages, { isAutoplay, loop: player.loop, paused: player.paused }),
-            };
+            return { embeds: [embed], files: [attachment], components };
         }
 
         embed.setDescription(messages.events.requestChannel.empty);
@@ -247,19 +280,31 @@ export const PanelOps = {
         if (!config) return;
 
         const { messages } = await ContextOps.locale(client, guildId);
-        const body: PanelBody = await PanelOps.build(client, messages, player, track);
+
+        // Queue-only change (same track already on the panel): edit just the embed and keep the uploaded banner.
+        const keepBanner: boolean = !isIdle && renderedTracks.get(guildId) === track!.info.identifier;
+        const body: PanelBody = await PanelOps.build(client, messages, player, track, { keepBanner });
 
         let updated = await client.messages.edit(config.messageId, config.channelId, body).catch((): null => null);
         if (!updated) {
-            // The panel message was deleted out from under us: re-post it and persist the new id.
-            updated = await client.messages.write(config.channelId, body).catch((): null => null);
+            // The panel message was deleted out from under us: re-post it and persist the new id. A keepBanner body has
+            // no attachment, so re-render a full body (with the banner) for the fresh message.
+            const repost: PanelBody = keepBanner ? await PanelOps.build(client, messages, player, track) : body;
+
+            updated = await client.messages.write(config.channelId, repost).catch((): null => null);
             if (updated) await client.database.requests.set(guildId, { channelId: config.channelId, messageId: updated.id });
         }
 
         // Remember the rendered state so the next idle reset can be short-circuited (only once it actually landed).
         if (updated) {
-            if (isIdle) idlePanels.add(guildId);
-            else idlePanels.delete(guildId);
+            if (isIdle) {
+                idlePanels.add(guildId);
+                // The idle panel shows its own banner, so a later same-track play must re-render, not keepBanner.
+                renderedTracks.delete(guildId);
+            } else {
+                idlePanels.delete(guildId);
+                renderedTracks.set(guildId, track!.info.identifier);
+            }
         }
     },
     /**
