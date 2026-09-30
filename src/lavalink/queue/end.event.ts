@@ -12,9 +12,12 @@ export default createLavalinkEvent({
         // In quiz mode the engine plays tracks directly and controls teardown; ignore natural queue-end between snippets.
         if (await player.data.get("isQuiz")) return;
 
-        // only unsubscribe if the queue is ended.
-        await PlayerOps.lyrics(client, player, player.textId, { unsubscribe: true, clearEnabled: true });
-        await PlayerOps.nowPlaying(client, player, player.textId);
+        // Independent REST cleanups (lyrics message + now-playing message): run them concurrently. Only unsubscribe the
+        // lyrics here since the queue is fully ended.
+        await Promise.all([
+            PlayerOps.lyrics(client, player, player.textId, { unsubscribe: true, clearEnabled: true }),
+            PlayerOps.nowPlaying(client, player, player.textId),
+        ]);
 
         const messages = await PlayerOps.messages(client, player);
         if (!messages) return;
