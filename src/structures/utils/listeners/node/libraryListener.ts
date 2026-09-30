@@ -26,7 +26,7 @@ export async function libraryListener(client: UsingClient, node: NodeStructure, 
 
                         await player.destroy();
 
-                        return;
+                        continue;
                     }
 
                     const messageId: string | undefined = await player.data.get("messageId");
