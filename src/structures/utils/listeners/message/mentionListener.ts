@@ -3,6 +3,12 @@ import { EmbedColors } from "seyfert/lib/common/index.js";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 
 /**
+ * The bare-mention matcher, compiled once on first use (the bot id is only known after login) and reused afterwards.
+ * @type {RegExp | undefined}
+ */
+let mentionRegex: RegExp | undefined;
+
+/**
  *
  * The listener for the `messageCreate` event of the client.
  * This listener is triggered when the bot is mentioned in a message.
@@ -15,8 +21,8 @@ export async function mentionListener(client: UsingClient, message: MessageStruc
 
     if (!guildId) return;
 
-    const mentionRegex = new RegExp(`^<@!?${client.me.id}>( |)$`);
-    if (content.match(mentionRegex)) {
+    mentionRegex ??= new RegExp(`^<@!?${client.me.id}>( |)$`);
+    if (mentionRegex.test(content)) {
         const { messages } = await ContextOps.locale(client, guildId);
 
         const command = client.commands.values.find((command) => command.name === "help");
