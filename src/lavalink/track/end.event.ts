@@ -8,8 +8,9 @@ export default createLavalinkEvent({
     async run(client, player, track): Promise<void> {
         if (!player.textId) return;
 
-        await PlayerOps.nowPlaying(client, player, player.textId);
-        await PlayerOps.lyrics(client, player, player.textId);
+        // Independent REST cleanups (the now-playing message and the lyrics message are different messages): run them
+        // concurrently. The messageId delete stays after, since nowPlaying reads it.
+        await Promise.all([PlayerOps.nowPlaying(client, player, player.textId), PlayerOps.lyrics(client, player, player.textId)]);
         await player.data.delete("messageId");
 
         client.debug(
