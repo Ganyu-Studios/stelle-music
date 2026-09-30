@@ -3,6 +3,14 @@ import { type QueueJSON, QueueStorageAdapter } from "hoshimi";
 import { StelleRedis } from "#stelle/utils/data/constants.js";
 
 /**
+ * TTL (seconds) refreshed on every queue write so an orphaned key can't leak forever if its player is torn down
+ * without a clean delete (crash / ungraceful shutdown). `set` fires on every queue mutation, so a live queue keeps
+ * resetting it; the window only needs to outlast the longest realistic gap between writes (a single long track).
+ * @type {number}
+ */
+const QUEUE_TTL_SECONDS: number = 7 * 24 * 60 * 60;
+
+/**
  * Class representing the Redis queue store.
  * @class RedisQueueStore
  * @implements {QueueStoreManager}
@@ -34,7 +42,7 @@ export class RedisQueueStore extends QueueStorageAdapter {
         return this.parse(data);
     }
     override async set(key: string, value: QueueJSON): Promise<void> {
-        await this.redis.set(this.buildKey(this.namespace, key), this.stringify(value));
+        await this.redis.set(this.buildKey(this.namespace, key), this.stringify(value), { EX: QUEUE_TTL_SECONDS });
     }
 
     override async delete(key: string): Promise<boolean> {
