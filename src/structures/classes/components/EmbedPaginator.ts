@@ -117,14 +117,14 @@ type PartialPaginatorOptions = MakeRequired<Partial<Omit<PaginatorOptions, "mess
  * @default /./
  */
 // So, this is a custom id regex, it's not the best but it works.
-const anyCustomId: RegExp = /./;
+const ANY_CUSTOM_ID: RegExp = /./;
 
 /**
  * The default time of the paginator.
  * @type {number}
  * @default ms("1m")
  */
-const defaultTime: number = ms("1m");
+const DEFAULT_TIME: number = ms("1m");
 
 /**
  *
@@ -233,7 +233,7 @@ export class EmbedPaginator {
             embeds: options.embeds ?? [],
             rows: options.rows ?? [],
             disabled: options.disabled ?? false,
-            time: options.time ?? defaultTime,
+            time: options.time ?? DEFAULT_TIME,
             pages: 0,
             message: null,
         };
@@ -310,7 +310,7 @@ export class EmbedPaginator {
         });
 
         if (this.options.rows.length) {
-            collector.run<ComponentInteraction>(anyCustomId, (interaction): unknown => {
+            collector.run<ComponentInteraction>(ANY_CUSTOM_ID, (interaction): unknown => {
                 for (const row of this.options.rows) {
                     for (const component of row.components) {
                         if ((component.data as { custom_id?: string }).custom_id === interaction.customId) {
@@ -392,7 +392,7 @@ export class EmbedPaginator {
      * @default 60e3
      * @returns {this} The paginator instance.
      */
-    public setTime(time: number = defaultTime): this {
+    public setTime(time: number = DEFAULT_TIME): this {
         this.options.time = time;
         return this;
     }

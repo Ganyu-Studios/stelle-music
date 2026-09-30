@@ -42,7 +42,7 @@ const IDLE_TIME: number = ms("2min");
  * Default stats for a node.
  * @type {Stats}
  */
-const defaultStats: Stats = {
+const DEFAULT_STATS: Stats = {
     op: OpCodes.Stats,
     players: 0,
     playingPlayers: 0,
@@ -74,7 +74,7 @@ const defaultStats: Stats = {
  */
 function renderFields(client: UsingClient, messages: DefaultLocale["messages"]): APIEmbedField[] {
     return client.manager.nodeManager.nodes.map((node): APIEmbedField => {
-        const stats = node.stats ?? defaultStats;
+        const stats = node.stats ?? DEFAULT_STATS;
 
         return {
             name: `\`🔰\` ${node.id}`,

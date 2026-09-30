@@ -6,7 +6,7 @@ import { type Mix, MixKind, RadioOps } from "#stelle/utils/functions/manager/rad
  * @type {number}
  * @default 10
  */
-const trackLimit: number = 10;
+const TRACK_LIMIT: number = 10;
 
 /**
  * Based on:
@@ -55,7 +55,7 @@ export async function autoplayFn(player: PlayerStructure, lastTrack: TrackStruct
     // queue the same run of tracks. A curated mix (Spotify / Deezer) is short, so we just take it from the top.
     let start: number = 0;
 
-    if (kind === MixKind.Radio) start = Math.max(0, Math.floor(Math.random() * (filtered.length - trackLimit + 1)));
+    if (kind === MixKind.Radio) start = Math.max(0, Math.floor(Math.random() * (filtered.length - TRACK_LIMIT + 1)));
 
-    await player.queue.add(filtered.slice(start, start + trackLimit));
+    await player.queue.add(filtered.slice(start, start + TRACK_LIMIT));
 }

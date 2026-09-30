@@ -2,7 +2,7 @@ import { SearchSources } from "hoshimi";
 import { createStringOption, Declare, type GuildCommandContext, LocalesT, Options, SubCommand } from "seyfert";
 import { Shortcut } from "yunaforseyfert";
 
-const engines: Record<string, string> = {
+const ENGINES: Record<string, string> = {
     spsearch: "Spotify",
     ytsearch: "Youtube",
     ytmsearch: "Youtube Music",
@@ -55,7 +55,7 @@ export default class EngineSubcommand extends SubCommand {
         await client.database.players.set(ctx.guildId, { searchPlatform: engine });
         await ctx.successReply(
             messages.commands.default.engine({
-                engine: engines[engine],
+                engine: ENGINES[engine],
                 clientName: client.me.username,
             }),
         );

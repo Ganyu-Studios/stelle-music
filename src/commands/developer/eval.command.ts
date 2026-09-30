@@ -18,10 +18,10 @@ import { StelleOptions } from "#stelle/utils/decorator.js";
 import { ms } from "#stelle/utils/functions/internal/time.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
-const secretsRegex = /\b(?:client\.(?:config)|config|env|process\.(?:env|exit)|eval|atob|btoa)\b/;
-const concatRegex = /".*?"\s*\+\s*".*?"(?:\s*\+\s*".*?")*/;
-const awaitableRegex = /^(?:\(?)\s*await\b/;
-const envRegex = new RegExp(
+const SECRETS_REGEX = /\b(?:client\.(?:config)|config|env|process\.(?:env|exit)|eval|atob|btoa)\b/;
+const CONCAT_REGEX = /".*?"\s*\+\s*".*?"(?:\s*\+\s*".*?")*/;
+const AWAITABLE_REGEX = /^(?:\(?)\s*await\b/;
+const ENV_REGEX = new RegExp(
     Object.values(Environment)
         .map((value): string => String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
         .join("|"),
@@ -85,16 +85,16 @@ export default class EvalCommand extends Command {
         if (!code.length) return ctx.errorReply("`❌` Hey! Try typing some code to be evaluated...");
 
         try {
-            if (secretsRegex.test(code.toLowerCase()) || concatRegex.test(code.toLowerCase())) output = StelleText.Secret();
+            if (SECRETS_REGEX.test(code.toLowerCase()) || CONCAT_REGEX.test(code.toLowerCase())) output = StelleText.Secret();
             else if (typeof output !== "string") {
-                if (awaitableRegex.test(code.toLowerCase())) code = `(async () => ${code})()`;
+                if (AWAITABLE_REGEX.test(code.toLowerCase())) code = `(async () => ${code})()`;
 
                 output = await eval(code);
                 typecode = typeof output;
                 output = UtilsOps.inspect(output, options.depth ?? 0);
 
                 // 100% security
-                if (envRegex.test(output)) output = output.replaceAll(envRegex, "🌟");
+                if (ENV_REGEX.test(output)) output = output.replaceAll(ENV_REGEX, "🌟");
             }
 
             await ctx.editOrReply({

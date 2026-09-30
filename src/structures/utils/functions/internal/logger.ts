@@ -21,7 +21,7 @@ const customColor: ColorFunction = (text: string): string => rgb24(text, Configu
  * The emojis associated with each log level for formatting log messages.
  * @type {Record<LogLevels, string>}
  */
-const levelEmojis: Record<LogLevels, string> = {
+const LEVEL_EMOJIS: Record<LogLevels, string> = {
     [LogLevels.Debug]: "🎩",
     [LogLevels.Error]: "🏮",
     [LogLevels.Info]: "📘",
@@ -34,7 +34,7 @@ const levelEmojis: Record<LogLevels, string> = {
  * The colors associated with each log level for formatting log messages.
  * @type {Record<LogLevels, ColorFunction>}
  */
-const levelColors: Record<LogLevels, ColorFunction> = {
+const LEVEL_COLORS: Record<LogLevels, ColorFunction> = {
     [LogLevels.Debug]: gray,
     [LogLevels.Error]: red,
     [LogLevels.Info]: customColor,
@@ -162,7 +162,7 @@ export const LoggerOps = {
         const label: string = Logger.prefixes.get(level) ?? "UNKNOWN";
         const timeFormat: string = `[${date.toLocaleDateString()} : ${date.toLocaleTimeString()}]`;
 
-        const text = `${gray(`${timeFormat}`)} ${gray(`[RAM: ${LoggerOps.memoryUsage(memory.rss)}]`)} ${levelEmojis[level]} [${levelColors[
+        const text = `${gray(`${timeFormat}`)} ${gray(`[RAM: ${LoggerOps.memoryUsage(memory.rss)}]`)} ${LEVEL_EMOJIS[level]} [${LEVEL_COLORS[
             level
         ](label)}] ${setPadding(label)}`;
 

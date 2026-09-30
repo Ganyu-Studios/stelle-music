@@ -32,7 +32,7 @@ import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 
 export { SaveType } from "#stelle/utils/functions/components/playlist/save.js";
 
-const saveType: Record<SaveButtonIdentifiers, SaveType> = {
+const SAVE_TYPE: Record<SaveButtonIdentifiers, SaveType> = {
     [SaveButtonIdentifiers.CurrentTrack]: SaveType.Current,
     [SaveButtonIdentifiers.CurrentQueue]: SaveType.Queue,
     [SaveButtonIdentifiers.FromURL]: SaveType.URL,
@@ -118,7 +118,7 @@ export const PlaylistOps = {
         collector.run(SaveButtonCustomIds, async (interaction): Promise<void> => {
             if (!interaction.isButton()) return;
 
-            await playlistTrackSave(ctx, interaction, playlist, saveType[interaction.customId as SaveButtonIdentifiers]);
+            await playlistTrackSave(ctx, interaction, playlist, SAVE_TYPE[interaction.customId as SaveButtonIdentifiers]);
         });
     },
 
