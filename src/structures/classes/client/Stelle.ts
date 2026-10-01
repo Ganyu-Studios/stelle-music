@@ -178,6 +178,26 @@ export class Stelle extends Client<PluginsDefinition, true> {
     }
 
     /**
+     *
+     * Shut Stelle down gracefully: close every gateway shard so Discord sees a clean disconnect, then close the database
+     * and Redis. Redis is closed with `close()`, which waits for pending commands, so the last queue writes land before
+     * the process exits. Lavalink is left untouched on purpose: with session resuming enabled, the node keeps the players
+     * alive for the resume window and the next start restores them from the (synchronously persisted) sessions.
+     * @returns {Promise<void>} A promise that resolves once the gateway, the database and Redis are closed.
+     */
+    public async shutdown(): Promise<void> {
+        this.logger.warn("[Client] Shutdown started");
+
+        // The gateway doesn't exist yet when the process is killed before the bot finishes starting.
+        this.gateway?.disconnectAll();
+
+        await this.database.disconnect();
+        if (this.redis.isOpen) await this.redis.close();
+
+        this.logger.info("[Client] Shutdown completed");
+    }
+
+    /**
      * Logs a message through the debug logger at the given level.
      *
      * This targets {@link debugger} — the opt-in logger Seyfert only creates when the bot runs with `--debug` — not the

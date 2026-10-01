@@ -3,7 +3,7 @@ import { mkdir } from "node:fs/promises";
 import { isAbsolute, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { inspect as nodeInspect } from "node:util";
-import type { AnyContext, UsingClient } from "seyfert";
+import type { AnyContext } from "seyfert";
 import type { APIApplicationCommandOptionChoice } from "seyfert/lib/types/index.js";
 import type { Omit, Plain, Prettify } from "#stelle/types/index.js";
 
@@ -119,20 +119,6 @@ export const UtilsOps = {
      */
     chunk<T>(items: T[], size: number): T[][] {
         return Array.from({ length: Math.ceil(items.length / size) }, (_, i): T[] => items.slice(i * size, i * size + size));
-    },
-    /**
-     * Cleanup function to gracefully shut down the client.
-     * @param client {UsingClient} The client instance.
-     * @returns {void} Aishite, aishite, motto, motto
-     */
-    cleanup(client: UsingClient): void {
-        client.logger.info("[Client] Shutdown requested");
-
-        client.gateway?.disconnectAll();
-        client.database?.disconnect();
-        if (client.redis.isOpen) client.redis.quit();
-
-        process.exit(1);
     },
 
     /**
