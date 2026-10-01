@@ -32,7 +32,7 @@
         "build": "tsc -p tsconfig.build.json",
         "typecheck": "tsc --noEmit",
         "test": "tsx --test --test-force-exit \"tests/*.test.ts\"",
-        "clean": "node ./scripts/clean.mjs && pnpm build",
+        "rebuild": "node ./scripts/clean.mjs && pnpm build",
         "start": "node ./dist/index.js",
         "dev": "tsx ./src/index.ts --debug --dev",
         "lint": "biome lint --write .",
