@@ -57,7 +57,8 @@ const ids: Map<string, string> = new Map<string, string>(
  * @returns {boolean} Whether their persisted state is identical.
  */
 function samePersistedSession(a: SessionJson, b: SessionJson): boolean {
-    const keys = ["lastPosition", "position"] as const;
+    // `savedAt` is a freshness stamp, not persisted state; comparing it would defeat the position-only skip below.
+    const keys = ["lastPosition", "position", "savedAt"] as const;
 
     return UtilsOps.deepEqual(UtilsOps.omit(a, keys), UtilsOps.omit(b, keys));
 }
@@ -84,6 +85,13 @@ export const Sessions = {
      */
     get<T>(id: string): T | undefined {
         return storage.get<T>(id);
+    },
+    /**
+     * Get every persisted session.
+     * @returns {T[]} All stored sessions.
+     */
+    values<T>(): T[] {
+        return Object.values<T>(storage.all());
     },
     /**
      * Delete the session of the player.
@@ -163,6 +171,7 @@ export const Sessions = {
         const session: SessionJson = {
             ...base,
             node,
+            savedAt: Date.now(),
             messageId,
             enabledAutoplay,
             localeString,

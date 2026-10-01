@@ -212,6 +212,11 @@ export interface SessionJson extends StellePlayerJson {
      * @type {boolean | undefined}
      */
     isRequestChannel?: boolean;
+    /**
+     * When the session was last persisted (epoch ms). Used to skip restoring stale sessions on a cold start.
+     * @type {number | undefined}
+     */
+    savedAt?: number;
 }
 
 /**
