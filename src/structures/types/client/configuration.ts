@@ -79,6 +79,13 @@ interface Sessions {
      * @default true
      */
     resumePlayers: boolean;
+    /**
+     * The maximum age a persisted session may have to still be restored on a cold start (in milliseconds; use `ms`).
+     * Older sessions are pruned instead of reconnected.
+     * @type {number}
+     * @default ms("2d")
+     */
+    maxResumeAge: number;
 }
 
 /**

@@ -56,6 +56,7 @@ export default createConfig({
         enabled: true,
         resumeTime: 60,
         resumePlayers: true,
+        maxResumeAge: ms("2d"),
     },
     cache: {
         limit: 5,
