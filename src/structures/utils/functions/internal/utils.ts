@@ -132,7 +132,7 @@ export const UtilsOps = {
         client.database?.disconnect();
         if (client.redis.isOpen) client.redis.quit();
 
-        process.exitCode = 0;
+        process.exit(1);
     },
 
     /**
