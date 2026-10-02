@@ -43,8 +43,8 @@ export const PlayerOps = {
     async voice(client: UsingClient, player: PlayerStructure): Promise<AllGuildVoiceChannels | null> {
         if (!player.voiceId) return null;
 
-        const voice: AllChannels = await client.channels.fetch(player.voiceId);
-        if (!voice.is(["GuildStageVoice", "GuildVoice"])) return null;
+        const voice: AllChannels | null = await client.channels.fetch(player.voiceId).catch((): null => null);
+        if (!voice?.is(["GuildStageVoice", "GuildVoice"])) return null;
 
         return voice;
     },
