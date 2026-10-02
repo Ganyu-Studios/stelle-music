@@ -41,19 +41,21 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
 
     if (is247) {
         if (isAutoPause) {
-            if (isEmpty && (player.paused || player.playing)) await player.setPaused(true);
-            else if (!isEmpty && player.paused) await player.setPaused(false);
+            if (isEmpty && (player.paused || player.playing)) await player.setPaused(true).catch((): null => null);
+            else if (!isEmpty && player.paused) await player.setPaused(false).catch((): null => null);
         }
 
         if (isEmpty && isChannel) {
-            await client.messages.write(player.textId, {
-                embeds: [
-                    {
-                        color: client.config.color.success,
-                        description: messages.events.is247Enabled,
-                    },
-                ],
-            });
+            await client.messages
+                .write(player.textId, {
+                    embeds: [
+                        {
+                            color: client.config.color.success,
+                            description: messages.events.is247Enabled,
+                        },
+                    ],
+                })
+                .catch((): null => null);
         }
 
         return;
@@ -61,54 +63,27 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
 
     // Only joined, doing nothing (idle + no current/queued track): leave with a dedicated "nothing was playing" notice.
     if (isChannel && isEmpty && player.isIdle() && !player.queue.totalSize && player.connected) {
-        await player.destroy();
-        await client.messages.write(player.textId, {
-            embeds: [
-                {
-                    color: EmbedColors.Yellow,
-                    description: messages.events.no.idle({
-                        clientName: client.me.username,
-                    }),
-                },
-            ],
-        });
+        await player.destroy().catch((): null => null);
+        await client.messages
+            .write(player.textId, {
+                embeds: [
+                    {
+                        color: EmbedColors.Yellow,
+                        description: messages.events.no.idle({
+                            clientName: client.me.username,
+                        }),
+                    },
+                ],
+            })
+            .catch((): null => null);
 
         return;
     }
 
     if (isChannel && isEmpty && !player.playing && player.paused && player.queue.current && !player.queue.tracks.length) {
-        await player.destroy();
-        await client.messages.write(player.textId, {
-            embeds: [
-                {
-                    color: EmbedColors.Yellow,
-                    description: messages.events.no.members({
-                        clientName: client.me.username,
-                    }),
-                },
-            ],
-        });
-
-        return;
-    }
-
-    if (isChannel && isEmpty && (player.paused || player.playing)) {
-        await player.setPaused(true);
-        await client.messages.write(player.textId, {
-            embeds: [
-                {
-                    color: EmbedColors.Yellow,
-                    description: messages.events.channelEmpty({
-                        type: TimeFormat.toHumanize(client.config.disconnectTime),
-                        clientName: client.me.username,
-                    }),
-                },
-            ],
-        });
-
-        const timeoutId: NodeJS.Timeout = setTimeout(async (): Promise<void> => {
-            await player.destroy();
-            await client.messages.write(player.textId!, {
+        await player.destroy().catch((): null => null);
+        await client.messages
+            .write(player.textId, {
                 embeds: [
                     {
                         color: EmbedColors.Yellow,
@@ -117,22 +92,59 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
                         }),
                     },
                 ],
-            });
+            })
+            .catch((): null => null);
+
+        return;
+    }
+
+    if (isChannel && isEmpty && (player.paused || player.playing)) {
+        await player.setPaused(true).catch((): null => null);
+        await client.messages
+            .write(player.textId, {
+                embeds: [
+                    {
+                        color: EmbedColors.Yellow,
+                        description: messages.events.channelEmpty({
+                            type: TimeFormat.toHumanize(client.config.disconnectTime),
+                            clientName: client.me.username,
+                        }),
+                    },
+                ],
+            })
+            .catch((): null => null);
+
+        const timeoutId: NodeJS.Timeout = setTimeout(async (): Promise<void> => {
+            await player.destroy().catch((): null => null);
+            await client.messages
+                .write(player.textId!, {
+                    embeds: [
+                        {
+                            color: EmbedColors.Yellow,
+                            description: messages.events.no.members({
+                                clientName: client.me.username,
+                            }),
+                        },
+                    ],
+                })
+                .catch((): null => null);
         }, client.config.disconnectTime);
 
         timeouts.set(guildId, timeoutId);
     } else if (timeouts.has(guildId) && !isEmpty && player.paused) {
-        await player.setPaused(false);
-        await client.messages.write(player.textId, {
-            embeds: [
-                {
-                    color: EmbedColors.Yellow,
-                    description: messages.events.hasMembers({
-                        clientName: client.me.username,
-                    }),
-                },
-            ],
-        });
+        await player.setPaused(false).catch((): null => null);
+        await client.messages
+            .write(player.textId, {
+                embeds: [
+                    {
+                        color: EmbedColors.Yellow,
+                        description: messages.events.hasMembers({
+                            clientName: client.me.username,
+                        }),
+                    },
+                ],
+            })
+            .catch((): null => null);
 
         clearTimeout(timeouts.get(guildId));
         timeouts.delete(guildId);
