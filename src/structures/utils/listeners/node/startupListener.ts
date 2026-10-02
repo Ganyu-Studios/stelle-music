@@ -1,6 +1,7 @@
 import { type NodeStructure, StorageError } from "hoshimi";
 import { LogLevels, type UsingClient } from "seyfert";
 import type { SessionJson } from "#stelle/types/index.js";
+import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
 import { Sessions } from "#stelle/utils/manager/sessions.js";
 
 /**
@@ -30,7 +31,17 @@ export async function startupListener(client: UsingClient, node: NodeStructure):
 
         if (client.manager.getPlayer(session.guildId)) continue;
 
-        // Restore each guild in isolation: one failure (channel gone, missing perms) must not abort the rest.
+        // The voice channel may be gone (deleted, or the bot was removed from the guild): prune the session instead of
+        // failing a connect against a dead channel on every startup.
+        const voice = await PlayerOps.resolveVoiceChannel(client, session.options.voiceId);
+        if (!voice) {
+            client.logger.warn(`[Lavalink] Skipping 24/7 restore | guild: ${session.guildId} | reason: voice channel unavailable`);
+            Sessions.delete(session.guildId);
+
+            continue;
+        }
+
+        // Restore each guild in isolation: one failure (missing perms, node hiccup) must not abort the rest.
         try {
             const player = client.manager.createPlayer({ ...session.options, node: node.id, volume: session.volume });
 

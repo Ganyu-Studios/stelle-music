@@ -50,6 +50,20 @@ export const PlayerOps = {
     },
     /**
      *
+     * Resolve a voice channel by id, returning null when it no longer exists (deleted, or the bot was removed from the
+     * guild) or isn't a voice channel. Unlike {@link voice}, the fetch is error-tolerant.
+     * @param {UsingClient} client The client instance.
+     * @param {string} voiceId The voice channel id.
+     * @returns {Promise<AllGuildVoiceChannels | null>} The voice channel, or null when unavailable.
+     */
+    async resolveVoiceChannel(client: UsingClient, voiceId: string): Promise<AllGuildVoiceChannels | null> {
+        const voice: AllChannels | null = await client.channels.fetch(voiceId).catch((): null => null);
+        if (!voice?.is(["GuildStageVoice", "GuildVoice"])) return null;
+
+        return voice;
+    },
+    /**
+     *
      * Return the text channel for the player.
      * @param {UsingClient} client The client instance.
      * @param {PlayerStructure} player The player structure.
