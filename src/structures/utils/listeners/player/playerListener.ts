@@ -1,5 +1,5 @@
 import type { PlayerStructure } from "hoshimi";
-import type { GuildMember, UsingClient, VoiceState } from "seyfert";
+import { type GuildMember, LogLevels, type UsingClient, type VoiceState } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
 import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
@@ -25,47 +25,47 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
 
     if (!(player.textId && player.voiceId)) return;
 
-    const messages = await PlayerOps.messages(client, player);
-    if (!messages) return;
+    // The bot can be removed from the guild (or lose the channel) mid-cleanup, so any of the fetches, node calls or
+    // message writes below can reject. Treat the whole voice-state handling as best-effort.
+    try {
+        const messages = await PlayerOps.messages(client, player);
+        if (!messages) return;
 
-    const channel = await PlayerOps.voice(client, player);
-    if (!channel) return;
+        const channel = await PlayerOps.voice(client, player);
+        if (!channel) return;
 
-    const members: GuildMember[] = await Promise.all(channel.states().map((c): Promise<GuildMember> => c.member()));
-    const isEmpty: boolean = !members.filter(({ user }): boolean => !user.bot).length;
+        const members: GuildMember[] = await Promise.all(channel.states().map((c): Promise<GuildMember> => c.member()));
+        const isEmpty: boolean = !members.filter(({ user }): boolean => !user.bot).length;
 
-    const isChannel: boolean = oldState?.channelId === player.voiceId && newState.channelId !== oldState?.channelId;
+        const isChannel: boolean = oldState?.channelId === player.voiceId && newState.channelId !== oldState?.channelId;
 
-    const is247: boolean = (await player.data.get("is247")) || client.config.twentyfourseven.is247;
-    const isAutoPause: boolean = (await player.data.get("isAutoPause")) ?? client.config.twentyfourseven.autoPause;
+        const is247: boolean = (await player.data.get("is247")) || client.config.twentyfourseven.is247;
+        const isAutoPause: boolean = (await player.data.get("isAutoPause")) ?? client.config.twentyfourseven.autoPause;
 
-    if (is247) {
-        if (isAutoPause) {
-            if (isEmpty && (player.paused || player.playing)) await player.setPaused(true).catch((): null => null);
-            else if (!isEmpty && player.paused) await player.setPaused(false).catch((): null => null);
-        }
+        if (is247) {
+            if (isAutoPause) {
+                if (isEmpty && (player.paused || player.playing)) await player.setPaused(true);
+                else if (!isEmpty && player.paused) await player.setPaused(false);
+            }
 
-        if (isEmpty && isChannel) {
-            await client.messages
-                .write(player.textId, {
+            if (isEmpty && isChannel) {
+                await client.messages.write(player.textId, {
                     embeds: [
                         {
                             color: client.config.color.success,
                             description: messages.events.is247Enabled,
                         },
                     ],
-                })
-                .catch((): null => null);
+                });
+            }
+
+            return;
         }
 
-        return;
-    }
-
-    // Only joined, doing nothing (idle + no current/queued track): leave with a dedicated "nothing was playing" notice.
-    if (isChannel && isEmpty && player.isIdle() && !player.queue.totalSize && player.connected) {
-        await player.destroy().catch((): null => null);
-        await client.messages
-            .write(player.textId, {
+        // Only joined, doing nothing (idle + no current/queued track): leave with a dedicated "nothing was playing" notice.
+        if (isChannel && isEmpty && player.isIdle() && !player.queue.totalSize && player.connected) {
+            await player.destroy();
+            await client.messages.write(player.textId, {
                 embeds: [
                     {
                         color: EmbedColors.Yellow,
@@ -74,16 +74,14 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
                         }),
                     },
                 ],
-            })
-            .catch((): null => null);
+            });
 
-        return;
-    }
+            return;
+        }
 
-    if (isChannel && isEmpty && !player.playing && player.paused && player.queue.current && !player.queue.tracks.length) {
-        await player.destroy().catch((): null => null);
-        await client.messages
-            .write(player.textId, {
+        if (isChannel && isEmpty && !player.playing && player.paused && player.queue.current && !player.queue.tracks.length) {
+            await player.destroy();
+            await client.messages.write(player.textId, {
                 embeds: [
                     {
                         color: EmbedColors.Yellow,
@@ -92,16 +90,14 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
                         }),
                     },
                 ],
-            })
-            .catch((): null => null);
+            });
 
-        return;
-    }
+            return;
+        }
 
-    if (isChannel && isEmpty && (player.paused || player.playing)) {
-        await player.setPaused(true).catch((): null => null);
-        await client.messages
-            .write(player.textId, {
+        if (isChannel && isEmpty && (player.paused || player.playing)) {
+            await player.setPaused(true);
+            await client.messages.write(player.textId, {
                 embeds: [
                     {
                         color: EmbedColors.Yellow,
@@ -111,30 +107,31 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
                         }),
                     },
                 ],
-            })
-            .catch((): null => null);
+            });
 
-        const timeoutId: NodeJS.Timeout = setTimeout(async (): Promise<void> => {
-            await player.destroy().catch((): null => null);
-            await client.messages
-                .write(player.textId!, {
-                    embeds: [
-                        {
-                            color: EmbedColors.Yellow,
-                            description: messages.events.no.members({
-                                clientName: client.me.username,
-                            }),
-                        },
-                    ],
-                })
-                .catch((): null => null);
-        }, client.config.disconnectTime);
+            // Runs detached after the outer try/catch has returned, so it needs its own guard.
+            const timeoutId: NodeJS.Timeout = setTimeout(async (): Promise<void> => {
+                try {
+                    await player.destroy();
+                    await client.messages.write(player.textId!, {
+                        embeds: [
+                            {
+                                color: EmbedColors.Yellow,
+                                description: messages.events.no.members({
+                                    clientName: client.me.username,
+                                }),
+                            },
+                        ],
+                    });
+                } catch (error) {
+                    client.debug(LogLevels.Error, `[Lavalink] Empty-channel leave failed | guild: ${guildId} | error: ${error}`);
+                }
+            }, client.config.disconnectTime);
 
-        timeouts.set(guildId, timeoutId);
-    } else if (timeouts.has(guildId) && !isEmpty && player.paused) {
-        await player.setPaused(false).catch((): null => null);
-        await client.messages
-            .write(player.textId, {
+            timeouts.set(guildId, timeoutId);
+        } else if (timeouts.has(guildId) && !isEmpty && player.paused) {
+            await player.setPaused(false);
+            await client.messages.write(player.textId, {
                 embeds: [
                     {
                         color: EmbedColors.Yellow,
@@ -143,10 +140,12 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
                         }),
                     },
                 ],
-            })
-            .catch((): null => null);
+            });
 
-        clearTimeout(timeouts.get(guildId));
-        timeouts.delete(guildId);
+            clearTimeout(timeouts.get(guildId));
+            timeouts.delete(guildId);
+        }
+    } catch (error) {
+        client.debug(LogLevels.Error, `[Lavalink] Voice-state handling failed | guild: ${guildId} | error: ${error}`);
     }
 }
