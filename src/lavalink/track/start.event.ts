@@ -13,7 +13,7 @@ export default createLavalinkEvent({
         const messages = await PlayerOps.messages(client, player);
         if (!messages) return;
 
-        const voice = await PlayerOps.voice(client, player);
+        const voice = await PlayerOps.voice(client, player.voiceId);
         if (!voice) return;
 
         // In quiz mode the engine drives its own UI: set a neutral voice status and never reveal the track here.

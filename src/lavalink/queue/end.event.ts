@@ -22,7 +22,7 @@ export default createLavalinkEvent({
         const messages = await PlayerOps.messages(client, player);
         if (!messages) return;
 
-        const voice = await PlayerOps.voice(client, player);
+        const voice = await PlayerOps.voice(client, player.voiceId);
         if (!voice) return;
 
         if (voice.isVoice()) await voice.setVoiceStatus(messages.events.voiceStatus.queueEnd).catch((): null => null);

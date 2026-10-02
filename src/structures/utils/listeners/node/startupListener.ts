@@ -33,7 +33,7 @@ export async function startupListener(client: UsingClient, node: NodeStructure):
 
         // The voice channel may be gone (deleted, or the bot was removed from the guild): prune the session instead of
         // failing a connect against a dead channel on every startup.
-        const voice = await PlayerOps.resolveVoiceChannel(client, session.options.voiceId);
+        const voice = await PlayerOps.voice(client, session.options.voiceId);
         if (!voice) {
             client.logger.warn(`[Lavalink] Skipping 24/7 restore | guild: ${session.guildId} | reason: voice channel unavailable`);
             Sessions.delete(session.guildId);

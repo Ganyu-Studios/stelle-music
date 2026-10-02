@@ -35,28 +35,15 @@ export const PlayerOps = {
     },
     /**
      *
-     * Return the voice channel for the player.
+     * Resolve a voice channel by id, returning null when the id is missing, the channel no longer exists (deleted, or
+     * the bot was removed from the guild) or it isn't a voice channel. The fetch is error-tolerant.
      * @param {UsingClient} client The client instance.
-     * @param {PlayerStructure} player The player structure.
-     * @returns {Promise<AllGuildVoiceChannels | null>} The voice channel for the player or null if not found.
-     */
-    async voice(client: UsingClient, player: PlayerStructure): Promise<AllGuildVoiceChannels | null> {
-        if (!player.voiceId) return null;
-
-        const voice: AllChannels | null = await client.channels.fetch(player.voiceId).catch((): null => null);
-        if (!voice?.is(["GuildStageVoice", "GuildVoice"])) return null;
-
-        return voice;
-    },
-    /**
-     *
-     * Resolve a voice channel by id, returning null when it no longer exists (deleted, or the bot was removed from the
-     * guild) or isn't a voice channel. Unlike {@link voice}, the fetch is error-tolerant.
-     * @param {UsingClient} client The client instance.
-     * @param {string} voiceId The voice channel id.
+     * @param {string | undefined} voiceId The voice channel id (e.g. `player.voiceId`).
      * @returns {Promise<AllGuildVoiceChannels | null>} The voice channel, or null when unavailable.
      */
-    async resolveVoiceChannel(client: UsingClient, voiceId: string): Promise<AllGuildVoiceChannels | null> {
+    async voice(client: UsingClient, voiceId: string | undefined): Promise<AllGuildVoiceChannels | null> {
+        if (!voiceId) return null;
+
         const voice: AllChannels | null = await client.channels.fetch(voiceId).catch((): null => null);
         if (!voice?.is(["GuildStageVoice", "GuildVoice"])) return null;
 

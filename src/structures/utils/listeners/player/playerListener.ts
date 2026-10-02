@@ -31,7 +31,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
         const messages = await PlayerOps.messages(client, player);
         if (!messages) return;
 
-        const channel = await PlayerOps.voice(client, player);
+        const channel = await PlayerOps.voice(client, player.voiceId);
         if (!channel) return;
 
         const members: GuildMember[] = await Promise.all(channel.states().map((c): Promise<GuildMember> => c.member()));
