@@ -25,9 +25,15 @@ export function rethrowUnlessMissing(error: unknown): null {
  * The version of a cache key while reads of it are in flight.
  */
 interface KeyVersion {
-    /** How many `fetch` queries of the key are in flight. */
+    /**
+     * How many `fetch` queries of the key are in flight.
+     * @type {number}
+     */
     readers: number;
-    /** Bumped by every `store`/`remove` of the key that lands while those reads are in flight. */
+    /**
+     * Bumped by every `store`/`remove` of the key that lands while those reads are in flight.
+     * @type {number}
+     */
     version: number;
 }
 
@@ -36,15 +42,32 @@ interface KeyVersion {
  * @template T The record type.
  */
 export interface FetchOptions<T> {
-    /** The cache key the record lives under, shared with the `store`/`remove` calls that write it. */
+    /**
+     * The cache key the record lives under, shared with the `store`/`remove` calls that write it.
+     * @type {string}
+     */
     key: string;
-    /** Read the record from the cache: `undefined` is a miss, `null` is a negatively-cached "known absent". */
+    /**
+     * Read the record from the cache: `undefined` is a miss, `null` is a negatively-cached "known absent".
+     * @returns {T | null | undefined} The cached record, `null` if known absent, or `undefined` if not cached.
+     */
     read: () => T | null | undefined;
-    /** Write a freshly read record (or `null`, to negatively cache an absent record) to the cache. */
+    /**
+     * Write a freshly read record (or `null`, to negatively cache an absent record) to the cache.
+     * @param {T | null} data The record to cache, or `null` if absent.
+     * @returns {void}
+     */
     write: (data: T | null) => void;
-    /** The database read to run on a cache miss. */
+    /**
+     * The database read to run on a cache miss.
+     * @returns {Promise<T | null>} A promise that resolves to the record, or `null` if absent.
+     */
     query: () => Promise<T | null>;
-    /** Whether to return a structured clone (for records callers mutate in place). */
+    /**
+     * Whether to return a structured clone (for records callers mutate in place). Defaults to `false`.
+     * @type {boolean}
+     * @default false
+     */
     clone?: boolean;
 }
 
@@ -53,11 +76,21 @@ export interface FetchOptions<T> {
  * @template T The record type.
  */
 export interface StoreOptions<T> {
-    /** The cache key the record lives under. */
+    /**
+     * The cache key the record lives under.
+     * @type {string}
+     */
     key: string;
-    /** Write the written record to the cache. */
+    /**
+     * Write the written record to the cache.
+     * @param {T} data The written record.
+     * @returns {void}
+     */
     write: (data: T) => void;
-    /** The database write to run. */
+    /**
+     * The database write to run.
+     * @returns {Promise<T>} A promise that resolves to the written record.
+     */
     query: () => Promise<T>;
 }
 
@@ -65,11 +98,20 @@ export interface StoreOptions<T> {
  * Options for a cache-backed delete (`remove`).
  */
 export interface RemoveOptions {
-    /** The cache key the record lives under. */
+    /**
+     * The cache key the record lives under.
+     * @type {string}
+     */
     key: string;
-    /** Evict the record from the cache. */
+    /**
+     * Evict the record from the cache.
+     * @returns {void}
+     */
     evict: () => void;
-    /** The database delete to run. */
+    /**
+     * The database delete to run.
+     * @returns {Promise<unknown>} A promise that resolves once the record is deleted.
+     */
     query: () => Promise<unknown>;
 }
 
