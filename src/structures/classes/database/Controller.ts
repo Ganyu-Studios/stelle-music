@@ -255,18 +255,17 @@ export abstract class Controller<M extends ModelNames> {
     }
 
     /**
-     * Run a delete and, on success, evict the record from the cache via `evict`, swallowing only a "record not found"
-     * (Prisma `P2025`) rejection and rethrowing anything else. The row is deleted first, then evicted, so a failing
-     * delete surfaces instead of leaving the cache and database disagreeing silently.
+     * Run a delete and evict the record from the cache via `evict`, swallowing only a "record not found" (Prisma
+     * `P2025`) rejection and rethrowing anything else. The row is deleted first, then evicted, so a failing delete
+     * surfaces instead of leaving the cache and database disagreeing silently. A `P2025` still evicts: the row is gone
+     * either way (e.g. deleted elsewhere), so the cache must not keep serving it.
      * @param {RemoveOptions} options The key, evict accessor and database delete.
      * @returns {Promise<void>} A promise that resolves once the record is evicted.
      */
     protected async remove({ key, evict, query }: RemoveOptions): Promise<void> {
-        await query()
-            .then((): void => {
-                evict();
-                this.bump(key);
-            })
-            .catch(rethrowUnlessMissing);
+        await query().catch(rethrowUnlessMissing);
+
+        evict();
+        this.bump(key);
     }
 }

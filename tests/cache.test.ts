@@ -177,6 +177,37 @@ test("a read in flight during a delete doesn't re-cache the deleted row", async 
     assert.equal(await read, null, "the read must retry and see the row gone");
 });
 
+test("a delete of an already-missing row (P2025) still evicts the cached entry", async (): Promise<void> => {
+    const rows: unknown[] = [{ playlistId: "pl-1", userId: "user-1", public: false }, null];
+    const playlist = new PlaylistController(
+        ...fakeDeps({
+            userPlaylist: {
+                findUnique: (): Promise<unknown> => Promise.resolve(rows.shift()),
+                delete: (): Promise<unknown> => Promise.reject({ code: "P2025" }),
+            },
+        }),
+    );
+
+    // Cache the row, then delete it after it was already removed elsewhere.
+    assert.equal((await playlist.get("pl-1", "user-1"))?.playlistId, "pl-1");
+    await playlist.delete("user-1", "pl-1");
+
+    assert.equal(await playlist.get("pl-1", "user-1"), null, "the cached row must be evicted, not served until it expires");
+});
+
+test("a failed delete (not P2025) rethrows and keeps the cached entry", async (): Promise<void> => {
+    const { model, state } = countingModel({ playlistId: "pl-1", userId: "user-1", public: false });
+    const playlist = new PlaylistController(
+        ...fakeDeps({ userPlaylist: { ...model, delete: (): Promise<unknown> => Promise.reject(new Error("timeout")) } }),
+    );
+
+    await playlist.get("pl-1", "user-1");
+    await assert.rejects(playlist.delete("user-1", "pl-1"), /timeout/);
+
+    assert.equal((await playlist.get("pl-1", "user-1"))?.playlistId, "pl-1");
+    assert.equal(state.calls, 1, "the row still exists, so the cache must keep serving it");
+});
+
 test("a playlist read returns a clone, so mutating it can't poison the cache", async (): Promise<void> => {
     const { model } = countingModel({ playlistId: "pl-1", userId: "user-1", public: false, tracks: [] });
     const playlist = new PlaylistController(...fakeDeps({ userPlaylist: model }));
