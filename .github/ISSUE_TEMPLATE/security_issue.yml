@@ -1,0 +1,98 @@
+name: 🔒 Security Issue
+description: Report a security vulnerability (please use responsibly)
+title: "[SECURITY] "
+labels: ["security", "high-priority"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **⚠️ IMPORTANT: Security Issues**
+        
+        If you've found a security vulnerability, please report it responsibly:
+        
+        - **For critical security issues**: Contact the maintainers directly via Discord or email before filing a public issue
+        - **For non-critical issues**: You can use this template
+        
+        Please do not include sensitive information or exploit code in public issues.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Security Issue Checklist
+      description: Please confirm the following before submitting
+      options:
+        - label: This is a genuine security concern and not a general bug
+          required: true
+        - label: I have not included sensitive information or exploit code in this public issue
+          required: true
+        - label: I understand this will be publicly visible and have acted responsibly
+          required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity Level
+      description: How severe do you consider this security issue?
+      options:
+        - Low - Information disclosure, minor issues
+        - Medium - Limited impact, requires specific conditions
+        - High - Significant impact, affects multiple users
+        - Critical - Immediate threat, affects all users
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Security Category
+      description: What type of security issue is this?
+      options:
+        - Authentication/Authorization
+        - Data validation/injection
+        - Information disclosure
+        - Permissions bypass
+        - Denial of Service (DoS)
+        - Dependency vulnerability
+        - Configuration issue
+        - Other security concern
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Security Issue Description
+      description: Describe the security issue (without sensitive details)
+      placeholder: "There appears to be an issue with..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Potential Impact
+      description: What could happen if this security issue is exploited?
+      placeholder: "An attacker could potentially..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: affected-components
+    attributes:
+      label: Affected Components
+      description: What parts of Stelle are affected?
+      placeholder: "Commands, database, authentication, etc."
+
+  - type: textarea
+    id: mitigation
+    attributes:
+      label: Suggested Mitigation
+      description: Do you have suggestions for fixing this issue?
+      placeholder: "This could be mitigated by..."
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other relevant information
+      placeholder: "Version affected, environment details, etc."

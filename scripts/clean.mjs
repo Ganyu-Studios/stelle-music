@@ -1,27 +1,18 @@
 //@ts-check
 
-import { existsSync } from "node:fs";
-import { rm } from "node:fs/promises";
+import { existsSync, rmSync } from "node:fs";
 import { resolve } from "node:path";
 
-/**
- * Deletes the dist folder if it exists.
- * @type {() => Promise<void>}
- */
-(
-    async () => {
-        console.info("Deleting files...");
+console.info("Deleting files...");
 
-        try {
-            const path = resolve("dist");
-            const exists = existsSync(path);
+try {
+    const path = resolve("dist");
+    const exists = existsSync(path);
 
-            if (exists) await rm(path, { recursive: true });
+    if (exists) rmSync(path, { recursive: true });
 
-            console.info("Done! Cleared.");
-        } catch (error) {
-            console.info(error);
-            process.exit(1);
-        }
-    }
-)();
+    console.info("Done! Cleared.");
+} catch (error) {
+    console.info(error);
+    process.exit(1);
+}

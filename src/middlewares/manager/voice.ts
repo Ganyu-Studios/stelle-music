@@ -1,36 +1,35 @@
-import { type AnyContext, createMiddleware, type MiddlewareContext } from "seyfert";
-
-import { EmbedColors } from "seyfert/lib/common/index.js";
-import { MessageFlags } from "seyfert/lib/types/index.js";
+import {
+    type AllGuildVoiceChannels,
+    type AnyContext,
+    createMiddleware,
+    type GuildMember,
+    type MiddlewareContext,
+    type VoiceState,
+} from "seyfert";
+import type { PermissionStrings } from "seyfert/lib/common/index.js";
+import type { PermissionNames } from "#stelle/types/index.js";
+import { PermissionOps } from "#stelle/utils/functions/internal/permissions.js";
 
 /**
  * Check if the bot is in a voice channel and if is the same as the author.
  * @type {MiddlewareContext<void, AnyContext>}
  */
-export const checkBotVoiceChannel: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, pass, next }) => {
+export const checkBotVoiceChannel: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, stop, next }) => {
     if (!context.inGuild()) return next();
 
-    const { messages } = await context.getLocale();
+    const { messages } = await context.locale();
 
-    const me = await context.me();
+    const me: GuildMember | null | undefined = await context.me().catch((): null => null);
     if (!me) return;
 
-    const state = await context.member.voice();
-    if (!state) return pass();
+    const state: VoiceState = await context.member.voice();
+    if (!state) return stop();
 
-    const bot = await me.voice().catch(() => null);
+    const bot: VoiceState | null = await me.voice().catch((): null => null);
     if (bot && bot.channelId !== state.channelId) {
-        await context.editOrReply({
-            flags: MessageFlags.Ephemeral,
-            embeds: [
-                {
-                    description: messages.events.noSameVoice({ channelId: bot.channelId! }),
-                    color: EmbedColors.Red,
-                },
-            ],
-        });
+        await context.errorReply(messages.events.no.sharedVoice({ channelId: bot.channelId! }), { ephemeral: true });
 
-        return pass();
+        return stop();
     }
 
     return next();
@@ -40,26 +39,18 @@ export const checkBotVoiceChannel: MiddlewareContext<void, AnyContext> = createM
  * Check if the author is in a voice channel.
  * @type {MiddlewareContext<void, AnyContext>}
  */
-export const checkVoiceChannel: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, pass, next }) => {
+export const checkVoiceChannel: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, stop, next }) => {
     if (!context.inGuild()) return next();
 
-    const { messages } = await context.getLocale();
+    const { messages } = await context.locale();
 
-    const state = await context.member.voice().catch(() => null);
+    const state: VoiceState | null = await context.member.voice().catch((): null => null);
 
-    const channel = await state?.channel().catch(() => null);
+    const channel: AllGuildVoiceChannels | null | undefined = await state?.channel().catch((): null => null);
     if (!channel) {
-        await context.editOrReply({
-            flags: MessageFlags.Ephemeral,
-            embeds: [
-                {
-                    description: messages.events.noVoiceChannel,
-                    color: EmbedColors.Red,
-                },
-            ],
-        });
+        await context.errorReply(messages.events.no.voiceChannel, { ephemeral: true });
 
-        return pass();
+        return stop();
     }
 
     return next();
@@ -69,45 +60,27 @@ export const checkVoiceChannel: MiddlewareContext<void, AnyContext> = createMidd
  * Check if the bot has permissions to join the voice channel.
  * @type {MiddlewareContext<void, AnyContext>}
  */
-export const checkVoicePermissions: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, pass, next }) => {
+export const checkVoicePermissions: MiddlewareContext<void, AnyContext> = createMiddleware<void>(async ({ context, stop, next }) => {
     if (!context.inGuild()) return next();
 
-    const state = await context.member.voice().catch(() => null);
-    if (!state) return pass();
+    const state: VoiceState | null = await context.member.voice().catch((): null => null);
+    if (!state) return stop();
 
-    const channel = await state.channel().catch(() => null);
-    if (!channel) return pass();
+    const channel: AllGuildVoiceChannels | null | undefined = await state.channel().catch((): null => null);
+    if (!channel) return stop();
+
+    const me: GuildMember | null | undefined = await context.me().catch((): null => null);
+    if (!me) return stop();
 
     const { stagePermissions, voicePermissions } = context.client.config.permissions;
-    const { messages } = await context.getLocale();
+    const required: PermissionStrings = channel.isStage() ? stagePermissions : voicePermissions;
 
-    const me = await context.me();
-    if (!me) return;
-
-    const permissions = await context.client.channels.memberPermissions(channel.id, me);
-    const missings = permissions.keys(permissions.missings(channel.isStage() ? stagePermissions : voicePermissions));
-
+    const missings: PermissionNames[] = await PermissionOps.missing(context.client, channel.id, me, required);
     if (missings.length) {
-        await context.editOrReply({
-            content: "",
-            flags: MessageFlags.Ephemeral,
-            embeds: [
-                {
-                    description: messages.events.permissions.channel.description({
-                        channelId: channel.id,
-                    }),
-                    color: EmbedColors.Red,
-                    fields: [
-                        {
-                            name: messages.events.permissions.user.field,
-                            value: missings.map((p) => `- ${messages.events.permissions.list[p]}`).join("\n"),
-                        },
-                    ],
-                },
-            ],
-        });
+        const { messages } = await context.locale();
+        await context.editOrReply(PermissionOps.message(messages, channel.id, missings));
 
-        return pass();
+        return stop();
     }
 
     return next();

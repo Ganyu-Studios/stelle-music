@@ -1,0 +1,126 @@
+name: 🎵 Music Issue
+description: Report issues specifically related to music playback
+title: "[MUSIC] "
+labels: ["music", "bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a music-related issue! Please provide specific details about the audio problem you're experiencing.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Prerequisites
+      description: Please confirm the following before submitting this issue
+      options:
+        - label: I have searched existing issues to ensure this hasn't been reported before
+          required: true
+        - label: I have tried restarting the bot/rejoining the voice channel
+          required: true
+        - label: The issue is specifically related to music playback functionality
+          required: true
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Music Issue Type
+      description: What type of music issue are you experiencing?
+      options:
+        - Bot won't join voice channel
+        - Bot joined but no audio is playing
+        - Audio is distorted/low quality
+        - Audio cuts out or stutters
+        - Bot disconnects unexpectedly
+        - Queue not working properly
+        - Search results are incorrect
+        - Volume control issues
+        - Track skipping issues
+        - Other playback issue
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Issue Description
+      description: Describe the music issue in detail
+      placeholder: "When I try to play music..."
+    validations:
+      required: true
+
+  - type: input
+    id: command-used
+    attributes:
+      label: Command Used
+      description: What music command were you using?
+      placeholder: "/play Never Gonna Give You Up"
+    validations:
+      required: true
+
+  - type: input
+    id: music-source
+    attributes:
+      label: Music Source
+      description: What was the source of the music?
+      placeholder: "YouTube, Spotify, SoundCloud, direct URL, etc."
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Step-by-step instructions to reproduce the issue
+      placeholder: |
+        1. Join voice channel
+        2. Use command '/play [song]'
+        3. Observe issue
+    validations:
+      required: true
+
+  - type: textarea
+    id: voice-channel-info
+    attributes:
+      label: Voice Channel Information
+      description: Information about the voice channel
+      placeholder: |
+        - Voice channel region: US East
+        - Number of users in channel: 3
+        - Channel bitrate: 64kbps
+        - User limit: None
+    validations:
+      required: true
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: How often does this occur?
+      options:
+        - Always (every time)
+        - Often (more than half the time)
+        - Sometimes (occasionally)
+        - Rarely (once or twice)
+        - First time experiencing this
+    validations:
+      required: true
+
+  - type: input
+    id: other-bots
+    attributes:
+      label: Other Music Bots
+      description: Are there other music bots in the server? Do they work properly?
+      placeholder: "MEE6 music works fine, Rythm was working before..."
+
+  - type: textarea
+    id: error-messages
+    attributes:
+      label: Error Messages
+      description: Any error messages displayed by the bot
+      placeholder: "Bot responded with: 'Failed to join voice channel'"
+      render: text
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other context about the music issue
+      placeholder: "This started happening after the recent update..."

@@ -1,7 +1,8 @@
-import type { GuildMember, UsingClient, VoiceState } from "seyfert";
+import type { PlayerStructure } from "hoshimi";
+import { type GuildMember, LogLevels, type UsingClient, type VoiceState } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
-
-import { TimeFormat } from "#stelle/utils/functions/time.js";
+import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
+import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
 
 const timeouts: Map<string, NodeJS.Timeout> = new Map();
 
@@ -19,103 +20,132 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
 
     const { guildId } = newState;
 
-    const player = client.manager.getPlayer(guildId);
+    const player: PlayerStructure | undefined = client.manager.getPlayer(guildId);
     if (!player) return;
 
-    if (!(player.textChannelId && player.voiceChannelId)) return;
+    if (!(player.textId && player.voiceId)) return;
 
-    const locale = player.get<string | undefined>("localeString");
-    if (!locale) return;
+    // The bot can be removed from the guild (or lose the channel) mid-cleanup, so any of the fetches, node calls or
+    // message writes below can reject. Treat the whole voice-state handling as best-effort.
+    try {
+        const messages = await PlayerOps.messages(client, player);
+        if (!messages) return;
 
-    const { messages } = client.t(locale).get();
+        const channel = await PlayerOps.voice(client, player.voiceId);
+        if (!channel) return;
 
-    const channel = await client.channels.fetch(player.voiceChannelId);
-    if (!channel.is(["GuildStageVoice", "GuildVoice"])) return;
+        const members: GuildMember[] = await Promise.all(channel.states().map((c): Promise<GuildMember> => c.member()));
+        const isEmpty: boolean = !members.filter(({ user }): boolean => !user.bot).length;
 
-    const members = await Promise.all(channel.states().map((c): Promise<GuildMember> => c.member()));
-    const isEmpty = !members.filter(({ user }) => !user.bot).length;
+        const isChannel: boolean = oldState?.channelId === player.voiceId && newState.channelId !== oldState?.channelId;
 
-    if (
-        isEmpty &&
-        !player.playing &&
-        !player.paused &&
-        !(player.queue.tracks.length + Number(!!player.queue.current)) &&
-        player.connected
-    ) {
-        await player.destroy();
-        await client.messages.write(player.textChannelId, {
-            embeds: [
-                {
-                    color: EmbedColors.Yellow,
-                    description: messages.events.noMembers({
-                        clientName: client.me.username,
-                    }),
-                },
-            ],
-        });
+        const is247: boolean = (await player.data.get("is247")) || client.config.twentyfourseven.is247;
+        const isAutoPause: boolean = (await player.data.get("isAutoPause")) ?? client.config.twentyfourseven.autoPause;
 
-        return;
-    }
+        if (is247) {
+            if (isAutoPause) {
+                if (isEmpty && (player.paused || player.playing)) await player.setPaused(true);
+                else if (!isEmpty && player.paused) await player.setPaused(false);
+            }
 
-    if (isEmpty && !player.playing && player.paused && player.queue.current && !player.queue.tracks.length) {
-        await player.destroy();
-        await client.messages.write(player.textChannelId, {
-            embeds: [
-                {
-                    color: EmbedColors.Yellow,
-                    description: messages.events.noMembers({
-                        clientName: client.me.username,
-                    }),
-                },
-            ],
-        });
+            if (isEmpty && isChannel) {
+                await client.messages.write(player.textId, {
+                    embeds: [
+                        {
+                            color: client.config.color.success,
+                            description: messages.events.is247Enabled,
+                        },
+                    ],
+                });
+            }
 
-        return;
-    }
+            return;
+        }
 
-    if (isEmpty && (player.paused || player.playing)) {
-        await player.pause();
-        await client.messages.write(player.textChannelId, {
-            embeds: [
-                {
-                    color: EmbedColors.Yellow,
-                    description: messages.events.channelEmpty({
-                        type: TimeFormat.toHumanize(client.config.disconnectTime),
-                        clientName: client.me.username,
-                    }),
-                },
-            ],
-        });
-
-        const timeoutId = setTimeout(async () => {
+        // Only joined, doing nothing (idle + no current/queued track): leave with a dedicated "nothing was playing" notice.
+        if (isChannel && isEmpty && player.isIdle() && !player.queue.totalSize && player.connected) {
             await player.destroy();
-            await client.messages.write(player.textChannelId!, {
+            await client.messages.write(player.textId, {
                 embeds: [
                     {
                         color: EmbedColors.Yellow,
-                        description: messages.events.noMembers({
+                        description: messages.events.no.idle({
                             clientName: client.me.username,
                         }),
                     },
                 ],
             });
-        }, client.config.disconnectTime);
 
-        timeouts.set(guildId, timeoutId);
-    } else if (timeouts.has(guildId) && !isEmpty && player.paused) {
-        await player.resume();
-        await client.messages.write(player.textChannelId, {
-            embeds: [
-                {
-                    color: EmbedColors.Yellow,
-                    description: messages.events.hasMembers({
-                        clientName: client.me.username,
-                    }),
-                },
-            ],
-        });
+            return;
+        }
 
-        clearTimeout(timeouts.get(guildId));
-        timeouts.delete(guildId);
+        if (isChannel && isEmpty && !player.playing && player.paused && player.queue.current && !player.queue.tracks.length) {
+            await player.destroy();
+            await client.messages.write(player.textId, {
+                embeds: [
+                    {
+                        color: EmbedColors.Yellow,
+                        description: messages.events.no.members({
+                            clientName: client.me.username,
+                        }),
+                    },
+                ],
+            });
+
+            return;
+        }
+
+        if (isChannel && isEmpty && (player.paused || player.playing)) {
+            await player.setPaused(true);
+            await client.messages.write(player.textId, {
+                embeds: [
+                    {
+                        color: EmbedColors.Yellow,
+                        description: messages.events.channelEmpty({
+                            type: TimeFormat.toHumanize(client.config.disconnectTime),
+                            clientName: client.me.username,
+                        }),
+                    },
+                ],
+            });
+
+            // Runs detached after the outer try/catch has returned, so it needs its own guard.
+            const timeoutId: NodeJS.Timeout = setTimeout(async (): Promise<void> => {
+                try {
+                    await player.destroy();
+                    await client.messages.write(player.textId!, {
+                        embeds: [
+                            {
+                                color: EmbedColors.Yellow,
+                                description: messages.events.no.members({
+                                    clientName: client.me.username,
+                                }),
+                            },
+                        ],
+                    });
+                } catch (error) {
+                    client.debug(LogLevels.Error, `[Lavalink] Empty-channel leave failed | guild: ${guildId} | error: ${error}`);
+                }
+            }, client.config.disconnectTime);
+
+            timeouts.set(guildId, timeoutId);
+        } else if (timeouts.has(guildId) && !isEmpty && player.paused) {
+            await player.setPaused(false);
+            await client.messages.write(player.textId, {
+                embeds: [
+                    {
+                        color: EmbedColors.Yellow,
+                        description: messages.events.hasMembers({
+                            clientName: client.me.username,
+                        }),
+                    },
+                ],
+            });
+
+            clearTimeout(timeouts.get(guildId));
+            timeouts.delete(guildId);
+        }
+    } catch (error) {
+        client.debug(LogLevels.Error, `[Lavalink] Voice-state handling failed | guild: ${guildId} | error: ${error}`);
     }
 }

@@ -1,34 +1,34 @@
-import type { LavalinkNodeOptions } from "lavalink-client";
+import type { NodeOptions, PlayerStructure } from "hoshimi";
 import MeowDB from "meowdb";
 import type { MakeRequired, RestOrArray } from "seyfert/lib/common/index.js";
-import type { StellePlayerJson } from "#stelle/types";
-import { Constants } from "#stelle/utils/data/constants.js";
+import type { NonOptionsNode, SessionJson, StellePlayerJson } from "#stelle/types/index.js";
+import { StellePaths } from "#stelle/utils/data/constants.js";
 import { InvalidNodeSession } from "#stelle/utils/errors.js";
-import { ms } from "#stelle/utils/functions/time.js";
-import { createDirectory } from "#stelle/utils/functions/utils.js";
+import { ms } from "#stelle/utils/functions/internal/time.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  * Lavalink node options without the `sessionId`.
  */
 //i don't know how to name this type, so i just called like this
-type NonResumableNodeOptions = Omit<LavalinkNodeOptions, "sessionId">;
+type NonResumableNodeOptions = Omit<NodeOptions, "sessionId">;
 
 /**
  * The player json with the required properties.
  */
-type RequiredPlayerJson = MakeRequired<StellePlayerJson, "nodeId" | "nodeSessionId">;
+type RequiredPlayerJson = MakeRequired<StellePlayerJson>;
 
 /**
  * The directory where the cache is stored.
  * @type {string}
  */
-const dir: string = await createDirectory(Constants.CachePath);
+const dir: string = await UtilsOps.createDir(StellePaths.CacheDirectory);
 
 /**
  * The name of the sessions file without the `.json` extension.
  * @type {string}
  */
-const name = Constants.SessionsFile.replace(/\.json$/, "").trim();
+const name: string = StellePaths.SessionsFile.replace(/\.json$/, "").trim();
 
 /**
  * The storage for player sessions.
@@ -42,9 +42,26 @@ const storage: MeowDB = new MeowDB({ dir, name });
  */
 const ids: Map<string, string> = new Map<string, string>(
     Object.values<StellePlayerJson>(storage.all())
-        .filter((session): session is RequiredPlayerJson => typeof session.nodeId === "string" && typeof session.nodeSessionId === "string")
-        .map((session) => [session.nodeId, session.nodeSessionId]),
+        .filter(
+            (session): session is RequiredPlayerJson => typeof session.node.id === "string" && typeof session.node.sessionId === "string",
+        )
+        .map((session) => [session.node.id, session.node.sessionId!]),
 );
+
+/**
+ *
+ * Compare two sessions ignoring the volatile playback position (`lastPosition`/`position`) — it changes on every
+ * playerUpdate but is restored from the live node payload on resume, never from the session.
+ * @param {SessionJson} a The stored session.
+ * @param {SessionJson} b The freshly built session.
+ * @returns {boolean} Whether their persisted state is identical.
+ */
+function samePersistedSession(a: SessionJson, b: SessionJson): boolean {
+    // `savedAt` is a freshness stamp, not persisted state; comparing it would defeat the position-only skip below.
+    const keys = ["lastPosition", "position", "savedAt"] as const;
+
+    return UtilsOps.deepEqual(UtilsOps.omit(a, keys), UtilsOps.omit(b, keys));
+}
 
 /**
  * Utility to manage Lavalink node sessions.
@@ -70,6 +87,13 @@ export const Sessions = {
         return storage.get<T>(id);
     },
     /**
+     * Get every persisted session.
+     * @returns {T[]} All stored sessions.
+     */
+    values<T>(): T[] {
+        return Object.values<T>(storage.all());
+    },
+    /**
      * Delete the session of the player.
      * @param {string} id The id of the session.
      * @return {boolean} Whether the session was deleted or not.
@@ -83,10 +107,10 @@ export const Sessions = {
      * @param {RestOrArray<NonResumableNodeOptions>} nodes The nodes to resolve.
      * @returns {LavalinkNodeOptions[]} The resolved nodes.
      */
-    resolve(...nodes: RestOrArray<NonResumableNodeOptions>): LavalinkNodeOptions[] {
+    resolve(...nodes: RestOrArray<NonResumableNodeOptions>): NodeOptions[] {
         nodes = nodes.flat();
 
-        if (nodes.some((node) => "sessionId" in node && typeof node.sessionId === "string"))
+        if (nodes.some((node): boolean => "sessionId" in node && typeof node.sessionId === "string"))
             throw new InvalidNodeSession("The 'sessionId' property is not allowed in the node options.");
 
         return nodes.map((node) => {
@@ -94,11 +118,77 @@ export const Sessions = {
             node.id ??= `${node.host}:${node.port}`;
             node.retryAmount ??= 25;
             node.retryDelay ??= ms("25s");
+            node.restTimeout ??= ms("30s");
 
             return {
                 ...node,
                 sessionId: ids.get(node.id),
             };
         });
+    },
+    /**
+     *
+     * Snapshot a player into its persisted session, so it can be recreated after a restart, node resume or a 24/7
+     * autoreconnect. Mirrors the shape read back by `resumeListener` and the destroy autoreconnect. Callers gate
+     * this on `config.sessions.enabled`.
+     * @param {PlayerStructure} player The player to persist.
+     * @returns {Promise<void>} A promise that resolves once the session is written.
+     */
+    async save(player: PlayerStructure): Promise<void> {
+        const json = player.toJSON();
+        if (json.queue?.current) json.queue.current.userData = {};
+
+        const base = UtilsOps.pick(json, [
+            "voice",
+            "options",
+            "guildId",
+            "volume",
+            "selfDeaf",
+            "selfMute",
+            "loop",
+            "voiceId",
+            "textId",
+            "lastPosition",
+            "position",
+        ]);
+
+        const node: NonOptionsNode = UtilsOps.pick(json.node, ["id", "sessionId"]);
+
+        // These player.data reads are independent, so fetch them concurrently instead of nine awaits in series.
+        const [messageId, enabledAutoplay, localeString, me, lyricsId, lyricsEnabled, is247, isAutoPause, isRequestChannel] =
+            await Promise.all([
+                player.data.get("messageId"),
+                player.data.get("enabledAutoplay"),
+                player.data.get("localeString"),
+                player.data.get("me"),
+                player.data.get("lyricsId"),
+                player.data.get("lyricsEnabled"),
+                player.data.get("is247"),
+                player.data.get("isAutoPause"),
+                player.data.get("isRequestChannel"),
+            ]);
+
+        const session: SessionJson = {
+            ...base,
+            node,
+            savedAt: Date.now(),
+            messageId,
+            enabledAutoplay,
+            localeString,
+            me,
+            lyricsId,
+            lyricsEnabled,
+            is247,
+            isAutoPause,
+            isRequestChannel,
+        };
+
+        // playerUpdate fires on every position tick, but resume restores the position from the live node payload
+        // (not the session), so persisting a position-only change is wasted synchronous file I/O (MeowDB rewrites the
+        // whole sessions file on every set). Skip the write unless a persisted field actually changed.
+        const stored: SessionJson | undefined = this.get<SessionJson>(player.guildId);
+        if (stored && samePersistedSession(stored, session)) return;
+
+        this.set<SessionJson>(player.guildId, session);
     },
 };
