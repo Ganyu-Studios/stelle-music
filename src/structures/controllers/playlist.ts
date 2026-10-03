@@ -27,6 +27,7 @@ export class PlaylistController extends Controller<"userPlaylist"> {
         // Clone on read: callers mutate the returned playlist (tracks, name) before persisting, so handing back the
         // cached object would poison the shared entry before the DB write lands.
         return this.fetch({
+            key: playlistId,
             read: () => {
                 const cached = this.cache.playlists.get(playlistId);
                 if (cached && cached.userId === userId) return cached;
@@ -53,6 +54,7 @@ export class PlaylistController extends Controller<"userPlaylist"> {
     public getLoadable(playlistId: string, userId: string): Promise<userPlaylist | null> {
         // Clone on read: same rationale as get() — the loaded playlist's tracks are copied into a live queue.
         return this.fetch({
+            key: playlistId,
             read: () => {
                 const cached = this.cache.playlists.get(playlistId);
                 if (cached && (cached.userId === userId || cached.public)) return cached;
@@ -84,6 +86,7 @@ export class PlaylistController extends Controller<"userPlaylist"> {
         if ("userId" in data) data = UtilsOps.omit(data, ["userId"]);
 
         return this.store({
+            key: data.playlistId,
             write: (record): void => {
                 this.cache.playlists.set(record.playlistId, record);
             },
@@ -105,6 +108,7 @@ export class PlaylistController extends Controller<"userPlaylist"> {
      */
     public delete(userId: string, playlistId: string): Promise<void> {
         return this.remove({
+            key: playlistId,
             evict: (): void => {
                 this.cache.playlists.delete(playlistId);
             },

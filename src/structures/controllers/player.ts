@@ -33,6 +33,7 @@ export class PlayerController extends Controller<"guildPlayer"> {
      */
     public async get(id: string): Promise<StoredPlayer> {
         const data = await this.fetch({
+            key: id,
             read: () => this.cache.getGuild(id)?.player,
             write: (record): void => {
                 this.cache.guild(id).player = record;
@@ -55,6 +56,7 @@ export class PlayerController extends Controller<"guildPlayer"> {
      */
     public set(guildId: string, data: Partial<StoredPlayer>): Promise<void> {
         return this.store({
+            key: guildId,
             write: (record): void => {
                 this.cache.guild(guildId).player = record;
             },

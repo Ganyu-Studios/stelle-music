@@ -22,10 +22,22 @@ export function rethrowUnlessMissing(error: unknown): null {
 }
 
 /**
+ * The version of a cache key while reads of it are in flight.
+ */
+interface KeyVersion {
+    /** How many `fetch` queries of the key are in flight. */
+    readers: number;
+    /** Bumped by every `store`/`remove` of the key that lands while those reads are in flight. */
+    version: number;
+}
+
+/**
  * Options for a cache-first read (`fetch`).
  * @template T The record type.
  */
 export interface FetchOptions<T> {
+    /** The cache key the record lives under, shared with the `store`/`remove` calls that write it. */
+    key: string;
     /** Read the record from the cache: `undefined` is a miss, `null` is a negatively-cached "known absent". */
     read: () => T | null | undefined;
     /** Write a freshly read record (or `null`, to negatively cache an absent record) to the cache. */
@@ -41,6 +53,8 @@ export interface FetchOptions<T> {
  * @template T The record type.
  */
 export interface StoreOptions<T> {
+    /** The cache key the record lives under. */
+    key: string;
     /** Write the written record to the cache. */
     write: (data: T) => void;
     /** The database write to run. */
@@ -51,6 +65,8 @@ export interface StoreOptions<T> {
  * Options for a cache-backed delete (`remove`).
  */
 export interface RemoveOptions {
+    /** The cache key the record lives under. */
+    key: string;
     /** Evict the record from the cache. */
     evict: () => void;
     /** The database delete to run. */
@@ -87,6 +103,16 @@ export abstract class Controller<M extends ModelNames> {
      * @protected
      */
     protected readonly client: UsingClient;
+
+    /**
+     * The version of each key with a `fetch` query in flight, so a read that started before a write can tell the write
+     * landed and skip caching what it read. Only keys being read are tracked: an entry is dropped when its last reader
+     * settles, so the map never outgrows the reads in flight.
+     * @type {Map<string, KeyVersion>}
+     * @readonly
+     * @private
+     */
+    private readonly versions: Map<string, KeyVersion> = new Map();
 
     /**
      * Create a controller instance.
@@ -126,18 +152,38 @@ export abstract class Controller<M extends ModelNames> {
      * always written back — including a `null` miss — so accessors backed by a bounded store negatively cache absent
      * records and stop re-querying the database for default-state guilds/users (accessors over an unbounded store
      * simply drop the `null` in their `write`).
+     *
+     * If a `store`/`remove` of the same key lands while the query is in flight, the query may have read the row from
+     * before that write, so writing it back would overwrite the newer cache entry with stale data until it expires.
+     * The read is then discarded and retried, which picks up what the write cached (or re-queries after an evict).
      * @template T The record type.
-     * @param {FetchOptions<T>} options The read/write/query accessors and clone flag.
+     * @param {FetchOptions<T>} options The key, read/write/query accessors and clone flag.
      * @returns {Promise<T | null>} The cached or freshly read record, or null.
      */
-    protected async fetch<T>({ read, write, query, clone = false }: FetchOptions<T>): Promise<T | null> {
+    protected async fetch<T>(options: FetchOptions<T>): Promise<T | null> {
+        const { key, read, write, query, clone = false } = options;
+
         const cached: T | null | undefined = read();
         if (cached !== undefined) {
             if (cached && clone) return structuredClone(cached);
             return cached;
         }
 
-        const data: T | null = await query();
+        const entry: KeyVersion = this.versions.get(key) ?? { readers: 0, version: 0 };
+        const version: number = entry.version;
+
+        entry.readers++;
+        this.versions.set(key, entry);
+
+        let data: T | null;
+        try {
+            data = await query();
+        } finally {
+            if (--entry.readers === 0) this.versions.delete(key);
+        }
+
+        if (entry.version !== version) return this.fetch(options);
+
         write(data);
 
         if (data && clone) return structuredClone(data);
@@ -145,25 +191,40 @@ export abstract class Controller<M extends ModelNames> {
     }
 
     /**
+     * Bump the version of a key with reads in flight, so they retry instead of caching what they read (see `fetch`).
+     * A key nobody is reading has nothing to invalidate.
+     * @param {string} key The cache key that was just written or evicted.
+     * @returns {void}
+     */
+    private bump(key: string): void {
+        const entry: KeyVersion | undefined = this.versions.get(key);
+        if (entry) entry.version++;
+    }
+
+    /**
      * Run a write that returns the record (e.g. an upsert) and write the result to the cache via `write`.
      * @template T The record type.
-     * @param {StoreOptions<T>} options The write accessor and database write.
+     * @param {StoreOptions<T>} options The key, write accessor and database write.
      * @returns {Promise<void>} A promise that resolves once the record is cached.
      */
-    protected async store<T>({ write, query }: StoreOptions<T>): Promise<void> {
+    protected async store<T>({ key, write, query }: StoreOptions<T>): Promise<void> {
         write(await query());
+        this.bump(key);
     }
 
     /**
      * Run a delete and, on success, evict the record from the cache via `evict`, swallowing only a "record not found"
      * (Prisma `P2025`) rejection and rethrowing anything else. The row is deleted first, then evicted, so a failing
      * delete surfaces instead of leaving the cache and database disagreeing silently.
-     * @param {RemoveOptions} options The evict accessor and database delete.
+     * @param {RemoveOptions} options The key, evict accessor and database delete.
      * @returns {Promise<void>} A promise that resolves once the record is evicted.
      */
-    protected async remove({ evict, query }: RemoveOptions): Promise<void> {
+    protected async remove({ key, evict, query }: RemoveOptions): Promise<void> {
         await query()
-            .then((): void => evict())
+            .then((): void => {
+                evict();
+                this.bump(key);
+            })
             .catch(rethrowUnlessMissing);
     }
 }

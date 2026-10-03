@@ -125,6 +125,58 @@ test("the global playlist collection does NOT negatively cache an absent record"
     assert.equal(state.calls, 2, "each miss must re-query rather than cache an owner-scoped null");
 });
 
+/**
+ * A `findUnique` stub whose calls stay pending until the test resolves them, so a write can be landed while a read is
+ * in flight. Each call is queued with its resolver.
+ * @returns {{ model: { findUnique: () => Promise<unknown> }; pending: ((value: unknown) => void)[] }} The stub and its queue.
+ */
+function deferredModel(): { model: { findUnique: () => Promise<unknown> }; pending: ((value: unknown) => void)[] } {
+    const pending: ((value: unknown) => void)[] = [];
+
+    return {
+        model: {
+            findUnique: (): Promise<unknown> => new Promise((resolve): void => void pending.push(resolve)),
+        },
+        pending,
+    };
+}
+
+test("a read in flight during a write doesn't cache the stale row it read", async (): Promise<void> => {
+    const { model, pending } = deferredModel();
+    const fresh = { id: "1", guildId: "guild-1", defaultVolume: 20, searchPlatform: "spsearch" };
+    const players = new PlayerController(
+        ...fakeDeps({ guildPlayer: { ...model, upsert: (): Promise<unknown> => Promise.resolve(fresh) } }),
+    );
+
+    // The read misses the cache and its query hangs, holding the row from before the write.
+    const read = players.get("guild-1");
+    await players.set("guild-1", { defaultVolume: 20 });
+    pending.shift()?.({ ...fresh, defaultVolume: 80 });
+
+    assert.equal((await read).defaultVolume, 20, "the read must return what the write cached, not its stale row");
+    assert.equal((await players.get("guild-1")).defaultVolume, 20, "the stale row must not overwrite the cache");
+    assert.equal(pending.length, 0, "the retry must be served by the cache, not re-query");
+});
+
+test("a read in flight during a delete doesn't re-cache the deleted row", async (): Promise<void> => {
+    const { model, pending } = deferredModel();
+    const row = { playlistId: "pl-1", userId: "user-1", public: false };
+    const playlist = new PlaylistController(
+        ...fakeDeps({ userPlaylist: { ...model, delete: (): Promise<unknown> => Promise.resolve(row) } }),
+    );
+
+    const read = playlist.get("pl-1", "user-1");
+    await playlist.delete("user-1", "pl-1");
+    pending.shift()?.(row);
+
+    // The evict leaves the key empty, so the retry re-queries and sees the row gone.
+    await new Promise((resolve): void => void setImmediate(resolve));
+    assert.equal(pending.length, 1, "the retry must re-query after the evict");
+    pending.shift()?.(null);
+
+    assert.equal(await read, null, "the read must retry and see the row gone");
+});
+
 test("a playlist read returns a clone, so mutating it can't poison the cache", async (): Promise<void> => {
     const { model } = countingModel({ playlistId: "pl-1", userId: "user-1", public: false, tracks: [] });
     const playlist = new PlaylistController(...fakeDeps({ userPlaylist: model }));

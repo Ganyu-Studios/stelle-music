@@ -21,6 +21,7 @@ export class RequestsController extends Controller<"guildRequestChannel"> {
      */
     public get(guildId: string): Promise<guildRequestChannel | null> {
         return this.fetch({
+            key: guildId,
             read: () => this.cache.getGuild(guildId)?.requests,
             write: (record): void => {
                 this.cache.guild(guildId).requests = record;
@@ -37,6 +38,7 @@ export class RequestsController extends Controller<"guildRequestChannel"> {
      */
     public set(guildId: string, data: RequestChannelData): Promise<void> {
         return this.store({
+            key: guildId,
             write: (record): void => {
                 this.cache.guild(guildId).requests = record;
             },
@@ -51,6 +53,7 @@ export class RequestsController extends Controller<"guildRequestChannel"> {
      */
     public delete(guildId: string): Promise<void> {
         return this.remove({
+            key: guildId,
             evict: (): void => {
                 this.cache.guild(guildId).requests = null;
             },

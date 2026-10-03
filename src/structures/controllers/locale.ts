@@ -17,6 +17,7 @@ export class LocaleController extends Controller<"guildLocale"> {
      */
     public async get(guildId: string): Promise<LocaleString> {
         const data = await this.fetch({
+            key: guildId,
             read: () => this.cache.getGuild(guildId)?.locale,
             write: (record): void => {
                 this.cache.guild(guildId).locale = record;
@@ -36,6 +37,7 @@ export class LocaleController extends Controller<"guildLocale"> {
      */
     public update(guildId: string, locale: string): Promise<void> {
         return this.store({
+            key: guildId,
             write: (record): void => {
                 this.cache.guild(guildId).locale = record;
             },

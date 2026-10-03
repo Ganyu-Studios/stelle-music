@@ -15,6 +15,7 @@ export class PrefixController extends Controller<"guildPrefix"> {
      */
     public async get(guildId: string): Promise<string> {
         const data = await this.fetch({
+            key: guildId,
             read: () => this.cache.getGuild(guildId)?.prefix,
             write: (record): void => {
                 this.cache.guild(guildId).prefix = record;
@@ -33,6 +34,7 @@ export class PrefixController extends Controller<"guildPrefix"> {
      */
     public set(guildId: string, prefix: string): Promise<void> {
         return this.store({
+            key: guildId,
             write: (record): void => {
                 this.cache.guild(guildId).prefix = record;
             },
