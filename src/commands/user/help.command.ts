@@ -50,24 +50,41 @@ const options = {
             const { client } = interaction;
             const { messages } = client.t(interaction.locale).get();
 
-            const commands: ResolvableCommand[] = client.commands.values.filter((command): boolean => !command.guildId);
-            const input: string = interaction.getInput();
+            const input: string = interaction.getInput().toLowerCase();
 
-            const toChoice = (command: ResolvableCommand): APIApplicationCommandOptionChoice<string> => {
-                const description: string = command.description_localizations?.[interaction.locale] ?? command.description;
+            /**
+             * The name a member sees for the command: its localized name for their client locale, else the base name.
+             * @param {ResolvableCommand} command The command.
+             * @returns {string} The displayed command name.
+             */
+            const displayName = (command: ResolvableCommand): string => command.name_localizations?.[interaction.locale] ?? command.name;
 
-                return {
-                    name: `${command.name} - ${UtilsOps.truncate(description, 124)} (${TimeFormat.toHumanize((command.cooldown ?? 3) * 1000)})`,
-                    value: command.name,
-                };
-            };
+            // Global commands whose base or localized name contains the input (an empty input matches all), prefix matches
+            // first. Only the 25 that fit become choices, each capped at Discord's 100 characters (one longer name gets the
+            // whole response rejected). The value stays the base name, which `run` resolves.
+            const choices: APIApplicationCommandOptionChoice<string>[] = client.commands.values
+                .filter(
+                    (command): boolean =>
+                        !command.guildId && (command.name.includes(input) || displayName(command).toLowerCase().includes(input)),
+                )
+                .sort(
+                    (a, b): number =>
+                        Number(displayName(b).toLowerCase().startsWith(input)) - Number(displayName(a).toLowerCase().startsWith(input)),
+                )
+                .slice(0, 25)
+                .map((command): APIApplicationCommandOptionChoice<string> => {
+                    const description: string = command.description_localizations?.[interaction.locale] ?? command.description;
+                    const cooldown: string = TimeFormat.toHumanize((command.cooldown ?? 3) * 1000);
 
-            if (!input.length) return interaction.respond(commands.map(toChoice).slice(0, 25));
+                    return {
+                        name: UtilsOps.truncate(`${displayName(command)} - ${description} (${cooldown})`, 100),
+                        value: command.name,
+                    };
+                });
 
-            const command: ResolvableCommand | undefined = commands.find((command) => command.name === input);
-            if (!command) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.no.command));
+            if (!choices.length) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.no.command));
 
-            return interaction.respond([toChoice(command)]);
+            return interaction.respond(choices);
         },
         description: "The command to get help for.",
         locales: {
@@ -103,13 +120,10 @@ export default class HelpCommand extends Command {
             const command: ResolvableCommand | undefined = commands.find((command) => command.name === options.command);
             if (!command) return ctx.errorReply(messages.commands.help.noCommand, { ephemeral: true });
 
-            let aliases: string | undefined;
-
             // Only chat commands carry aliases; context menu commands don't. Fall back to the "not specified" text
             // when the command has none.
-            if (command instanceof Command && command.aliases?.length)
-                aliases = command.aliases.join(", ") ?? messages.commands.help.noAliases;
-            else aliases = messages.commands.help.noAliases;
+            let aliases: string = messages.commands.help.noAliases;
+            if (command instanceof Command && command.aliases?.length) aliases = command.aliases.join(", ");
 
             const embed: Embed = new Embed()
                 .setColor(client.config.color.success)
