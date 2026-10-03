@@ -67,7 +67,7 @@
     },
     "devDependencies": {
         "@biomejs/biome": "^2.5.15",
-        "@types/node": "^26.6.3",
+        "@types/node": "^26.6.4",
         "husky": "^9.1.7",
         "lint-staged": "^17.6.0",
         "prisma": "6.19.3",

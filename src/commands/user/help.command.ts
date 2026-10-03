@@ -103,10 +103,13 @@ export default class HelpCommand extends Command {
             const command: ResolvableCommand | undefined = commands.find((command) => command.name === options.command);
             if (!command) return ctx.errorReply(messages.commands.help.noCommand, { ephemeral: true });
 
+            let aliases: string | undefined;
+
             // Only chat commands carry aliases; context menu commands don't. Fall back to the "not specified" text
             // when the command has none.
-            let aliases: string[] | undefined;
-            if (command instanceof Command) aliases = command.aliases;
+            if (command instanceof Command && command.aliases?.length)
+                aliases = command.aliases.join(", ") ?? messages.commands.help.noAliases;
+            else aliases = messages.commands.help.noAliases;
 
             const embed: Embed = new Embed()
                 .setColor(client.config.color.success)
@@ -119,11 +122,9 @@ export default class HelpCommand extends Command {
                 )
                 .setDescription(
                     messages.commands.help.command({
+                        aliases,
                         category: getAlias(command.category),
                         cooldown: TimeFormat.toHumanize((command.cooldown ?? 3) * 1000),
-                        aliases: aliases?.length
-                            ? aliases.map((alias): string => `\`${alias}\``).join(", ")
-                            : messages.commands.help.noAliases,
                         options: parseCommand(command, messages.events.optionTypes, localeString),
                     }),
                 );
@@ -206,11 +207,7 @@ export default class HelpCommand extends Command {
  * @param locale The locale to use.
  * @returns {string} The parsed command.
  */
-function parseCommand(
-    command: ResolvableCommand,
-    optionsType: Record<ApplicationCommandOptionType, string>,
-    locale?: LocaleString,
-): string {
+function parseCommand(command: ResolvableCommand, optionsType: Record<ApplicationCommandOptionType, string>, locale: LocaleString): string {
     if (command instanceof ContextMenuCommand) return command.name;
     let content: string = command.name;
     for (const option of command.options ?? []) {
@@ -221,7 +218,7 @@ function parseCommand(
         }
     }
 
-    return `\`${content}\`\n* ${command.description_localizations?.[locale!] ?? command.description}`;
+    return `\`${content}\`\n* ${command.description_localizations?.[locale] ?? command.description}`;
 }
 
 /**
