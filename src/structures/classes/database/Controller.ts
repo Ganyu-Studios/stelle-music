@@ -110,9 +110,9 @@ export abstract class Controller<M extends ModelNames> {
      * settles, so the map never outgrows the reads in flight.
      * @type {Map<string, KeyVersion>}
      * @readonly
-     * @private
+     * @protected
      */
-    private readonly versions: Map<string, KeyVersion> = new Map();
+    protected readonly versions: Map<string, KeyVersion> = new Map();
 
     /**
      * Create a controller instance.
