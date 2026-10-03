@@ -2,16 +2,22 @@ import {
     Command,
     createStringOption,
     Declare,
-    type DefaultLocale,
     type GuildCommandContext,
     LocalesT,
     type MessageStructure,
     Options,
     type WebhookMessageStructure,
 } from "seyfert";
-import { ApplicationIntegrationType, InteractionContextType, PermissionFlagsBits } from "seyfert/lib/types/index.js";
+import {
+    type APIApplicationCommandOptionChoice,
+    ApplicationIntegrationType,
+    InteractionContextType,
+    type LocaleString,
+    PermissionFlagsBits,
+} from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 const options = {
     locale: createStringOption({
@@ -21,17 +27,29 @@ const options = {
             name: "locales.setlocale.option.name",
             description: "locales.setlocale.option.description",
         },
-        autocomplete: async (interaction) => {
+        autocomplete: async (interaction): Promise<void> => {
             const { client } = interaction;
+            const { messages } = client.t(interaction.locale).get();
 
-            await interaction.respond(
-                Object.entries<DefaultLocale>(client.langs.values)
-                    .map(([value, l]) => ({
-                        name: `${l.metadata.name} [${l.metadata.emoji}] - ${l.metadata.translators.join(", ")}`,
-                        value,
-                    }))
-                    .slice(0, 25),
-            );
+            const input: string = interaction.getInput().toLowerCase();
+
+            // The locale code goes in the name too, so typing "es" or "419" matches; an empty input matches every locale.
+            // The translators are listed here (the command has no picker that shows them), so the name is capped at
+            // Discord's 100 characters.
+            const choices: APIApplicationCommandOptionChoice<string>[] = (Object.keys(client.langs.values) as LocaleString[])
+                .map((locale): APIApplicationCommandOptionChoice<string> => {
+                    const { metadata } = client.t(locale).get();
+
+                    return {
+                        name: UtilsOps.truncate(`${metadata.emoji} ${metadata.name} (${locale}) - ${metadata.translators.join(", ")}`, 100),
+                        value: locale,
+                    };
+                })
+                .filter((choice): boolean => choice.name.toLowerCase().includes(input));
+
+            if (!choices.length) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.no.locale));
+
+            await interaction.respond(choices);
         },
     }),
 };

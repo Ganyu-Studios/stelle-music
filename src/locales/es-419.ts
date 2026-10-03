@@ -331,6 +331,7 @@ export default {
                     tracks: "Stelle - No encontre la canción. Introduce otro nombre o el URL.",
                     guild: "Stelle - Este autocomplete solo puede ser usado en servidores.",
                     command: "Stelle - Nombre de comando inválido.",
+                    locale: "Stelle - Ningún idioma coincide con tu búsqueda.",
                 },
             },
             optionTypes: {

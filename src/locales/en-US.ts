@@ -396,6 +396,7 @@ export default {
                     tracks: "Stelle - No tracks was found. Enter another track name or URL.",
                     guild: "Stelle - This autocomplete only can be used in a guild.",
                     command: "Stelle - Invalid command name.",
+                    locale: "Stelle - No locales match your search.",
                 },
             },
             optionTypes: {
