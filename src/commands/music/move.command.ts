@@ -1,4 +1,5 @@
 import { Command, createChannelOption, Declare, type GuildCommandContext, type GuildMember, LocalesT, Middlewares, Options } from "seyfert";
+import type { PermissionStrings } from "seyfert/lib/common/index.js";
 import { ApplicationIntegrationType, ChannelType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { type PermissionNames, StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
@@ -7,7 +8,7 @@ import { PermissionOps } from "#stelle/utils/functions/internal/permissions.js";
 const options = {
     voice: createChannelOption({
         description: "Select the voice channel.",
-        channel_types: [ChannelType.GuildVoice],
+        channel_types: [ChannelType.GuildVoice, ChannelType.GuildStageVoice],
         required: true,
         locales: {
             name: "locales.move.options.voice.name",
@@ -45,14 +46,16 @@ export default class MoveCommand extends Command {
         const { player } = ctx.metadata.checkPlayer;
 
         // The move targets come from the options (not the author's current channel), so validate the bot can actually
-        // use them before switching: connect/speak in the voice channel and post in the text channel. Otherwise the
+        // use them before switching: connect/speak in the voice channel (`MuteMembers` when the target is a stage
+        // channel, which is what raises the bot out of the audience) and post in the text channel. Otherwise the
         // player would move into a channel where it's muted or its now-playing messages silently fail.
         const me: GuildMember | null = await ctx.me().catch((): null => null);
         if (!me) return;
 
-        const { voicePermissions, textPermissions } = client.config.permissions;
+        const { stagePermissions, textPermissions, voicePermissions } = client.config.permissions;
+        const requiredVoice: PermissionStrings = voice.isStage() ? stagePermissions : voicePermissions;
 
-        const missingVoice: PermissionNames[] = await PermissionOps.missing(client, voice.id, me, voicePermissions);
+        const missingVoice: PermissionNames[] = await PermissionOps.missing(client, voice.id, me, requiredVoice);
         if (missingVoice.length) return ctx.editOrReply(PermissionOps.message(messages, voice.id, missingVoice));
 
         if (text) {

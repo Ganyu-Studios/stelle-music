@@ -34,7 +34,7 @@ const options = {
 })
 @LocalesT("locales.quiz.commands.start.name", "locales.quiz.commands.start.description")
 @Options(options)
-@Middlewares(["checkNodes", "checkVoiceChannel"])
+@Middlewares(["checkNodes", "checkVoiceChannel", "checkVoicePermissions"])
 export default class QuizStartSubCommand extends SubCommand {
     public async run(ctx: GuildCommandContext<typeof options>): Promise<MessageStructure | WebhookMessageStructure | void> {
         const { client, guildId, channelId, member, options } = ctx;
