@@ -1,5 +1,7 @@
 import type { LavalinkPlayerVoice, NodeStructure, PlayerStructure, TrackStructure } from "hoshimi";
-import { LogLevels, type UsingClient } from "seyfert";
+import { type AllGuildVoiceChannels, type GuildMember, LogLevels, type UsingClient } from "seyfert";
+import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
+import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 
 /**
  *
@@ -45,6 +47,16 @@ export async function libraryListener(client: UsingClient, node: NodeStructure, 
 
                     await player.updatePlayer({ playerOptions: { voice } });
                     await player.connect();
+
+                    // Same as `resumeListener`: a re-resumed player never sends a fresh join, so no voice-state
+                    // event can repair a bot left as a suppressed audience in a stage channel — do it directly.
+                    const me: GuildMember | null = await client.members.fetch(player.guildId, client.botId).catch((): null => null);
+                    const voiceChannel: AllGuildVoiceChannels | null = await PlayerOps.voice(
+                        client,
+                        player.voiceId ?? player.options.voiceId,
+                    );
+                    if (me && voiceChannel) await joinVoiceChannel(player, voiceChannel, me);
+
                     await player.queue.utils.sync({ override: false, syncCurrent: true });
 
                     if (track)

@@ -1,6 +1,8 @@
 import { type LavalinkPlayer, type NodeStructure, StorageError } from "hoshimi";
-import { LogLevels, type UsingClient } from "seyfert";
+import { type AllGuildVoiceChannels, type GuildMember, LogLevels, type UsingClient } from "seyfert";
 import type { SessionJson } from "#stelle/types/index.js";
+import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
+import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
 import { Sessions } from "#stelle/utils/manager/sessions.js";
 
 /**
@@ -47,6 +49,14 @@ export async function resumeListener(client: UsingClient, node: NodeStructure, p
             player.voice.patch({ ...data.voice });
 
             await player.connect();
+
+            // A resumed player keeps its voice connection on Lavalink's side, so this process never sees the join
+            // event that triggers the stage unsuppress (`playerListener`). If the bot was left as a suppressed
+            // audience in a stage channel, repair it here: the player is settled in the target channel, which is
+            // exactly the race-free branch `joinVoiceChannel` handles.
+            const me: GuildMember | null = await client.members.fetch(data.guildId, client.botId).catch((): null => null);
+            const voice: AllGuildVoiceChannels | null = await PlayerOps.voice(client, player.voiceId ?? session.options.voiceId);
+            if (me && voice) await joinVoiceChannel(player, voice, me);
 
             Object.assign(player.filterManager, { data: data.filters });
 
