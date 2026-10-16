@@ -71,7 +71,7 @@ export default class JoinCommand extends Command {
             selfDeaf: true,
         });
 
-        await joinVoiceChannel(player, voice, me);
+        await joinVoiceChannel(player, channel, me);
 
         if (!(await player.data.get("localeString"))) await player.data.set("localeString", localeString);
 

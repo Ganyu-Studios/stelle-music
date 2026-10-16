@@ -1,5 +1,5 @@
 import type { PlayerStructure } from "hoshimi";
-import { type GuildMember, LogLevels, type UsingClient, type VoiceState } from "seyfert";
+import { type AllGuildVoiceChannels, type GuildMember, LogLevels, type UsingClient, type VoiceState } from "seyfert";
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
 import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
@@ -22,6 +22,21 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
 
     const player: PlayerStructure | undefined = client.manager.getPlayer(guildId);
     if (!player) return;
+
+    // Stage channels place every new member as suppressed ("audience"), and Discord denies the audio of a
+    // suppressed member: Lavalink connects and streams, but nothing is audible. The join only becomes real for
+    // Discord when this event fires, which makes it the first race-free point to raise the bot to speaker. It
+    // covers every way the bot can land in a stage: /play, /move, the quiz player, 24/7 reconnects, session
+    // restores or a manual drag. In-place suppressions (same channel, returned above) are left alone, so a
+    // moderator deliberately muting the bot still stands.
+    if (newState.userId === client.botId && newState.channelId && newState.suppress && player.connected) {
+        const channel: AllGuildVoiceChannels | null | undefined = await newState.channel().catch((): null => null);
+        if (channel?.isStage()) {
+            await newState.setSuppress(false).catch((error: unknown): void => {
+                client.debug(LogLevels.Error, `[Lavalink] Stage unsuppress failed | guild: ${guildId} | error: ${error}`);
+            });
+        }
+    }
 
     if (!(player.textId && player.voiceId)) return;
 
