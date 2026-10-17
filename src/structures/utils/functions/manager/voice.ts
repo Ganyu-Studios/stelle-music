@@ -30,10 +30,11 @@ export async function joinVoiceChannel(player: PlayerStructure, voice: AllGuildV
 /**
  *
  * Defer raising the bot to speaker in a stage channel until its voice connection is up (see `releaseUnsuppress`).
- * If the bot is already a speaker when Discord's voice server handshakes the connection, the server routes its audio
- * through a path stage listeners never receive (it hands out a random high SSRC instead of the sequential one): the
- * node streams normally, yet the stage stays silent for the whole connection. Raising it after the handshake keeps
- * the working route.
+ * If the bot is raised while its voice session is still being set up (between landing in the channel and the node's
+ * voice handshake completing), Discord's voice server routes its audio through a path stage listeners never receive
+ * (it hands out a random high SSRC instead of the sequential one): the node streams normally, yet the stage stays
+ * silent for the whole connection. Raising it after the handshake keeps the working route. A bot that is already a
+ * speaker is unaffected when its connection is re-established later (e.g. a node restart).
  * @param {PlayerStructure} player The player instance.
  * @returns {Promise<void>} Resolves when the unsuppress is marked as pending.
  */
