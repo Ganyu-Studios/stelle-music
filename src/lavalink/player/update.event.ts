@@ -1,11 +1,14 @@
 import { EventNames } from "hoshimi";
 import { LogLevels } from "seyfert";
+import { releaseUnsuppress } from "#stelle/utils/functions/manager/voice.js";
 import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 import { Sessions } from "#stelle/utils/manager/sessions.js";
 
 export default createLavalinkEvent({
     name: EventNames.PlayerUpdate,
     async run(client, newPlayer): Promise<void> {
+        await releaseUnsuppress(client, newPlayer);
+
         if (!client.config.sessions.enabled) return;
 
         await Sessions.save(newPlayer);

@@ -3,6 +3,7 @@ import { type AllGuildVoiceChannels, type GuildMember, LogLevels, type UsingClie
 import { EmbedColors } from "seyfert/lib/common/index.js";
 import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
 import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
+import { deferUnsuppress } from "#stelle/utils/functions/manager/voice.js";
 
 const timeouts: Map<string, NodeJS.Timeout> = new Map();
 
@@ -25,17 +26,14 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
 
     // Stage channels place every new member as suppressed ("audience"), and Discord denies the audio of a
     // suppressed member: Lavalink connects and streams, but nothing is audible. The join only becomes real for
-    // Discord when this event fires, which makes it the first race-free point to raise the bot to speaker. It
-    // covers every way the bot can land in a stage: /play, /move, the quiz player, 24/7 reconnects, session
-    // restores or a manual drag. In-place suppressions (same channel, returned above) are left alone, so a
-    // moderator deliberately muting the bot still stands.
-    if (newState.userId === client.botId && newState.channelId && newState.suppress && player.connected) {
+    // Discord when this event fires, yet raising the bot to speaker here would race the node's voice handshake and
+    // can leave the stage silent, so it is only marked and the player update event raises the bot once the node
+    // reports the connection up (see `deferUnsuppress`). It covers every way the bot can land in a stage: /play,
+    // /move, the quiz player, 24/7 reconnects, session restores or a manual drag. In-place suppressions (same
+    // channel, returned above) are left alone, so a moderator deliberately muting the bot still stands.
+    if (newState.userId === client.botId && newState.channelId && newState.suppress) {
         const channel: AllGuildVoiceChannels | null | undefined = await newState.channel().catch((): null => null);
-        if (channel?.isStage()) {
-            await newState.setSuppress(false).catch((error: unknown): void => {
-                client.debug(LogLevels.Error, `[Lavalink] Stage unsuppress failed | guild: ${guildId} | error: ${error}`);
-            });
-        }
+        if (channel?.isStage()) await deferUnsuppress(player);
     }
 
     if (!(player.textId && player.voiceId)) return;

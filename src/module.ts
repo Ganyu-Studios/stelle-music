@@ -48,5 +48,6 @@ declare module "hoshimi" {
         messageId: string;
         isRequestChannel: boolean;
         isQuiz: boolean;
+        pendingUnsuppress: boolean;
     }
 }
