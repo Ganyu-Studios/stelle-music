@@ -1,0 +1,129 @@
+name: 🐛 Bug Report
+description: Report a bug or issue with Stelle
+title: "[BUG] "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! Please provide as much detail as possible to help us resolve the issue.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Prerequisites
+      description: Please confirm the following before submitting your bug report
+      options:
+        - label: I have searched existing issues to ensure this bug hasn't been reported before
+          required: true
+        - label: I have read the [Contributing Guidelines](../CONTRIBUTING.md)
+          required: true
+        - label: I am using the latest version of Stelle
+          required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      description: Where are you running Stelle?
+      options:
+        - Self-hosted
+        - Official bot invite
+        - Development environment
+      default: 1
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is
+      placeholder: Describe what happened and what you expected to happen
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Step-by-step instructions to reproduce the bug
+      placeholder: |
+        1. Go to '...'
+        2. Use command '/...'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: Describe the expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: Describe what actually happened
+    validations:
+      required: true
+
+  - type: input
+    id: command
+    attributes:
+      label: Command Used
+      description: What command were you trying to use when the bug occurred?
+      placeholder: "/play, /queue, /skip, etc."
+
+  - type: textarea
+    id: error-message
+    attributes:
+      label: Error Message
+      description: If there was an error message, please include it here
+      placeholder: Paste any error messages here
+      render: text
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Bot Logs
+      description: If you have access to bot logs, please include relevant portions
+      placeholder: Paste relevant log entries here
+      render: text
+
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js Version
+      description: What version of Node.js are you using? (for self-hosted instances)
+      placeholder: "v22.11.0"
+
+  - type: input
+    id: bot-version
+    attributes:
+      label: Stelle Version
+      description: What version of Stelle are you using?
+      placeholder: "0.3.8-BLAZER"
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here
+      placeholder: Screenshots, additional information, related issues, etc.
+
+  - type: textarea
+    id: server-info
+    attributes:
+      label: Server Information
+      description: Information about the Discord server where the issue occurred (if applicable)
+      placeholder: |
+        - Server size: ~500 members
+        - Voice channel region: US East
+        - Bot permissions: Administrator
+        - Other music bots present: No
