@@ -57,8 +57,9 @@ export async function libraryListener(client: UsingClient, node: NodeStructure, 
                     );
                     if (me && voiceChannel) await joinVoiceChannel(player, voiceChannel, me);
 
-                    await player.queue.utils.sync({ override: false, syncCurrent: true });
-
+                    // No queue sync here: this process never lost the player, so its in-memory queue is the source of
+                    // truth and the stored one is a copy of it. Merging the stored tracks back in (`override: false`)
+                    // appended that copy on every node reconnect, doubling the queue each time.
                     if (track)
                         await player.play({
                             track,
