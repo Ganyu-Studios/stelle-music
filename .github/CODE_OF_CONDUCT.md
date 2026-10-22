@@ -16,32 +16,30 @@ diverse, inclusive, and healthy community.
 
 Examples of behavior that contributes to a positive environment for our
 community include:
-
-* Demonstrating empathy and kindness toward other people
-* Being respectful of differing opinions, viewpoints, and experiences
-* Giving and gracefully accepting constructive feedback
-* Accepting responsibility and apologizing to those affected by our mistakes,
+- Demonstrating empathy and kindness toward other people
+- Being respectful of differing opinions, viewpoints, and experiences
+- Giving and gracefully accepting constructive feedback
+- Accepting responsibility and apologizing to those affected by our mistakes,
   and learning from the experience
-* Focusing on what is best not just for us as individuals, but for the overall
+- Focusing on what is best not just for us as individuals, but for the overall
   community
-* Using welcoming and inclusive language
-* Being patient with newcomers and those learning
-* Helping others learn and grow in their development journey
-* Sharing knowledge and resources openly
-* Acknowledging and respecting the time and effort of contributors
+- Using welcoming and inclusive language
+- Being patient with newcomers and those learning
+- Helping others learn and grow in their development journey
+- Sharing knowledge and resources openly
+- Acknowledging and respecting the time and effort of contributors
 
 Examples of unacceptable behavior include:
-
-* The use of sexualized language or imagery, and sexual attention or advances of
+- The use of sexualized language or imagery, and sexual attention or advances of
   any kind
-* Trolling, insulting or derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others' private information, such as a physical or email address,
+- Trolling, insulting or derogatory comments, and personal or political attacks
+- Public or private harassment
+- Publishing others' private information, such as a physical or email address,
   without their explicit permission
-* Spam, self-promotion, or off-topic discussions
-* Disruptive behavior in community spaces
-* Attempting to circumvent moderation decisions
-* Other conduct which could reasonably be considered inappropriate in a
+- Spam, self-promotion, or off-topic discussions
+- Disruptive behavior in community spaces
+- Attempting to circumvent moderation decisions
+- Other conduct which could reasonably be considered inappropriate in a
   professional setting
 
 ## Community Guidelines
@@ -99,7 +97,6 @@ decisions when appropriate.
 This Code of Conduct applies within all community spaces, and also applies when
 an individual is officially representing the community in public spaces.
 Examples of representing our community include:
-
 - Using an official e-mail address
 - Posting via an official social media account
 - Acting as an appointed representative at an online or offline event
@@ -111,7 +108,6 @@ Examples of representing our community include:
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported to the community leaders responsible for enforcement at:
-
 - **Discord**: Contact moderators or administrators in our [support server](https://discord.com/invite/4JmKY8wgB6)
 - **GitHub**: Report through GitHub's reporting mechanisms or contact repository maintainers
 - **Email**: Contact the project maintainers directly (if applicable)
@@ -212,4 +208,4 @@ For answers to common questions about this code of conduct, see the FAQ at
 
 ---
 
-*Thank you for helping make the Stelle community welcoming and inclusive for everyone!*
+_Thank you for helping make the Stelle community welcoming and inclusive for everyone!_

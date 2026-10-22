@@ -2,7 +2,7 @@
 
 ### 🏠 [Homepage](https://github.com/Ganyu-Studios/stelle-music)
 
-* This is the home of `Stelle`, a feature-rich Discord music bot built on [`Seyfert`](https://github.com/tiramisulabs/seyfert) and powered by [`hoshimi`](https://www.npmjs.com/package/hoshimi) (Lavalink).
+- This is the home of `Stelle`, a feature-rich Discord music bot built on [`Seyfert`](https://github.com/tiramisulabs/seyfert) and powered by [`hoshimi`](https://www.npmjs.com/package/hoshimi) (Lavalink).
 
 ### 🐐 What is Stelle?
 
@@ -48,13 +48,13 @@ Stelle packs a full music experience, and more:
 - 🌐 **LOCALIZATION**: Switch the locale to your liking (English & Spanish included).
 - ⌨️ **COMMANDS**: Both `slash` and `prefix` commands out of the box.
 - 🧊 **COOLDOWN**: Anti-spam on commands.
-- 🕹️ **CONTROL**: Stelle provides a necessary (*that I consider*) control over the music.
+- 🕹️ **CONTROL**: Stelle provides a necessary (_that I consider_) control over the music.
 
 * Want to see more? Add the bot and see!
 
 ## 📦 Wiki!
 
-* Stelle now has a wiki! Everything related to the bot, including setup and self-hosting, is shown in the [wiki](https://github.com/Ganyu-Studios/stelle-music/wiki).
+- Stelle now has a wiki! Everything related to the bot, including setup and self-hosting, is shown in the [wiki](https://github.com/Ganyu-Studios/stelle-music/wiki).
 
 ## 🤝 Contributing
 
@@ -80,7 +80,6 @@ There are some [FAQs](https://github.com/Ganyu-Studios/stelle-music/wiki/FAQ) (F
 Copyright © 2024–2026 [Ganyu Studios](https://github.com/Ganyu-Studios).
 
 This project is [MIT](LICENSE) licensed.
+- _The character and assets are not my property, property of miHoYo Co. Ltd. (HoYoverse)_
 
-- *The character and assets are not my property, property of miHoYo Co. Ltd. (HoYoverse)*
-
-> *Made with 🐐❤️💪... A project made by the community, for the community.*
+> _Made with 🐐❤️💪... A project made by the community, for the community._
