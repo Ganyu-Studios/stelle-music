@@ -7,6 +7,9 @@ import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 export default createLavalinkEvent({
     name: EventNames.QueueEnd,
     async run(client, player): Promise<void> {
+        // The last track ends through this event instead of TrackEnd: replaying it later must still be announced.
+        await player.data.delete("announcedTrack");
+
         if (!(player.textId && player.voiceId)) return;
 
         // In quiz mode the engine plays tracks directly and controls teardown; ignore natural queue-end between snippets.

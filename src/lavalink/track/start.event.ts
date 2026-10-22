@@ -10,6 +10,16 @@ export default createLavalinkEvent({
     async run(client, player, track): Promise<void> {
         if (!(player.textId && player.voiceId) || !track) return;
 
+        // A repeated start of the still-playing track (NodeLink re-sends it on a voice reconnect) is not a new track.
+        if (!(await PlayerOps.claimStart(player, track))) {
+            client.debug(
+                LogLevels.Debug,
+                `[Lavalink] Repeated track start ignored | guild: ${player.guildId} | node: ${player.node.id} | title: ${track.info.title}`,
+            );
+
+            return;
+        }
+
         const messages = await PlayerOps.messages(client, player);
         if (!messages) return;
 

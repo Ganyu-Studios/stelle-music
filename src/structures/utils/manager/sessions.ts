@@ -154,19 +154,30 @@ export const Sessions = {
 
         const node: NonOptionsNode = UtilsOps.pick(json.node, ["id", "sessionId"]);
 
-        // These player.data reads are independent, so fetch them concurrently instead of nine awaits in series.
-        const [messageId, enabledAutoplay, localeString, me, lyricsId, lyricsEnabled, is247, isAutoPause, isRequestChannel] =
-            await Promise.all([
-                player.data.get("messageId"),
-                player.data.get("enabledAutoplay"),
-                player.data.get("localeString"),
-                player.data.get("me"),
-                player.data.get("lyricsId"),
-                player.data.get("lyricsEnabled"),
-                player.data.get("is247"),
-                player.data.get("isAutoPause"),
-                player.data.get("isRequestChannel"),
-            ]);
+        // These player.data reads are independent, so fetch them concurrently instead of ten awaits in series.
+        const [
+            messageId,
+            enabledAutoplay,
+            localeString,
+            me,
+            lyricsId,
+            lyricsEnabled,
+            is247,
+            isAutoPause,
+            isRequestChannel,
+            announcedTrack,
+        ] = await Promise.all([
+            player.data.get("messageId"),
+            player.data.get("enabledAutoplay"),
+            player.data.get("localeString"),
+            player.data.get("me"),
+            player.data.get("lyricsId"),
+            player.data.get("lyricsEnabled"),
+            player.data.get("is247"),
+            player.data.get("isAutoPause"),
+            player.data.get("isRequestChannel"),
+            player.data.get("announcedTrack"),
+        ]);
 
         const session: SessionJson = {
             ...base,
@@ -181,6 +192,7 @@ export const Sessions = {
             is247,
             isAutoPause,
             isRequestChannel,
+            announcedTrack,
         };
 
         // playerUpdate fires on every position tick, but resume restores the position from the live node payload

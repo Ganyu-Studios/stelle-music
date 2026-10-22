@@ -45,6 +45,13 @@ export async function resumeListener(client: UsingClient, node: NodeStructure, p
             if (session.is247) await player.data.set("is247", session.is247);
             if (session.isAutoPause) await player.data.set("isAutoPause", session.isAutoPause);
             if (session.isRequestChannel) await player.data.set("isRequestChannel", session.isRequestChannel);
+            // The node kept playing the announced track through the restart: the start it re-sends once the voice
+            // connection is re-established must not post a second now-playing message (see `PlayerOps.claimStart`).
+            if (session.announcedTrack) {
+                await player.data.set("announcedTrack", session.announcedTrack);
+
+                client.debug(LogLevels.Debug, `[Lavalink] Announced track restored | node: ${node.id} | guild: ${data.guildId}`);
+            }
 
             player.voice.patch({ ...data.voice });
 

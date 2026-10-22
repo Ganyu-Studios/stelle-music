@@ -49,5 +49,6 @@ declare module "hoshimi" {
         isRequestChannel: boolean;
         isQuiz: boolean;
         pendingUnsuppress: boolean;
+        announcedTrack: string;
     }
 }

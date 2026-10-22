@@ -1,4 +1,4 @@
-import type { PlayerStructure } from "hoshimi";
+import type { PlayerStructure, TrackStructure } from "hoshimi";
 import type { AllChannels, AllGuildVoiceChannels, DefaultLocale, UsingClient } from "seyfert";
 
 /**
@@ -48,6 +48,23 @@ export const PlayerOps = {
         if (!voice?.is(["GuildStageVoice", "GuildVoice"])) return null;
 
         return voice;
+    },
+    /**
+     *
+     * Claim the announcement of a track start. NodeLink emits a track start again whenever it re-establishes the voice
+     * connection (e.g. after Stelle restarts and resumes its session) for a track that never ended, which would post a
+     * second now-playing message. The announced track is kept in the player data (and persisted with the session, so
+     * it survives the restart) and cleared when a track or the queue ends, so only a repeat of the same, still-playing
+     * track is rejected.
+     * @param {PlayerStructure} player The player structure.
+     * @param {TrackStructure} track The track that started.
+     * @returns {Promise<boolean>} Whether the start is new and should be announced.
+     */
+    async claimStart(player: PlayerStructure, track: TrackStructure): Promise<boolean> {
+        if ((await player.data.get("announcedTrack")) === track.encoded) return false;
+
+        await player.data.set("announcedTrack", track.encoded);
+        return true;
     },
     /**
      *

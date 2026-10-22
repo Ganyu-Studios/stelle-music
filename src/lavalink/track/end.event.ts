@@ -6,6 +6,9 @@ import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 export default createLavalinkEvent({
     name: EventNames.TrackEnd,
     async run(client, player, track): Promise<void> {
+        // First, before any early return or REST wait: the next start (even the same track, looped) must be announced.
+        await player.data.delete("announcedTrack");
+
         if (!player.textId) return;
 
         // Independent REST cleanups (the now-playing message and the lyrics message are different messages): run them

@@ -213,6 +213,11 @@ export interface SessionJson extends StellePlayerJson {
      */
     isRequestChannel?: boolean;
     /**
+     * The encoded track whose start was already announced, so a repeated start of the same track is ignored.
+     * @type {string | undefined}
+     */
+    announcedTrack?: string;
+    /**
      * When the session was last persisted (epoch ms). Used to skip restoring stale sessions on a cold start.
      * @type {number | undefined}
      */

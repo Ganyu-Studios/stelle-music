@@ -36,6 +36,11 @@ export async function libraryListener(client: UsingClient, node: NodeStructure, 
 
                     if (messageId && channelId) await client.messages.delete(messageId, channelId).catch((): null => null);
 
+                    // The node lost the player, so the track below is replayed from a fresh node player: with its old
+                    // now-playing message deleted, that start has to be announced again.
+                    if (await player.data.delete("announcedTrack"))
+                        client.debug(LogLevels.Debug, `[Lavalink] Announced track released | node: ${node.id} | guild: ${player.guildId}`);
+
                     const track: TrackStructure | null = player.queue.current;
 
                     const voice: LavalinkPlayerVoice | null = player.voice.toNode();
