@@ -42,3 +42,30 @@ export interface CacheAdapter<T> {
  * @template T The resolved value type.
  */
 export type Awaitable<T> = T | PromiseLike<T>;
+
+/**
+ * Options shared by cache adapter factories.
+ */
+export interface CacheAdapterOptions {
+    /**
+     * Maximum number of entries for bounded adapters.
+     * @type {number}
+     */
+    limit: number;
+    /**
+     * Expiration time in milliseconds.
+     * @type {number}
+     */
+    expire: number;
+    /**
+     * Namespace for the collection.
+     * @type {string}
+     */
+    namespace: string;
+}
+
+/**
+ * Creates a typed cache adapter for one collection.
+ * @template T The collection value type.
+ */
+export type CacheAdapterFactory = <T>(options: CacheAdapterOptions) => CacheAdapter<T>;

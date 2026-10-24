@@ -1,6 +1,7 @@
 import type { UsingClient } from "seyfert";
 import { PrismaService } from "#stelle/classes/database/PrismaService.js";
 import { Cache } from "#stelle/classes/modules/Cache.js";
+import { createCacheAdapterFactory } from "#stelle/classes/modules/CacheAdapterFactory.js";
 import { LocaleController } from "#stelle/controllers/locale.js";
 import { PlayerController } from "#stelle/controllers/player.js";
 import { PlaylistController } from "#stelle/controllers/playlist.js";
@@ -28,7 +29,7 @@ export class StelleDatabase {
      * @type {Cache}
      * @readonly
      */
-    readonly cache: Cache = new Cache();
+    readonly cache: Cache;
 
     /**
      * The client instance.
@@ -79,6 +80,7 @@ export class StelleDatabase {
     constructor(client: UsingClient) {
         this.client = client;
         this.prisma = new PrismaService(client);
+        this.cache = new Cache(createCacheAdapterFactory(client));
 
         this.locales = new LocaleController(this.prisma, this.cache, client);
         this.prefixes = new PrefixController(this.prisma, this.cache, client);

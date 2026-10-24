@@ -94,10 +94,10 @@ interface Sessions {
 interface Cache {
     /**
      * The cache backend. Memory is the default and currently built-in backend.
-     * @type {"memory"}
+     * @type {"memory" | "redis"}
      * @default "memory"
      */
-    adapter: "memory";
+    adapter: "memory" | "redis";
     /**
      * The maximum limit of the cache.
      * @type {number}

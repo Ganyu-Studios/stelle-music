@@ -21,6 +21,7 @@ Object.assign(Configuration, { cache: { adapter: "memory", limit: 100, expire: 3
 
 const { Cache } = await import("#stelle/classes/modules/Cache.js");
 const { MemoryCacheAdapter } = await import("#stelle/classes/modules/MemoryCacheAdapter.js");
+const { RedisCacheAdapter } = await import("#stelle/classes/modules/RedisCacheAdapter.js");
 const { LocaleController } = await import("#stelle/controllers/locale.js");
 const { PrefixController } = await import("#stelle/controllers/prefix.js");
 const { PlayerController } = await import("#stelle/controllers/player.js");
@@ -38,7 +39,7 @@ const config = {
 } as const;
 
 test("the default cache backend is the in-memory adapter", (): void => {
-    const adapter = new MemoryCacheAdapter<{ value: string } | null>({ limit: 2, expire: 300_000 });
+    const adapter = new MemoryCacheAdapter<{ value: string } | null>({ limit: 2, expire: 300_000, namespace: "test" });
 
     adapter.set("present", { value: "cached" });
     adapter.set("negative", null);
@@ -49,7 +50,7 @@ test("the default cache backend is the in-memory adapter", (): void => {
 });
 
 test("the cache accepts an asynchronous adapter", async (): Promise<void> => {
-    const createAsyncAdapter = <T>(options: { limit: number; expire: number }) => {
+    const createAsyncAdapter = <T>(options: { limit: number; expire: number; namespace: string }) => {
         const memory = new MemoryCacheAdapter<T>(options);
 
         const adapter: CacheAdapter<T> = {
@@ -78,6 +79,43 @@ test("the cache accepts an asynchronous adapter", async (): Promise<void> => {
     (await cache.guild("guild-1")).locale = null;
 
     assert.equal((await cache.getGuild("guild-1"))?.locale, null);
+});
+
+test("the Redis adapter scopes keys and applies its TTL", async (): Promise<void> => {
+    const values = new Map<string, string>();
+    const sets: { key: string; ttl: number }[] = [];
+    const redis = {
+        async get(key: string): Promise<string | null> {
+            return values.get(key) ?? null;
+        },
+        async set(key: string, value: string, options: { EX: number }): Promise<void> {
+            values.set(key, value);
+            sets.push({ key, ttl: options.EX });
+        },
+        async del(keys: string | string[]): Promise<number> {
+            const list = Array.isArray(keys) ? keys : [keys];
+            return list.filter((key) => values.delete(key)).length;
+        },
+        async exists(key: string): Promise<number> {
+            return values.has(key) ? 1 : 0;
+        },
+        async *scanIterator(options: { MATCH: string }): AsyncGenerator<string[]> {
+            const prefix = options.MATCH.slice(0, -1);
+            yield [...values.keys()].filter((key) => key.startsWith(prefix));
+        },
+    };
+    const adapter = new RedisCacheAdapter<{ value: string }>(redis as never, {
+        limit: 5,
+        expire: 1_500,
+        namespace: "guilds",
+    });
+
+    await adapter.set("guild-1", { value: "cached" });
+    assert.deepEqual(await adapter.get("guild-1"), { value: "cached" });
+    assert.deepEqual(sets, [{ key: "stellecache:guilds:guild-1", ttl: 2 }]);
+
+    await adapter.clear();
+    assert.equal(await adapter.get("guild-1"), undefined);
 });
 
 /**

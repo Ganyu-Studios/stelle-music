@@ -1,21 +1,10 @@
 import { LimitedCollection } from "seyfert";
-import type { CacheAdapter } from "#stelle/classes/modules/CacheAdapter.js";
+import type { CacheAdapter, CacheAdapterOptions } from "#stelle/classes/modules/CacheAdapter.js";
 
 /**
  * Options for the in-memory cache adapter.
  */
-export interface MemoryCacheOptions {
-    /**
-     * Maximum number of entries.
-     * @type {number}
-     */
-    limit: number;
-    /**
-     * Sliding expiration time in milliseconds.
-     * @type {number}
-     */
-    expire: number;
-}
+export type MemoryCacheOptions = CacheAdapterOptions;
 
 /**
  * The default cache adapter. It keeps values in a bounded, expiring in-memory collection.

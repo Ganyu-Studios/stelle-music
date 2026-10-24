@@ -50,7 +50,10 @@ Stelle packs a full music experience, and more:
 - 🧊 **COOLDOWN**: Anti-spam on commands.
 - 🕹️ **CONTROL**: Stelle provides a necessary (_that I consider_) control over the music.
 
-* Want to see more? Add the bot and see!
+The database cache uses the in-memory adapter by default. To select another backend, set `cache.adapter` to
+`"memory"` or `"redis"` in the Stelle configuration. The Redis adapter uses the Redis connection already configured for
+the bot and keeps its keys under a dedicated namespace.
+- Want to see more? Add the bot and see!
 
 ## 📦 Wiki!
 

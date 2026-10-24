@@ -1,5 +1,5 @@
-import type { Awaitable, CacheAdapter } from "#stelle/classes/modules/CacheAdapter.js";
-import { MemoryCacheAdapter, type MemoryCacheOptions } from "#stelle/classes/modules/MemoryCacheAdapter.js";
+import type { Awaitable, CacheAdapter, CacheAdapterFactory, CacheAdapterOptions } from "#stelle/classes/modules/CacheAdapter.js";
+import { MemoryCacheAdapter } from "#stelle/classes/modules/MemoryCacheAdapter.js";
 import type { guildLocale, guildPlayer, guildPrefix, guildRequestChannel, userPlaylist } from "#stelle/prisma";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 
@@ -39,15 +39,9 @@ export class GuildBucket {
  * frequently-accessed entries stay cached and only idle ones are evicted.
  * @returns {{ limit: number; expire: number; resetOnDemand: true }} The collection options.
  */
-function cacheOptions(): MemoryCacheOptions {
-    return { limit: Configuration.cache.limit, expire: Configuration.cache.expire };
+function cacheOptions(namespace: string): CacheAdapterOptions {
+    return { limit: Configuration.cache.limit, expire: Configuration.cache.expire, namespace };
 }
-
-/**
- * Creates an adapter for one typed cache collection.
- * @type {<T>(options: MemoryCacheOptions) => CacheAdapter<T>}
- */
-export type CacheAdapterFactory = <T>(options: MemoryCacheOptions) => CacheAdapter<T>;
 
 /**
  * Class representing the cache of the bot. The primary tree is keyed by guild id ({@link GuildBucket}); the playlist
@@ -76,13 +70,11 @@ export class Cache {
      *
      * The optional factory is the extension point for alternative backends. Both collections receive independent
      * adapters so a backend can keep their namespaces separate.
-     * @param {(options: MemoryCacheOptions) => CacheAdapter<unknown>} [createAdapter] Adapter factory. Memory is the
-     * default.
+     * @param {CacheAdapterFactory} [createAdapter] Adapter factory. Memory is the default.
      */
-    constructor(createAdapter: CacheAdapterFactory = <T>(options: MemoryCacheOptions) => new MemoryCacheAdapter<T>(options)) {
-        const options: MemoryCacheOptions = cacheOptions();
-        this.guilds = createAdapter<GuildBucket>(options);
-        this.playlists = createAdapter<userPlaylist | null>(options);
+    constructor(createAdapter: CacheAdapterFactory = <T>(options: CacheAdapterOptions) => new MemoryCacheAdapter<T>(options)) {
+        this.guilds = createAdapter<GuildBucket>(cacheOptions("guilds"));
+        this.playlists = createAdapter<userPlaylist | null>(cacheOptions("playlists"));
     }
 
     /**
