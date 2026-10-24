@@ -44,7 +44,7 @@ Stelle packs a full music experience, and more:
 ### ⚙️ Core
 
 - ⚡ **NO HANDLERS**: Stelle wires everything for you, you just have to implement it.
-- 🗄️ **DATABASE**: `Prisma` as `ORM` over `MongoDB`, with a `Redis`-backed queue store.
+- 🗄️ **DATABASE**: `Prisma` as `ORM` over `MongoDB`, with a configurable cache adapter (in-memory by default) and a `Redis`-backed queue store.
 - 🌐 **LOCALIZATION**: Switch the locale to your liking (English & Spanish included).
 - ⌨️ **COMMANDS**: Both `slash` and `prefix` commands out of the box.
 - 🧊 **COOLDOWN**: Anti-spam on commands.

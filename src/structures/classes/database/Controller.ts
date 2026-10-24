@@ -1,6 +1,7 @@
 import type { UsingClient } from "seyfert";
 import type { PrismaService } from "#stelle/classes/database/PrismaService.js";
 import type { Cache } from "#stelle/classes/modules/Cache.js";
+import type { Awaitable } from "#stelle/classes/modules/CacheAdapter.js";
 import type { Prisma, PrismaClient } from "#stelle/prisma";
 
 /**
@@ -51,13 +52,13 @@ export interface FetchOptions<T> {
      * Read the record from the cache: `undefined` is a miss, `null` is a negatively-cached "known absent".
      * @returns {T | null | undefined} The cached record, `null` if known absent, or `undefined` if not cached.
      */
-    read: () => T | null | undefined;
+    read: () => Awaitable<T | null | undefined>;
     /**
      * Write a freshly read record (or `null`, to negatively cache an absent record) to the cache.
      * @param {T | null} data The record to cache, or `null` if absent.
      * @returns {void}
      */
-    write: (data: T | null) => void;
+    write: (data: T | null) => Awaitable<void>;
     /**
      * The database read to run on a cache miss.
      * @returns {Promise<T | null>} A promise that resolves to the record, or `null` if absent.
@@ -86,7 +87,7 @@ export interface StoreOptions<T> {
      * @param {T} data The written record.
      * @returns {void}
      */
-    write: (data: T) => void;
+    write: (data: T) => Awaitable<void>;
     /**
      * The database write to run.
      * @returns {Promise<T>} A promise that resolves to the written record.
@@ -107,7 +108,7 @@ export interface RemoveOptions {
      * Evict the record from the cache.
      * @returns {void}
      */
-    evict: () => void;
+    evict: () => Awaitable<void>;
     /**
      * The database delete to run.
      * @returns {Promise<unknown>} A promise that resolves once the record is deleted.
@@ -205,7 +206,7 @@ export abstract class Controller<M extends ModelNames> {
     protected async fetch<T>(options: FetchOptions<T>): Promise<T | null> {
         const { key, read, write, query, clone = false } = options;
 
-        const cached: T | null | undefined = read();
+        const cached: T | null | undefined = await read();
         if (cached !== undefined) {
             if (cached && clone) return structuredClone(cached);
             return cached;
@@ -226,7 +227,7 @@ export abstract class Controller<M extends ModelNames> {
 
         if (entry.version !== version) return this.fetch(options);
 
-        write(data);
+        await write(data);
 
         if (data && clone) return structuredClone(data);
         return data;
@@ -250,7 +251,7 @@ export abstract class Controller<M extends ModelNames> {
      * @returns {Promise<void>} A promise that resolves once the record is cached.
      */
     protected async store<T>({ key, write, query }: StoreOptions<T>): Promise<void> {
-        write(await query());
+        await write(await query());
         this.bump(key);
     }
 
@@ -265,7 +266,7 @@ export abstract class Controller<M extends ModelNames> {
     protected async remove({ key, evict, query }: RemoveOptions): Promise<void> {
         await query().catch(rethrowUnlessMissing);
 
-        evict();
+        await evict();
         this.bump(key);
     }
 }

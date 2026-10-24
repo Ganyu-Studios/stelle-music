@@ -22,9 +22,9 @@ export class RequestsController extends Controller<"guildRequestChannel"> {
     public get(guildId: string): Promise<guildRequestChannel | null> {
         return this.fetch({
             key: guildId,
-            read: () => this.cache.getGuild(guildId)?.requests,
-            write: (record): void => {
-                this.cache.guild(guildId).requests = record;
+            read: async () => (await this.cache.getGuild(guildId))?.requests,
+            write: async (record): Promise<void> => {
+                (await this.cache.guild(guildId)).requests = record;
             },
             query: () => this.model.findUnique({ where: { guildId } }),
         });
@@ -39,8 +39,8 @@ export class RequestsController extends Controller<"guildRequestChannel"> {
     public set(guildId: string, data: RequestChannelData): Promise<void> {
         return this.store({
             key: guildId,
-            write: (record): void => {
-                this.cache.guild(guildId).requests = record;
+            write: async (record): Promise<void> => {
+                (await this.cache.guild(guildId)).requests = record;
             },
             query: () => this.model.upsert({ where: { guildId }, create: { guildId, ...data }, update: data }),
         });
@@ -54,8 +54,8 @@ export class RequestsController extends Controller<"guildRequestChannel"> {
     public delete(guildId: string): Promise<void> {
         return this.remove({
             key: guildId,
-            evict: (): void => {
-                this.cache.guild(guildId).requests = null;
+            evict: async (): Promise<void> => {
+                (await this.cache.guild(guildId)).requests = null;
             },
             query: () => this.model.delete({ where: { guildId } }),
         });

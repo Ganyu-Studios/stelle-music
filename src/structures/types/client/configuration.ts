@@ -93,6 +93,12 @@ interface Sessions {
  */
 interface Cache {
     /**
+     * The cache backend. Memory is the default and currently built-in backend.
+     * @type {"memory"}
+     * @default "memory"
+     */
+    adapter: "memory";
+    /**
      * The maximum limit of the cache.
      * @type {number}
      * @default 5

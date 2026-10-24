@@ -18,9 +18,9 @@ export class LocaleController extends Controller<"guildLocale"> {
     public async get(guildId: string): Promise<LocaleString> {
         const data = await this.fetch({
             key: guildId,
-            read: () => this.cache.getGuild(guildId)?.locale,
-            write: (record): void => {
-                this.cache.guild(guildId).locale = record;
+            read: async () => (await this.cache.getGuild(guildId))?.locale,
+            write: async (record): Promise<void> => {
+                (await this.cache.guild(guildId)).locale = record;
             },
             query: () => this.model.findUnique({ where: { guildId } }),
         });
@@ -38,8 +38,8 @@ export class LocaleController extends Controller<"guildLocale"> {
     public update(guildId: string, locale: string): Promise<void> {
         return this.store({
             key: guildId,
-            write: (record): void => {
-                this.cache.guild(guildId).locale = record;
+            write: async (record): Promise<void> => {
+                (await this.cache.guild(guildId)).locale = record;
             },
             query: () => this.model.upsert({ where: { guildId }, create: { guildId, locale }, update: { locale } }),
         });

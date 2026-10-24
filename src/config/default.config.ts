@@ -59,6 +59,7 @@ export default createConfig({
         maxResumeAge: ms("2d"),
     },
     cache: {
+        adapter: "memory",
         limit: 5,
         expire: ms("5mins"),
     },

@@ -1,4 +1,5 @@
-import { LimitedCollection } from "seyfert";
+import type { Awaitable, CacheAdapter } from "#stelle/classes/modules/CacheAdapter.js";
+import { MemoryCacheAdapter, type MemoryCacheOptions } from "#stelle/classes/modules/MemoryCacheAdapter.js";
 import type { guildLocale, guildPlayer, guildPrefix, guildRequestChannel, userPlaylist } from "#stelle/prisma";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 
@@ -38,9 +39,15 @@ export class GuildBucket {
  * frequently-accessed entries stay cached and only idle ones are evicted.
  * @returns {{ limit: number; expire: number; resetOnDemand: true }} The collection options.
  */
-function cacheOptions(): { limit: number; expire: number; resetOnDemand: true } {
-    return { limit: Configuration.cache.limit, expire: Configuration.cache.expire, resetOnDemand: true };
+function cacheOptions(): MemoryCacheOptions {
+    return { limit: Configuration.cache.limit, expire: Configuration.cache.expire };
 }
+
+/**
+ * Creates an adapter for one typed cache collection.
+ * @type {<T>(options: MemoryCacheOptions) => CacheAdapter<T>}
+ */
+export type CacheAdapterFactory = <T>(options: MemoryCacheOptions) => CacheAdapter<T>;
 
 /**
  * Class representing the cache of the bot. The primary tree is keyed by guild id ({@link GuildBucket}); the playlist
@@ -51,29 +58,43 @@ function cacheOptions(): { limit: number; expire: number; resetOnDemand: true } 
 export class Cache {
     /**
      * The per-guild buckets, keyed by guild id. This is the primary cache tree; its `limit` is the number of guilds.
-     * @type {LimitedCollection<string, GuildBucket>}
+     * @type {CacheAdapter<GuildBucket>}
      * @readonly
      */
-    readonly guilds: LimitedCollection<string, GuildBucket> = new LimitedCollection(cacheOptions());
+    readonly guilds: CacheAdapter<GuildBucket>;
 
     /**
      * The user playlists, keyed by playlist id. Global (a playlist belongs to a user, not a guild). A cached `null` is
      * a negative cache (read and known absent), distinct from a missing key (not read yet).
-     * @type {LimitedCollection<string, userPlaylist | null>}
+     * @type {CacheAdapter<userPlaylist | null>}
      * @readonly
      */
-    readonly playlists: LimitedCollection<string, userPlaylist | null> = new LimitedCollection(cacheOptions());
+    readonly playlists: CacheAdapter<userPlaylist | null>;
+
+    /**
+     * Create a Stelle cache.
+     *
+     * The optional factory is the extension point for alternative backends. Both collections receive independent
+     * adapters so a backend can keep their namespaces separate.
+     * @param {(options: MemoryCacheOptions) => CacheAdapter<unknown>} [createAdapter] Adapter factory. Memory is the
+     * default.
+     */
+    constructor(createAdapter: CacheAdapterFactory = <T>(options: MemoryCacheOptions) => new MemoryCacheAdapter<T>(options)) {
+        const options: MemoryCacheOptions = cacheOptions();
+        this.guilds = createAdapter<GuildBucket>(options);
+        this.playlists = createAdapter<userPlaylist | null>(options);
+    }
 
     /**
      * Get the guild's bucket, creating (and caching) an empty one if it doesn't exist yet. Use this on writes.
      * @param {string} guildId The guild id.
-     * @returns {GuildBucket} The guild's bucket.
+     * @returns {Promise<GuildBucket>} The guild's bucket.
      */
-    public guild(guildId: string): GuildBucket {
-        let bucket: GuildBucket | undefined = this.guilds.get(guildId);
+    public async guild(guildId: string): Promise<GuildBucket> {
+        let bucket: GuildBucket | undefined = await this.guilds.get(guildId);
         if (!bucket) {
             bucket = new GuildBucket();
-            this.guilds.set(guildId, bucket);
+            await this.guilds.set(guildId, bucket);
         }
 
         return bucket;
@@ -83,9 +104,9 @@ export class Cache {
      * Get the guild's bucket without creating one. Use this on reads so a cache miss doesn't leave empty buckets
      * behind (and, via `resetOnDemand`, a hit keeps the bucket warm).
      * @param {string} guildId The guild id.
-     * @returns {GuildBucket | undefined} The guild's bucket, or undefined if it isn't cached.
+     * @returns {Awaitable<GuildBucket | undefined>} The guild's bucket, or undefined if it isn't cached.
      */
-    public getGuild(guildId: string): GuildBucket | undefined {
+    public getGuild(guildId: string): Awaitable<GuildBucket | undefined> {
         return this.guilds.get(guildId);
     }
 }

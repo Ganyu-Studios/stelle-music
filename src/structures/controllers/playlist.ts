@@ -28,15 +28,15 @@ export class PlaylistController extends Controller<"userPlaylist"> {
         // cached object would poison the shared entry before the DB write lands.
         return this.fetch({
             key: playlistId,
-            read: () => {
-                const cached = this.cache.playlists.get(playlistId);
+            read: async () => {
+                const cached = await this.cache.playlists.get(playlistId);
                 if (cached && cached.userId === userId) return cached;
                 return undefined;
             },
-            write: (record): void => {
+            write: async (record): Promise<void> => {
                 // Global collection addressed by playlistId, but the query is scoped by owner: cache only a hit, never a
                 // `null` miss — a null here means "not this user's", not "no such playlist", and would poison the owner.
-                if (record) this.cache.playlists.set(record.playlistId, record);
+                if (record) await this.cache.playlists.set(record.playlistId, record);
             },
             query: () => this.model.findUnique({ where: { playlistId, userId } }),
             clone: true,
@@ -55,13 +55,13 @@ export class PlaylistController extends Controller<"userPlaylist"> {
         // Clone on read: same rationale as get() — the loaded playlist's tracks are copied into a live queue.
         return this.fetch({
             key: playlistId,
-            read: () => {
-                const cached = this.cache.playlists.get(playlistId);
+            read: async () => {
+                const cached = await this.cache.playlists.get(playlistId);
                 if (cached && (cached.userId === userId || cached.public)) return cached;
                 return undefined;
             },
-            write: (record): void => {
-                if (record) this.cache.playlists.set(record.playlistId, record);
+            write: async (record): Promise<void> => {
+                if (record) await this.cache.playlists.set(record.playlistId, record);
             },
             query: () =>
                 this.model.findFirst({
@@ -87,8 +87,8 @@ export class PlaylistController extends Controller<"userPlaylist"> {
 
         return this.store({
             key: data.playlistId,
-            write: (record): void => {
-                this.cache.playlists.set(record.playlistId, record);
+            write: async (record): Promise<void> => {
+                await this.cache.playlists.set(record.playlistId, record);
             },
             query: () =>
                 this.model.upsert({
@@ -109,8 +109,8 @@ export class PlaylistController extends Controller<"userPlaylist"> {
     public delete(userId: string, playlistId: string): Promise<void> {
         return this.remove({
             key: playlistId,
-            evict: (): void => {
-                this.cache.playlists.delete(playlistId);
+            evict: async (): Promise<void> => {
+                await this.cache.playlists.delete(playlistId);
             },
             query: () => this.model.delete({ where: { userId, playlistId } }),
         });

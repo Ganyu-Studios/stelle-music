@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import type { CacheAdapter } from "#stelle/classes/modules/CacheAdapter.js";
 
 // `configuration.ts` parses `process.env` at import time (`Environment.parse`), so importing the cache or any
 // controller would throw without these. Dummy values are enough: the tests inject a fake Prisma model and never open a
@@ -14,11 +15,12 @@ process.env.REDIS_PASSWORD ||= "test";
 // Imported dynamically, after the env defaults above are set, so the transitive `Environment.parse` sees them.
 const { Configuration } = await import("#stelle/utils/data/configuration.js");
 
-// The real bot loads `Configuration` dynamically from the config files; the cache only needs `cache.size`/`cache.expire`
-// to build its `LimitedCollection`s, so stub just that instead of running the whole file loader in a test.
-Object.assign(Configuration, { cache: { size: 100, expire: 300_000 } });
+// The real bot loads `Configuration` dynamically from the config files; the cache only needs `cache.limit`/`cache.expire`
+// to build its in-memory adapters, so stub just that instead of running the whole file loader in a test.
+Object.assign(Configuration, { cache: { adapter: "memory", limit: 100, expire: 300_000 } });
 
 const { Cache } = await import("#stelle/classes/modules/Cache.js");
+const { MemoryCacheAdapter } = await import("#stelle/classes/modules/MemoryCacheAdapter.js");
 const { LocaleController } = await import("#stelle/controllers/locale.js");
 const { PrefixController } = await import("#stelle/controllers/prefix.js");
 const { PlayerController } = await import("#stelle/controllers/player.js");
@@ -34,6 +36,49 @@ const config = {
     defaultVolume: 60,
     defaultSearchSource: "spsearch",
 } as const;
+
+test("the default cache backend is the in-memory adapter", (): void => {
+    const adapter = new MemoryCacheAdapter<{ value: string } | null>({ limit: 2, expire: 300_000 });
+
+    adapter.set("present", { value: "cached" });
+    adapter.set("negative", null);
+
+    assert.deepEqual(adapter.get("present"), { value: "cached" });
+    assert.equal(adapter.get("negative"), null);
+    assert.equal(adapter.get("missing"), undefined);
+});
+
+test("the cache accepts an asynchronous adapter", async (): Promise<void> => {
+    const createAsyncAdapter = <T>(options: { limit: number; expire: number }) => {
+        const memory = new MemoryCacheAdapter<T>(options);
+
+        const adapter: CacheAdapter<T> = {
+            async get(key: string): Promise<T | undefined> {
+                return memory.get(key);
+            },
+            async set(key: string, value: T): Promise<CacheAdapter<T>> {
+                memory.set(key, value);
+                return adapter;
+            },
+            async delete(key: string): Promise<boolean> {
+                return memory.delete(key);
+            },
+            async has(key: string): Promise<boolean> {
+                return memory.has(key);
+            },
+            async clear(): Promise<void> {
+                memory.clear();
+            },
+        };
+
+        return adapter;
+    };
+
+    const cache = new Cache(createAsyncAdapter);
+    (await cache.guild("guild-1")).locale = null;
+
+    assert.equal((await cache.getGuild("guild-1"))?.locale, null);
+});
 
 /**
  * Build the three dependencies a controller now receives: a fake `PrismaService` whose `model(name)` returns the
