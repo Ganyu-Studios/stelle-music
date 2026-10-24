@@ -1,5 +1,5 @@
 import { LimitedCollection } from "seyfert";
-import type { CacheAdapter, CacheAdapterOptions } from "#stelle/classes/modules/CacheAdapter.js";
+import type { CacheAdapter, CacheAdapterOptions } from "#stelle/classes/modules/adapters/CacheAdapter.js";
 
 /**
  * Options for the in-memory cache adapter.

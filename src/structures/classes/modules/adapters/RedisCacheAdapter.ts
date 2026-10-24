@@ -1,5 +1,5 @@
 import type { RedisClientType } from "@redis/client";
-import type { CacheAdapter, CacheAdapterOptions } from "#stelle/classes/modules/CacheAdapter.js";
+import type { CacheAdapter, CacheAdapterOptions } from "#stelle/classes/modules/adapters/CacheAdapter.js";
 
 /**
  * A Redis-backed cache adapter.

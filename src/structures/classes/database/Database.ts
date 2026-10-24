@@ -1,7 +1,7 @@
 import type { UsingClient } from "seyfert";
 import { PrismaService } from "#stelle/classes/database/PrismaService.js";
+import { createCacheAdapterFactory } from "#stelle/classes/modules/adapters/CacheAdapterFactory.js";
 import { Cache } from "#stelle/classes/modules/Cache.js";
-import { createCacheAdapterFactory } from "#stelle/classes/modules/CacheAdapterFactory.js";
 import { LocaleController } from "#stelle/controllers/locale.js";
 import { PlayerController } from "#stelle/controllers/player.js";
 import { PlaylistController } from "#stelle/controllers/playlist.js";

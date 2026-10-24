@@ -1,5 +1,5 @@
-import type { Awaitable, CacheAdapter, CacheAdapterFactory, CacheAdapterOptions } from "#stelle/classes/modules/CacheAdapter.js";
-import { MemoryCacheAdapter } from "#stelle/classes/modules/MemoryCacheAdapter.js";
+import type { Awaitable, CacheAdapter, CacheAdapterFactory, CacheAdapterOptions } from "#stelle/classes/modules/adapters/CacheAdapter.js";
+import { MemoryCacheAdapter } from "#stelle/classes/modules/adapters/MemoryCacheAdapter.js";
 import type { guildLocale, guildPlayer, guildPrefix, guildRequestChannel, userPlaylist } from "#stelle/prisma";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 

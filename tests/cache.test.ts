@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import type { CacheAdapter } from "#stelle/classes/modules/CacheAdapter.js";
+import type { CacheAdapter } from "#stelle/classes/modules/adapters/CacheAdapter.js";
 
 // `configuration.ts` parses `process.env` at import time (`Environment.parse`), so importing the cache or any
 // controller would throw without these. Dummy values are enough: the tests inject a fake Prisma model and never open a
@@ -20,8 +20,8 @@ const { Configuration } = await import("#stelle/utils/data/configuration.js");
 Object.assign(Configuration, { cache: { adapter: "memory", limit: 100, expire: 300_000 } });
 
 const { Cache } = await import("#stelle/classes/modules/Cache.js");
-const { MemoryCacheAdapter } = await import("#stelle/classes/modules/MemoryCacheAdapter.js");
-const { RedisCacheAdapter } = await import("#stelle/classes/modules/RedisCacheAdapter.js");
+const { MemoryCacheAdapter } = await import("#stelle/classes/modules/adapters/MemoryCacheAdapter.js");
+const { RedisCacheAdapter } = await import("#stelle/classes/modules/adapters/RedisCacheAdapter.js");
 const { LocaleController } = await import("#stelle/controllers/locale.js");
 const { PrefixController } = await import("#stelle/controllers/prefix.js");
 const { PlayerController } = await import("#stelle/controllers/player.js");
