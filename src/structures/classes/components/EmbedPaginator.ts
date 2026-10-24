@@ -323,7 +323,7 @@ export class EmbedPaginator {
                                 this.options.pages = n;
 
                                 // funny thing
-                                if (!(await interaction.replied) || !interaction.deferred) await interaction.deferUpdate();
+                                if (!interaction.replied || !interaction.deferred) await interaction.deferUpdate();
 
                                 await this.update();
                             });
