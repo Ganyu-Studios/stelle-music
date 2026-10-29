@@ -351,7 +351,10 @@ export interface InternalStelleConfiguration {
 
 /**
  * The loadable configuration interface.
+ * @interface StelleConfiguration
+ * @extends {InternalStelleConfiguration}
  */
+// where the magic occurs
 export interface StelleConfiguration extends InternalStelleConfiguration {
     /**
      * Loads the configuration.
