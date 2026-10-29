@@ -1,27 +1,23 @@
-import { pathToFileURL } from "node:url";
+import type { HoshimiEvents } from "hoshimi";
 import type { UsingClient } from "seyfert";
 import { BaseHandler } from "seyfert/lib/common/index.js";
-import type { LavalinkEvents } from "#stelle/types";
-import type { Lavalink } from "./events.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
+import type { Lavalink } from "#stelle/utils/manager/events.js";
 
 /**
  * The event parameters of the lavalink events.
  */
-type LavalinkEventParameters = Parameters<LavalinkEvents[keyof LavalinkEvents]>;
+type LavalinkEventParameters = HoshimiEvents[keyof HoshimiEvents];
 
 /**
  * The event names of the lavalink events.
  */
-type LavalinkEventNames = keyof LavalinkEvents;
+type LavalinkEventNames = keyof HoshimiEvents;
 
 /**
- *
- * Import a file dynamically.
- * @param {string} path The path to the file.
- * @returns {Promise<T>} The imported file.
+ * The type of a lavalink event run listener.
  */
-const customImport = <T>(path: string): Promise<T> =>
-    import(`${pathToFileURL(path)}?update=${Date.now()}`).then((x) => x.default ?? x) as Promise<T>;
+type Listener = (...args: LavalinkEventParameters) => void;
 
 /**
  * Class representing the lavalink handler.
@@ -36,6 +32,13 @@ export class LavalinkHandler extends BaseHandler {
      * @type {Map<string, Lavalink>}
      */
     readonly values: Map<LavalinkEventNames, Lavalink> = new Map<LavalinkEventNames, Lavalink>();
+
+    /**
+     * The lavalink event run listeners collection.
+     * Stores the `run` function reference for each event.
+     * @type {Map<LavalinkEventNames, Listener>}
+     */
+    private readonly listeners: Map<LavalinkEventNames, Listener> = new Map<LavalinkEventNames, Listener>();
 
     /**
      * The client instance.
@@ -64,17 +67,17 @@ export class LavalinkHandler extends BaseHandler {
         for (const file of files) {
             const event: Lavalink = file.file.default;
             if (!event) {
-                this.logger.warn(`${file.name} doesn't export by \`export default new Lavaink({ ... })\``);
+                this.logger.warn(`[Handler] Invalid event export | file: ${file.name} | expected: export default new Lavaink({ ... })`);
                 continue;
             }
 
             if (!event.name) {
-                this.logger.warn(`${file.name} doesn't have a \`name\` property`);
+                this.logger.warn(`[Handler] Missing event name | file: ${file.name}`);
                 continue;
             }
 
             if (typeof event.run !== "function") {
-                this.logger.warn(`${file.name} doesn't have a \`run\` function`);
+                this.logger.warn(`[Handler] Missing event run function | file: ${file.name}`);
                 continue;
             }
 
@@ -82,15 +85,11 @@ export class LavalinkHandler extends BaseHandler {
 
             event.filepath = file.path;
 
-            if (event.isNode()) {
-                if (event.once) this.client.manager.nodeManager.once(event.name, run);
-                else this.client.manager.nodeManager.on(event.name, run);
-            } else if (event.isManager()) {
-                if (event.once) this.client.manager.once(event.name, run);
-                else this.client.manager.on(event.name, run);
-            }
+            if (event.once) this.client.manager.once(event.name, run);
+            else this.client.manager.on(event.name, run);
 
             this.values.set(event.name, event);
+            this.listeners.set(event.name, run);
         }
     }
 
@@ -101,29 +100,33 @@ export class LavalinkHandler extends BaseHandler {
      */
     public async reload(name: LavalinkEventNames): Promise<void> {
         const oldEvent: Lavalink | undefined = this.values.get(name);
-        if (!oldEvent?.filepath) return;
 
-        // don't ask... just... don't ask.
-        if (oldEvent.isManager()) this.client.manager.removeListener(oldEvent.name, oldEvent.run as never);
-        else if (oldEvent.isNode()) this.client.manager.nodeManager.removeListener(oldEvent.name, oldEvent.run as never);
+        /**
+         * The old lavalink event run listener.
+         * Used to remove the previously registered listener.
+         */
+        const oldListener: Listener | undefined = this.listeners.get(name);
 
-        // i hate this so much, but it's the only way to make it work.
-        const newEvent: Lavalink = await customImport<Lavalink>(oldEvent.filepath);
+        if (!oldEvent?.filepath || !oldListener) return;
+
+        this.client.manager.removeListener(oldEvent.name, oldListener);
+
+        const newEvent: Lavalink = await UtilsOps.dynamicImport<Lavalink>(oldEvent.filepath);
         if (!newEvent) return;
 
         newEvent.filepath = oldEvent.filepath;
 
+        /**
+         * The new lavalink event run listener.
+         * Registered as the event listener and stored for future reloads.
+         */
         const run = (...args: LavalinkEventParameters) => newEvent.run(this.client, ...args);
 
-        if (newEvent.isNode()) {
-            if (newEvent.once) this.client.manager.nodeManager.once(newEvent.name, run);
-            else this.client.manager.nodeManager.on(newEvent.name, run);
-        } else if (newEvent.isManager()) {
-            if (newEvent.once) this.client.manager.once(newEvent.name, run);
-            else this.client.manager.on(newEvent.name, run);
-        }
+        if (newEvent.once) this.client.manager.once(newEvent.name, run);
+        else this.client.manager.on(newEvent.name, run);
 
         this.values.set(newEvent.name, newEvent);
+        this.listeners.set(newEvent.name, run);
     }
 
     /**

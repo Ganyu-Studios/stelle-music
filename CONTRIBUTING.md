@@ -1,7 +1,6 @@
-
 ## 💪 Contributions
 
-* Contributions to this project should be transparent and simple.
+- Contributions to this project should be transparent and simple.
 
 ## 📋 Pull Requests
 

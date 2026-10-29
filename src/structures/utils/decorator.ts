@@ -1,5 +1,5 @@
 import type { BaseCommand } from "seyfert";
-import type { NonCommandOptions, Options } from "#stelle/types";
+import type { NonCommandOptions, Options } from "#stelle/types/index.js";
 
 /**
  * Represents a constructor function.

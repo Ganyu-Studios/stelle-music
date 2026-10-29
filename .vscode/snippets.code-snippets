@@ -20,7 +20,7 @@
 		"scope": "typescript",
 		"body": [
 			"import { Declare, Command } from \"seyfert\";",
-			"import { StelleOptions } from \"#stelle/decorators\";",
+			"import { StelleOptions } from \"#stelle/utils/decorator.js\";",
 			"",
 			"@Declare({",
 			"    name: \"${1:example}\",",
