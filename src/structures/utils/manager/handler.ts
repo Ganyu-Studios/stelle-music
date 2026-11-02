@@ -1,6 +1,7 @@
 import type { HoshimiEvents } from "hoshimi";
 import type { UsingClient } from "seyfert";
 import { BaseHandler } from "seyfert/lib/common/index.js";
+import { sendErrorReport } from "#stelle/utils/functions/internal/report.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 import type { Lavalink } from "#stelle/utils/manager/events.js";
 
@@ -56,6 +57,27 @@ export class LavalinkHandler extends BaseHandler {
     }
 
     /**
+     *
+     * Wrap an event's run function so a failure is reported instead of escaping as an unhandled rejection,
+     * which would crash the whole process. Mirrors seyfert's `events.onFail` for the client events.
+     * @param {Lavalink} event The event to wrap.
+     * @returns {Listener} The listener to register on the manager.
+     */
+    private listener(event: Lavalink): Listener {
+        return (...args: LavalinkEventParameters): void => {
+            Promise.resolve()
+                .then(() => event.run(this.client, ...args))
+                .catch((error: unknown) =>
+                    sendErrorReport({ error }).catch((reportError: unknown): void =>
+                        this.logger.error(
+                            `[Handler] Event failed | event: ${event.name} | error: ${UtilsOps.inspect(error)} | report error: ${UtilsOps.inspect(reportError)}`,
+                        ),
+                    ),
+                );
+        };
+    }
+
+    /**
      * Load the handler.
      * @returns {Promise<void>} tip: don't take this comments too seriously.
      */
@@ -81,7 +103,7 @@ export class LavalinkHandler extends BaseHandler {
                 continue;
             }
 
-            const run = (...args: LavalinkEventParameters) => event.run(this.client, ...args);
+            const run: Listener = this.listener(event);
 
             event.filepath = file.path;
 
@@ -120,7 +142,7 @@ export class LavalinkHandler extends BaseHandler {
          * The new lavalink event run listener.
          * Registered as the event listener and stored for future reloads.
          */
-        const run = (...args: LavalinkEventParameters) => newEvent.run(this.client, ...args);
+        const run: Listener = this.listener(newEvent);
 
         if (newEvent.once) this.client.manager.once(newEvent.name, run);
         else this.client.manager.on(newEvent.name, run);
