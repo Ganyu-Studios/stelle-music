@@ -228,10 +228,8 @@ export const UtilsOps = {
      * @param {(error: unknown) => F | Promise<F>} [onError] The error handler, its result is returned on failure.
      * @returns {Promise<T | F>} The function result, or the error handler result (`null` by default) on failure.
      */
-    try<T, F = null>(fn: () => T | Promise<T>, onError?: (error: unknown) => F | Promise<F>): Promise<T | F> {
-        return Promise.resolve()
-            .then(fn)
-            .catch((error: unknown): F | Promise<F> => (onError ? onError(error) : (null as F)));
+    try<T, F = null>(fn: () => T | Promise<T>, onError: (error: unknown) => F | Promise<F> = (): F => null as F): Promise<T | F> {
+        return Promise.resolve().then(fn).catch(onError);
     },
     /**
      *
