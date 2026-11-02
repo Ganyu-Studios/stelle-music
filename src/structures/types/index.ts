@@ -1,6 +1,6 @@
 import type { NodeJSON, PlayerJSON } from "hoshimi";
 import type { User } from "seyfert";
-import type { EmojiResolvable } from "seyfert/lib/common/index.js";
+import type { Awaitable, EmojiResolvable } from "seyfert/lib/common/index.js";
 import type { ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
 export * from "#stelle/types/client/components.js";
@@ -253,6 +253,16 @@ export type Plain<T> = {
 export type Prettify<T> = {
     [K in keyof T]: T[K];
 } & {};
+
+/**
+ * The function run by `UtilsOps.try`, sync or async.
+ */
+export type TryCallback<T> = () => Awaitable<T>;
+
+/**
+ * The failure handler of `UtilsOps.try`, its result is returned in place of the callback's.
+ */
+export type TryErrorHandler<F> = (error: unknown) => Awaitable<F>;
 
 /**
  * The type of the permission flags.
