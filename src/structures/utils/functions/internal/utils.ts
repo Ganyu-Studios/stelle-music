@@ -222,6 +222,19 @@ export const UtilsOps = {
     },
     /**
      *
+     * Run a function and settle its failure in a single place: a sync throw and an async rejection both go to
+     * `onError`, whose result is returned instead. Without `onError` the failure is swallowed and `null` is returned.
+     * @param {() => T | Promise<T>} fn The function to run.
+     * @param {(error: unknown) => F | Promise<F>} [onError] The error handler, its result is returned on failure.
+     * @returns {Promise<T | F>} The function result, or the error handler result (`null` by default) on failure.
+     */
+    try<T, F = null>(fn: () => T | Promise<T>, onError?: (error: unknown) => F | Promise<F>): Promise<T | F> {
+        return Promise.resolve()
+            .then(fn)
+            .catch((error: unknown): F | Promise<F> => (onError ? onError(error) : (null as F)));
+    },
+    /**
+     *
      * Check if the flags include the check flags.
      * @param {number} flags The flags to check.
      * @param {number} check The flags to check for.

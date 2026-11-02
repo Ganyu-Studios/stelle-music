@@ -23,10 +23,26 @@ interface ReportOptions {
 
 /**
  *
- * Send a error report.
+ * Send a error report. Never rejects: it runs inside error handlers, so a failed delivery (e.g. the webhook or the
+ * errors channel being unreachable) is logged along with the original error instead of escaping as a new rejection.
  * @param options The options.
  */
-export async function sendErrorReport(options: ReportOptions): Promise<MessageStructure | void> {
+export async function sendErrorReport(options: ReportOptions): Promise<void> {
+    await UtilsOps.try(
+        () => report(options),
+        (error: unknown): void =>
+            logger.error(
+                `[Report] Failed to send the error report | error: ${UtilsOps.inspect(options.error)} | report error: ${UtilsOps.inspect(error)}`,
+            ),
+    );
+}
+
+/**
+ *
+ * Build and deliver the error report.
+ * @param options The options.
+ */
+async function report(options: ReportOptions): Promise<MessageStructure | void> {
     const { error, ctx } = options;
 
     if (!(error instanceof Error)) return;

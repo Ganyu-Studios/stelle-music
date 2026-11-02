@@ -1,5 +1,5 @@
 import { createClient, type RedisClientType } from "@redis/client";
-import { Client, LimitedCollection, LimitedMemoryAdapter, type LogLevels, type MessageStructure } from "seyfert";
+import { Client, LimitedCollection, LimitedMemoryAdapter, type LogLevels } from "seyfert";
 import { ActivityType, type GatewayPresenceUpdateData, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
 import { StelleDatabase } from "#stelle/classes/database/Database.js";
 import { StelleManager } from "#stelle/classes/manager/Manager.js";
@@ -141,7 +141,7 @@ export class Stelle extends Client<PluginsDefinition, true> {
 
         if (this.cache.messages) this.cache.messages.filter = (message): boolean => message.author.id === this.botId;
 
-        this.events.onFail = (_, error): Promise<MessageStructure | void> => sendErrorReport({ error });
+        this.events.onFail = (_, error): Promise<void> => sendErrorReport({ error });
 
         this.redis.on("connect", (): void => this.logger.info("[Redis] Connected"));
         this.redis.on("error", (error): void => this.logger.error(`[Redis] Client error | error: ${UtilsOps.inspect(error)}`));
