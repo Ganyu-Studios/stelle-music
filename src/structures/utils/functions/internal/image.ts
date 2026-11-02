@@ -5,6 +5,7 @@ import { Image } from "imagescript";
 import type { ImageData } from "#stelle/types/index.js";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 import { StellePaths } from "#stelle/utils/data/constants.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 const ImageColors = {
     Text: -841550593,
@@ -243,7 +244,7 @@ function bannerPath(identifier: string): string {
 async function readBannerCache(identifier: string, ttl: number): Promise<Uint8Array | null> {
     const file: string = bannerPath(identifier);
 
-    try {
+    return UtilsOps.try(async (): Promise<Uint8Array | null> => {
         const info: Stats = await stat(file);
 
         if (Date.now() - info.mtimeMs > ttl) {
@@ -257,9 +258,7 @@ async function readBannerCache(identifier: string, ttl: number): Promise<Uint8Ar
         await utimes(file, now, now).catch((): null => null);
 
         return buffer;
-    } catch {
-        return null;
-    }
+    });
 }
 
 /**
@@ -271,13 +270,12 @@ async function readBannerCache(identifier: string, ttl: number): Promise<Uint8Ar
  * @returns {Promise<void>} A promise that resolves once the banner is written and the cache is pruned.
  */
 async function writeBannerCache(identifier: string, buffer: Uint8Array, maxEntries: number): Promise<void> {
-    try {
+    // Caching is best-effort; ignore write/eviction failures.
+    await UtilsOps.try(async (): Promise<void> => {
         await mkdir(BANNERS_DIR, { recursive: true });
         await writeFile(bannerPath(identifier), buffer);
         await evictBanners(maxEntries);
-    } catch {
-        // Caching is best-effort; ignore write/eviction failures.
-    }
+    });
 }
 
 /**
@@ -531,23 +529,22 @@ export const ImageOps = {
 
         const img: Image = (await idleBasePromise).clone();
 
-        // Avatar (PFP) centered above title
-        if (data.avatarURL) {
-            try {
-                const avatarBuffer: Buffer = await getBuffer(data.avatarURL);
-                const avatarImage: Image = await Image.decode(avatarBuffer);
-                const avatarSize = 80;
-                avatarImage.resize(avatarSize, avatarSize);
+        // Avatar (PFP) centered above title, skipped if it can't be fetched or decoded
+        const { avatarURL } = data;
+        const avatarImage: Image | null = avatarURL
+            ? await UtilsOps.try(async (): Promise<Image> => Image.decode(await getBuffer(avatarURL)))
+            : null;
 
-                const ring: Image = new Image(avatarSize + 8, avatarSize + 8)
-                    .fill(Image.rgbaToColor(255, 255, 255, 30))
-                    .roundCorners((avatarSize + 8) / 2);
+        if (avatarImage) {
+            const avatarSize = 80;
+            avatarImage.resize(avatarSize, avatarSize);
 
-                img.composite(ring, Math.round((WIDTH - avatarSize) / 2) - 4, 86);
-                img.composite(avatarImage.roundCorners(avatarSize / 2), Math.round((WIDTH - avatarSize) / 2), 90);
-            } catch {
-                // skip avatar on error
-            }
+            const ring: Image = new Image(avatarSize + 8, avatarSize + 8)
+                .fill(Image.rgbaToColor(255, 255, 255, 30))
+                .roundCorners((avatarSize + 8) / 2);
+
+            img.composite(ring, Math.round((WIDTH - avatarSize) / 2) - 4, 86);
+            img.composite(avatarImage.roundCorners(avatarSize / 2), Math.round((WIDTH - avatarSize) / 2), 90);
         }
 
         // Typography

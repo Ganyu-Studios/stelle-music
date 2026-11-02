@@ -65,15 +65,10 @@ export class LavalinkHandler extends BaseHandler {
      */
     private listener(event: Lavalink): Listener {
         return (...args: LavalinkEventParameters): void => {
-            Promise.resolve()
-                .then(() => event.run(this.client, ...args))
-                .catch((error: unknown) =>
-                    sendErrorReport({ error }).catch((reportError: unknown): void =>
-                        this.logger.error(
-                            `[Handler] Event failed | event: ${event.name} | error: ${UtilsOps.inspect(error)} | report error: ${UtilsOps.inspect(reportError)}`,
-                        ),
-                    ),
-                );
+            void UtilsOps.try(
+                () => event.run(this.client, ...args),
+                (error: unknown) => sendErrorReport({ error }),
+            );
         };
     }
 
