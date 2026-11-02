@@ -108,6 +108,23 @@ function lerpColor(c1: number, c2: number, t: number): number {
 
 /**
  *
+ * Paint a translucent color over a pixel of an opaque image. `setPixelAt` replaces the pixel outright, so a
+ * low-alpha color would punch a see-through hole instead of tinting what is underneath; this blends it in.
+ * @param {Image} img The image to draw on.
+ * @param {number} x The x-coordinate of the pixel (0-based).
+ * @param {number} y The y-coordinate of the pixel (0-based).
+ * @param {number} color The color to blend over the pixel (32-bit integer, its alpha is the blend amount).
+ * @returns {void} This function modifies the image in place and does not return a value.
+ */
+function blendPixel(img: Image, x: number, y: number, color: number): void {
+    const base: number = img.getPixelAt(x, y);
+    const t: number = (color & 0xff) / 255;
+
+    img.setPixelAt(x, y, lerpColor(base, (color & ~0xff) | 0xff, t));
+}
+
+/**
+ *
  * Draw a music note shape on the given image at the specified coordinates with the specified color.
  * @param {Image} img The image to draw on.
  * @param {number} x The x-coordinate of the center of the music note.
@@ -374,7 +391,7 @@ async function buildIdleBase(): Promise<Image> {
             const y: number = i;
 
             if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT) {
-                img.setPixelAt(x, y, lineColor);
+                blendPixel(img, x, y, lineColor);
             }
         }
     }
@@ -413,12 +430,12 @@ async function buildIdleBase(): Promise<Image> {
     // 7. Decorative frame border
     const borderColor: number = Image.rgbaToColor(255, 255, 255, 25);
     for (let bx: number = 0; bx < WIDTH; bx++) {
-        img.setPixelAt(bx, 22, borderColor);
-        img.setPixelAt(bx, HEIGHT - 23, borderColor);
+        blendPixel(img, bx, 22, borderColor);
+        blendPixel(img, bx, HEIGHT - 23, borderColor);
     }
     for (let by: number = 0; by < HEIGHT; by++) {
-        img.setPixelAt(22, by, borderColor);
-        img.setPixelAt(WIDTH - 23, by, borderColor);
+        blendPixel(img, 22, by, borderColor);
+        blendPixel(img, WIDTH - 23, by, borderColor);
     }
 
     return img;
