@@ -122,18 +122,18 @@ function drawMusicNote(img: Image, x: number, y: number, color: number): void {
     for (let dy: number = -headH / 2; dy < headH / 2; dy++) {
         for (let dx: number = -headW / 2; dx < headW / 2; dx++) {
             if ((dx * dx) / (headW / 2) ** 2 + (dy * dy) / (headH / 2) ** 2 <= 1) {
-                img.setPixelAt(Math.round(x + dx) + 1, Math.round(y + dy) + 1, color);
+                img.setPixelAt(Math.round(x + dx), Math.round(y + dy), color);
             }
         }
     }
 
     for (let i: number = 0; i < 70; i++) {
-        img.setPixelAt(Math.round(x + headW / 2 - 2) + 1, Math.round(y - i) + 1, color);
-        img.setPixelAt(Math.round(x + headW / 2 - 1) + 1, Math.round(y - i) + 1, color);
+        img.setPixelAt(Math.round(x + headW / 2 - 2), Math.round(y - i), color);
+        img.setPixelAt(Math.round(x + headW / 2 - 1), Math.round(y - i), color);
     }
 
     for (let i: number = 0; i < 20; i++) {
-        img.setPixelAt(Math.round(x + headW / 2 - 1 + i * 0.5) + 1, Math.round(y - 70 + i) + 1, color);
+        img.setPixelAt(Math.round(x + headW / 2 - 1 + i * 0.5), Math.round(y - 70 + i), color);
     }
 }
 
@@ -149,15 +149,15 @@ function drawStar(img: Image, cx: number, cy: number, color: number): void {
     const size: number = 7;
 
     for (let i: number = -size; i <= size; i++) {
-        img.setPixelAt(Math.round(cx + i) + 1, Math.round(cy) + 1, color);
-        img.setPixelAt(Math.round(cx) + 1, Math.round(cy + i) + 1, color);
+        img.setPixelAt(Math.round(cx + i), Math.round(cy), color);
+        img.setPixelAt(Math.round(cx), Math.round(cy + i), color);
     }
 
     const diag: number = 4;
 
     for (let i: number = -diag; i <= diag; i++) {
-        img.setPixelAt(Math.round(cx + i) + 1, Math.round(cy + i) + 1, color);
-        img.setPixelAt(Math.round(cx + i) + 1, Math.round(cy - i) + 1, color);
+        img.setPixelAt(Math.round(cx + i), Math.round(cy + i), color);
+        img.setPixelAt(Math.round(cx + i), Math.round(cy - i), color);
     }
 }
 
@@ -339,7 +339,7 @@ async function buildIdleBase(): Promise<Image> {
         const color: number = lerpColor(IDLE_COLORS.BgTop, IDLE_COLORS.BgBottom, t);
 
         for (let x: number = 0; x < WIDTH; x++) {
-            img.setPixelAt(x + 1, y + 1, color);
+            img.setPixelAt(x, y, color);
         }
     }
 
@@ -347,15 +347,15 @@ async function buildIdleBase(): Promise<Image> {
     for (let i: number = 0; i < 14000; i++) {
         const x: number = Math.floor(Math.random() * WIDTH);
         const y: number = Math.floor(Math.random() * HEIGHT);
-        const base: number = img.getPixelAt(x + 1, y + 1);
+        const base: number = img.getPixelAt(x, y);
         const r: number = (base >> 24) & 0xff;
         const g: number = (base >> 16) & 0xff;
         const b: number = (base >> 8) & 0xff;
         const delta: number = Math.floor(Math.random() * 10) - 5;
 
         img.setPixelAt(
-            x + 1,
-            y + 1,
+            x,
+            y,
             Image.rgbaToColor(
                 Math.min(255, Math.max(0, r + delta)),
                 Math.min(255, Math.max(0, g + delta)),
@@ -374,7 +374,7 @@ async function buildIdleBase(): Promise<Image> {
             const y: number = i;
 
             if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT) {
-                img.setPixelAt(x + 1, y + 1, lineColor);
+                img.setPixelAt(x, y, lineColor);
             }
         }
     }
@@ -391,9 +391,9 @@ async function buildIdleBase(): Promise<Image> {
             const t: number = Math.min(1, d / maxR);
             const alpha: number = Math.round((1 - t) * 40);
             if (alpha > 0) {
-                glow.setPixelAt(gx + 1, gy + 1, Image.rgbaToColor(111, 140, 255, alpha));
+                glow.setPixelAt(gx, gy, Image.rgbaToColor(111, 140, 255, alpha));
             } else {
-                glow.setPixelAt(gx + 1, gy + 1, Image.rgbaToColor(0, 0, 0, 0));
+                glow.setPixelAt(gx, gy, Image.rgbaToColor(0, 0, 0, 0));
             }
         }
     }
@@ -406,19 +406,19 @@ async function buildIdleBase(): Promise<Image> {
 
     // 6. Decorative line under title
     for (let lx: number = Math.round(WIDTH / 2 - 90); lx < Math.round(WIDTH / 2 + 90); lx++) {
-        img.setPixelAt(lx + 1, 332, IDLE_COLORS.Accent);
-        img.setPixelAt(lx + 1, 333, IDLE_COLORS.Accent);
+        img.setPixelAt(lx, 331, IDLE_COLORS.Accent);
+        img.setPixelAt(lx, 332, IDLE_COLORS.Accent);
     }
 
     // 7. Decorative frame border
     const borderColor: number = Image.rgbaToColor(255, 255, 255, 25);
     for (let bx: number = 0; bx < WIDTH; bx++) {
-        img.setPixelAt(bx + 1, 23, borderColor);
-        img.setPixelAt(bx + 1, HEIGHT - 22, borderColor);
+        img.setPixelAt(bx, 22, borderColor);
+        img.setPixelAt(bx, HEIGHT - 23, borderColor);
     }
     for (let by: number = 0; by < HEIGHT; by++) {
-        img.setPixelAt(23, by + 1, borderColor);
-        img.setPixelAt(WIDTH - 22, by + 1, borderColor);
+        img.setPixelAt(22, by, borderColor);
+        img.setPixelAt(WIDTH - 23, by, borderColor);
     }
 
     return img;
