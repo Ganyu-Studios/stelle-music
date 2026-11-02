@@ -25,6 +25,13 @@ import { TrackOps } from "#stelle/utils/functions/internal/track.js";
 import { AutocompleteNoticeValue, UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 import { playQuery } from "#stelle/utils/functions/manager/play.js";
 
+/**
+ * The time budget to answer the query autocomplete, in milliseconds. Discord drops an autocomplete that isn't answered
+ * within 3 seconds (Unknown interaction, 10062); the margin covers the gateway delivery and the response round trip.
+ * @type {number}
+ */
+const AUTOCOMPLETE_BUDGET: number = 2500;
+
 const options = {
     query: createStringOption({
         onAutocompleteError: OverridesOps.autocompleteError,
@@ -35,6 +42,7 @@ const options = {
             description: "locales.play.option.description",
         },
         autocomplete: async (interaction): Promise<void> => {
+            const start: number = Date.now();
             const { client, member, guildId } = interaction;
 
             const localeString: string = interaction.user.locale ?? client.config.defaultLocale;
@@ -42,19 +50,27 @@ const options = {
 
             if (!(guildId && member)) return interaction.respond(UtilsOps.autocomplete(t.messages.events.autocomplete.no.guild));
 
-            const { searchPlatform: source } = await client.database.players.get(guildId);
-            const { messages } = await ContextOps.locale(client, guildId);
+            // Independent lookups: run them together to keep the search's share of the time budget.
+            const [{ searchPlatform: source }, { messages }, voice] = await Promise.all([
+                client.database.players.get(guildId),
+                ContextOps.locale(client, guildId),
+                member.voice().catch((): null => null),
+            ]);
 
             if (!client.manager.isUsable()) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.no.nodes));
-
-            const voice: VoiceState | null = await member.voice().catch((): null => null);
             if (!voice) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.no.voiceChannel));
 
             const query: string = interaction.getInput();
             if (!query) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.no.query));
 
-            const { tracks }: QueryResult = await client.manager.search({ query, source, requester: null });
+            // A slow search would miss Discord's window and fail the whole autocomplete: cap it to the time left, so it
+            // answers with the "no tracks" notice instead.
+            const result: QueryResult | null = await UtilsOps.timeout(
+                client.manager.search({ query, source, requester: null }),
+                AUTOCOMPLETE_BUDGET - (Date.now() - start),
+            );
 
+            const tracks: TrackStructure[] = result?.tracks ?? [];
             if (!tracks.length) return interaction.respond(UtilsOps.autocomplete(messages.events.autocomplete.no.tracks));
 
             await interaction.respond(

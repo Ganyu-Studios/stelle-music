@@ -4,7 +4,8 @@ import { isAbsolute, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { inspect as nodeInspect } from "node:util";
 import type { AnyContext } from "seyfert";
-import type { APIApplicationCommandOptionChoice } from "seyfert/lib/types/index.js";
+import { SeyfertError } from "seyfert/lib/common/index.js";
+import type { APIApplicationCommandOptionChoice, RESTJSONErrorCodes } from "seyfert/lib/types/index.js";
 import type { Omit, Plain, Prettify, TryCallback, TryErrorHandler } from "#stelle/types/index.js";
 
 /**
@@ -230,6 +231,36 @@ export const UtilsOps = {
      */
     try<T, F = null>(fn: TryCallback<T>, onError: TryErrorHandler<F> = (): F => null as F): Promise<T | F> {
         return Promise.resolve().then(fn).catch(onError);
+    },
+    /**
+     *
+     * Settle a promise within a time limit. Resolves with its value, or `null` once `ms` elapse first; the promise keeps
+     * running in the background and a late rejection is ignored.
+     * @param {Promise<T>} promise The promise to wait for.
+     * @param {number} ms The time limit, in milliseconds (a negative limit counts as already expired).
+     * @returns {Promise<T | null>} The promise value, or `null` if the time limit was hit.
+     */
+    timeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
+        let timer: NodeJS.Timeout | undefined;
+        const expired: Promise<null> = new Promise((resolve): void => {
+            timer = setTimeout(resolve, Math.max(0, ms), null);
+        });
+
+        return Promise.race([promise, expired]).finally((): void => clearTimeout(timer));
+    },
+    /**
+     *
+     * Check whether an error is a Discord API error with the given JSON error code. Matches the code from the response
+     * body, since seyfert's `SeyfertError.code` also embeds the HTTP status text, which varies.
+     * @param {unknown} error The error to check.
+     * @param {RESTJSONErrorCodes} code The Discord JSON error code.
+     * @returns {boolean} True if the error is that Discord API error.
+     */
+    isApiError(error: unknown, code: RESTJSONErrorCodes): boolean {
+        if (!SeyfertError.is(error)) return false;
+
+        const response = error.metadata?.response as { code?: number } | undefined;
+        return response?.code === code;
     },
     /**
      *

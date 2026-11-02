@@ -7,7 +7,7 @@ import {
     type WebhookMessageStructure,
 } from "seyfert";
 import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
-import { MessageFlags } from "seyfert/lib/types/index.js";
+import { MessageFlags, RESTJSONErrorCodes } from "seyfert/lib/types/index.js";
 import type { PermissionNames } from "#stelle/types/index.js";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js";
@@ -74,6 +74,9 @@ export const OverridesOps = {
      * @returns {Promise<void>} A promise... and a half.
      */
     async autocompleteError(interaction: AutocompleteInteraction, error: unknown): Promise<void> {
+        // The response missed Discord's 3-second autocomplete window: the interaction is gone, so there is nothing left
+        // to answer and nothing actionable to report.
+        if (UtilsOps.isApiError(error, RESTJSONErrorCodes.UnknownInteraction)) return;
         if (!interaction.guildId) return;
 
         const { messages } = await ContextOps.locale(interaction.client, interaction.guildId);
