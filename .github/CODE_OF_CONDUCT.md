@@ -16,6 +16,7 @@ diverse, inclusive, and healthy community.
 
 Examples of behavior that contributes to a positive environment for our
 community include:
+
 - Demonstrating empathy and kindness toward other people
 - Being respectful of differing opinions, viewpoints, and experiences
 - Giving and gracefully accepting constructive feedback
@@ -30,6 +31,7 @@ community include:
 - Acknowledging and respecting the time and effort of contributors
 
 Examples of unacceptable behavior include:
+
 - The use of sexualized language or imagery, and sexual attention or advances of
   any kind
 - Trolling, insulting or derogatory comments, and personal or political attacks
@@ -47,12 +49,14 @@ Examples of unacceptable behavior include:
 ### Discord Server Behavior
 
 Our Discord server is a place for:
+
 - Getting help with Stelle
 - Discussing features and improvements
 - Sharing feedback and suggestions
 - Building community connections
 
 When participating in our Discord server:
+
 - Keep discussions relevant to Stelle and music bots
 - Use appropriate channels for different topics
 - Be patient when asking for help
@@ -63,6 +67,7 @@ When participating in our Discord server:
 ### GitHub Repository Behavior
 
 When contributing to our GitHub repository:
+
 - Use issue templates when reporting bugs or requesting features
 - Be descriptive and provide necessary information
 - Search existing issues before creating new ones
@@ -97,6 +102,7 @@ decisions when appropriate.
 This Code of Conduct applies within all community spaces, and also applies when
 an individual is officially representing the community in public spaces.
 Examples of representing our community include:
+
 - Using an official e-mail address
 - Posting via an official social media account
 - Acting as an appointed representative at an online or offline event
@@ -108,6 +114,7 @@ Examples of representing our community include:
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported to the community leaders responsible for enforcement at:
+
 - **Discord**: Contact moderators or administrators in our [support server](https://discord.com/invite/4JmKY8wgB6)
 - **GitHub**: Report through GitHub's reporting mechanisms or contact repository maintainers
 - **Email**: Contact the project maintainers directly (if applicable)
@@ -166,6 +173,7 @@ community.
 ## Reporting Security Issues
 
 If you discover a security vulnerability, please report it responsibly:
+
 - Do not create public issues for security vulnerabilities
 - Contact the maintainers directly through Discord or other private channels
 - Provide details about the vulnerability and potential impact
@@ -174,6 +182,7 @@ If you discover a security vulnerability, please report it responsibly:
 ## Recognition
 
 We recognize and appreciate contributors who:
+
 - Help maintain a positive community environment
 - Assist newcomers and answer questions
 - Provide valuable feedback and suggestions
@@ -183,6 +192,7 @@ We recognize and appreciate contributors who:
 ## Questions and Feedback
 
 If you have questions about this Code of Conduct or suggestions for improvement:
+
 - Join our [Discord server](https://discord.com/invite/4JmKY8wgB6) for discussions
 - Open an issue on GitHub for feedback
 - Contact the maintainers directly

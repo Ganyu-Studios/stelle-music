@@ -53,6 +53,7 @@ Stelle packs a full music experience, and more:
 The database cache uses the in-memory adapter by default. To select another backend, set `cache.adapter` to
 `"memory"` or `"redis"` in the Stelle configuration. The Redis adapter uses the Redis connection already configured for
 the bot and keeps its keys under a dedicated namespace.
+
 - Want to see more? Add the bot and see!
 
 ## 📦 Wiki!
@@ -83,6 +84,7 @@ There are some [FAQs](https://github.com/Ganyu-Studios/stelle-music/wiki/FAQ) (F
 Copyright © 2024–2026 [Ganyu Studios](https://github.com/Ganyu-Studios).
 
 This project is [MIT](LICENSE) licensed.
+
 - _The character and assets are not my property, property of miHoYo Co. Ltd. (HoYoverse)_
 
 > _Made with 🐐❤️💪... A project made by the community, for the community._

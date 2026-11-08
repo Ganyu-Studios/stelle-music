@@ -7,7 +7,6 @@
 > Pull Requests are always welcome.
 > Even if you are new, you can review some [pull requests](https://github.com/Ganyu-Studios/stelle-music/pulls?q=is%3Apr+is%3Aopen+label%3A"good+first+issue") for a guide.
 
-
 ## ⚙️ Bug Fixes
 
 1. Fork the repo and create your branch from `dev`.
