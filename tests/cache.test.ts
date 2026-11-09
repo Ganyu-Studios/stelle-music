@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import type { CacheAdapter } from "#stelle/classes/modules/adapters/CacheAdapter.js";
+import type { CacheAdapter, CacheAdapterFactory, CacheAdapterOptions } from "#stelle/classes/modules/adapters/CacheAdapter.js";
 
 // `configuration.ts` parses `process.env` at import time (`Environment.parse`), so importing the cache or any
 // controller would throw without these. Dummy values are enough: the tests inject a fake Prisma model and never open a
@@ -26,6 +26,7 @@ const { LocaleController } = await import("#stelle/controllers/locale.js");
 const { PrefixController } = await import("#stelle/controllers/prefix.js");
 const { PlayerController } = await import("#stelle/controllers/player.js");
 const { PlaylistController } = await import("#stelle/controllers/playlist.js");
+const { RequestsController } = await import("#stelle/controllers/requests.js");
 
 /**
  * The default config values a controller falls back to when a record is absent. Mirrors the shape the controllers read
@@ -76,12 +77,17 @@ test("the cache accepts an asynchronous adapter", async (): Promise<void> => {
     };
 
     const cache = new Cache(createAsyncAdapter);
-    (await cache.guild("guild-1")).locale = null;
+    await cache.locales.set("guild-1", null);
 
-    assert.equal((await cache.getGuild("guild-1"))?.locale, null);
+    assert.equal(await cache.locales.get("guild-1"), null);
 });
 
-test("the Redis adapter scopes keys and applies its TTL", async (): Promise<void> => {
+/**
+ * An in-memory stand-in for the Redis client, covering the commands the Redis adapter uses. Values are kept as the
+ * strings the adapter writes, so every `get` decodes a fresh copy exactly like a real Redis round trip.
+ * @returns {{ redis: never; values: Map<string, string>; sets: { key: string; ttl: number }[] }} The client, its store and the recorded `set`s.
+ */
+function fakeRedis(): { redis: never; values: Map<string, string>; sets: { key: string; ttl: number }[] } {
     const values = new Map<string, string>();
     const sets: { key: string; ttl: number }[] = [];
     const redis = {
@@ -104,7 +110,13 @@ test("the Redis adapter scopes keys and applies its TTL", async (): Promise<void
             yield [...values.keys()].filter((key) => key.startsWith(prefix));
         },
     };
-    const adapter = new RedisCacheAdapter<{ value: string }>(redis as never, {
+
+    return { redis: redis as never, values, sets };
+}
+
+test("the Redis adapter scopes keys and applies its TTL", async (): Promise<void> => {
+    const { redis, sets } = fakeRedis();
+    const adapter = new RedisCacheAdapter<{ value: string }>(redis, {
         limit: 5,
         expire: 1_500,
         namespace: "guilds",
@@ -118,18 +130,52 @@ test("the Redis adapter scopes keys and applies its TTL", async (): Promise<void
     assert.equal(await adapter.get("guild-1"), undefined);
 });
 
+test("the Redis adapter round-trips records exactly, Dates and negative caches included", async (): Promise<void> => {
+    const { redis } = fakeRedis();
+    const adapter = new RedisCacheAdapter<{ createdAt: Date } | null>(redis, { limit: 5, expire: 1_500, namespace: "test" });
+    const createdAt = new Date("2026-01-01T00:00:00.000Z");
+
+    await adapter.set("present", { createdAt });
+    await adapter.set("negative", null);
+
+    const cached = await adapter.get("present");
+    assert.ok(cached?.createdAt instanceof Date, "a Date must come back as a Date, not an ISO string");
+    assert.equal(cached.createdAt.getTime(), createdAt.getTime());
+    assert.equal(await adapter.get("negative"), null, "a negative cache must stay null");
+    assert.equal(await adapter.get("missing"), undefined, "a missing key must stay a miss");
+});
+
+test("the Redis adapter treats an undecodable entry (the older JSON encoding) as a miss", async (): Promise<void> => {
+    const { redis, values } = fakeRedis();
+    const adapter = new RedisCacheAdapter<{ value: string }>(redis, { limit: 5, expire: 1_500, namespace: "test" });
+
+    values.set("stellecache:test:legacy", JSON.stringify({ value: "cached" }));
+
+    assert.equal(await adapter.get("legacy"), undefined);
+});
+
 /**
  * Build the three dependencies a controller now receives: a fake `PrismaService` whose `model(name)` returns the
  * matching stub, a real `Cache` (so the caching behaviour under test is genuine), and a `client` carrying `config` for
  * the default fallbacks. Spread into the controller constructor.
  * @param {Record<string, unknown>} models The per-model stubs, keyed by Prisma model name.
+ * @param {CacheAdapterFactory} [createAdapter] The cache backend. Memory (the `Cache` default) when omitted.
  * @returns {[never, InstanceType<typeof Cache>, never]} The `[prisma, cache, client]` tuple, typed loosely.
  */
-function fakeDeps(models: Record<string, unknown>): [never, InstanceType<typeof Cache>, never] {
+function fakeDeps(models: Record<string, unknown>, createAdapter?: CacheAdapterFactory): [never, InstanceType<typeof Cache>, never] {
     const prisma = { model: (name: string): unknown => models[name] } as never;
     const client = { config } as never;
 
-    return [prisma, new Cache(), client];
+    return [prisma, new Cache(createAdapter), client];
+}
+
+/**
+ * A cache backend factory over a fresh {@link fakeRedis} client, for running the controllers on the Redis adapter.
+ * @returns {CacheAdapterFactory} The adapter factory.
+ */
+function redisFactory(): CacheAdapterFactory {
+    const { redis } = fakeRedis();
+    return <T>(options: CacheAdapterOptions) => new RedisCacheAdapter<T>(redis, options);
 }
 
 /**
@@ -196,6 +242,61 @@ test("the global playlist collection caches a present record by playlist id", as
     assert.equal((await playlist.get("pl-1", "user-1"))?.playlistId, "pl-1");
     assert.equal((await playlist.get("pl-1", "user-1"))?.playlistId, "pl-1");
     assert.equal(state.calls, 1, "the second read must hit the positive cache, not the database");
+});
+
+test("every guild config is actually cached on the Redis adapter", async (): Promise<void> => {
+    const record = { id: "1", guildId: "guild-1", locale: "es-419", prefix: "!", defaultVolume: 80, searchPlatform: "ytsearch" };
+    const controllers = [
+        ["locale", LocaleController, "guildLocale"],
+        ["prefix", PrefixController, "guildPrefix"],
+        ["player", PlayerController, "guildPlayer"],
+        ["requests", RequestsController, "guildRequestChannel"],
+    ] as const;
+
+    for (const [name, Controller, modelName] of controllers) {
+        const { model, state } = countingModel(record);
+        const controller = new Controller(...fakeDeps({ [modelName]: model }, redisFactory()));
+
+        await controller.get("guild-1");
+        await controller.get("guild-1");
+        assert.equal(state.calls, 1, `the second ${name} read must hit Redis, not the database`);
+    }
+});
+
+test("writes to different configs of one guild don't clobber each other on the Redis adapter", async (): Promise<void> => {
+    const { model, state } = countingModel(null);
+    const createAdapter = redisFactory();
+    const [prisma, cache, client] = fakeDeps(
+        {
+            guildLocale: { ...model, upsert: (): Promise<unknown> => Promise.resolve({ id: "1", guildId: "guild-1", locale: "es-419" }) },
+            guildPlayer: {
+                ...model,
+                upsert: (): Promise<unknown> =>
+                    Promise.resolve({ id: "2", guildId: "guild-1", defaultVolume: 20, searchPlatform: "spsearch" }),
+            },
+        },
+        createAdapter,
+    );
+    const locales = new LocaleController(prisma, cache, client);
+    const players = new PlayerController(prisma, cache, client);
+
+    await Promise.all([locales.update("guild-1", "es-419"), players.set("guild-1", { defaultVolume: 20 })]);
+
+    assert.equal(await locales.get("guild-1"), "es-419");
+    assert.equal((await players.get("guild-1")).defaultVolume, 20);
+    assert.equal(state.calls, 0, "both writes must land in the cache, so neither read reaches the database");
+});
+
+test("a cached playlist keeps its Date fields on the Redis adapter", async (): Promise<void> => {
+    const createdAt = new Date("2026-01-01T00:00:00.000Z");
+    const { model, state } = countingModel({ playlistId: "pl-1", userId: "user-1", public: false, createdAt, tracks: [] });
+    const playlist = new PlaylistController(...fakeDeps({ userPlaylist: model }, redisFactory()));
+
+    await playlist.get("pl-1", "user-1");
+    const cached = await playlist.get("pl-1", "user-1");
+
+    assert.equal(state.calls, 1, "the second read must hit Redis, not the database");
+    assert.ok(cached?.createdAt instanceof Date, "createdAt must come back as a Date, not an ISO string");
 });
 
 test("the global playlist collection does NOT negatively cache an absent record", async (): Promise<void> => {

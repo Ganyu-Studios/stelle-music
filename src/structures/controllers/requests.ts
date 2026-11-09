@@ -22,9 +22,9 @@ export class RequestsController extends Controller<"guildRequestChannel"> {
     public get(guildId: string): Promise<guildRequestChannel | null> {
         return this.fetch({
             key: guildId,
-            read: async () => (await this.cache.getGuild(guildId))?.requests,
+            read: () => this.cache.requests.get(guildId),
             write: async (record): Promise<void> => {
-                (await this.cache.guild(guildId)).requests = record;
+                await this.cache.requests.set(guildId, record);
             },
             query: () => this.model.findUnique({ where: { guildId } }),
         });
@@ -40,7 +40,7 @@ export class RequestsController extends Controller<"guildRequestChannel"> {
         return this.store({
             key: guildId,
             write: async (record): Promise<void> => {
-                (await this.cache.guild(guildId)).requests = record;
+                await this.cache.requests.set(guildId, record);
             },
             query: () => this.model.upsert({ where: { guildId }, create: { guildId, ...data }, update: data }),
         });
@@ -55,7 +55,7 @@ export class RequestsController extends Controller<"guildRequestChannel"> {
         return this.remove({
             key: guildId,
             evict: async (): Promise<void> => {
-                (await this.cache.guild(guildId)).requests = null;
+                await this.cache.requests.set(guildId, null);
             },
             query: () => this.model.delete({ where: { guildId } }),
         });

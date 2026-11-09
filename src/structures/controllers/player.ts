@@ -34,9 +34,9 @@ export class PlayerController extends Controller<"guildPlayer"> {
     public async get(id: string): Promise<StoredPlayer> {
         const data = await this.fetch({
             key: id,
-            read: async () => (await this.cache.getGuild(id))?.player,
+            read: () => this.cache.players.get(id),
             write: async (record): Promise<void> => {
-                (await this.cache.guild(id)).player = record;
+                await this.cache.players.set(id, record);
             },
             query: () => this.model.findUnique({ where: { guildId: id } }),
         });
@@ -58,7 +58,7 @@ export class PlayerController extends Controller<"guildPlayer"> {
         return this.store({
             key: guildId,
             write: async (record): Promise<void> => {
-                (await this.cache.guild(guildId)).player = record;
+                await this.cache.players.set(guildId, record);
             },
             query: () => this.model.upsert({ where: { guildId }, update: data, create: { guildId, ...data } }),
         });

@@ -16,9 +16,9 @@ export class PrefixController extends Controller<"guildPrefix"> {
     public async get(guildId: string): Promise<string> {
         const data = await this.fetch({
             key: guildId,
-            read: async () => (await this.cache.getGuild(guildId))?.prefix,
+            read: () => this.cache.prefixes.get(guildId),
             write: async (record): Promise<void> => {
-                (await this.cache.guild(guildId)).prefix = record;
+                await this.cache.prefixes.set(guildId, record);
             },
             query: () => this.model.findUnique({ where: { guildId } }),
         });
@@ -36,7 +36,7 @@ export class PrefixController extends Controller<"guildPrefix"> {
         return this.store({
             key: guildId,
             write: async (record): Promise<void> => {
-                (await this.cache.guild(guildId)).prefix = record;
+                await this.cache.prefixes.set(guildId, record);
             },
             query: () => this.model.upsert({ where: { guildId }, create: { guildId, prefix }, update: { prefix } }),
         });

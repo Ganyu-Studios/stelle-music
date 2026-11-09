@@ -1,8 +1,14 @@
+import { deserialize, serialize } from "node:v8";
 import type { RedisClientType } from "@redis/client";
 import type { CacheAdapter, CacheAdapterOptions } from "#stelle/classes/modules/adapters/CacheAdapter.js";
+import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  * A Redis-backed cache adapter.
+ *
+ * Values are encoded with the V8 serializer (the same algorithm as `structuredClone`) instead of JSON, so records come
+ * back exactly as the in-memory adapter returns them: a `Date` stays a `Date` rather than turning into an ISO string.
+ * The bytes are stored base64-encoded to keep using the shared string client.
  * @template T The collection value type.
  * @class RedisCacheAdapter
  * @implements {CacheAdapter<T>}
@@ -46,11 +52,18 @@ export class RedisCacheAdapter<T> implements CacheAdapter<T> {
 
     public async get(key: string): Promise<T | undefined> {
         const value: string | null = await this.redis.get(this.key(key));
-        return value === null ? undefined : (JSON.parse(value) as T);
+        if (value === null) return undefined;
+
+        // An entry that can't be decoded (e.g. one written by the older JSON encoding) is treated as a miss, so the
+        // caller re-reads the database and overwrites it. Not `null`: that is a valid cached value (a negative cache).
+        return UtilsOps.try(
+            (): T => deserialize(Buffer.from(value, "base64")) as T,
+            (): undefined => undefined,
+        );
     }
 
     public async set(key: string, value: T): Promise<this> {
-        await this.redis.set(this.key(key), JSON.stringify(value), { EX: this.ttl });
+        await this.redis.set(this.key(key), serialize(value).toString("base64"), { EX: this.ttl });
         return this;
     }
 
