@@ -173,23 +173,23 @@ importers:
         specifier: ^6.3.1
         version: 6.3.1
       dotenv:
-        specifier: ^18.0.9
-        version: 18.0.9
+        specifier: ^18.0.10
+        version: 18.0.10
       hoshimi:
         specifier: 0.6.0
         version: 0.6.0
       imagescript:
-        specifier: ^3.20.1
-        version: 3.20.1
+        specifier: ^3.20.2
+        version: 3.20.2
       meowdb:
         specifier: ^2.2.3
         version: 2.2.3
       seyfert:
-        specifier: 5.2.2-dev-41194592305.0
-        version: 5.2.2-dev-41194592305.0
+        specifier: 5.2.2-dev-41510346259.0
+        version: 5.2.2-dev-41510346259.0
       yunaforseyfert:
         specifier: ^1.2.4
-        version: 1.2.4(seyfert@5.2.2-dev-41194592305.0)
+        version: 1.2.4(seyfert@5.2.2-dev-41510346259.0)
       zod:
         specifier: ^4.6.7
         version: 4.6.7
@@ -653,8 +653,8 @@ packages:
     resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
     engines: {node: '>=12'}
 
-  dotenv@18.0.9:
-    resolution: {integrity: sha512-3fVOW4cB02R066PUSwn8O4TJyz9NckQl7F81blIbaq9jKBm2tSmOKky7ZHIXzGvkVPXCSn6jkpziBPZdGFs8Tw==}
+  dotenv@18.0.10:
+    resolution: {integrity: sha512-89FAA1xchzK2mxVWdr5F/0rldwiueXs6zJM86rO66EzekR1iBdiXRthyG+m5GvkJaFH3C2LESzamTkgndmLT2A==}
     engines: {node: '>=12'}
     hasBin: true
 
@@ -694,8 +694,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  imagescript@3.20.1:
-    resolution: {integrity: sha512-PEnq3HIzXJAfkVeGK584OKZi9G7yDWhuACsYditaMofSA+cmDUx2GKkK2+6D100Fw/QL5pZ7q4MLU/x04qvOCg==}
+  imagescript@3.20.2:
+    resolution: {integrity: sha512-BO5D8bDe9eHMGyIDCrhOIYWganRstRZ60r3aokqgU2Zco3V3gIvYFKMp8jU+RfhkqVMuojVT3Z9ifo4OZGNMeQ==}
     engines: {node: '>=22.13.0'}
 
   jiti@2.7.0:
@@ -754,8 +754,8 @@ packages:
     resolution: {integrity: sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg==}
     engines: {node: '>= 14.18.0'}
 
-  seyfert@5.2.2-dev-41194592305.0:
-    resolution: {integrity: sha512-vyhThB+CkW0AX8iGKEfQY7zrtk7IZJ/iW+ZmWXbeORWIXFW6EaWtnbMG+sQZymXM6y/oWOwwqYCnmXko4W85Pg==}
+  seyfert@5.2.2-dev-41510346259.0:
+    resolution: {integrity: sha512-RmiYq9wvm8AxRHZp+T45DG+rzqsjtEPWu9kSpyAKEdiYlx76rStHf4ahNEJz69auQQgG9+Roz+Top9632mCcgA==}
 
   string-argv@0.3.2:
     resolution: {integrity: sha512-aqD2Q0144Z+/RqG52NeHEkZauTAUWJO8c6yTftGJKO3Tja5tUgIfmIl6kExvhtxSDP7fXB6DvzkfMpCd/F3G+Q==}
@@ -1068,7 +1068,7 @@ snapshots:
 
   dotenv@16.6.1: {}
 
-  dotenv@18.0.9: {}
+  dotenv@18.0.10: {}
 
   effect@3.21.0:
     dependencies:
@@ -1133,7 +1133,7 @@ snapshots:
 
   husky@9.1.7: {}
 
-  imagescript@3.20.1: {}
+  imagescript@3.20.2: {}
 
   jiti@2.7.0: {}
 
@@ -1187,7 +1187,7 @@ snapshots:
 
   readdirp@4.1.2: {}
 
-  seyfert@5.2.2-dev-41194592305.0: {}
+  seyfert@5.2.2-dev-41510346259.0: {}
 
   string-argv@0.3.2: {}
 
@@ -1229,8 +1229,8 @@ snapshots:
   yaml@2.9.1:
     optional: true
 
-  yunaforseyfert@1.2.4(seyfert@5.2.2-dev-41194592305.0):
+  yunaforseyfert@1.2.4(seyfert@5.2.2-dev-41510346259.0):
     dependencies:
-      seyfert: 5.2.2-dev-41194592305.0
+      seyfert: 5.2.2-dev-41510346259.0
 
   zod@4.6.7: {}

@@ -57,11 +57,11 @@
     "dependencies": {
         "@prisma/client": "6.19.3",
         "@redis/client": "^6.3.1",
-        "dotenv": "^18.0.9",
+        "dotenv": "^18.0.10",
         "hoshimi": "0.6.0",
-        "imagescript": "^3.20.1",
+        "imagescript": "^3.20.2",
         "meowdb": "^2.2.3",
-        "seyfert": "5.2.2-dev-41194592305.0",
+        "seyfert": "5.2.2-dev-41510346259.0",
         "yunaforseyfert": "^1.2.4",
         "zod": "^4.6.7"
     },
