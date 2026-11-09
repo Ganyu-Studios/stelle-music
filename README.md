@@ -54,6 +54,20 @@ The database cache uses the in-memory adapter by default. To select another back
 `"memory"` or `"redis"` in the Stelle configuration. The Redis adapter uses the Redis connection already configured for
 the bot and keeps its keys under a dedicated namespace.
 
+To plug in a custom backend, implement `CacheAdapter` and set `cache.adapter` to a factory. It is called once per cache
+collection with that collection's options (`limit`, `expire`, `namespace`) and the client:
+
+```ts
+cache: {
+    adapter: <T>(options, client) => new MyCacheAdapter<T>(options, client),
+    limit: 5,
+    expire: ms("5mins"),
+},
+```
+
+Validate it with the shared contract tests (`tests/helpers/cache-adapter-contract.ts`), the same suite the built-in
+adapters run. The backend is created at startup, so switching it takes a restart.
+
 - Want to see more? Add the bot and see!
 
 ## 📦 Wiki!

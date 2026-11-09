@@ -1,17 +1,30 @@
 import type { UsingClient } from "seyfert";
-import type { CacheAdapterFactory, CacheAdapterOptions } from "#stelle/classes/modules/adapters/CacheAdapter.js";
+import type {
+    BoundCacheAdapterFactory,
+    CacheAdapter,
+    CacheAdapterFactory,
+    CacheAdapterOptions,
+} from "#stelle/classes/modules/adapters/CacheAdapter.js";
 import { MemoryCacheAdapter } from "#stelle/classes/modules/adapters/MemoryCacheAdapter.js";
 import { RedisCacheAdapter } from "#stelle/classes/modules/adapters/RedisCacheAdapter.js";
 
 /**
- * Resolve the configured cache backend.
- * @param {UsingClient} client Stelle's client, including the Redis connection.
- * @returns {CacheAdapterFactory} The configured adapter factory.
+ * The built-in cache backends, selectable by name in the config's `cache.adapter`.
+ * @type {Record<"memory" | "redis", CacheAdapterFactory>}
  */
-export function createCacheAdapterFactory(client: UsingClient): CacheAdapterFactory {
-    if (client.config.cache.adapter === "redis") {
-        return <T>(options: CacheAdapterOptions) => new RedisCacheAdapter<T>(client.redis, options);
-    }
+export const BuiltinCacheAdapters = {
+    memory: <T>(options: CacheAdapterOptions): CacheAdapter<T> => new MemoryCacheAdapter<T>(options),
+    redis: <T>(options: CacheAdapterOptions, client: UsingClient): CacheAdapter<T> => new RedisCacheAdapter<T>(client.redis, options),
+} satisfies Record<"memory" | "redis", CacheAdapterFactory>;
 
-    return <T>(options: CacheAdapterOptions) => new MemoryCacheAdapter<T>(options);
+/**
+ * Resolve the configured cache backend: a built-in one by name, or the custom factory set as `cache.adapter`.
+ * @param {UsingClient} client Stelle's client, including the Redis connection.
+ * @returns {BoundCacheAdapterFactory} The configured adapter factory, bound to the client.
+ */
+export function createCacheAdapterFactory(client: UsingClient): BoundCacheAdapterFactory {
+    const { adapter } = client.config.cache;
+    const factory: CacheAdapterFactory = typeof adapter === "function" ? adapter : BuiltinCacheAdapters[adapter];
+
+    return <T>(options: CacheAdapterOptions): CacheAdapter<T> => factory<T>(options, client);
 }

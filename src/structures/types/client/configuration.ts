@@ -1,6 +1,7 @@
 import type { NodeOptions, SearchSources } from "hoshimi";
 import type { PermissionStrings } from "seyfert";
 import type { Locale, LocaleString } from "seyfert/lib/types/index.js";
+import type { CacheAdapterFactory } from "#stelle/classes/modules/adapters/CacheAdapter.js";
 
 /**
  * The colors configuration interface.
@@ -93,11 +94,16 @@ interface Sessions {
  */
 interface Cache {
     /**
-     * The cache backend. Memory is the default and currently built-in backend.
-     * @type {"memory" | "redis"}
+     * The cache backend: a built-in one by name, or a {@link CacheAdapterFactory} for a custom backend.
+     *
+     * The adapters are created once, when the database starts, so changing it takes a restart: a config reload doesn't
+     * swap the backend of a running bot.
+     * @type {"memory" | "redis" | CacheAdapterFactory}
      * @default "memory"
+     * @example
+     * adapter: <T>(options, client) => new MyCacheAdapter<T>(options, client),
      */
-    adapter: "memory" | "redis";
+    adapter: "memory" | "redis" | CacheAdapterFactory;
     /**
      * The maximum limit of the cache.
      * @type {number}

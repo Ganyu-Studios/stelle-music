@@ -1,4 +1,4 @@
-import type { CacheAdapter, CacheAdapterFactory, CacheAdapterOptions } from "#stelle/classes/modules/adapters/CacheAdapter.js";
+import type { BoundCacheAdapterFactory, CacheAdapter, CacheAdapterOptions } from "#stelle/classes/modules/adapters/CacheAdapter.js";
 import { MemoryCacheAdapter } from "#stelle/classes/modules/adapters/MemoryCacheAdapter.js";
 import type { guildLocale, guildPlayer, guildPrefix, guildRequestChannel, userPlaylist } from "#stelle/prisma";
 import { Configuration } from "#stelle/utils/data/configuration.js";
@@ -64,9 +64,9 @@ export class Cache {
      *
      * The optional factory is the extension point for alternative backends. Every collection receives an independent
      * adapter so a backend can keep their namespaces separate.
-     * @param {CacheAdapterFactory} [createAdapter] Adapter factory. Memory is the default.
+     * @param {BoundCacheAdapterFactory} [createAdapter] Adapter factory. Memory is the default.
      */
-    constructor(createAdapter: CacheAdapterFactory = <T>(options: CacheAdapterOptions) => new MemoryCacheAdapter<T>(options)) {
+    constructor(createAdapter: BoundCacheAdapterFactory = <T>(options: CacheAdapterOptions) => new MemoryCacheAdapter<T>(options)) {
         this.locales = createAdapter<guildLocale | null>(cacheOptions("locales"));
         this.prefixes = createAdapter<guildPrefix | null>(cacheOptions("prefixes"));
         this.players = createAdapter<guildPlayer | null>(cacheOptions("players"));

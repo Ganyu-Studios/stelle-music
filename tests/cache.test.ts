@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import type { CacheAdapter, CacheAdapterFactory, CacheAdapterOptions } from "#stelle/classes/modules/adapters/CacheAdapter.js";
+import type {
+    BoundCacheAdapterFactory,
+    CacheAdapter,
+    CacheAdapterFactory,
+    CacheAdapterOptions,
+} from "#stelle/classes/modules/adapters/CacheAdapter.js";
+import { cacheAdapterContract } from "./helpers/cache-adapter-contract.js";
 
 // `configuration.ts` parses `process.env` at import time (`Environment.parse`), so importing the cache or any
 // controller would throw without these. Dummy values are enough: the tests inject a fake Prisma model and never open a
@@ -22,6 +28,7 @@ Object.assign(Configuration, { cache: { adapter: "memory", limit: 100, expire: 3
 const { Cache } = await import("#stelle/classes/modules/Cache.js");
 const { MemoryCacheAdapter } = await import("#stelle/classes/modules/adapters/MemoryCacheAdapter.js");
 const { RedisCacheAdapter } = await import("#stelle/classes/modules/adapters/RedisCacheAdapter.js");
+const { createCacheAdapterFactory } = await import("#stelle/classes/modules/adapters/CacheAdapterFactory.js");
 const { LocaleController } = await import("#stelle/controllers/locale.js");
 const { PrefixController } = await import("#stelle/controllers/prefix.js");
 const { PlayerController } = await import("#stelle/controllers/player.js");
@@ -39,16 +46,7 @@ const config = {
     defaultSearchSource: "spsearch",
 } as const;
 
-test("the default cache backend is the in-memory adapter", (): void => {
-    const adapter = new MemoryCacheAdapter<{ value: string } | null>({ limit: 2, expire: 300_000, namespace: "test" });
-
-    adapter.set("present", { value: "cached" });
-    adapter.set("negative", null);
-
-    assert.deepEqual(adapter.get("present"), { value: "cached" });
-    assert.equal(adapter.get("negative"), null);
-    assert.equal(adapter.get("missing"), undefined);
-});
+cacheAdapterContract("memory adapter", <T>(options: CacheAdapterOptions) => new MemoryCacheAdapter<T>(options));
 
 test("the cache accepts an asynchronous adapter", async (): Promise<void> => {
     const createAsyncAdapter = <T>(options: { limit: number; expire: number; namespace: string }) => {
@@ -130,20 +128,7 @@ test("the Redis adapter scopes keys and applies its TTL", async (): Promise<void
     assert.equal(await adapter.get("guild-1"), undefined);
 });
 
-test("the Redis adapter round-trips records exactly, Dates and negative caches included", async (): Promise<void> => {
-    const { redis } = fakeRedis();
-    const adapter = new RedisCacheAdapter<{ createdAt: Date } | null>(redis, { limit: 5, expire: 1_500, namespace: "test" });
-    const createdAt = new Date("2026-01-01T00:00:00.000Z");
-
-    await adapter.set("present", { createdAt });
-    await adapter.set("negative", null);
-
-    const cached = await adapter.get("present");
-    assert.ok(cached?.createdAt instanceof Date, "a Date must come back as a Date, not an ISO string");
-    assert.equal(cached.createdAt.getTime(), createdAt.getTime());
-    assert.equal(await adapter.get("negative"), null, "a negative cache must stay null");
-    assert.equal(await adapter.get("missing"), undefined, "a missing key must stay a miss");
-});
+cacheAdapterContract("Redis adapter", redisFactory());
 
 test("the Redis adapter treats an undecodable entry (the older JSON encoding) as a miss", async (): Promise<void> => {
     const { redis, values } = fakeRedis();
@@ -154,15 +139,34 @@ test("the Redis adapter treats an undecodable entry (the older JSON encoding) as
     assert.equal(await adapter.get("legacy"), undefined);
 });
 
+test("the configured backend resolves a built-in name or a custom factory", (): void => {
+    const { redis } = fakeRedis();
+    const options: CacheAdapterOptions = { limit: 5, expire: 1_500, namespace: "test" };
+    const withAdapter = (adapter: unknown): never => ({ config: { cache: { adapter } }, redis }) as never;
+
+    assert.ok(createCacheAdapterFactory(withAdapter("memory"))(options) instanceof MemoryCacheAdapter);
+    assert.ok(createCacheAdapterFactory(withAdapter("redis"))(options) instanceof RedisCacheAdapter);
+
+    const calls: { options: CacheAdapterOptions; client: unknown }[] = [];
+    const custom: CacheAdapterFactory = <T>(options: CacheAdapterOptions, client: unknown): CacheAdapter<T> => {
+        calls.push({ options, client });
+        return new MemoryCacheAdapter<T>(options);
+    };
+    const client = withAdapter(custom);
+
+    createCacheAdapterFactory(client)(options);
+    assert.deepEqual(calls, [{ options, client }], "a custom factory must receive the collection options and the client");
+});
+
 /**
  * Build the three dependencies a controller now receives: a fake `PrismaService` whose `model(name)` returns the
  * matching stub, a real `Cache` (so the caching behaviour under test is genuine), and a `client` carrying `config` for
  * the default fallbacks. Spread into the controller constructor.
  * @param {Record<string, unknown>} models The per-model stubs, keyed by Prisma model name.
- * @param {CacheAdapterFactory} [createAdapter] The cache backend. Memory (the `Cache` default) when omitted.
+ * @param {BoundCacheAdapterFactory} [createAdapter] The cache backend. Memory (the `Cache` default) when omitted.
  * @returns {[never, InstanceType<typeof Cache>, never]} The `[prisma, cache, client]` tuple, typed loosely.
  */
-function fakeDeps(models: Record<string, unknown>, createAdapter?: CacheAdapterFactory): [never, InstanceType<typeof Cache>, never] {
+function fakeDeps(models: Record<string, unknown>, createAdapter?: BoundCacheAdapterFactory): [never, InstanceType<typeof Cache>, never] {
     const prisma = { model: (name: string): unknown => models[name] } as never;
     const client = { config } as never;
 
@@ -171,9 +175,9 @@ function fakeDeps(models: Record<string, unknown>, createAdapter?: CacheAdapterF
 
 /**
  * A cache backend factory over a fresh {@link fakeRedis} client, for running the controllers on the Redis adapter.
- * @returns {CacheAdapterFactory} The adapter factory.
+ * @returns {BoundCacheAdapterFactory} The adapter factory.
  */
-function redisFactory(): CacheAdapterFactory {
+function redisFactory(): BoundCacheAdapterFactory {
     const { redis } = fakeRedis();
     return <T>(options: CacheAdapterOptions) => new RedisCacheAdapter<T>(redis, options);
 }
