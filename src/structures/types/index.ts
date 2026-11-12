@@ -13,7 +13,6 @@ export type {
     ConstantsPresence,
     ConstantsRedis,
     ConstantsText,
-    OutputDirectory,
     PausedState,
 } from "#stelle/types/client/constants.js";
 export type { ImageData } from "#stelle/types/client/image.js";

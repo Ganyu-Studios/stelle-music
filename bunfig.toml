@@ -1,0 +1,5 @@
+[install]
+# Supply-chain cooldown: only install versions published at least a day ago (pnpm's built-in default).
+minimumReleaseAge = 86400 # seconds
+# Dev builds of these are installed as soon as they are published.
+minimumReleaseAgeExcludes = ["hoshimi", "seyfert"]

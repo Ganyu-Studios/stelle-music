@@ -1,4 +1,4 @@
-import type { RedisClientType } from "@redis/client";
+import type { RedisClient } from "bun";
 import { type QueueJSON, QueueStorageAdapter } from "hoshimi";
 import { StelleRedis } from "#stelle/utils/data/constants.js";
 
@@ -23,14 +23,14 @@ export class RedisQueueStore extends QueueStorageAdapter {
      * @type {RedisClient}
      * @readonly
      */
-    readonly redis: RedisClientType;
+    readonly redis: RedisClient;
 
     /**
      *
      * Create a new Redis queue store.
      * @param {RedisClient} redis The Redis instance.
      */
-    constructor(redis: RedisClientType) {
+    constructor(redis: RedisClient) {
         super();
         this.redis = redis;
     }
@@ -42,7 +42,7 @@ export class RedisQueueStore extends QueueStorageAdapter {
         return this.parse(data);
     }
     override async set(key: string, value: QueueJSON): Promise<void> {
-        await this.redis.set(this.buildKey(this.namespace, key), this.stringify(value), { EX: QUEUE_TTL_SECONDS });
+        await this.redis.set(this.buildKey(this.namespace, key), this.stringify(value), "EX", QUEUE_TTL_SECONDS);
     }
 
     override async delete(key: string): Promise<boolean> {
@@ -51,17 +51,20 @@ export class RedisQueueStore extends QueueStorageAdapter {
     }
 
     override async clear(): Promise<void> {
-        // Scoped to this store's namespace instead of `flushAll()`: the queues share the database with
+        // Scoped to this store's namespace instead of `flushall()`: the queues share the database with
         // whatever else lives in it, and dev (`internal`) shares it with prod (`stellequeue`), so
         // flushing everything would take far more than the queues this adapter owns.
-        for await (const keys of this.redis.scanIterator({ MATCH: `${this.namespace}:*`, COUNT: 100 })) {
-            if (keys.length) await this.redis.del(keys);
-        }
+        let cursor: string = "0";
+
+        do {
+            const [next, keys] = await this.redis.scan(cursor, "MATCH", `${this.namespace}:*`, "COUNT", 100);
+            if (keys.length) await this.redis.del(...keys);
+            cursor = next;
+        } while (cursor !== "0");
     }
 
     override async has(key: string): Promise<boolean> {
-        const result: number = await this.redis.exists(this.buildKey(this.namespace, key));
-        return result > 0;
+        return this.redis.exists(this.buildKey(this.namespace, key));
     }
 
     override parse(value: unknown): QueueJSON {

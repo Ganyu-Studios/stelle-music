@@ -1,0 +1,10 @@
+{
+    "apps": [
+        {
+            "name": "Stelle",
+            "script": "./src/index.ts",
+            "interpreter": "bun",
+            "watch": false
+        }
+    ]
+}

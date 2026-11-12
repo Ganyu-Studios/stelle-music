@@ -29,6 +29,11 @@
             "#stelle/prisma": ["./src/generated/prisma/client.ts"]
         }
     },
-    "include": ["./src/**/*", "./tests/**/*"],
+    "include": [
+        "./src/**/*",
+        "./tests/**/*",
+        "./seyfert.config.ts",
+        "./prisma.config.ts"
+    ],
     "exclude": ["node_modules", "dist", "generated"]
 }

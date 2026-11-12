@@ -2,9 +2,8 @@
     "name": "stelle-music",
     "version": "0.4.0-BLAZER",
     "description": "A music bot.",
-    "main": "./dist/index.js",
+    "main": "./src/index.ts",
     "type": "module",
-    "packageManager": "pnpm@12.18.0+sha512.9d7882d5dc82147ecfc4e062aa34834e0ad0296710a1837a1115ae012127d36b7109e321ac1598a1dd0a65597681b1e99917e12ed0d749eae91187943363beb3",
     "homepage": "https://github.com/Ganyu-Studios/stelle-music#readme",
     "author": "Ganyu Studios",
     "license": "MIT",
@@ -25,26 +24,23 @@
         }
     ],
     "engines": {
-        "node": ">= 22.11.0",
-        "pnpm": ">= 10.7.0"
+        "bun": ">= 1.4.4"
     },
     "scripts": {
-        "build": "tsc -p tsconfig.build.json",
         "typecheck": "tsc --noEmit",
-        "test": "tsx --test --test-force-exit \"tests/*.test.ts\"",
-        "rebuild": "node ./scripts/clean.mjs && pnpm build",
-        "start": "node ./dist/index.js",
-        "dev": "tsx ./src/index.ts --debug --dev",
+        "test": "bun test tests/",
+        "start": "bun src/index.ts",
+        "dev": "bun src/index.ts --debug --dev",
         "lint": "biome lint --write .",
         "format": "biome check --write .",
-        "db:generate": "prisma generate",
-        "db:push": "prisma db push",
-        "db": "pnpm db:push && pnpm db:generate",
+        "db:generate": "bunx --bun prisma generate",
+        "db:push": "bunx --bun prisma db push",
+        "db": "bun run db:push && bun run db:generate",
         "prepare": "husky"
     },
     "lint-staged": {
         "{*.ts,*.json}": [
-            "pnpm format"
+            "bun run format"
         ]
     },
     "repository": {
@@ -56,8 +52,6 @@
     },
     "dependencies": {
         "@prisma/client": "6.19.3",
-        "@redis/client": "^6.3.1",
-        "dotenv": "^18.0.10",
         "hoshimi": "0.6.0",
         "imagescript": "^3.20.2",
         "meowdb": "^2.2.3",
@@ -67,20 +61,15 @@
     },
     "devDependencies": {
         "@biomejs/biome": "^2.6.6",
-        "@types/node": "^26.6.6",
+        "@types/bun": "1.4.4",
         "husky": "^9.1.7",
         "lint-staged": "^17.6.0",
         "prisma": "6.19.3",
-        "tsx": "^4.23.15",
         "typescript": "^7.0.2"
     },
-    "imports": {
-        "#stelle/middlewares/*": "./dist/middlewares/*",
-        "#stelle/locales/*": "./dist/locales/*",
-        "#stelle/types/*": "./dist/structures/types/*",
-        "#stelle/classes/*": "./dist/structures/classes/*",
-        "#stelle/utils/*": "./dist/structures/utils/*",
-        "#stelle/controllers/*": "./dist/structures/controllers/*",
-        "#stelle/prisma": "./dist/generated/prisma/client.js"
-    }
+    "trustedDependencies": [
+        "@prisma/client",
+        "@prisma/engines",
+        "prisma"
+    ]
 }

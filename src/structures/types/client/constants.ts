@@ -23,11 +23,6 @@ interface ActivityOptions {
 }
 
 /**
- * The type of the output directory of the bot.
- */
-export type OutputDirectory = "src" | "dist";
-
-/**
  * The type of the paused state of the player.
  */
 export type PausedState = "pause" | "resume";
@@ -103,11 +98,6 @@ export interface ConstantsPaths {
      * @returns {string} The commands cache path.
      */
     GetCommandsPath(): string;
-    /**
-     * Get the current output directory of the bot. (By default, derived from `StelleMeta.Dev`.)
-     * @returns {OutputDirectory} The current output directory of the bot.
-     */
-    GetOutDirectory(): OutputDirectory;
     /**
      * Get the absolute path to the directory where rendered banners are cached.
      * @returns {string} The banners cache directory.

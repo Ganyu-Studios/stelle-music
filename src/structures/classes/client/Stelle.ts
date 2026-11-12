@@ -1,4 +1,4 @@
-import { createClient, type RedisClientType } from "@redis/client";
+import { RedisClient } from "bun";
 import { Client, LimitedCollection, LimitedMemoryAdapter, type LogLevels } from "seyfert";
 import { ActivityType, type GatewayPresenceUpdateData, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
 import { StelleDatabase } from "#stelle/classes/database/Database.js";
@@ -35,11 +35,13 @@ export class Stelle extends Client<PluginsDefinition, true> {
     readonly cooldowns: LimitedCollection<string, number> = new LimitedCollection<string, number>();
 
     /**
-     * The Redis client instance.
-     * @type {RedisClientType}
+     * The Redis client instance. Bun's client stops reconnecting after `maxRetries` (20 by default, ~31 s of backoff)
+     * and then stays closed for good; node-redis retried forever, so the limit is raised to outlive any real outage
+     * (1M retries at the 2 s backoff cap is ~23 days). It also makes `connect()` wait for Redis at boot.
+     * @type {RedisClient}
      * @readonly
      */
-    readonly redis: RedisClientType = createClient({ url: StelleRedis.GetUrl() });
+    readonly redis: RedisClient = new RedisClient(StelleRedis.GetUrl(), { maxRetries: 1_000_000 });
 
     /**
      * The client database instance.
@@ -143,8 +145,8 @@ export class Stelle extends Client<PluginsDefinition, true> {
 
         this.events.onFail = (_, error): Promise<void> => sendErrorReport({ error });
 
-        this.redis.on("connect", (): void => this.logger.info("[Redis] Connected"));
-        this.redis.on("error", (error): void => this.logger.error(`[Redis] Client error | error: ${UtilsOps.inspect(error)}`));
+        this.redis.onconnect = (): void => this.logger.info("[Redis] Connected");
+        this.redis.onclose = (error): void => this.logger.error(`[Redis] Connection closed | error: ${UtilsOps.inspect(error)}`);
 
         await this.redis.connect();
         await this.manager.load();
@@ -180,9 +182,10 @@ export class Stelle extends Client<PluginsDefinition, true> {
     /**
      *
      * Shut Stelle down gracefully: close every gateway shard so Discord sees a clean disconnect, then close the database
-     * and Redis. Redis is closed with `close()`, which waits for pending commands, so the last queue writes land before
-     * the process exits. Lavalink is left untouched on purpose: with session resuming enabled, the node keeps the players
-     * alive for the resume window and the next start restores them from the (synchronously persisted) sessions.
+     * and Redis. Bun's `close()` rejects every command still in flight, so a `PING` is awaited first: Redis answers in
+     * order, so it resolves only once the commands sent before it (the last queue writes) have landed. Lavalink is left
+     * untouched on purpose: with session resuming enabled, the node keeps the players alive for the resume window and the
+     * next start restores them from the (synchronously persisted) sessions.
      * @returns {Promise<void>} A promise that resolves once the gateway, the database and Redis are closed.
      */
     public async shutdown(): Promise<void> {
@@ -192,7 +195,14 @@ export class Stelle extends Client<PluginsDefinition, true> {
         this.gateway?.disconnectAll();
 
         await this.database.disconnect();
-        if (this.redis.isOpen) await this.redis.close();
+
+        if (this.redis.connected) {
+            await this.redis.ping();
+
+            // A deliberate close is not a connection error.
+            this.redis.onclose = null;
+            this.redis.close();
+        }
 
         this.logger.info("[Client] Shutdown completed");
     }

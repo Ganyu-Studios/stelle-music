@@ -1,14 +1,15 @@
 import { deserialize, serialize } from "node:v8";
-import type { RedisClientType } from "@redis/client";
+import type { RedisClient } from "bun";
 import type { CacheAdapter, CacheAdapterOptions } from "#stelle/classes/modules/adapters/CacheAdapter.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 /**
  * A Redis-backed cache adapter.
  *
- * Values are encoded with the V8 serializer (the same algorithm as `structuredClone`) instead of JSON, so records come
- * back exactly as the in-memory adapter returns them: a `Date` stays a `Date` rather than turning into an ISO string.
- * The bytes are stored base64-encoded to keep using the shared string client.
+ * Values are encoded with `node:v8`'s serializer (the same algorithm as `structuredClone`) instead of JSON, so records
+ * come back exactly as the in-memory adapter returns them: a `Date` stays a `Date` rather than turning into an ISO
+ * string. The bytes are stored base64-encoded to keep using the shared string client. Bun writes JavaScriptCore's wire
+ * format, so an entry left by the old Node.js build doesn't decode and is read as a miss.
  * @template T The collection value type.
  * @class RedisCacheAdapter
  * @implements {CacheAdapter<T>}
@@ -16,10 +17,10 @@ import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 export class RedisCacheAdapter<T> implements CacheAdapter<T> {
     /**
      * Redis client used by this adapter.
-     * @type {RedisClientType}
+     * @type {RedisClient}
      * @readonly
      */
-    readonly redis: RedisClientType;
+    readonly redis: RedisClient;
 
     /**
      * Cache key namespace.
@@ -37,10 +38,10 @@ export class RedisCacheAdapter<T> implements CacheAdapter<T> {
 
     /**
      * Create a Redis cache adapter.
-     * @param {RedisClientType} redis The Redis client.
+     * @param {RedisClient} redis The Redis client.
      * @param {CacheAdapterOptions} options Adapter options.
      */
-    constructor(redis: RedisClientType, options: CacheAdapterOptions) {
+    constructor(redis: RedisClient, options: CacheAdapterOptions) {
         this.redis = redis;
         this.namespace = `stellecache:${options.namespace}`;
         this.ttl = Math.max(1, Math.ceil(options.expire / 1000));
@@ -63,7 +64,7 @@ export class RedisCacheAdapter<T> implements CacheAdapter<T> {
     }
 
     public async set(key: string, value: T): Promise<this> {
-        await this.redis.set(this.key(key), serialize(value).toString("base64"), { EX: this.ttl });
+        await this.redis.set(this.key(key), serialize(value).toString("base64"), "EX", this.ttl);
         return this;
     }
 
@@ -72,12 +73,16 @@ export class RedisCacheAdapter<T> implements CacheAdapter<T> {
     }
 
     public async has(key: string): Promise<boolean> {
-        return (await this.redis.exists(this.key(key))) > 0;
+        return this.redis.exists(this.key(key));
     }
 
     public async clear(): Promise<void> {
-        for await (const keys of this.redis.scanIterator({ MATCH: `${this.namespace}:*`, COUNT: 100 })) {
-            if (keys.length) await this.redis.del(keys);
-        }
+        let cursor: string = "0";
+
+        do {
+            const [next, keys] = await this.redis.scan(cursor, "MATCH", `${this.namespace}:*`, "COUNT", 100);
+            if (keys.length) await this.redis.del(...keys);
+            cursor = next;
+        } while (cursor !== "0");
     }
 }

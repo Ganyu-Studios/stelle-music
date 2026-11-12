@@ -1,5 +1,3 @@
-import "dotenv/config";
-
 import { Structures } from "hoshimi";
 import { HoshimiLyricsManager } from "#stelle/classes/manager/LyricsManager.js";
 import { Configuration } from "#stelle/utils/data/configuration.js";
