@@ -12,7 +12,8 @@ const envSchema = z.object({
     REDIS_PORT: z.coerce.number(),
     REDIS_PASSWORD: z.string(),
     REDIS_USERNAME: z.string().default("default"),
-    REDIS_SECURE: z.coerce.boolean().default(true),
+    // Not `z.coerce.boolean()`: it reads the string "false" as true. This parses true/false, 1/0, yes/no and on/off.
+    REDIS_SECURE: z.stringbool().default(true),
 });
 
 /**
