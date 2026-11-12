@@ -92,20 +92,19 @@ function fakeRedis(): { redis: never; values: Map<string, string>; sets: { key: 
         async get(key: string): Promise<string | null> {
             return values.get(key) ?? null;
         },
-        async set(key: string, value: string, options: { EX: number }): Promise<void> {
+        async set(key: string, value: string, _ex: "EX", seconds: number): Promise<void> {
             values.set(key, value);
-            sets.push({ key, ttl: options.EX });
+            sets.push({ key, ttl: seconds });
         },
-        async del(keys: string | string[]): Promise<number> {
-            const list = Array.isArray(keys) ? keys : [keys];
-            return list.filter((key) => values.delete(key)).length;
+        async del(...keys: string[]): Promise<number> {
+            return keys.filter((key) => values.delete(key)).length;
         },
-        async exists(key: string): Promise<number> {
-            return values.has(key) ? 1 : 0;
+        async exists(key: string): Promise<boolean> {
+            return values.has(key);
         },
-        async *scanIterator(options: { MATCH: string }): AsyncGenerator<string[]> {
-            const prefix = options.MATCH.slice(0, -1);
-            yield [...values.keys()].filter((key) => key.startsWith(prefix));
+        async scan(_cursor: string, _match: "MATCH", pattern: string): Promise<[string, string[]]> {
+            const prefix = pattern.slice(0, -1);
+            return ["0", [...values.keys()].filter((key) => key.startsWith(prefix))];
         },
     };
 

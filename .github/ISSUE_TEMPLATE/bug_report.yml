@@ -97,11 +97,11 @@ body:
           render: text
 
     - type: input
-      id: node-version
+      id: bun-version
       attributes:
-          label: Node.js Version
-          description: What version of Node.js are you using? (for self-hosted instances)
-          placeholder: "v22.11.0"
+          label: Bun Version
+          description: What version of Bun are you using? (for self-hosted instances)
+          placeholder: "1.4.4"
 
     - type: input
       id: bot-version

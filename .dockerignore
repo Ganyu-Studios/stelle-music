@@ -145,9 +145,6 @@ LICENSE
 # CI/CD
 .github/
 
-# Development scripts
-scripts/
-
 # Runtime data (created in the container / mounted as volumes)
 logs
 cache
@@ -159,6 +156,3 @@ lint-staged
 
 # Lavalink (if running externally)
 lavalink/
-
-# PM2 ecosystem file (since we're using Docker)
-ecosystem.config.cjs

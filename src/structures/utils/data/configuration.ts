@@ -48,7 +48,8 @@ export const Configuration: StelleConfiguration = {
                 const file: string = join(directory, `${filename}${ext}`);
 
                 const i: StelleConfiguration | null = await UtilsOps.dynamicImport<StelleConfiguration>(file).catch((error) => {
-                    if (error.stack.includes("ERR_MODULE_NOT_FOUND")) return null;
+                    // A missing file is skipped. Check the code, not the stack: Bun doesn't put the code in the stack.
+                    if (error?.code === "ERR_MODULE_NOT_FOUND") return null;
                     throw error;
                 });
 

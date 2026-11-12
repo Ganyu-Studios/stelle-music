@@ -97,7 +97,7 @@ body:
               - OS: Ubuntu 20.04
               - CPU: Intel i5-8400
               - RAM: 8GB
-              - Node.js version: v22.11.0
+              - Bun version: 1.4.4
               - Stelle version: 0.3.8-BLAZER
 
     - type: textarea

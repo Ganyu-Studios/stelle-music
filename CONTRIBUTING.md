@@ -10,7 +10,7 @@
 ## ⚙️ Bug Fixes
 
 1. Fork the repo and create your branch from `dev`.
-2. First, install the dependencies with `pnpm install`.
+2. First, install the dependencies with `bun install`.
 3. Make your code change.
 4. Try to be clear and concise as possible.
 5. Open a PR (If it is possible)
