@@ -156,3 +156,6 @@ lint-staged
 
 # Lavalink (if running externally)
 lavalink/
+
+# PM2 ecosystem file (since we're using Docker)
+ecosystem.config.json
