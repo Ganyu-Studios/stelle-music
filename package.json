@@ -52,7 +52,7 @@
     },
     "dependencies": {
         "@prisma/client": "6.19.3",
-        "hoshimi": "^0.6.1",
+        "hoshimi": "^0.6.2-dev-43377835734.0",
         "imagescript": "^3.20.2",
         "meowdb": "^2.2.3",
         "seyfert": "5.2.2-dev-41510346259.0",
