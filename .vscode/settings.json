@@ -1,7 +1,4 @@
 {
-    "typescript.tsdk": "node_modules\\typescript\\lib",
-    "editor.defaultFormatter": "biomejs.biome",
-    "[prisma]": {
-        "editor.defaultFormatter": "Prisma.prisma"
-    },
+    "js/ts.tsdk.path": "node_modules\\typescript\\lib",
+    "prisma.pinToPrisma6": true,
 }
