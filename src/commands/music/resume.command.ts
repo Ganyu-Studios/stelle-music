@@ -16,7 +16,7 @@ import { StelleOptions } from "#stelle/utils/decorator.js";
     description: "Resume the player.",
     integrationTypes: [ApplicationIntegrationType.GuildInstall],
     contexts: [InteractionContextType.Guild],
-    aliases: ["unpause", "play"],
+    aliases: ["unpause"],
 })
 @StelleOptions({ cooldown: 5, category: StelleCategory.Music })
 @LocalesT("locales.resume.name", "locales.resume.description")
