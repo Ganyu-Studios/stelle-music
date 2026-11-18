@@ -41,7 +41,7 @@ export default class LoadSubcommand extends SubCommand {
     public async run(ctx: GuildCommandContext<typeof options>): Promise<WebhookMessageStructure | MessageStructure | void> {
         await ctx.deferReply();
 
-        const { client, member, channelId } = ctx;
+        const { client, channelId, member } = ctx;
         const { id } = ctx.options;
 
         const { messages } = await ctx.locale();
@@ -50,8 +50,6 @@ export default class LoadSubcommand extends SubCommand {
         if (!playlist) return ctx.errorReply(messages.commands.playlist.no.playlist, { content: "" });
 
         if (!playlist.tracks.length) return ctx.errorReply(messages.commands.playlist.no.tracks, { content: "" });
-
-        if (!member) return;
 
         const me: GuildMember | null = await ctx.me().catch((): null => null);
         if (!me) return;

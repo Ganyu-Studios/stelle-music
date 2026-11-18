@@ -1,11 +1,10 @@
 import type { PlayerStructure } from "hoshimi";
-import { type AllGuildVoiceChannels, type GuildMember, LogLevels, type UsingClient, type VoiceState } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
+import { type AllGuildVoiceChannels, type GuildMember, LogLevels, type UsingClient, type VoiceState, EmbedColors } from "seyfert";
 import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
 import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
 import { deferUnsuppress } from "#stelle/utils/functions/manager/voice.js";
 
-const timeouts: Map<string, NodeJS.Timeout> = new Map();
+const timeouts = new Map<string, NodeJS.Timeout>();
 
 /**
  *
@@ -50,7 +49,7 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
         const members: GuildMember[] = await Promise.all(channel.states().map((c): Promise<GuildMember> => c.member()));
         const isEmpty: boolean = !members.filter(({ user }): boolean => !user.bot).length;
 
-        const isChannel: boolean = oldState?.channelId === player.voiceId && newState.channelId !== oldState?.channelId;
+        const isChannel: boolean = oldState?.channelId === player.voiceId && newState.channelId !== oldState.channelId;
 
         const is247: boolean = (await player.data.get("is247")) || client.config.twentyfourseven.is247;
         const isAutoPause: boolean = (await player.data.get("isAutoPause")) ?? client.config.twentyfourseven.autoPause;
@@ -123,22 +122,27 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
             });
 
             // Runs detached after the outer try/catch has returned, so it needs its own guard.
-            const timeoutId: NodeJS.Timeout = setTimeout(async (): Promise<void> => {
-                try {
-                    await player.destroy();
-                    await client.messages.write(player.textId!, {
-                        embeds: [
-                            {
-                                color: EmbedColors.Yellow,
-                                description: messages.events.no.members({
-                                    clientName: client.me.username,
-                                }),
-                            },
-                        ],
-                    });
-                } catch (error) {
-                    client.debug(LogLevels.Error, `[Lavalink] Empty-channel leave failed | guild: ${guildId} | error: ${error}`);
-                }
+            const timeoutId: NodeJS.Timeout = setTimeout((): void => {
+                void (async (): Promise<void> => {
+                    try {
+                        await player.destroy();
+                        await client.messages.write(player.textId!, {
+                            embeds: [
+                                {
+                                    color: EmbedColors.Yellow,
+                                    description: messages.events.no.members({
+                                        clientName: client.me.username,
+                                    }),
+                                },
+                            ],
+                        });
+                    } catch (error) {
+                        client.debug(
+                            LogLevels.Error,
+                            `[Lavalink] Empty-channel leave failed | guild: ${guildId} | error: ${String(error)}`,
+                        );
+                    }
+                })();
             }, client.config.disconnectTime);
 
             timeouts.set(guildId, timeoutId);
@@ -159,6 +163,6 @@ export async function playerListener(client: UsingClient, newState: VoiceState, 
             timeouts.delete(guildId);
         }
     } catch (error) {
-        client.debug(LogLevels.Error, `[Lavalink] Voice-state handling failed | guild: ${guildId} | error: ${error}`);
+        client.debug(LogLevels.Error, `[Lavalink] Voice-state handling failed | guild: ${guildId} | error: ${String(error)}`);
     }
 }

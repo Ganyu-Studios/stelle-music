@@ -11,7 +11,7 @@ export default class ToggleLoopComponent extends ComponentCommand {
         const { messages } = await ctx.locale();
         const { player } = ctx.metadata.checkPlayer;
 
-        await player.setLoop(StelleMusic.LoopMode(player.loop));
+        player.setLoop(StelleMusic.LoopMode(player.loop));
 
         await ComponentOps.refresh(ctx, {
             customId: "player-toggleLoop",

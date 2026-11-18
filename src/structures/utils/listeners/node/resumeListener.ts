@@ -72,10 +72,10 @@ export async function resumeListener(client: UsingClient, node: NodeStructure, p
             // aborting the rest of this player's resume.
             await player.queue.utils.sync({ override: true, syncCurrent: false }).catch((error: unknown): void => {
                 if (!(error instanceof StorageError))
-                    client.debug(LogLevels.Error, `[Lavalink] Queue sync failed | guild: ${player.guildId} | error: ${error}`);
+                    client.debug(LogLevels.Error, `[Lavalink] Queue sync failed | guild: ${player.guildId} | error: ${String(error)}`);
             });
 
-            if (data.track) player.queue.current = await player.queue.utils.build(data.track, session.me);
+            if (data.track) Object.assign(player.queue, { current: await player.queue.utils.build(data.track, session.me) });
 
             Object.assign(player, {
                 lastPosition: data.state.position,
@@ -87,7 +87,7 @@ export async function resumeListener(client: UsingClient, node: NodeStructure, p
 
             client.debug(LogLevels.Debug, `[Lavalink] Player resumed | node: ${node.id} | guild: ${player.guildId}`);
         } catch (error) {
-            client.logger.error(`[Lavalink] Resume failed | node: ${node.id} | guild: ${data.guildId} | error: ${error}`);
+            client.logger.error(`[Lavalink] Resume failed | node: ${node.id} | guild: ${data.guildId} | error: ${String(error)}`);
         }
     }
 }

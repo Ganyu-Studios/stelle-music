@@ -1,6 +1,14 @@
 import { LoopMode, type PlayerStructure, type TrackStructure } from "hoshimi";
-import { ActionRow, AttachmentBuilder, Button, type DefaultLocale, Embed, type MessageStructure, type UsingClient } from "seyfert";
-import { ButtonStyle } from "seyfert/lib/types/index.js";
+import {
+    ActionRow,
+    AttachmentBuilder,
+    Button,
+    type DefaultLocale,
+    Embed,
+    type MessageStructure,
+    type UsingClient,
+    ButtonStyle,
+} from "seyfert";
 import { StelleMusic } from "#stelle/utils/data/constants.js";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { ImageOps } from "#stelle/utils/functions/internal/image.js";
@@ -23,13 +31,13 @@ const QUEUE_PREVIEW: number = 10;
  * The Discord epoch (2015-01-01) used to derive a message's timestamp from its snowflake id.
  * @type {number}
  */
-const DISCORD_EPOCH: number = 1420070400000;
+const DISCORD_EPOCH: number = 1_420_070_400_000;
 
 /**
  * The bulk-delete age window. Discord rejects bulk-deleting messages older than 14 days; a margin avoids edge rejections.
  * @type {number}
  */
-const BULK_DELETE_MAX_AGE: number = 13 * 24 * 60 * 60 * 1000;
+const BULK_DELETE_MAX_AGE: number = 13 * 24 * 60 * 60 * 1_000;
 
 /**
  * The state used to render the player control buttons.
@@ -99,7 +107,7 @@ interface PanelBody {
  * In-memory only — after a restart the first idle reset simply renders once, which is harmless.
  * @type {Set<string>}
  */
-const idlePanels: Set<string> = new Set();
+const idlePanels = new Set<string>();
 
 /**
  * The track identifier currently rendered on each guild's panel banner. Lets {@link PanelOps.update} detect a
@@ -107,7 +115,7 @@ const idlePanels: Set<string> = new Set();
  * instead of re-rendering and re-uploading an identical image. Cleared whenever the panel goes idle.
  * @type {Map<string, string>}
  */
-const renderedTracks: Map<string, string> = new Map();
+const renderedTracks = new Map<string, string>();
 
 export const PanelOps = {
     /**

@@ -12,9 +12,11 @@ import {
     SubCommand,
     type UsingClient,
     type WebhookMessageStructure,
+    EmbedColors,
+    type APIEmbedField,
+    ButtonStyle,
+    MessageFlags,
 } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
-import { type APIEmbedField, ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
 import { Shortcut } from "yunaforseyfert";
 import { EmbedPaginator } from "#stelle/classes/components/EmbedPaginator.js";
 import { LoggerOps } from "#stelle/utils/functions/internal/logger.js";

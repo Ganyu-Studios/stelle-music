@@ -67,7 +67,9 @@ export class PrismaService {
                 this.connected = true;
                 this.client.logger.info("[Database] Connected");
             })
-            .catch((error) => this.client.logger.error(`[Database] Connection failed | error: ${error}`));
+            .catch((error: unknown) =>
+                this.client.logger.error(`[Database] Connection failed | error: ${error instanceof Error ? error.message : String(error)}`),
+            );
     }
 
     /**
@@ -81,6 +83,10 @@ export class PrismaService {
                 this.connected = false;
                 this.client.logger.info("[Database] Disconnected");
             })
-            .catch((error) => this.client.logger.error(`[Database] Disconnection failed | error: ${error}`));
+            .catch((error: unknown) =>
+                this.client.logger.error(
+                    `[Database] Disconnection failed | error: ${error instanceof Error ? error.message : String(error)}`,
+                ),
+            );
     }
 }

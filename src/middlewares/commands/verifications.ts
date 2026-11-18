@@ -20,7 +20,7 @@ export const checkVerifications: MiddlewareContext<void, AnyContext> = createMid
         const guild: Guild<"cached" | "api"> = await context.guild();
         const owner: GuildMember | null = await guild.fetchOwner().catch(() => null);
 
-        if (!owner || owner.id !== author.id) {
+        if (owner?.id !== author.id) {
             await context.errorReply(messages.events.only.guildOwner, { ephemeral: true });
 
             return stop();

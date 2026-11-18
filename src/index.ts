@@ -20,7 +20,7 @@ const SHUTDOWN_TIMEOUT: number = ms("10s");
 // Override the default LyricsManager with our custom implementation.
 Structures.LyricsManager = (...args) => new HoshimiLyricsManager(...args);
 
-Logger.customize(LoggerOps.custom);
+Logger.customize((self, level, args) => LoggerOps.custom(self, level, args));
 Logger.saveOnFile = "all";
 Logger.dirname = "logs";
 
@@ -57,8 +57,12 @@ async function shutdown(signal: NodeJS.Signals): Promise<void> {
 }
 
 // Registered before starting, so a signal that arrives mid-startup is cleaned up too.
-process.on("SIGINT", shutdown);
-process.on("SIGTERM", shutdown);
+process.on("SIGINT", (signal): void => {
+    void shutdown(signal);
+});
+process.on("SIGTERM", (signal): void => {
+    void shutdown(signal);
+});
 
 // "Warning: Detected unsettled top-level await" my ass
-(async (): Promise<void> => await client.run())();
+void (async (): Promise<void> => client.run())();

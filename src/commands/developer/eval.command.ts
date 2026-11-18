@@ -8,9 +8,12 @@ import {
     type MessageStructure,
     Options,
     type WebhookMessageStructure,
+    EmbedColors,
+    Formatter,
+    ApplicationIntegrationType,
+    InteractionContextType,
+    PermissionFlagsBits,
 } from "seyfert";
-import { EmbedColors, Formatter } from "seyfert/lib/common/index.js";
-import { ApplicationIntegrationType, InteractionContextType, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 import { DeclareParserConfig, ParserRecommendedConfig, Watch, Yuna } from "yunaforseyfert";
 import { Environment } from "#stelle/utils/data/configuration.js";
 import { StelleText } from "#stelle/utils/data/constants.js";
@@ -60,7 +63,7 @@ export default class EvalCommand extends Command {
             watcher.stop("Another instance running.");
         },
         onStop(reason): void {
-            this.ctx?.editOrReply({
+            void this.ctx?.editOrReply({
                 content: "",
                 embeds: [
                     {
@@ -78,7 +81,7 @@ export default class EvalCommand extends Command {
 
         let code: string = options.code;
         let output: string | null = null;
-        let typecode: any;
+        let typecode: string = "unknown";
 
         if (ctx.message) await client.channels.typing(channelId);
 
@@ -89,9 +92,9 @@ export default class EvalCommand extends Command {
             else if (typeof output !== "string") {
                 if (AWAITABLE_REGEX.test(code.toLowerCase())) code = `(async () => ${code})()`;
 
-                output = await eval(code);
-                typecode = typeof output;
-                output = UtilsOps.inspect(output, options.depth ?? 0);
+                const evaluated: unknown = await eval(code);
+                typecode = typeof evaluated;
+                output = UtilsOps.inspect(evaluated, options.depth ?? 0);
 
                 // 100% security
                 if (ENV_REGEX.test(output)) output = output.replaceAll(ENV_REGEX, "🌟");
@@ -103,14 +106,14 @@ export default class EvalCommand extends Command {
                         .setAuthor({ name: author.tag, iconUrl: author.avatarURL() })
                         .setColor(client.config.color.success)
                         .setDescription(
-                            `\`📖\` A code has been evaluated.\n \n${Formatter.codeBlock(UtilsOps.truncate(output, 1900), "js")}`,
+                            `\`📖\` A code has been evaluated.\n \n${Formatter.codeBlock(UtilsOps.truncate(output, 1_900), "js")}`,
                         )
                         .setThumbnail(client.me.avatarURL())
                         .setTimestamp()
                         .addFields(
                             {
                                 name: "`📖` Type",
-                                value: `${Formatter.codeBlock(typecode, "js")}`,
+                                value: Formatter.codeBlock(typecode, "js"),
                                 inline: true,
                             },
                             {
@@ -118,7 +121,7 @@ export default class EvalCommand extends Command {
                                 value: `\`${Math.floor(Date.now() - now)}ms\``,
                                 inline: true,
                             },
-                            { name: "`📥` Input", value: `${Formatter.codeBlock(UtilsOps.truncate(options.code, 1024), "js")}` },
+                            { name: "`📥` Input", value: Formatter.codeBlock(UtilsOps.truncate(options.code, 1_024), "js") },
                             { name: "`📤` Output", value: "Check the embed description." },
                         ),
                 ],
@@ -133,7 +136,7 @@ export default class EvalCommand extends Command {
                         .addFields(
                             {
                                 name: "`📖` Type",
-                                value: `${Formatter.codeBlock(typecode, "js")}`,
+                                value: Formatter.codeBlock(typecode, "js"),
                                 inline: true,
                             },
                             {
@@ -143,11 +146,11 @@ export default class EvalCommand extends Command {
                             },
                             {
                                 name: "`📥` Input",
-                                value: `${Formatter.codeBlock(UtilsOps.truncate(options.code, 1024), "js")}`,
+                                value: Formatter.codeBlock(UtilsOps.truncate(options.code, 1_024), "js"),
                             },
                             {
                                 name: "`📤` Output",
-                                value: `${Formatter.codeBlock(UtilsOps.truncate(`${error}`, 1024), "js")}`,
+                                value: Formatter.codeBlock(UtilsOps.truncate(String(error), 1_024), "js"),
                             },
                         ),
                 ],

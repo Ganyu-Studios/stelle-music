@@ -1,6 +1,5 @@
 import type { PlayerStructure } from "hoshimi";
-import { type AnyContext, Embed, type Guild } from "seyfert";
-import { MessageFlags } from "seyfert/lib/types/index.js";
+import { type AnyContext, Embed, type Guild, MessageFlags } from "seyfert";
 import { EmbedPaginator } from "#stelle/classes/components/EmbedPaginator.js";
 
 /**
@@ -23,7 +22,7 @@ export async function displayQueue(ctx: AnyContext): Promise<void> {
 
     const limit = 20;
     const tracks: string[] = player.queue.tracks.map(
-        (track, i): string => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri}) - ${track.requester.tag}`,
+        (track, i): string => `#${i + 1}. [\`${track.info.title}\`](${track.info.uri ?? ""}) - ${track.requester.tag}`,
     );
 
     // One embed for the slice of tracks starting at `start`.

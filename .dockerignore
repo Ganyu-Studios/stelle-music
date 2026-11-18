@@ -150,7 +150,8 @@ logs
 cache
 
 # Development configurations that aren't needed in production
-biome.json
+.oxlintrc.json
+.oxfmtrc.json
 .husky/
 lint-staged
 

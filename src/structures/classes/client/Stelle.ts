@@ -1,6 +1,13 @@
 import { RedisClient } from "bun";
-import { Client, LimitedCollection, LimitedMemoryAdapter, type LogLevels } from "seyfert";
-import { ActivityType, type GatewayPresenceUpdateData, PresenceUpdateStatus } from "seyfert/lib/types/index.js";
+import {
+    Client,
+    LimitedCollection,
+    LimitedMemoryAdapter,
+    type LogLevels,
+    ActivityType,
+    type GatewayPresenceUpdateData,
+    PresenceUpdateStatus,
+} from "seyfert";
 import { StelleDatabase } from "#stelle/classes/database/Database.js";
 import { StelleManager } from "#stelle/classes/manager/Manager.js";
 import { StelleMiddlewares } from "#stelle/middlewares/index.js";
@@ -83,7 +90,7 @@ export class Stelle extends Client<PluginsDefinition, true> {
             },
             components: {
                 defaults: {
-                    onRunError: OverridesOps.runError,
+                    onRunError: (ctx, error) => OverridesOps.runError(ctx, error),
                 },
             },
             commands: {
@@ -99,10 +106,10 @@ export class Stelle extends Client<PluginsDefinition, true> {
                     content: `<a:typing:1214253750093488149> **${client.me.username}** ${StelleText.Think()}`,
                 }),
                 defaults: {
-                    onBotPermissionsFail: OverridesOps.botPermissions,
-                    onOptionsError: OverridesOps.options,
-                    onPermissionsFail: OverridesOps.permissions,
-                    onRunError: OverridesOps.runError,
+                    onBotPermissionsFail: (ctx, permissions) => OverridesOps.botPermissions(ctx, permissions),
+                    onOptionsError: (ctx) => OverridesOps.options(ctx),
+                    onPermissionsFail: (ctx, permissions) => OverridesOps.permissions(ctx, permissions),
+                    onRunError: (ctx, error) => OverridesOps.runError(ctx, error),
                 },
             },
         });
@@ -143,7 +150,9 @@ export class Stelle extends Client<PluginsDefinition, true> {
 
         if (this.cache.messages) this.cache.messages.filter = (message): boolean => message.author.id === this.botId;
 
-        this.events.onFail = (_, error): Promise<void> => sendErrorReport({ error });
+        this.events.onFail = (_, error): void => {
+            void sendErrorReport({ error });
+        };
 
         this.redis.onconnect = (): void => this.logger.info("[Redis] Connected");
         this.redis.onclose = (error): void => this.logger.error(`[Redis] Connection closed | error: ${UtilsOps.inspect(error)}`);
@@ -192,7 +201,7 @@ export class Stelle extends Client<PluginsDefinition, true> {
         this.logger.warn("[Client] Shutdown started");
 
         // The gateway doesn't exist yet when the process is killed before the bot finishes starting.
-        this.gateway?.disconnectAll();
+        (this.gateway as this["gateway"] | undefined)?.disconnectAll();
 
         await this.database.disconnect();
 

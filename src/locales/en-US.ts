@@ -1,5 +1,5 @@
 import { LoopMode, State } from "hoshimi";
-import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
+import { ApplicationCommandOptionType } from "seyfert";
 import {
     type IAmount,
     type IAutocompletePlaylist,

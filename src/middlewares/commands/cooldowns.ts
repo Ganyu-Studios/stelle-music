@@ -14,7 +14,7 @@ export const checkCooldown: MiddlewareContext<void, AnyContext> = createMiddlewa
     const { client, command } = context;
 
     const collection: LimitedCollection<string, number> = client.cooldowns;
-    const cooldown: number = (command.cooldown ?? 3) * 1000;
+    const cooldown: number = (command.cooldown ?? 3) * 1_000;
     const now: number = Date.now();
     const key: string = UtilsOps.collectionKey(context);
 
@@ -22,7 +22,7 @@ export const checkCooldown: MiddlewareContext<void, AnyContext> = createMiddlewa
 
     const time: number | undefined = collection.get(key);
     if (time && now < time) {
-        context.errorReply(messages.events.inCooldown({ time: Math.floor(time / 1000) }), { ephemeral: true });
+        await context.errorReply(messages.events.inCooldown({ time: Math.floor(time / 1_000) }), { ephemeral: true });
 
         return stop();
     }

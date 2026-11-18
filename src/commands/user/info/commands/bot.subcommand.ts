@@ -1,5 +1,15 @@
-import { ActionRow, Button, type ClientUser, Declare, Embed, type Guild, type GuildCommandContext, LocalesT, SubCommand } from "seyfert";
-import { ButtonStyle } from "seyfert/lib/types/index.js";
+import {
+    ActionRow,
+    Button,
+    type ClientUser,
+    Declare,
+    Embed,
+    type Guild,
+    type GuildCommandContext,
+    LocalesT,
+    SubCommand,
+    ButtonStyle,
+} from "seyfert";
 import { Shortcut } from "yunaforseyfert";
 import { StelleMeta } from "#stelle/utils/data/constants.js";
 import { type GitInfo, getGitInfo } from "#stelle/utils/functions/internal/git.js";
@@ -23,7 +33,7 @@ export default class InfoBotSubcommand extends SubCommand {
 
         const embed = new Embed()
             .setColor(client.config.color.success)
-            .setImage(me.bannerURL({ size: 4096 }))
+            .setImage(me.bannerURL({ size: 4_096 }))
             .setDescription(
                 messages.commands.info.bot.description({
                     clientName: client.me.username,
@@ -45,7 +55,7 @@ export default class InfoBotSubcommand extends SubCommand {
                     name: messages.commands.info.bot.fields.system.name,
                     value: messages.commands.info.bot.fields.system.value({
                         memory: LoggerOps.memoryUsage(process.memoryUsage().rss),
-                        uptime: Math.floor(client.readyTimestamp / 1000),
+                        uptime: Math.floor(client.readyTimestamp / 1_000),
                         version: StelleMeta.Version,
                     }),
                 },

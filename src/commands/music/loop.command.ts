@@ -1,6 +1,15 @@
 import { LoopMode } from "hoshimi";
-import { Command, createNumberOption, Declare, type GuildCommandContext, LocalesT, Middlewares, Options } from "seyfert";
-import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
+import {
+    Command,
+    createNumberOption,
+    Declare,
+    type GuildCommandContext,
+    LocalesT,
+    Middlewares,
+    Options,
+    ApplicationIntegrationType,
+    InteractionContextType,
+} from "seyfert";
 import { StelleCategory } from "#stelle/types/index.js";
 import { StelleMusic } from "#stelle/utils/data/constants.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
@@ -50,7 +59,7 @@ export default class LoopCommand extends Command {
 
         const mode: LoopMode = options.mode ?? StelleMusic.LoopMode(player.loop);
 
-        await player.setLoop(mode);
+        player.setLoop(mode);
         await ctx.successReply(
             messages.commands.loop.toggled({
                 type: messages.commands.loop.loopType[StelleMusic.LoopMode(player.loop, true)],

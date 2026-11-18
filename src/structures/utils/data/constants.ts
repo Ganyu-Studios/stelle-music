@@ -1,8 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { LoopMode } from "hoshimi";
-import type { GatewayActivityUpdateData } from "seyfert/lib/types/gateway.js";
-import { ActivityType } from "seyfert/lib/types/index.js";
+import { type GatewayActivityUpdateData, ActivityType } from "seyfert";
 import type {
     AutoplayState,
     ConstantsMeta,
@@ -25,13 +24,13 @@ type PackageJSON = typeof import("../../../../package.json");
  * @type {PackageJSON}
  */
 // funny thing, it sucks, but it works.
-const packageJson: PackageJSON = JSON.parse(await readFile(resolve("package.json"), "utf-8"));
+const packageJson: PackageJSON = JSON.parse(await readFile(resolve("package.json"), "utf8")) as PackageJSON;
 
 /**
  * The version of Seyfert that the bot is using.
  * @type {string}
  */
-const seyfert: string = packageJson.dependencies?.seyfert ?? "unknown";
+const seyfert: string = packageJson.dependencies.seyfert;
 
 /**
  * The bot's metadata (version and mode flags).

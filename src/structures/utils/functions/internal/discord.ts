@@ -58,7 +58,7 @@ export const DiscordOps = {
                 { name: "`📜` Name", value: `\`${guild.name}\``, inline: true },
                 { name: "`👤` Owner", value: `\`${ownerName}\``, inline: true },
                 { name: "`🏮` ID", value: `\`${guild.id}\``, inline: true },
-                { name: "`👥` Members", value: `\`${guild.memberCount}\``, inline: true },
+                { name: "`👥` Members", value: `\`${String(guild.memberCount)}\``, inline: true },
             );
 
         await client.messages.write(client.config.channels.guildsId, { embeds: [embed] });

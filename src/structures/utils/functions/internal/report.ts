@@ -13,7 +13,7 @@ interface ReportOptions {
      * The error to report.
      * @type {Error | unknown}
      */
-    error: Error | unknown;
+    error: unknown;
     /**
      * The context of the command or whatever the context is.
      * @type {AnyContext}
@@ -76,28 +76,26 @@ async function report(options: ReportOptions): Promise<MessageStructure | void> 
         .setColor("Red")
         .setTitle(`${title} | Error`)
         .setDescription(
-            `\`🏮\` An error ocurred while I tried to run.\n\n \`📜\` Name: ${UtilsOps.truncate(error.name, 1000)}\n\`📨\` Reason: ${UtilsOps.truncate(error.message, 1000)}`,
+            `\`🏮\` An error ocurred while I tried to run.\n\n \`📜\` Name: ${UtilsOps.truncate(error.name, 1_000)}\n\`📨\` Reason: ${UtilsOps.truncate(error.message, 1_000)}`,
         );
 
     if (ctx) {
         const { client, author } = ctx;
 
-        if (client.me) {
-            const guild = await ctx.guild();
-            if (guild) {
-                embed
-                    .setThumbnail(guild.iconURL() ?? author.avatarURL())
-                    .addFields(
-                        { name: "`📦` From", value: `\`${guild.name}\``, inline: true },
-                        { name: "`👤` Executed By", value: `\`${author.tag}\``, inline: true },
-                    );
-            }
-
-            return client.messages.write(client.config.channels.errorsId, {
-                embeds: [embed],
-                files: [attachment],
-            });
+        const guild = await ctx.guild();
+        if (guild) {
+            embed
+                .setThumbnail(guild.iconURL() ?? author.avatarURL())
+                .addFields(
+                    { name: "`📦` From", value: `\`${guild.name}\``, inline: true },
+                    { name: "`👤` Executed By", value: `\`${author.tag}\``, inline: true },
+                );
         }
+
+        return client.messages.write(client.config.channels.errorsId, {
+            embeds: [embed],
+            files: [attachment],
+        });
     }
 
     const webhook = new WebhookClient(Environment.ERRORS_WEBHOOK);

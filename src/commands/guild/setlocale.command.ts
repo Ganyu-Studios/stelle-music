@@ -7,14 +7,12 @@ import {
     type MessageStructure,
     Options,
     type WebhookMessageStructure,
-} from "seyfert";
-import {
     type APIApplicationCommandOptionChoice,
     ApplicationIntegrationType,
     InteractionContextType,
     type LocaleString,
     PermissionFlagsBits,
-} from "seyfert/lib/types/index.js";
+} from "seyfert";
 import { StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";

@@ -14,10 +14,13 @@ import {
     TextInput,
     type VoiceState,
     type WebhookMessageStructure,
+    EmbedColors,
+    type PermissionStrings,
+    ButtonStyle,
+    MessageFlags,
+    TextInputStyle,
 } from "seyfert";
-import { EmbedColors, type PermissionStrings } from "seyfert/lib/common/index.js";
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
-import { ButtonStyle, MessageFlags, TextInputStyle } from "seyfert/lib/types/index.js";
 import { EmbedPaginator } from "#stelle/classes/components/EmbedPaginator.js";
 import type { userPlaylist } from "#stelle/prisma";
 import type { PermissionNames } from "#stelle/types/index.js";
@@ -360,9 +363,9 @@ export const PlaylistOps = {
 
                 let amount: number = 0;
 
-                for (const index of selection.slice().reverse()) {
-                    const [track] = playlist.tracks.splice(index - 1, 1);
-                    if (track) amount += 1;
+                for (const index of selection.toReversed()) {
+                    const removed = playlist.tracks.splice(index - 1, 1);
+                    amount += removed.length;
                 }
 
                 await ctx.client.database.playlist.set(ctx.author.id, playlist);
@@ -412,7 +415,7 @@ export const PlaylistOps = {
                 }),
             );
 
-        if (!(await interaction.replied) && !interaction.deferred) await interaction.deferUpdate();
+        if (!interaction.replied && !interaction.deferred) await interaction.deferUpdate();
 
         // One embed for the slice of tracks starting at `start`.
         const page = (start: number): Embed =>

@@ -51,7 +51,7 @@ export async function startupListener(client: UsingClient, node: NodeStructure):
             if (session.localeString) await player.data.set("localeString", session.localeString);
             if (session.lyricsId) await player.data.set("lyricsId", session.lyricsId);
             if (session.lyricsEnabled) await player.data.set("lyricsEnabled", session.lyricsEnabled);
-            if (session.is247) await player.data.set("is247", session.is247);
+            await player.data.set("is247", true);
             if (session.isAutoPause) await player.data.set("isAutoPause", session.isAutoPause);
             if (session.isRequestChannel) await player.data.set("isRequestChannel", session.isRequestChannel);
 
@@ -60,7 +60,10 @@ export async function startupListener(client: UsingClient, node: NodeStructure):
             // Load the queue from Redis. An idle 24/7 player has no stored queue (StorageError) — expected here.
             await player.queue.utils.sync({ override: true, syncCurrent: true }).catch((error: unknown): void => {
                 if (!(error instanceof StorageError))
-                    client.debug(LogLevels.Error, `[Lavalink] Startup queue sync failed | guild: ${player.guildId} | error: ${error}`);
+                    client.debug(
+                        LogLevels.Error,
+                        `[Lavalink] Startup queue sync failed | guild: ${player.guildId} | error: ${String(error)}`,
+                    );
             });
 
             Object.assign(player, { loop: session.loop });
@@ -72,7 +75,9 @@ export async function startupListener(client: UsingClient, node: NodeStructure):
 
             client.debug(LogLevels.Debug, `[Lavalink] Session restored on startup | node: ${node.id} | guild: ${player.guildId}`);
         } catch (error) {
-            client.logger.error(`[Lavalink] Startup restore failed | node: ${node.id} | guild: ${session.guildId} | error: ${error}`);
+            client.logger.error(
+                `[Lavalink] Startup restore failed | node: ${node.id} | guild: ${session.guildId} | error: ${String(error)}`,
+            );
         }
     }
 }

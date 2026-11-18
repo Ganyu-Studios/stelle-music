@@ -14,9 +14,11 @@ import {
     Options,
     type VoiceState,
     type WebhookMessageStructure,
+    EmbedColors,
+    ApplicationIntegrationType,
+    InteractionContextType,
+    MessageFlags,
 } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
-import { ApplicationIntegrationType, InteractionContextType, MessageFlags } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
@@ -30,11 +32,11 @@ import { playQuery } from "#stelle/utils/functions/manager/play.js";
  * within 3 seconds (Unknown interaction, 10062); the margin covers the gateway delivery and the response round trip.
  * @type {number}
  */
-const AUTOCOMPLETE_BUDGET: number = 2500;
+const AUTOCOMPLETE_BUDGET: number = 2_500;
 
 const options = {
     query: createStringOption({
-        onAutocompleteError: OverridesOps.autocompleteError,
+        onAutocompleteError: (interaction, error) => OverridesOps.autocompleteError(interaction, error),
         description: "Enter the track name or url.",
         required: true,
         locales: {
@@ -108,8 +110,6 @@ export default class PlayCommand extends Command {
         // The user picked an informative autocomplete notice, not a real track.
         if (query === AutocompleteNoticeValue) return ctx.errorReply(messages.commands.play.noResults, { ephemeral: true, content: "" });
 
-        if (!member) return;
-
         const me: GuildMember | null = await ctx.me().catch((): null => null);
         if (!me) return;
 
@@ -142,7 +142,7 @@ export default class PlayCommand extends Command {
 
         switch (loadType) {
             case LoadType.Track:
-            case LoadType.Search:
+            case LoadType.Search: {
                 {
                     const track: TrackStructure | undefined = tracks.at(0);
                     if (!track) return noResults();
@@ -156,7 +156,7 @@ export default class PlayCommand extends Command {
                                 requester: track.requester.id,
                                 position: player.queue.tracks.findIndex((t) => t.info.identifier === track.info.identifier) + 1,
                                 title: track.info.title,
-                                url: track.info.uri!,
+                                url: track.info.uri,
                                 volume: player.volume,
                             }),
                         )
@@ -165,8 +165,9 @@ export default class PlayCommand extends Command {
                     await ctx.editOrReply({ content: "", embeds: [embed] });
                 }
                 break;
+            }
 
-            case LoadType.Playlist:
+            case LoadType.Playlist: {
                 {
                     const track: TrackStructure | undefined = tracks.at(0);
                     if (!track) return noResults();
@@ -188,10 +189,12 @@ export default class PlayCommand extends Command {
                     await ctx.editOrReply({ content: "", embeds: [embed] });
                 }
                 break;
+            }
 
-            default:
+            default: {
                 await noResults();
                 break;
+            }
         }
     }
 }

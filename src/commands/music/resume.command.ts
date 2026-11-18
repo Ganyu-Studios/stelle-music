@@ -6,8 +6,9 @@ import {
     type MessageStructure,
     Middlewares,
     type WebhookMessageStructure,
+    ApplicationIntegrationType,
+    InteractionContextType,
 } from "seyfert";
-import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 

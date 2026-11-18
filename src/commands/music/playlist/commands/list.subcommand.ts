@@ -10,8 +10,8 @@ import {
     SubCommand,
     type User,
     type WebhookMessageStructure,
+    MessageFlags,
 } from "seyfert";
-import { MessageFlags } from "seyfert/lib/types/index.js";
 import { EmbedPaginator } from "#stelle/classes/components/EmbedPaginator.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
@@ -45,7 +45,7 @@ export default class ListSubcommand extends SubCommand {
         // that user's public playlists. Either way, other users' private playlists never leave the database.
         const playlists = (
             isApplicable ? await client.database.playlist.loadable(author.id) : await client.database.playlist.publicOf(target!.id)
-        ).sort((a, b): number => Number(b.public) - Number(a.public) || b.createdAt.getTime() - a.createdAt.getTime());
+        ).toSorted((a, b): number => Number(b.public) - Number(a.public) || b.createdAt.getTime() - a.createdAt.getTime());
 
         if (!playlists.length) return ctx.errorReply(messages.commands.playlist.no.playlist, { ephemeral: true, content: "" });
 
@@ -60,31 +60,27 @@ export default class ListSubcommand extends SubCommand {
         type Row = { section: "private" | "public"; content: string };
 
         const rows: Row[] = [
-            ...privatePlaylists.map(
-                (playlist, index): Row => ({
-                    section: "private",
-                    content: messages.commands.playlist.list.entry.private({
-                        index: index + 1,
-                        id: playlist.playlistId,
-                        name: UtilsOps.truncate(playlist.playlistName, 28),
-                        tracks: playlist.tracks.length,
-                        timestamp: timestamp(playlist.createdAt),
-                    }),
+            ...privatePlaylists.map((playlist, index): Row => ({
+                section: "private",
+                content: messages.commands.playlist.list.entry.private({
+                    index: index + 1,
+                    id: playlist.playlistId,
+                    name: UtilsOps.truncate(playlist.playlistName, 28),
+                    tracks: playlist.tracks.length,
+                    timestamp: timestamp(playlist.createdAt),
                 }),
-            ),
-            ...publicPlaylists.map(
-                (playlist, index): Row => ({
-                    section: "public",
-                    content: messages.commands.playlist.list.entry.public({
-                        index: index + 1,
-                        id: playlist.playlistId,
-                        name: UtilsOps.truncate(playlist.playlistName, 28),
-                        tracks: playlist.tracks.length,
-                        userId: playlist.userId,
-                        timestamp: timestamp(playlist.createdAt),
-                    }),
+            })),
+            ...publicPlaylists.map((playlist, index): Row => ({
+                section: "public",
+                content: messages.commands.playlist.list.entry.public({
+                    index: index + 1,
+                    id: playlist.playlistId,
+                    name: UtilsOps.truncate(playlist.playlistName, 28),
+                    tracks: playlist.tracks.length,
+                    userId: playlist.userId,
+                    timestamp: timestamp(playlist.createdAt),
                 }),
-            ),
+            })),
         ];
 
         const header = (section: Row["section"]): string =>

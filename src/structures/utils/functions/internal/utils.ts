@@ -3,9 +3,7 @@ import { mkdir } from "node:fs/promises";
 import { isAbsolute, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { inspect as nodeInspect } from "node:util";
-import type { AnyContext } from "seyfert";
-import { SeyfertError } from "seyfert/lib/common/index.js";
-import type { APIApplicationCommandOptionChoice, RESTJSONErrorCodes } from "seyfert/lib/types/index.js";
+import { type AnyContext, SeyfertError, type APIApplicationCommandOptionChoice, type RESTJSONErrorCodes } from "seyfert";
 import type { Omit, Plain, Prettify, TryCallback, TryErrorHandler } from "#stelle/types/index.js";
 
 /**
@@ -210,7 +208,9 @@ export const UtilsOps = {
      * @returns {Promise<T>} The imported file.
      */
     dynamicImport<T>(path: string): Promise<T> {
-        return import(`${pathToFileURL(path)}?update=${Date.now()}`).then((x) => x.default ?? x) as Promise<T>;
+        return import(`${pathToFileURL(path).href}?update=${Date.now()}`).then(
+            (module: { default?: unknown }): T => (module.default ?? module) as T,
+        );
     },
     /**
      *
@@ -219,7 +219,9 @@ export const UtilsOps = {
      * @returns {Promise<void>} A promise that resolves after the specified time.
      */
     wait(ms: number): Promise<void> {
-        return new Promise((resolve): NodeJS.Timeout => setTimeout(resolve, ms));
+        return new Promise((resolve): void => {
+            setTimeout(resolve, ms);
+        });
     },
     /**
      *
@@ -242,7 +244,7 @@ export const UtilsOps = {
      */
     timeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
         let timer: NodeJS.Timeout | undefined;
-        const expired: Promise<null> = new Promise((resolve): void => {
+        const expired = new Promise<null>((resolve): void => {
             timer = setTimeout(resolve, Math.max(0, ms), null);
         });
 
@@ -279,6 +281,6 @@ export const UtilsOps = {
      * @returns {string} The sanitized string.
      */
     sanitize(text: string): string {
-        return text.normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
+        return text.normalize("NFKD").replaceAll(/[\u0300-\u036F]/g, "");
     },
 };

@@ -11,8 +11,10 @@ import {
     Options,
     type VoiceState,
     type WebhookMessageStructure,
+    ApplicationIntegrationType,
+    ChannelType,
+    InteractionContextType,
 } from "seyfert";
-import { ApplicationIntegrationType, ChannelType, InteractionContextType } from "seyfert/lib/types/index.js";
 import { StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";
@@ -43,8 +45,6 @@ const options = {
 export default class JoinCommand extends Command {
     public override async run(ctx: GuildCommandContext<typeof options>): Promise<MessageStructure | WebhookMessageStructure | void> {
         const { options, client, channelId, member } = ctx;
-
-        if (!member) return;
 
         const me: GuildMember | null = await ctx.me().catch((): null => null);
         if (!me) return;

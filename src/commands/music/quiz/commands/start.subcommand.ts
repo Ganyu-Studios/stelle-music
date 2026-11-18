@@ -11,8 +11,8 @@ import {
     SubCommand,
     type VoiceState,
     type WebhookMessageStructure,
+    MessageFlags,
 } from "seyfert";
-import { MessageFlags } from "seyfert/lib/types/index.js";
 import { QuizOps } from "#stelle/utils/functions/manager/quiz.js";
 
 const options = {
@@ -39,8 +39,6 @@ export default class QuizStartSubCommand extends SubCommand {
     public async run(ctx: GuildCommandContext<typeof options>): Promise<MessageStructure | WebhookMessageStructure | void> {
         const { client, guildId, channelId, member, options } = ctx;
         const { messages } = await ctx.locale();
-
-        if (!member) return;
 
         const me: GuildMember | null = await ctx.me().catch((): null => null);
         if (!me) return;

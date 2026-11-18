@@ -1,4 +1,4 @@
-import type { LocaleString } from "seyfert/lib/types/index.js";
+import type { LocaleString } from "seyfert";
 import { Controller } from "#stelle/classes/database/Controller.js";
 
 /**

@@ -1,6 +1,5 @@
 import { LoopMode, State } from "hoshimi";
-import type { DefaultLocale } from "seyfert";
-import { ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
+import { type DefaultLocale, ApplicationCommandOptionType } from "seyfert";
 import { StelleCategory } from "#stelle/types/index.js";
 
 /**

@@ -16,7 +16,7 @@ type Messages = DefaultLocale["messages"];
  * How long the reveal stays up before the next round starts. (In milliseconds)
  * @type {number}
  */
-const INTER_ROUND_DELAY: number = 4000;
+const INTER_ROUND_DELAY: number = 4_000;
 
 /**
  * A single quiz round: the track to guess and who (if anyone) has already claimed its title / artist.
@@ -140,7 +140,7 @@ export type StartQuizResult = { ok: true; rounds: number } | { ok: false; reason
  * The running quiz per guild id. In-memory only, mirroring the ephemeral nature of a game.
  * @type {Map<string, QuizSession>}
  */
-const sessions: Map<string, QuizSession> = new Map();
+const sessions = new Map<string, QuizSession>();
 
 /**
  * Whether the shared `playerDestroy` listener has been set. Set once, lazily, on the first
@@ -243,7 +243,7 @@ const RoundOps = {
             }
         }
 
-        const seen: Set<string> = new Set();
+        const seen = new Set<string>();
         const pool: TrackStructure[] = shuffle(
             tracks.filter((track): boolean => {
                 if (seen.has(track.info.identifier)) return false;
@@ -287,9 +287,11 @@ const RoundOps = {
         await say(client, session.channelId, messages.events.quiz.roundStart({ round: session.index, total: session.total }));
         await session.player.play({ track }).catch((): null => null);
 
-        session.timer = setTimeout((): void => {
-            void this.end(client, session, "timeout");
-        }, client.config.quiz.snippet);
+        Object.assign(session, {
+            timer: setTimeout((): void => {
+                void this.end(client, session, "timeout");
+            }, client.config.quiz.snippet),
+        });
     },
     /**
      *
@@ -374,7 +376,7 @@ export const QuizOps = {
      * @returns {string} The rendered scoreboard.
      */
     leaderboard(messages: Messages, scores: Map<string, number>): string {
-        const ranked: Array<[string, number]> = [...scores.entries()].sort((a, b): number => b[1] - a[1]);
+        const ranked: [string, number][] = [...scores.entries()].toSorted((a, b): number => b[1] - a[1]);
         if (!ranked.length) return messages.events.quiz.noScores;
 
         const lines: string[] = ranked.map(([user, points], index): string =>

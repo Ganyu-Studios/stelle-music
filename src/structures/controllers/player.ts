@@ -43,7 +43,7 @@ export class PlayerController extends Controller<"guildPlayer"> {
 
         return {
             defaultVolume: data?.defaultVolume ?? this.client.config.defaultVolume,
-            searchPlatform: (data?.searchPlatform as SearchSources) ?? this.client.config.defaultSearchSource,
+            searchPlatform: (data?.searchPlatform as SearchSources | undefined) ?? this.client.config.defaultSearchSource,
         };
     }
 
