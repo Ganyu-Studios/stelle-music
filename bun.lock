@@ -6,7 +6,7 @@
       "name": "stelle-music",
       "dependencies": {
         "@prisma/client": "6.19.3",
-        "hoshimi": "0.6.2-dev-44408622729.0",
+        "hoshimi": "0.6.2-dev-44409975731.0",
         "imagescript": "^3.20.4",
         "meowdb": "^2.2.3",
         "seyfert": "5.2.2-dev-41510346259.0",
@@ -375,7 +375,7 @@
 
     "hookified": ["hookified@1.15.1", "", {}, "sha512-MvG/clsADq1GPM2KGo2nyfaWVyn9naPiXrqIe4jYjXNZQt238kWyOGrsyc/DmRAQ+Re6yeo6yX/yoNCG5KAEVg=="],
 
-    "hoshimi": ["hoshimi@0.6.2-dev-44408622729.0", "", { "dependencies": { "ws": "^8.23.0" } }, "sha512-imJv8mbfSn7mGkcMgROsKq4ZGhSLkFKfQinLDY2TEBoMolshbq9TNoEc8X/qonj+tZfXR25HyZ1xgZQv73yw+w=="],
+    "hoshimi": ["hoshimi@0.6.2-dev-44409975731.0", "", { "dependencies": { "ws": "^8.23.0" } }, "sha512-uQwa7FKNOR1UuUnXlB4oBPyZ0Tix6GLKRQcMfhSAC+u6gZrIyPTPnuqkdtWcDnWDwsy6v5630kXuOlhHrABnvA=="],
 
     "husky": ["husky@9.1.7", "", { "bin": { "husky": "bin.js" } }, "sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA=="],
 
