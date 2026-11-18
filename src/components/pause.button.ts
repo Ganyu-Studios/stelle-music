@@ -1,5 +1,4 @@
-import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfert";
-import { ButtonStyle } from "seyfert";
+import { ComponentCommand, type GuildComponentContext, Middlewares, ButtonStyle } from "seyfert";
 import { StelleMusic } from "#stelle/utils/data/constants.js";
 import { ComponentOps } from "#stelle/utils/functions/internal/components.js";
 

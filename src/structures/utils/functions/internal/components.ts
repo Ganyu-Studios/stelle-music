@@ -5,8 +5,6 @@ import {
     type GuildComponentContext,
     type MessageStructure,
     type WebhookMessageStructure,
-} from "seyfert";
-import {
     type APIActionRowComponent,
     type APIActionRowComponentTypes,
     type APIButtonComponent,

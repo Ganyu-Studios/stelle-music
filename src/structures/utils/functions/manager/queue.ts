@@ -1,6 +1,5 @@
 import type { PlayerStructure } from "hoshimi";
-import { type AnyContext, Embed, type Guild } from "seyfert";
-import { MessageFlags } from "seyfert";
+import { type AnyContext, Embed, type Guild, MessageFlags } from "seyfert";
 import { EmbedPaginator } from "#stelle/classes/components/EmbedPaginator.js";
 
 /**

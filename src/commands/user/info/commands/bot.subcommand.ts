@@ -1,5 +1,15 @@
-import { ActionRow, Button, type ClientUser, Declare, Embed, type Guild, type GuildCommandContext, LocalesT, SubCommand } from "seyfert";
-import { ButtonStyle } from "seyfert";
+import {
+    ActionRow,
+    Button,
+    type ClientUser,
+    Declare,
+    Embed,
+    type Guild,
+    type GuildCommandContext,
+    LocalesT,
+    SubCommand,
+    ButtonStyle,
+} from "seyfert";
 import { Shortcut } from "yunaforseyfert";
 import { StelleMeta } from "#stelle/utils/data/constants.js";
 import { type GitInfo, getGitInfo } from "#stelle/utils/functions/internal/git.js";

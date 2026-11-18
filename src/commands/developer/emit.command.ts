@@ -1,5 +1,13 @@
-import { Command, createStringOption, Declare, type GuildCommandContext, Options } from "seyfert";
-import { ApplicationIntegrationType, InteractionContextType, PermissionFlagsBits } from "seyfert";
+import {
+    Command,
+    createStringOption,
+    Declare,
+    type GuildCommandContext,
+    Options,
+    ApplicationIntegrationType,
+    InteractionContextType,
+    PermissionFlagsBits,
+} from "seyfert";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
 const options = {

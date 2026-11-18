@@ -1,5 +1,13 @@
-import { createChannelOption, Declare, type GuildCommandContext, LocalesT, type MessageStructure, Options, SubCommand } from "seyfert";
-import { ChannelType } from "seyfert";
+import {
+    createChannelOption,
+    Declare,
+    type GuildCommandContext,
+    LocalesT,
+    type MessageStructure,
+    Options,
+    SubCommand,
+    ChannelType,
+} from "seyfert";
 import { PanelOps } from "#stelle/utils/functions/manager/panel.js";
 
 const options = {

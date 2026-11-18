@@ -12,9 +12,10 @@ import {
     SubCommand,
     TextDisplay,
     type WebhookMessageStructure,
+    EmbedColors,
+    ButtonStyle,
+    MessageFlags,
 } from "seyfert";
-import { EmbedColors } from "seyfert";
-import { ButtonStyle, MessageFlags } from "seyfert";
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
 import { ManageButtonCustomIds, ManageButtonIdentifiers } from "#stelle/types/index.js";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";

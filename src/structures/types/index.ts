@@ -1,6 +1,5 @@
 import type { NodeJSON, PlayerJSON } from "hoshimi";
-import type { User } from "seyfert";
-import type { ButtonStyle, PermissionFlagsBits } from "seyfert";
+import type { User, ButtonStyle, PermissionFlagsBits } from "seyfert";
 import type { Awaitable, EmojiResolvable } from "seyfert/lib/common/index.js";
 
 export * from "#stelle/types/client/components.js";

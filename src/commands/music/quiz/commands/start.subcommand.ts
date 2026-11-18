@@ -11,8 +11,8 @@ import {
     SubCommand,
     type VoiceState,
     type WebhookMessageStructure,
+    MessageFlags,
 } from "seyfert";
-import { MessageFlags } from "seyfert";
 import { QuizOps } from "#stelle/utils/functions/manager/quiz.js";
 
 const options = {

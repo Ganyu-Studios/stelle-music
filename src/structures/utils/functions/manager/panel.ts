@@ -1,6 +1,14 @@
 import { LoopMode, type PlayerStructure, type TrackStructure } from "hoshimi";
-import { ActionRow, AttachmentBuilder, Button, type DefaultLocale, Embed, type MessageStructure, type UsingClient } from "seyfert";
-import { ButtonStyle } from "seyfert";
+import {
+    ActionRow,
+    AttachmentBuilder,
+    Button,
+    type DefaultLocale,
+    Embed,
+    type MessageStructure,
+    type UsingClient,
+    ButtonStyle,
+} from "seyfert";
 import { StelleMusic } from "#stelle/utils/data/constants.js";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { ImageOps } from "#stelle/utils/functions/internal/image.js";

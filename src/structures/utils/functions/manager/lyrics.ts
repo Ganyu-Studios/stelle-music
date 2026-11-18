@@ -8,9 +8,10 @@ import {
     type MessageStructure,
     type UsingClient,
     type WebhookMessageStructure,
+    EmbedColors,
+    ButtonStyle,
+    MessageFlags,
 } from "seyfert";
-import { EmbedColors } from "seyfert";
-import { ButtonStyle, MessageFlags } from "seyfert";
 import type { CollectorInteraction, CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
 import { ms } from "#stelle/utils/functions/internal/time.js";
 

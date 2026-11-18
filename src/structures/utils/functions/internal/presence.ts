@@ -1,5 +1,4 @@
-import type { Guild, UsingClient } from "seyfert";
-import { type GatewayActivityUpdateData, PresenceUpdateStatus } from "seyfert";
+import { type Guild, type UsingClient, type GatewayActivityUpdateData, PresenceUpdateStatus } from "seyfert";
 
 import { StellePresence } from "#stelle/utils/data/constants.js";
 

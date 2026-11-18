@@ -3,9 +3,7 @@ import { mkdir } from "node:fs/promises";
 import { isAbsolute, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { inspect as nodeInspect } from "node:util";
-import type { AnyContext } from "seyfert";
-import { SeyfertError } from "seyfert";
-import type { APIApplicationCommandOptionChoice, RESTJSONErrorCodes } from "seyfert";
+import { type AnyContext, SeyfertError, type APIApplicationCommandOptionChoice, type RESTJSONErrorCodes } from "seyfert";
 import type { Omit, Plain, Prettify, TryCallback, TryErrorHandler } from "#stelle/types/index.js";
 
 /**

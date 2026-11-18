@@ -5,8 +5,8 @@ import {
     type GuildMember,
     type MiddlewareContext,
     type VoiceState,
+    type PermissionStrings,
 } from "seyfert";
-import type { PermissionStrings } from "seyfert";
 import type { PermissionNames } from "#stelle/types/index.js";
 import { PermissionOps } from "#stelle/utils/functions/internal/permissions.js";
 

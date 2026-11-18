@@ -10,8 +10,9 @@ import {
     StringSelectMenu,
     type StringSelectMenuInteraction,
     type WebhookMessageStructure,
+    ButtonStyle,
+    MessageFlags,
 } from "seyfert";
-import { ButtonStyle, MessageFlags } from "seyfert";
 import type {
     Awaitable,
     InteractionCreateBodyRequest,

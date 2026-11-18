@@ -10,8 +10,8 @@ import {
     SubCommand,
     type User,
     type WebhookMessageStructure,
+    MessageFlags,
 } from "seyfert";
-import { MessageFlags } from "seyfert";
 import { EmbedPaginator } from "#stelle/classes/components/EmbedPaginator.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 

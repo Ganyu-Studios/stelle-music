@@ -8,9 +8,12 @@ import {
     type MessageStructure,
     Options,
     type WebhookMessageStructure,
+    EmbedColors,
+    Formatter,
+    ApplicationIntegrationType,
+    InteractionContextType,
+    PermissionFlagsBits,
 } from "seyfert";
-import { EmbedColors, Formatter } from "seyfert";
-import { ApplicationIntegrationType, InteractionContextType, PermissionFlagsBits } from "seyfert";
 import { DeclareParserConfig, ParserRecommendedConfig, Watch, Yuna } from "yunaforseyfert";
 import { Environment } from "#stelle/utils/data/configuration.js";
 import { StelleText } from "#stelle/utils/data/constants.js";

@@ -5,9 +5,11 @@ import {
     type MessageStructure,
     type PermissionStrings,
     type WebhookMessageStructure,
+    EmbedColors,
+    Formatter,
+    MessageFlags,
+    RESTJSONErrorCodes,
 } from "seyfert";
-import { EmbedColors, Formatter } from "seyfert";
-import { MessageFlags, RESTJSONErrorCodes } from "seyfert";
 import type { PermissionNames } from "#stelle/types/index.js";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { getFormattedOptions } from "#stelle/utils/functions/internal/options.js";

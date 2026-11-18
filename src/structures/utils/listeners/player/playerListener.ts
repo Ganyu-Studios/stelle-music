@@ -1,6 +1,5 @@
 import type { PlayerStructure } from "hoshimi";
-import { type AllGuildVoiceChannels, type GuildMember, LogLevels, type UsingClient, type VoiceState } from "seyfert";
-import { EmbedColors } from "seyfert";
+import { type AllGuildVoiceChannels, type GuildMember, LogLevels, type UsingClient, type VoiceState, EmbedColors } from "seyfert";
 import { TimeFormat } from "#stelle/utils/functions/internal/time.js";
 import { PlayerOps } from "#stelle/utils/functions/manager/player.js";
 import { deferUnsuppress } from "#stelle/utils/functions/manager/voice.js";

@@ -1,6 +1,4 @@
-import type { DefaultLocale, GuildMember, UsingClient } from "seyfert";
-import { EmbedColors, type PermissionStrings } from "seyfert";
-import { MessageFlags } from "seyfert";
+import { type DefaultLocale, type GuildMember, type UsingClient, EmbedColors, type PermissionStrings, MessageFlags } from "seyfert";
 import { PermissionsBitField } from "seyfert/lib/structures/extra/Permissions.js";
 import type { PermissionNames } from "#stelle/types/index.js";
 

@@ -1,6 +1,5 @@
 import type { NodeOptions, SearchSources } from "hoshimi";
-import type { PermissionStrings } from "seyfert";
-import type { Locale, LocaleString } from "seyfert";
+import type { PermissionStrings, Locale, LocaleString } from "seyfert";
 import type { CacheAdapterFactory } from "#stelle/classes/modules/adapters/CacheAdapter.js";
 
 /**

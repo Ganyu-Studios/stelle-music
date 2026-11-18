@@ -8,9 +8,10 @@ import {
     type ModalSubmitInteraction,
     TextInput,
     type WebhookMessageStructure,
+    EmbedColors,
+    MessageFlags,
+    TextInputStyle,
 } from "seyfert";
-import { EmbedColors } from "seyfert";
-import { MessageFlags, TextInputStyle } from "seyfert";
 import type { userPlaylist } from "#stelle/prisma";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 

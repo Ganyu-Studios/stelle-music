@@ -12,9 +12,13 @@ import {
     StringSelectOption,
     SubCommand,
     type WebhookMessageStructure,
+    type APIApplicationCommandOption,
+    type APIApplicationCommandOptionChoice,
+    type ApplicationCommandOptionType,
+    type LocaleString,
+    ApplicationIntegrationType,
+    InteractionContextType,
 } from "seyfert";
-import type { APIApplicationCommandOption, APIApplicationCommandOptionChoice, ApplicationCommandOptionType, LocaleString } from "seyfert";
-import { ApplicationIntegrationType, InteractionContextType } from "seyfert";
 import { EmbedPaginator, StelleStringMenu } from "#stelle/classes/components/EmbedPaginator.js";
 import { StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";

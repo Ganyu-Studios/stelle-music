@@ -14,9 +14,11 @@ import {
     Options,
     type VoiceState,
     type WebhookMessageStructure,
+    EmbedColors,
+    ApplicationIntegrationType,
+    InteractionContextType,
+    MessageFlags,
 } from "seyfert";
-import { EmbedColors } from "seyfert";
-import { ApplicationIntegrationType, InteractionContextType, MessageFlags } from "seyfert";
 import { StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";

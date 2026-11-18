@@ -7,8 +7,6 @@ import {
     type MessageStructure,
     Options,
     type WebhookMessageStructure,
-} from "seyfert";
-import {
     type APIApplicationCommandOptionChoice,
     ApplicationIntegrationType,
     InteractionContextType,

@@ -10,18 +10,16 @@ import {
     Router,
     resolveAttachment,
     resolveFiles,
-} from "seyfert";
-import type {
-    APIMessage,
-    APIWebhook,
-    RESTAPIAttachment,
-    RESTAPIPollCreate,
-    RESTDeleteAPIWebhookWithTokenMessageResult,
-    RESTGetAPIGuildWebhooksResult,
-    RESTPatchAPIWebhookJSONBody,
-    RESTPatchAPIWebhookWithTokenJSONBody,
-    RESTPatchAPIWebhookWithTokenResult,
-    RESTPostAPIWebhookWithTokenJSONBody,
+    type APIMessage,
+    type APIWebhook,
+    type RESTAPIAttachment,
+    type RESTAPIPollCreate,
+    type RESTDeleteAPIWebhookWithTokenMessageResult,
+    type RESTGetAPIGuildWebhooksResult,
+    type RESTPatchAPIWebhookJSONBody,
+    type RESTPatchAPIWebhookWithTokenJSONBody,
+    type RESTPatchAPIWebhookWithTokenResult,
+    type RESTPostAPIWebhookWithTokenJSONBody,
 } from "seyfert";
 import { BaseClient } from "seyfert/lib/client/base.js";
 import type { MessageCreateBodyRequest, MessageUpdateBodyRequest, WebhookShorterOptionalParams } from "seyfert/lib/common/index.js";

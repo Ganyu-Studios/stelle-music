@@ -1,6 +1,13 @@
 import { RedisClient } from "bun";
-import { Client, LimitedCollection, LimitedMemoryAdapter, type LogLevels } from "seyfert";
-import { ActivityType, type GatewayPresenceUpdateData, PresenceUpdateStatus } from "seyfert";
+import {
+    Client,
+    LimitedCollection,
+    LimitedMemoryAdapter,
+    type LogLevels,
+    ActivityType,
+    type GatewayPresenceUpdateData,
+    PresenceUpdateStatus,
+} from "seyfert";
 import { StelleDatabase } from "#stelle/classes/database/Database.js";
 import { StelleManager } from "#stelle/classes/manager/Manager.js";
 import { StelleMiddlewares } from "#stelle/middlewares/index.js";

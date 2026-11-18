@@ -11,8 +11,10 @@ import {
     Options,
     type VoiceState,
     type WebhookMessageStructure,
+    ApplicationIntegrationType,
+    ChannelType,
+    InteractionContextType,
 } from "seyfert";
-import { ApplicationIntegrationType, ChannelType, InteractionContextType } from "seyfert";
 import { StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { joinVoiceChannel } from "#stelle/utils/functions/manager/voice.js";

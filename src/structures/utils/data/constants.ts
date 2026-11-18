@@ -1,8 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { LoopMode } from "hoshimi";
-import type { GatewayActivityUpdateData } from "seyfert";
-import { ActivityType } from "seyfert";
+import { type GatewayActivityUpdateData, ActivityType } from "seyfert";
 import type {
     AutoplayState,
     ConstantsMeta,
