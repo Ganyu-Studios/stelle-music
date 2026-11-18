@@ -7,12 +7,6 @@ import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
 import { Sessions } from "#stelle/utils/manager/sessions.js";
 
 /**
- * tsdown inlines the `DestroyReasons` members into plain strings in hoshimi's build, so the event delivers
- * the enum value as a `string`. Widening it here keeps the comparison honest without asserting arbitrary payloads.
- */
-const VOICE_CHANNEL_LEFT: string = DestroyReasons.VoiceChannelLeft;
-
-/**
  *
  * Recreate a 24/7 player from its persisted session and rejoin its voice channel. Used when the bot is kicked out
  * of voice while 24/7 is enabled: instead of tearing down, it comes back. Mirrors `resumeListener`'s restore, but
@@ -51,7 +45,7 @@ export default createLavalinkEvent({
         if (
             session &&
             is247 &&
-            reason === VOICE_CHANNEL_LEFT &&
+            reason === DestroyReasons.VoiceChannelLeft &&
             client.config.twentyfourseven.autoReconnect &&
             client.config.sessions.enabled
         ) {
