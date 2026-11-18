@@ -1,7 +1,7 @@
 import type { PlayerStructure } from "hoshimi";
 import { type AnyContext, type DefaultLocale, extendContext, type UsingClient } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
-import { type LocaleString, MessageFlags } from "seyfert/lib/types/index.js";
+import { EmbedColors } from "seyfert";
+import { type LocaleString, MessageFlags } from "seyfert";
 
 /**
  * The options for the quick reply helpers (`errorReply` / `successReply`).

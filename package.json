@@ -31,16 +31,24 @@
         "test": "bun test tests/",
         "start": "bun src/index.ts",
         "dev": "bun src/index.ts --debug --dev",
-        "lint": "biome lint --write .",
-        "format": "biome check --write .",
+        "lint": "oxlint && eslint src",
+        "lint:fix": "oxlint --fix && eslint src --fix",
+        "lint:seyfert": "eslint src",
+        "format": "oxfmt",
+        "format:check": "oxfmt --check",
         "db:generate": "bunx --bun prisma generate",
         "db:push": "bunx --bun prisma db push",
         "db": "bun run db:push && bun run db:generate",
         "prepare": "husky"
     },
     "lint-staged": {
-        "{*.ts,*.json}": [
-            "bun run format"
+        "**/*.{js,jsx,ts,tsx,mjs,cjs}": [
+            "oxlint --fix",
+            "eslint --fix",
+            "oxfmt"
+        ],
+        "**/*.{json,jsonc}": [
+            "oxfmt"
         ]
     },
     "repository": {
@@ -53,19 +61,25 @@
     "dependencies": {
         "@prisma/client": "6.19.3",
         "hoshimi": "^0.6.2-dev-43377835734.0",
-        "imagescript": "^3.20.2",
+        "imagescript": "^3.20.4",
         "meowdb": "^2.2.3",
         "seyfert": "5.2.2-dev-41510346259.0",
         "yunaforseyfert": "^1.2.4",
         "zod": "^4.6.7"
     },
     "devDependencies": {
-        "@biomejs/biome": "^2.6.7",
+        "@marcrock22/eslintcf": "^0.0.2",
+        "@slipher/eslint-plugin": "^1.1.0",
         "@types/bun": "1.4.4",
+        "@typescript/native": "npm:typescript@^7.0.2",
+        "eslint": "^10.15.0",
         "husky": "^9.1.7",
-        "lint-staged": "^17.6.0",
+        "lint-staged": "^17.6.1",
+        "oxfmt": "^0.79.0",
+        "oxlint": "^1.94.0",
         "prisma": "6.19.3",
-        "typescript": "^7.0.2"
+        "typescript": "npm:@typescript/typescript6@^6.0.2",
+        "typescript-eslint": "^8.73.0"
     },
     "trustedDependencies": [
         "@prisma/client",

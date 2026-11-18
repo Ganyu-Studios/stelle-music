@@ -30,8 +30,7 @@ export class PlaylistController extends Controller<"userPlaylist"> {
             key: playlistId,
             read: async () => {
                 const cached = await this.cache.playlists.get(playlistId);
-                if (cached && cached.userId === userId) return cached;
-                return undefined;
+                if (cached?.userId === userId) return cached;
             },
             write: async (record): Promise<void> => {
                 // Global collection addressed by playlistId, but the query is scoped by owner: cache only a hit, never a
@@ -58,7 +57,6 @@ export class PlaylistController extends Controller<"userPlaylist"> {
             read: async () => {
                 const cached = await this.cache.playlists.get(playlistId);
                 if (cached && (cached.userId === userId || cached.public)) return cached;
-                return undefined;
             },
             write: async (record): Promise<void> => {
                 if (record) await this.cache.playlists.set(record.playlistId, record);

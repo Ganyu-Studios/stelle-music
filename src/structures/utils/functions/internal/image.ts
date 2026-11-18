@@ -1,21 +1,23 @@
 import type { Stats } from "node:fs";
 import { mkdir, readdir, readFile, stat, unlink, utimes, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { Image } from "imagescript";
+import { Colors, Image } from "imagescript";
 import type { ImageData } from "#stelle/types/index.js";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 import { StellePaths } from "#stelle/utils/data/constants.js";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
 const ImageColors = {
-    Text: -841550593,
-    SubText: -1161634049,
-    Surface: 1162304255,
-    Base: 505294591,
+    Text: -841_550_593,
+    SubText: -1_161_634_049,
+    Surface: 1_162_304_255,
+    Base: 505_294_591,
 };
 
 function getFontSizeByLength(text: string, maxWidth: number, maxFontSize: number, minFontSize: number): number {
     const avgCharFactor: number = 0.6;
+    // Count code points rather than UTF-16 units so emoji-heavy titles are sized correctly.
+    // eslint-disable-next-line @typescript-eslint/no-misused-spread -- code points are intended here
     const length: number = [...text].length;
 
     for (let size: number = maxFontSize; size >= minFontSize; size--) {
@@ -60,16 +62,16 @@ function coverCrop(image: Image, size: number): Image {
 async function renderFitted(font: Buffer, text: string, maxWidth: number, maxSize: number, minSize: number, color: number): Promise<Image> {
     const size: number = getFontSizeByLength(text, maxWidth, maxSize, minSize);
 
-    let layer: Image = await Image.renderText(font, size, text, color);
+    let layer: Image = await Image.renderText(text, { font, size, color });
     if (layer.width <= maxWidth) return layer;
 
     // Jump close to the fitting length in one step, then trim the last few characters precisely.
     let current: string = text.slice(0, Math.max(1, Math.floor((text.length * maxWidth) / layer.width) - 1)).trimEnd();
-    layer = await Image.renderText(font, size, `${current}…`, color);
+    layer = await Image.renderText(`${current}…`, { font, size, color });
 
     while (layer.width > maxWidth && current.length > 1) {
         current = current.slice(0, -1).trimEnd();
-        layer = await Image.renderText(font, size, `${current}…`, color);
+        layer = await Image.renderText(`${current}…`, { font, size, color });
     }
 
     return layer;
@@ -104,7 +106,7 @@ function lerpColor(c1: number, c2: number, t: number): number {
     const b2: number = (c2 >> 8) & 0xff;
     const a2: number = c2 & 0xff;
 
-    return Image.rgbaToColor(lerpChannel(r1, r2, t), lerpChannel(g1, g2, t), lerpChannel(b1, b2, t), lerpChannel(a1, a2, t));
+    return Colors.fromRGBA(lerpChannel(r1, r2, t), lerpChannel(g1, g2, t), lerpChannel(b1, b2, t), lerpChannel(a1, a2, t));
 }
 
 /**
@@ -231,7 +233,7 @@ const BANNERS_DIR: string = StellePaths.GetBannersDirectory();
  * @returns {string} The absolute PNG path.
  */
 function bannerPath(identifier: string): string {
-    return join(BANNERS_DIR, `${identifier.replace(/[^a-zA-Z0-9._-]/g, "_")}.png`);
+    return join(BANNERS_DIR, `${identifier.replaceAll(/[^a-zA-Z0-9._-]/g, "_")}.png`);
 }
 
 /**
@@ -288,25 +290,16 @@ async function evictBanners(maxEntries: number): Promise<void> {
     if (files.length <= maxEntries) return;
 
     const entries = await Promise.all(
-        files.map(
-            async (file): Promise<{ file: string; mtime: number }> => ({
-                file,
-                mtime: (await stat(join(BANNERS_DIR, file)).catch((): null => null))?.mtimeMs ?? 0,
-            }),
-        ),
+        files.map(async (file): Promise<{ file: string; mtime: number }> => ({
+            file,
+            mtime: (await stat(join(BANNERS_DIR, file)).catch((): null => null))?.mtimeMs ?? 0,
+        })),
     );
 
     entries.sort((a, b): number => a.mtime - b.mtime);
 
     const excess = entries.slice(0, entries.length - maxEntries);
-    await Promise.all(
-        excess.map(
-            (entry): Promise<void> =>
-                unlink(join(BANNERS_DIR, entry.file))
-                    .then(() => {})
-                    .catch((): void => {}),
-        ),
-    );
+    await Promise.allSettled(excess.map((entry): Promise<void> => unlink(join(BANNERS_DIR, entry.file))));
 }
 
 /**
@@ -342,7 +335,7 @@ let idleBasePromise: Promise<Image> | undefined;
  * dynamic avatar and text on top.
  * @returns {Promise<Image>} The static backdrop, ready to be cloned.
  */
-async function buildIdleBase(): Promise<Image> {
+function buildIdleBase(): Promise<Image> {
     const WIDTH: number = IDLE_WIDTH;
     const HEIGHT: number = IDLE_HEIGHT;
 
@@ -359,7 +352,7 @@ async function buildIdleBase(): Promise<Image> {
     }
 
     // 2. Subtle grain texture
-    for (let i: number = 0; i < 14000; i++) {
+    for (let i: number = 0; i < 14_000; i++) {
         const x: number = Math.floor(Math.random() * WIDTH);
         const y: number = Math.floor(Math.random() * HEIGHT);
         const base: number = img.getPixelAt(x, y);
@@ -371,7 +364,7 @@ async function buildIdleBase(): Promise<Image> {
         img.setPixelAt(
             x,
             y,
-            Image.rgbaToColor(
+            Colors.fromRGBA(
                 Math.min(255, Math.max(0, r + delta)),
                 Math.min(255, Math.max(0, g + delta)),
                 Math.min(255, Math.max(0, b + delta)),
@@ -381,7 +374,7 @@ async function buildIdleBase(): Promise<Image> {
     }
 
     // 3. Diagonal stave lines
-    const lineColor: number = Image.rgbaToColor(255, 255, 255, 10);
+    const lineColor: number = Colors.fromRGBA(255, 255, 255, 10);
 
     for (let offset: number = -HEIGHT; offset < WIDTH; offset += 46) {
         for (let i: number = 0; i < Math.max(WIDTH, HEIGHT); i++) {
@@ -402,18 +395,18 @@ async function buildIdleBase(): Promise<Image> {
 
     for (let gy: number = 0; gy < HEIGHT; gy++) {
         for (let gx: number = 0; gx < WIDTH; gx++) {
-            const d: number = Math.sqrt((gx - cx) ** 2 + (gy - cy) ** 2);
+            const d: number = Math.hypot(gx - cx, gy - cy);
             const t: number = Math.min(1, d / maxR);
             const alpha: number = Math.round((1 - t) * 40);
             if (alpha > 0) {
-                glow.setPixelAt(gx, gy, Image.rgbaToColor(111, 140, 255, alpha));
+                glow.setPixelAt(gx, gy, Colors.fromRGBA(111, 140, 255, alpha));
             } else {
-                glow.setPixelAt(gx, gy, Image.rgbaToColor(0, 0, 0, 0));
+                glow.setPixelAt(gx, gy, Colors.fromRGBA(0, 0, 0, 0));
             }
         }
     }
 
-    img.composite(glow, 0, 0);
+    img.composite(glow);
 
     // 5. Music notes
     drawMusicNote(img, WIDTH / 2 - 210, 150, IDLE_COLORS.AccentSoft);
@@ -426,7 +419,7 @@ async function buildIdleBase(): Promise<Image> {
     }
 
     // 7. Decorative frame border
-    const borderColor: number = Image.rgbaToColor(255, 255, 255, 25);
+    const borderColor: number = Colors.fromRGBA(255, 255, 255, 25);
     for (let bx: number = 0; bx < WIDTH; bx++) {
         blendPixel(img, bx, 22, borderColor);
         blendPixel(img, bx, HEIGHT - 23, borderColor);
@@ -436,7 +429,7 @@ async function buildIdleBase(): Promise<Image> {
         blendPixel(img, WIDTH - 23, by, borderColor);
     }
 
-    return img;
+    return Promise.resolve(img);
 }
 
 export const ImageOps = {
@@ -467,7 +460,7 @@ export const ImageOps = {
         const albumImage: Image = coverCrop(await ImageOps.album(albumURL), 504);
 
         const dominant: number = albumImage.dominantColor();
-        const opaque: boolean = isOpaque(Image.colorToRGB(dominant));
+        const opaque: boolean = isOpaque(Colors.toRGB(dominant));
         let mainColor: number = ImageColors.Base;
         if (opaque) mainColor = ImageColors.Text;
 
@@ -480,32 +473,40 @@ export const ImageOps = {
         if (opaque) layoutColor = ImageColors.SubText;
         const fontSize: number = getFontSizeByLength(artist, 940, 51.5, 25);
 
-        const trackText: Image = await Image.renderText(font, getFontSizeByLength(name, 940, 65.3, 25), name, mainColor);
-        const artistText: Image = await Image.renderText(font, fontSize, artist, layoutColor);
-        const guildText: Image = await Image.renderText(font, 65.3, guildName, mainColor);
+        const trackText: Image = await Image.renderText(name, { font, size: getFontSizeByLength(name, 940, 65.3, 25), color: mainColor });
+        const artistText: Image = await Image.renderText(artist, { font, size: fontSize, color: layoutColor });
+        const guildText: Image = await Image.renderText(guildName, { font, size: 65.3, color: mainColor });
 
-        const progressBackground: Image = new Image(858, 151).fill(mainColor).roundCorners(30);
-        const progressFill: Image = new Image(getProgress(timestamp.progress, timestamp.end, 858), 151).fill(mainColor).roundCorners(30);
+        const progressBackground: Image = new Image(858, 151).fill(mainColor).roundCorners({ radius: 30 });
+        const progressFill: Image = new Image(getProgress(timestamp.progress, timestamp.end, 858), 151)
+            .fill(mainColor)
+            .roundCorners({ radius: 30 });
 
-        const text: Image = new Image(1080, 905);
+        const text: Image = new Image(1_080, 905);
         const centerX: number = text.width / 2;
 
-        text.composite(trackText, centerX - trackText.width / 2, 803 - 20)
-            .composite(artistText.opacity(0.9), centerX - artistText.width / 2, 876 - 20)
-            .composite(guildText, centerX - guildText.width / 2, 0)
-            .composite(progressBackground.opacity(0.5), 111, 414)
-            .composite(progressFill, 111, 414)
-            .composite(await Image.renderText(font, 35.2, timestamp.progressStart, mainColor), 206 - 30, 584 - 10)
-            .composite(await Image.renderText(font, 35.2, timestamp.progressEnd, mainColor), 802, 584 - 10)
-            .composite(await Image.renderText(font, 47.5, `${queue.current}/${queue.total}`, mainColor), 140, 128 - 20);
+        text.composite(trackText, { x: centerX - trackText.width / 2, y: 803 - 20 })
+            .composite(artistText.opacity(0.9), { x: centerX - artistText.width / 2, y: 876 - 20 })
+            .composite(guildText, { x: centerX - guildText.width / 2 })
+            .composite(progressBackground.opacity(0.5), { x: 111, y: 414 })
+            .composite(progressFill, { x: 111, y: 414 })
+            .composite(await Image.renderText(timestamp.progressStart, { font, size: 35.2, color: mainColor }), {
+                x: 206 - 30,
+                y: 584 - 10,
+            })
+            .composite(await Image.renderText(timestamp.progressEnd, { font, size: 35.2, color: mainColor }), { x: 802, y: 584 - 10 })
+            .composite(await Image.renderText(`${queue.current}/${queue.total}`, { font, size: 47.5, color: mainColor }), {
+                x: 140,
+                y: 128 - 20,
+            });
 
-        const canvas: Image = new Image(1080, 1350)
+        const canvas: Image = new Image(1_080, 1_350)
             .fill(dominant)
-            .composite(text, 0, 100)
-            .composite(albumImage.roundCorners(50), 288, 348)
-            .composite(borderImage, 0, 0);
+            .composite(text, { y: 100 })
+            .composite(albumImage.roundCorners({ radius: 50 }), { x: 288, y: 348 })
+            .composite(borderImage);
 
-        return canvas.encode();
+        return canvas.encodePNG();
     },
     /**
      *
@@ -540,31 +541,31 @@ export const ImageOps = {
             avatarImage.resize(avatarSize, avatarSize);
 
             const ring: Image = new Image(avatarSize + 8, avatarSize + 8)
-                .fill(Image.rgbaToColor(255, 255, 255, 30))
-                .roundCorners((avatarSize + 8) / 2);
+                .fill(Colors.fromRGBA(255, 255, 255, 30))
+                .roundCorners({ radius: (avatarSize + 8) / 2 });
 
-            img.composite(ring, Math.round((WIDTH - avatarSize) / 2) - 4, 86);
-            img.composite(avatarImage.roundCorners(avatarSize / 2), Math.round((WIDTH - avatarSize) / 2), 90);
+            img.composite(ring, { x: Math.round((WIDTH - avatarSize) / 2) - 4, y: 86 });
+            img.composite(avatarImage.roundCorners({ radius: avatarSize / 2 }), { x: Math.round((WIDTH - avatarSize) / 2), y: 90 });
         }
 
         // Typography
-        const titleLayer: Image = await Image.renderText(font, 58, data.title, IDLE_COLORS.Text);
+        const titleLayer: Image = await Image.renderText(data.title, { font, size: 58, color: IDLE_COLORS.Text });
 
-        img.composite(titleLayer, Math.round((WIDTH - titleLayer.width) / 2), 240);
+        img.composite(titleLayer, { x: Math.round((WIDTH - titleLayer.width) / 2), y: 240 });
 
-        const subLayer: Image = await Image.renderText(font, 24, data.prompt, IDLE_COLORS.SubText);
+        const subLayer: Image = await Image.renderText(data.prompt, { font, size: 24, color: IDLE_COLORS.SubText });
 
-        img.composite(subLayer, Math.round((WIDTH - subLayer.width) / 2), 360);
+        img.composite(subLayer, { x: Math.round((WIDTH - subLayer.width) / 2), y: 360 });
 
-        const tagLayer: Image = await Image.renderText(font, 20, data.footer, IDLE_COLORS.AccentSoft);
+        const tagLayer: Image = await Image.renderText(data.footer, { font, size: 20, color: IDLE_COLORS.AccentSoft });
         const tagX = Math.round((WIDTH - tagLayer.width) / 2);
 
-        img.composite(tagLayer, tagX, 460);
+        img.composite(tagLayer, { x: tagX, y: 460 });
 
         drawStar(img, tagX - 26, 470, IDLE_COLORS.AccentSoft);
         drawStar(img, tagX + tagLayer.width + 26, 470, IDLE_COLORS.AccentSoft);
 
-        return img.encode();
+        return img.encodePNG();
     },
     /**
      *
@@ -604,7 +605,7 @@ export const ImageOps = {
         const albumImage: Image = coverCrop(await ImageOps.album(albumURL), ART_SIZE);
 
         const dominant: number = albumImage.dominantColor();
-        const opaque: boolean = isOpaque(Image.colorToRGB(dominant));
+        const opaque: boolean = isOpaque(Colors.toRGB(dominant));
         let mainColor: number = ImageColors.Base;
         if (opaque) mainColor = ImageColors.Text;
         let layoutColor: number = ImageColors.Surface;
@@ -615,30 +616,33 @@ export const ImageOps = {
         const artistText: Image = await renderFitted(font, artist, textMaxWidth, 38, 20, layoutColor);
 
         // 1. Card frame: a thin outer stroke (mainColor) with the dominant color filling the inside
-        const outer: Image = new Image(WIDTH, HEIGHT).fill(mainColor).opacity(0.9).roundCorners(RADIUS);
+        const outer: Image = new Image(WIDTH, HEIGHT).fill(mainColor).opacity(0.9).roundCorners({ radius: RADIUS });
         const inner: Image = new Image(WIDTH - OUTER_BORDER * 2, HEIGHT - OUTER_BORDER * 2)
             .fill(dominant)
-            .roundCorners(RADIUS - OUTER_BORDER);
-        const canvas: Image = new Image(WIDTH, HEIGHT).composite(outer, 0, 0).composite(inner, OUTER_BORDER, OUTER_BORDER);
+            .roundCorners({ radius: RADIUS - OUTER_BORDER });
+        const canvas: Image = new Image(WIDTH, HEIGHT).composite(outer).composite(inner, { x: OUTER_BORDER, y: OUTER_BORDER });
 
         // 2. Album art on the left, with a thin ring around it
         const artX = MARGIN;
         const artY = (HEIGHT - ART_SIZE) / 2;
         const ring: Image = new Image(ART_SIZE + 16, ART_SIZE + 16)
-            .fill(Image.rgbaToColor(255, 255, 255, 30))
-            .roundCorners(RADIUS - OUTER_BORDER + 8);
-        canvas.composite(ring, artX - 8, artY - 8);
-        canvas.composite(albumImage.roundCorners(RADIUS - OUTER_BORDER), artX, artY);
+            .fill(Colors.fromRGBA(255, 255, 255, 30))
+            .roundCorners({ radius: RADIUS - OUTER_BORDER + 8 });
+        canvas.composite(ring, { x: artX - 8, y: artY - 8 });
+        canvas.composite(albumImage.roundCorners({ radius: RADIUS - OUTER_BORDER }), { x: artX, y: artY });
 
         // 3. Track name and artist centered in the right-side area, both vertically centered against the art
         const textAreaLeft = artX + ART_SIZE + 50;
         const textAreaCenter = textAreaLeft + (WIDTH - MARGIN - textAreaLeft) / 2;
         const blockHeight = trackText.height + 14 + artistText.height;
         const textStartY = (HEIGHT - blockHeight) / 2;
-        canvas.composite(trackText, Math.round(textAreaCenter - trackText.width / 2), textStartY);
-        canvas.composite(artistText.opacity(0.9), Math.round(textAreaCenter - artistText.width / 2), textStartY + trackText.height + 14);
+        canvas.composite(trackText, { x: Math.round(textAreaCenter - trackText.width / 2), y: textStartY });
+        canvas.composite(artistText.opacity(0.9), {
+            x: Math.round(textAreaCenter - artistText.width / 2),
+            y: textStartY + trackText.height + 14,
+        });
 
-        const encoded: Uint8Array = await canvas.encode();
+        const encoded: Uint8Array = await canvas.encodePNG();
         if (enabled) await writeBannerCache(identifier, encoded, maxEntries);
 
         return encoded;

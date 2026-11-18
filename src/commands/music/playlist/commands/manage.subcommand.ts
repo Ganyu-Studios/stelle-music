@@ -13,9 +13,9 @@ import {
     TextDisplay,
     type WebhookMessageStructure,
 } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
+import { EmbedColors } from "seyfert";
+import { ButtonStyle, MessageFlags } from "seyfert";
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
-import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
 import { ManageButtonCustomIds, ManageButtonIdentifiers } from "#stelle/types/index.js";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";
 import { PlaylistOps } from "#stelle/utils/functions/components/playlist.js";
@@ -145,11 +145,11 @@ export default class ManageSubcommand extends SubCommand {
             if (!interaction.isButton()) return;
 
             const playlistHandlers = {
-                [ManageButtonIdentifiers.TrackSave]: PlaylistOps.save,
-                [ManageButtonIdentifiers.TrackDelete]: PlaylistOps.remove,
-                [ManageButtonIdentifiers.Info]: PlaylistOps.info,
-                [ManageButtonIdentifiers.Load]: PlaylistOps.load,
-                [ManageButtonIdentifiers.ToggleVisibility]: PlaylistOps.toggle,
+                [ManageButtonIdentifiers.TrackSave]: PlaylistOps.save.bind(PlaylistOps),
+                [ManageButtonIdentifiers.TrackDelete]: PlaylistOps.remove.bind(PlaylistOps),
+                [ManageButtonIdentifiers.Info]: PlaylistOps.info.bind(PlaylistOps),
+                [ManageButtonIdentifiers.Load]: PlaylistOps.load.bind(PlaylistOps),
+                [ManageButtonIdentifiers.ToggleVisibility]: PlaylistOps.toggle.bind(PlaylistOps),
             };
 
             await playlistHandlers[interaction.customId as ManageButtonIdentifiers](ctx, interaction, playlist);

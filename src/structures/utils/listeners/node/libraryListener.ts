@@ -75,7 +75,9 @@ export async function libraryListener(client: UsingClient, node: NodeStructure, 
 
                     client.debug(LogLevels.Debug, `[Lavalink] Player resumed | node: ${node.id} | guild: ${player.guildId}`);
                 } catch (error) {
-                    client.logger.error(`[Lavalink] Resume player failed | node: ${node.id} | guild: ${player.guildId} | error: ${error}`);
+                    client.logger.error(
+                        `[Lavalink] Resume player failed | node: ${node.id} | guild: ${player.guildId} | error: ${String(error)}`,
+                    );
                 }
             }
         }

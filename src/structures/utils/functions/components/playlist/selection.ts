@@ -6,7 +6,7 @@
  * @returns {number[]} The selected track indexes in ascending order.
  */
 export function parseTrackSelection(value: string, total: number): number[] {
-    const normalized: string = value.replace(/\s*-/g, "-").trim();
+    const normalized: string = value.replaceAll(/\s*-/g, "-").trim();
     const tokens: string[] = normalized
         .split(/[\s,]+/)
         .map((token): string => token.trim())
@@ -57,7 +57,7 @@ export function parseTrackSelection(value: string, total: number): number[] {
         selection.add(index);
     }
 
-    const selected: number[] = [...selection].sort((a, b): number => a - b);
+    const selected: number[] = [...selection].toSorted((a, b): number => a - b);
 
     if (!selected.length) throw new Error("invalid-selection");
     if (selected.some((index): boolean => index > total)) throw new RangeError("out-of-range");

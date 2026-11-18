@@ -27,11 +27,11 @@ type TimeRecord = Record<string, number>;
  */
 export enum TimeUnits {
     Millisecond = 1,
-    Second = 1000,
-    Minute = 60 * TimeUnits.Second, // 60_000
-    Hour = 60 * TimeUnits.Minute, // 3_600_000
-    Day = 24 * TimeUnits.Hour, // 8_640_000
-    Week = 7 * TimeUnits.Day, // 604_800_000
+    Second = 1_000,
+    Minute = 60 * Second, // 60_000
+    Hour = 60 * Minute, // 3_600_000
+    Day = 24 * Hour, // 8_640_000
+    Week = 7 * Day, // 604_800_000
 }
 
 /**
@@ -57,14 +57,14 @@ const createMsFormater = (isNormalMode: boolean = true, order: typeof TimeUnitsO
     const unitsLabels = Object.keys(order) as (keyof typeof order)[];
     const unitsValues = Object.values(order) as number[];
 
-    const isDottedMode = isNormalMode === false;
+    const isDottedMode = !isNormalMode;
 
     function baseFormater(time: number = 0, isChild = false): [string, number] {
         let targetPosition = 0;
         let targetUnitValue = 1;
 
         for (let i = 0; i < unitsValues.length; i++) {
-            const unitValue = unitsValues[i]!;
+            const unitValue = unitsValues[i];
 
             if (time < unitValue) break;
 
@@ -72,7 +72,7 @@ const createMsFormater = (isNormalMode: boolean = true, order: typeof TimeUnitsO
             targetUnitValue = unitValue;
         }
 
-        const unitName = unitsLabels[targetPosition]!;
+        const unitName = unitsLabels[targetPosition];
 
         const resultTime = Math.floor(time / targetUnitValue).toString();
 
@@ -80,15 +80,13 @@ const createMsFormater = (isNormalMode: boolean = true, order: typeof TimeUnitsO
         let result = resultTime + unitName;
 
         if (isDottedMode) {
-            if (more < 1000) more = 0;
+            if (more < 1_000) more = 0;
             if (targetPosition === 0) return ["00:00", targetPosition];
 
-            result = isChild
-                ? resultTime.padStart(2, "0")
-                : // do 00:05
-                  targetPosition <= 1
-                  ? "00:".repeat(targetPosition) + resultTime.padStart(2, "0")
-                  : resultTime;
+            // do 00:05
+            if (isChild) result = resultTime.padStart(2, "0");
+            else if (targetPosition <= 1) result = "00:".repeat(targetPosition) + resultTime.padStart(2, "0");
+            else result = resultTime;
         }
 
         if (more !== 0) {
@@ -136,7 +134,7 @@ const createAliases = <const R extends TimeRecord, M extends Record<keyof R, str
     return result;
 };
 
-const TimeUnitsAliases = createAliases(TimeUnitsOrder, {
+const TimeUnitsAliases: Record<string, number | undefined> = createAliases(TimeUnitsOrder, {
     ms: ["milliseconds", "millisecond", "millisec", "millisecs"],
     s: ["seconds", "sec", "second", "secs"],
     m: ["minutes", "min", "minute", "mins"],
@@ -169,6 +167,7 @@ const formatToMs = (date: string): number => {
 
     for (const [, value, unit] of matches) {
         const unitValue = TimeUnitsAliases[unit.toLowerCase()];
+        // Unknown units are ignored instead of turning the whole result into NaN.
         if (unitValue === undefined) continue;
         result += sanitizeNumber(value) * unitValue;
     }

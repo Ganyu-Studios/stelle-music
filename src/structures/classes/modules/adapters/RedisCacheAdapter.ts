@@ -44,7 +44,7 @@ export class RedisCacheAdapter<T> implements CacheAdapter<T> {
     constructor(redis: RedisClient, options: CacheAdapterOptions) {
         this.redis = redis;
         this.namespace = `stellecache:${options.namespace}`;
-        this.ttl = Math.max(1, Math.ceil(options.expire / 1000));
+        this.ttl = Math.max(1, Math.ceil(options.expire / 1_000));
     }
 
     private key(key: string): string {

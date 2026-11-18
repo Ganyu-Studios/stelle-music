@@ -18,7 +18,7 @@ export default createLavalinkEvent({
 
         client.debug(
             LogLevels.Debug,
-            `[Lavalink] Track ended | guild: ${player.guildId} | title: ${track?.info?.title ?? "Unknown"} | author: ${track?.info?.author ?? "Unknown"}`,
+            `[Lavalink] Track ended | guild: ${player.guildId} | title: ${track?.info.title ?? "Unknown"} | author: ${track?.info.author ?? "Unknown"}`,
         );
     },
 });

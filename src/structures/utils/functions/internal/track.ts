@@ -28,8 +28,6 @@ export const TrackOps = {
      * @returns {string} The duration of the track as a string.
      */
     duration(track: TrackStructure, messages: DefaultLocale["messages"]): string {
-        return track.info.isStream
-            ? messages.commands.play.live
-            : (TimeFormat.toDotted(track.info.length) ?? messages.commands.play.undetermined);
+        return track.info.isStream ? messages.commands.play.live : TimeFormat.toDotted(track.info.length);
     },
 };

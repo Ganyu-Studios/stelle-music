@@ -15,7 +15,7 @@ import {
     TextDisplay,
     type WebhookMessageStructure,
 } from "seyfert";
-import { ApplicationIntegrationType, InteractionContextType, MessageFlags } from "seyfert/lib/types/index.js";
+import { ApplicationIntegrationType, InteractionContextType, MessageFlags } from "seyfert";
 import { StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { ImageOps } from "#stelle/utils/functions/internal/image.js";

@@ -1,4 +1,4 @@
-import { type APIApplicationCommandOption, ApplicationCommandOptionType } from "seyfert/lib/types/index.js";
+import { type APIApplicationCommandOption, ApplicationCommandOptionType } from "seyfert";
 
 /**
  * The formatted option type.
@@ -69,19 +69,22 @@ function rangeOf(option: APIApplicationCommandOption): string {
     let text: string = "";
 
     switch (option.type) {
-        case ApplicationCommandOptionType.String:
+        case ApplicationCommandOptionType.String: {
             if (option.max_length) text += ` Max: ${option.max_length}`;
             if (option.min_length) text += ` Min: ${option.min_length}`;
             break;
+        }
 
         case ApplicationCommandOptionType.Integer:
-        case ApplicationCommandOptionType.Number:
+        case ApplicationCommandOptionType.Number: {
             if (option.max_value) text += ` Max: ${option.max_value}`;
             if (option.min_value) text += ` Min: ${option.min_value}`;
             break;
+        }
 
-        default:
+        default: {
             break;
+        }
     }
 
     return text.trim();

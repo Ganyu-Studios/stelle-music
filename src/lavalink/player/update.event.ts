@@ -15,7 +15,7 @@ export default createLavalinkEvent({
 
         client.debug(
             LogLevels.Debug,
-            `[Lavalink] Session updated | guild: ${newPlayer.guildId} | node: ${newPlayer.node.id} | voice: ${newPlayer.voiceId} | text: ${newPlayer.textId}`,
+            `[Lavalink] Session updated | guild: ${newPlayer.guildId} | node: ${newPlayer.node.id} | voice: ${newPlayer.voiceId ?? "none"} | text: ${newPlayer.textId ?? "none"}`,
         );
     },
 });

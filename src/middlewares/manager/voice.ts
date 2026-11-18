@@ -6,7 +6,7 @@ import {
     type MiddlewareContext,
     type VoiceState,
 } from "seyfert";
-import type { PermissionStrings } from "seyfert/lib/common/index.js";
+import type { PermissionStrings } from "seyfert";
 import type { PermissionNames } from "#stelle/types/index.js";
 import { PermissionOps } from "#stelle/utils/functions/internal/permissions.js";
 
@@ -20,9 +20,9 @@ export const checkBotVoiceChannel: MiddlewareContext<void, AnyContext> = createM
     const { messages } = await context.locale();
 
     const me: GuildMember | null | undefined = await context.me().catch((): null => null);
-    if (!me) return;
+    if (!me) return stop();
 
-    const state: VoiceState = await context.member.voice();
+    const state: VoiceState | null = await context.member.voice().catch((): null => null);
     if (!state) return stop();
 
     const bot: VoiceState | null = await me.voice().catch((): null => null);

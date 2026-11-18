@@ -11,7 +11,7 @@ import {
     SubCommand,
     type WebhookMessageStructure,
 } from "seyfert";
-import { MessageFlags } from "seyfert/lib/types/index.js";
+import { MessageFlags } from "seyfert";
 import { EmbedPaginator } from "#stelle/classes/components/EmbedPaginator.js";
 import type { TrackUser } from "#stelle/types/index.js";
 import { playlistAutocomplete as autocomplete } from "#stelle/utils/functions/autocompletes/playlist.js";

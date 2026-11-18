@@ -75,11 +75,11 @@ export const MatchOps = {
      */
     clean(text: string): string {
         const tidied: string = text
-            .replace(/[([{（【「『〔《][^)\]}）】」』〕》]*[)\]}）】」』〕》]/gu, " ")
+            .replaceAll(/[([{（【「『〔《][^)\]}）】」』〕》]*[)\]}）】」』〕》]/gu, " ")
             .replace(/\s\/\s.*$/u, " ")
             .replace(/\bcover\b.*$/iu, " ")
             .replace(FEAT_TAIL, " ")
-            .replace(/\s+/g, " ")
+            .replaceAll(/\s+/g, " ")
             .trim();
 
         return tidied || text.trim();
@@ -96,10 +96,10 @@ export const MatchOps = {
     normalize(text: string): string {
         return UtilsOps.sanitize(this.clean(text))
             .toLowerCase()
-            .replace(/&/g, " and ")
-            .replace(/['’`´"]/g, "")
-            .replace(/[^\p{L}\p{N}]+/gu, " ")
-            .replace(/\s+/g, " ")
+            .replaceAll("&", " and ")
+            .replaceAll(/['’`´"]/g, "")
+            .replaceAll(/[^\p{L}\p{N}]+/gu, " ")
+            .replaceAll(/\s+/g, " ")
             .trim();
     },
 
@@ -123,8 +123,8 @@ export const MatchOps = {
 
         const guessWords: string[] = g.split(" ");
         const targetWords: string[] = t.split(" ");
-        const guessSet: Set<string> = new Set(guessWords);
-        const targetSet: Set<string> = new Set(targetWords);
+        const guessSet = new Set<string>(guessWords);
+        const targetSet = new Set<string>(targetWords);
 
         // A specific multi-word guess that is a subphrase of the target (guards single common words by accident).
         if (guessWords.length >= 2 && guessWords.every((word): boolean => targetSet.has(word))) return true;

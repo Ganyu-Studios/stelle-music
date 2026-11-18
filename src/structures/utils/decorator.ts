@@ -21,6 +21,8 @@ export function StelleOptions<A extends Instantiable<any>>(
     return (target: A) =>
         class extends target {
             constructor(...args: any[]) {
+                // TypeScript requires mixin constructors to take a single rest parameter of type any[].
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 super(...args);
                 Object.assign(this, options);
             }

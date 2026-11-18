@@ -77,26 +77,28 @@ export class LavalinkHandler extends BaseHandler {
      * @returns {Promise<void>} tip: don't take this comments too seriously.
      */
     public async load(): Promise<void> {
-        const files = await this.loadFilesK<{ default: Lavalink }>(
+        const files = await this.loadFilesK<{ default?: unknown }>(
             await this.getFiles(await this.client.getRC().then((x) => x.locations.lavalink)),
         );
 
         for (const file of files) {
-            const event: Lavalink = file.file.default;
-            if (!event) {
+            const candidate: unknown = file.file.default;
+            if (!candidate || typeof candidate !== "object") {
                 this.logger.warn(`[Handler] Invalid event export | file: ${file.name} | expected: export default new Lavaink({ ... })`);
                 continue;
             }
 
-            if (!event.name) {
+            if (!("name" in candidate) || typeof candidate.name !== "string") {
                 this.logger.warn(`[Handler] Missing event name | file: ${file.name}`);
                 continue;
             }
 
-            if (typeof event.run !== "function") {
+            if (!("run" in candidate) || typeof candidate.run !== "function") {
                 this.logger.warn(`[Handler] Missing event run function | file: ${file.name}`);
                 continue;
             }
+
+            const event: Lavalink = candidate as Lavalink;
 
             const run: Listener = this.listener(event);
 
@@ -128,7 +130,7 @@ export class LavalinkHandler extends BaseHandler {
 
         this.client.manager.removeListener(oldEvent.name, oldListener);
 
-        const newEvent: Lavalink = await UtilsOps.dynamicImport<Lavalink>(oldEvent.filepath);
+        const newEvent: Lavalink | undefined = await UtilsOps.dynamicImport<Lavalink | undefined>(oldEvent.filepath);
         if (!newEvent) return;
 
         newEvent.filepath = oldEvent.filepath;

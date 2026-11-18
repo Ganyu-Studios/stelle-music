@@ -70,7 +70,7 @@ export class RedisQueueStore extends QueueStorageAdapter {
     override parse(value: unknown): QueueJSON {
         if ((typeof value === "string" && !value.length) || (typeof value === "object" && value && !Object.keys(value).length))
             return {} as QueueJSON;
-        if (typeof value === "string") return JSON.parse(value);
+        if (typeof value === "string") return JSON.parse(value) as QueueJSON;
         return value as QueueJSON;
     }
 

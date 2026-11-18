@@ -5,21 +5,21 @@ import {
     Button,
     type ButtonInteraction,
     type Embed,
+    EmbedColors,
     type MessageStructure,
     StringSelectMenu,
     type StringSelectMenuInteraction,
     type WebhookMessageStructure,
 } from "seyfert";
-import {
-    type Awaitable,
-    EmbedColors,
-    type InteractionCreateBodyRequest,
-    type InteractionMessageUpdateBodyRequest,
-    type MakeRequired,
-    type MessageWebhookCreateBodyRequest,
+import { ButtonStyle, MessageFlags } from "seyfert";
+import type {
+    Awaitable,
+    InteractionCreateBodyRequest,
+    InteractionMessageUpdateBodyRequest,
+    MakeRequired,
+    MessageWebhookCreateBodyRequest,
 } from "seyfert/lib/common/index.js";
 import type { CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
-import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
 import { type Omit, PaginatorButtonCustomIds, PaginatorButtonIdentifiers } from "#stelle/types/index.js";
 import { InvalidComponentRun, InvalidEmbedsLength, InvalidMessage, InvalidPageNumber } from "#stelle/utils/errors.js";
 import { ComponentOps } from "#stelle/utils/functions/internal/components.js";
@@ -94,7 +94,7 @@ interface PaginatorOptions {
 /**
  * The callback function of a component.
  */
-type ComponentCallback<Interaction> = (interaction: Interaction, setPage: (n: number) => void) => Awaitable<unknown>;
+type ComponentCallback<Interaction> = (interaction: Interaction, setPage: (n: number) => Awaitable<unknown>) => Awaitable<unknown>;
 
 /**
  * The components of a message.
@@ -132,8 +132,8 @@ const DEFAULT_TIME: number = ms("1m");
  * @param {EmbedPaginator} self The paginator instance.
  * @returns {ActionRow<ActionBuilderComponents>[]} The current row.
  */
-function createRow(self: EmbedPaginator): ActionRow<ActionBuilderComponents>[] {
-    const rows: ActionRow<ActionBuilderComponents>[] = [
+function createRow(self: EmbedPaginator): ActionRow[] {
+    const rows: ActionRow[] = [
         new ActionRow<ActionBuilderComponents>().addComponents(
             new Button()
                 .setEmoji("<:forward:1061798317417312306>")

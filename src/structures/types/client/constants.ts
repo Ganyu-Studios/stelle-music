@@ -1,5 +1,5 @@
 import type { LoopMode } from "hoshimi";
-import type { GatewayActivityUpdateData } from "seyfert/lib/types/gateway.js";
+import type { GatewayActivityUpdateData } from "seyfert";
 
 /**
  * The options for the presence activity.

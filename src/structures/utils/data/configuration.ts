@@ -48,9 +48,9 @@ export const Configuration: StelleConfiguration = {
             for (const ext of extensions) {
                 const file: string = join(directory, `${filename}${ext}`);
 
-                const i: StelleConfiguration | null = await UtilsOps.dynamicImport<StelleConfiguration>(file).catch((error) => {
+                const i: StelleConfiguration | null = await UtilsOps.dynamicImport<StelleConfiguration>(file).catch((error: unknown) => {
                     // A missing file is skipped. Check the code, not the stack: Bun doesn't put the code in the stack.
-                    if (error?.code === "ERR_MODULE_NOT_FOUND") return null;
+                    if ((error as { code?: string } | null)?.code === "ERR_MODULE_NOT_FOUND") return null;
                     throw error;
                 });
 
@@ -89,7 +89,7 @@ export const Environment: StelleEnvironment = envSchema
         const message: string = issues
             .map(
                 (issue): string =>
-                    `❌ Stelle [${issue.path?.join(".") ?? "UNKNOWN"}]: Invalid input: expected ${issue.expected}, received ${issue.received}`,
+                    `❌ Stelle [${issue.path?.join(".") ?? "UNKNOWN"}]: Invalid input: expected ${String(issue.expected)}, received ${String(issue.received)}`,
             )
             .join("\n");
 

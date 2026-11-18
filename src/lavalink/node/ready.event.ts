@@ -8,7 +8,7 @@ import { createLavalinkEvent } from "#stelle/utils/manager/events.js";
  * still in memory and resumeListener/libraryListener handle them.
  * @type {Set<string>}
  */
-const readied: Set<string> = new Set();
+const readied = new Set<string>();
 
 export default createLavalinkEvent({
     name: EventNames.NodeReady,

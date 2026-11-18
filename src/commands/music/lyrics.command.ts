@@ -1,5 +1,5 @@
 import { Command, Declare, type GuildCommandContext, LocalesT, Middlewares } from "seyfert";
-import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
+import { ApplicationIntegrationType, InteractionContextType } from "seyfert";
 import { StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { displayLyrics } from "#stelle/utils/functions/manager/lyrics.js";

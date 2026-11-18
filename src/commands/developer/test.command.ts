@@ -1,5 +1,5 @@
 import { Command, type CommandContext, Declare } from "seyfert";
-import { ApplicationIntegrationType, InteractionContextType, PermissionFlagsBits } from "seyfert/lib/types/index.js";
+import { ApplicationIntegrationType, InteractionContextType, PermissionFlagsBits } from "seyfert";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
 @Declare({

@@ -155,7 +155,7 @@ export abstract class Controller<M extends ModelNames> {
      * @readonly
      * @protected
      */
-    protected readonly versions: Map<string, KeyVersion> = new Map();
+    protected readonly versions = new Map<string, KeyVersion>();
 
     /**
      * Create a controller instance.

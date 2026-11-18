@@ -16,7 +16,7 @@ export async function quizListener(client: UsingClient, message: MessageStructur
     if (!guildId || author.bot || !member) return false;
 
     const session = QuizOps.get(guildId);
-    if (!session || channelId !== session.channelId) return false;
+    if (session?.channelId !== channelId) return false;
 
     // You must be listening in the quiz voice channel to guess — otherwise you can't hear the snippet.
     const voice: VoiceState | null = await member.voice().catch((): null => null);

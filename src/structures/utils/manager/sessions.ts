@@ -40,8 +40,9 @@ const storage: MeowDB = new MeowDB({ dir, name });
  * The session ids of the nodes.
  * @type {Map<string, string>}
  */
+const stored: Record<string, StellePlayerJson> = storage.all() as Record<string, StellePlayerJson>;
 const ids: Map<string, string> = new Map<string, string>(
-    Object.values<StellePlayerJson>(storage.all())
+    Object.values(stored)
         .filter(
             (session): session is RequiredPlayerJson => typeof session.node.id === "string" && typeof session.node.sessionId === "string",
         )
@@ -76,7 +77,6 @@ export const Sessions = {
      */
     set<T>(id: string, value: T): void {
         storage.set<T>(id, value);
-        return;
     },
     /**
      * Get the session of the player.
@@ -91,7 +91,8 @@ export const Sessions = {
      * @returns {T[]} All stored sessions.
      */
     values<T>(): T[] {
-        return Object.values<T>(storage.all());
+        const stored = storage.all() as Record<string, T>;
+        return Object.values(stored);
     },
     /**
      * Delete the session of the player.
@@ -136,7 +137,7 @@ export const Sessions = {
      */
     async save(player: PlayerStructure): Promise<void> {
         const json = player.toJSON();
-        if (json.queue?.current) json.queue.current.userData = {};
+        if (json.queue.current) json.queue.current.userData = {};
 
         const base = UtilsOps.pick(json, [
             "voice",

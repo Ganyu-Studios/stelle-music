@@ -1,5 +1,5 @@
 import type { MessageStructure, UsingClient } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
+import { EmbedColors } from "seyfert";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 
 /**

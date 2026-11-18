@@ -1,6 +1,6 @@
 import { LoadType } from "hoshimi";
 import type { AllGuildVoiceChannels, GuildMember, MessageStructure, UsingClient, VoiceState } from "seyfert";
-import { EmbedColors, type PermissionStrings } from "seyfert/lib/common/index.js";
+import { EmbedColors, type PermissionStrings } from "seyfert";
 import type { PermissionNames } from "#stelle/types/index.js";
 import { ContextOps } from "#stelle/utils/functions/internal/context.js";
 import { PermissionOps } from "#stelle/utils/functions/internal/permissions.js";
@@ -21,7 +21,7 @@ type TemporaryEmbeds = Parameters<UsingClient["messages"]["write"]>[1]["embeds"]
  * @param {number} [ttl] The lifetime in milliseconds.
  * @returns {Promise<void>} A promise that resolves once the message is sent.
  */
-async function sendTemporary(client: UsingClient, channelId: string, embeds: TemporaryEmbeds, ttl: number = 6000): Promise<void> {
+async function sendTemporary(client: UsingClient, channelId: string, embeds: TemporaryEmbeds, ttl: number = 6_000): Promise<void> {
     const message: MessageStructure | null = await client.messages.write(channelId, { embeds }).catch((): null => null);
 
     if (message) setTimeout((): void => void client.messages.delete(message.id, channelId).catch((): null => null), ttl);
@@ -42,7 +42,7 @@ export async function requestListener(client: UsingClient, message: MessageStruc
     if (!guildId || author.bot) return false;
 
     const config = await client.database.requests.get(guildId);
-    if (!config || channelId !== config.channelId) return false;
+    if (config?.channelId !== channelId) return false;
 
     // The message belongs to the request channel: consume it regardless of what happens next.
     await message.delete().catch((): null => null);

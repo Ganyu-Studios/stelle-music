@@ -1,5 +1,5 @@
 import { SearchSources } from "hoshimi";
-import { Locale, PermissionFlagsBits } from "seyfert/lib/types/index.js";
+import { Locale, PermissionFlagsBits } from "seyfert";
 import { createConfig } from "#stelle/utils/data/configuration.js";
 import { ms } from "#stelle/utils/functions/internal/time.js";
 import { Sessions } from "#stelle/utils/manager/sessions.js";
@@ -22,7 +22,7 @@ export default createConfig({
         {
             id: "SN #1", // <--- AKA Stelle Node
             host: "localhost",
-            port: 2333,
+            port: 2_333,
             password: "youshallnotpass",
             secure: false,
             retryAmount: 25,
@@ -31,7 +31,7 @@ export default createConfig({
         {
             id: "SN #2",
             host: "localhost",
-            port: 2334,
+            port: 2_334,
             password: "youshallnotpass",
             secure: false,
             retryAmount: 25,

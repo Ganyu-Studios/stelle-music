@@ -1,5 +1,5 @@
-import { Logger } from "seyfert";
-import { gray, italic, LogLevels, red, rgb24, yellow } from "seyfert/lib/common/index.js";
+import { Logger, LogLevels } from "seyfert";
+import { gray, italic, red, rgb24, yellow } from "seyfert/lib/common/index.js";
 import { Configuration } from "#stelle/utils/data/configuration.js";
 import { type GitInfo, getGitInfo } from "#stelle/utils/functions/internal/git.js";
 
@@ -114,8 +114,8 @@ export const LoggerOps = {
         const units: string[] = ["B", "KB", "MB", "GB", "TB"];
         let i: number = 0;
 
-        while (bytes >= 1024 && i < units.length - 1) {
-            bytes /= 1024;
+        while (bytes >= 1_024 && i < units.length - 1) {
+            bytes /= 1_024;
             i++;
         }
 
@@ -141,7 +141,7 @@ export const LoggerOps = {
 		
            ${italic(`Current Branch: ${git.branch}`)}
            ${italic(`Current Commit: ${git.commit}`)}
-           ${italic(`Commit Time: ${git.date}`)}
+           ${italic(`Commit Time: ${git.date.toISOString()}`)}
 		
 		   ${italic(`→   ${getRandomText()}`)}
     `),
@@ -162,7 +162,7 @@ export const LoggerOps = {
         const label: string = Logger.prefixes.get(level) ?? "UNKNOWN";
         const timeFormat: string = `[${date.toLocaleDateString()} : ${date.toLocaleTimeString()}]`;
 
-        const text = `${gray(`${timeFormat}`)} ${gray(`[RAM: ${LoggerOps.memoryUsage(memory.rss)}]`)} ${LEVEL_EMOJIS[level]} [${LEVEL_COLORS[
+        const text = `${gray(timeFormat)} ${gray(`[RAM: ${LoggerOps.memoryUsage(memory.rss)}]`)} ${LEVEL_EMOJIS[level]} [${LEVEL_COLORS[
             level
         ](label)}] ${setPadding(label)}`;
 

@@ -15,7 +15,7 @@ function updateStats(stats: Stats): void {
         const load: unknown = cpu.nodelinkLoad;
 
         if (typeof load !== "number" || Number.isNaN(load) || load < 0) cpu.lavalinkLoad = 0;
-        else cpu.lavalinkLoad = Number(load);
+        else cpu.lavalinkLoad = load;
     } else if (typeof cpu.lavalinkLoad !== "number") {
         cpu.lavalinkLoad = 0;
     }
@@ -23,7 +23,7 @@ function updateStats(stats: Stats): void {
 
 export default createLavalinkEvent({
     name: EventNames.NodeRaw,
-    async run(client, node, payload) {
+    run(client, node, payload) {
         if (node.isNodelink() && payload.op === OpCodes.Stats) {
             client.debug(LogLevels.Debug, `[Lavalink] Node Raw | node: ${node.id} | Using nodelink, patching stats...`);
 

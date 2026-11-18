@@ -6,7 +6,6 @@ import {
     type MessageStructure,
     type WebhookMessageStructure,
 } from "seyfert";
-import { resolvePartialEmoji } from "seyfert/lib/common/index.js";
 import {
     type APIActionRowComponent,
     type APIActionRowComponentTypes,
@@ -17,7 +16,8 @@ import {
     type APISectionComponent,
     ButtonStyle,
     ComponentType,
-} from "seyfert/lib/types/index.js";
+} from "seyfert";
+import { resolvePartialEmoji } from "seyfert/lib/common/index.js";
 import type { EditButtonOptions, StelleConfiguration } from "#stelle/types/index.js";
 import { InvalidRow } from "#stelle/utils/errors.js";
 
@@ -29,10 +29,7 @@ export const ComponentOps = {
      * @param {EditButtonOptions} options The options to edit the rows.
      * @returns {(ActionRow<Button> | Container)[]} The edited components.
      */
-    update(
-        message: MessageStructure | WebhookMessageStructure,
-        options?: Partial<EditButtonOptions>,
-    ): Array<ActionRow<Button> | Container> {
+    update(message: MessageStructure | WebhookMessageStructure, options?: Partial<EditButtonOptions>): (ActionRow<Button> | Container)[] {
         return message.components.map((builder): ActionRow<Button> | Container => {
             const topLevel = builder.toJSON();
 
@@ -88,7 +85,7 @@ export const ComponentOps = {
                             };
                         }
 
-                        if (nested.type === ComponentType.Section && nested.accessory?.type === ComponentType.Button) {
+                        if (nested.type === ComponentType.Section && nested.accessory.type === ComponentType.Button) {
                             const section: APISectionComponent = {
                                 ...nested,
                                 accessory: updateButton(nested.accessory),

@@ -1,4 +1,4 @@
-import { Hoshimi, SearchSources } from "hoshimi";
+import { Hoshimi, SearchSources, type TrackRequester } from "hoshimi";
 import type { UsingClient } from "seyfert";
 import { RedisQueueStore } from "#stelle/classes/manager/Store.js";
 import { TrackOps } from "#stelle/utils/functions/internal/track.js";
@@ -38,7 +38,7 @@ export class StelleManager extends Hoshimi {
             defaultSearchSource: SearchSources.Spotify,
             sendPayload: async (guildId, payload) => {
                 // just in case, but this should never happen
-                if (typeof guildId !== "string" || typeof guildId === "undefined")
+                if (typeof guildId !== "string")
                     return client.logger.warn("[Manager] Invalid payload target | reason: guildId is not a string");
 
                 await client.gateway.send(client.gateway.calculateShardId(guildId), payload);
@@ -60,7 +60,7 @@ export class StelleManager extends Hoshimi {
                 maxHistory: 25,
             },
             playerOptions: {
-                requesterFn: TrackOps.requesterFn,
+                requesterFn: <T>(requester: TrackRequester): T => TrackOps.requesterFn<T>(requester),
                 onDisconnect: {
                     autoDestroy: true,
                 },

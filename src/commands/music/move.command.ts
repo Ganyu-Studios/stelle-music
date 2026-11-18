@@ -1,6 +1,6 @@
 import { Command, createChannelOption, Declare, type GuildCommandContext, type GuildMember, LocalesT, Middlewares, Options } from "seyfert";
-import type { PermissionStrings } from "seyfert/lib/common/index.js";
-import { ApplicationIntegrationType, ChannelType, InteractionContextType } from "seyfert/lib/types/index.js";
+import type { PermissionStrings } from "seyfert";
+import { ApplicationIntegrationType, ChannelType, InteractionContextType } from "seyfert";
 import { type PermissionNames, StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 import { PermissionOps } from "#stelle/utils/functions/internal/permissions.js";

@@ -9,9 +9,9 @@ import {
     type UsingClient,
     type WebhookMessageStructure,
 } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
+import { EmbedColors } from "seyfert";
+import { ButtonStyle, MessageFlags } from "seyfert";
 import type { CollectorInteraction, CreateComponentCollectorResult } from "seyfert/lib/components/handler.js";
-import { ButtonStyle, MessageFlags } from "seyfert/lib/types/index.js";
 import { ms } from "#stelle/utils/functions/internal/time.js";
 
 /**
@@ -153,9 +153,9 @@ export async function displayLyrics(ctx: AnyContext): Promise<void | MessageStru
 
                 return cleanLyrics(player, lyrics);
             })
-            .catch(async (error): Promise<LyricsResult | null> => {
+            .catch(async (error: unknown): Promise<LyricsResult | null> => {
                 // If the lyrics object contains an error or trace property, it means an error occurred
-                if ("error" in error && "trace" in error) {
+                if (typeof error === "object" && error !== null && "error" in error && "trace" in error) {
                     // Fallback in case the response from the lyrics provider is a 400
                     // which means that the lyrics were not found
                     if (typeof error.trace === "string" && error.trace.toLowerCase().includes("response code from channel info is 400")) {

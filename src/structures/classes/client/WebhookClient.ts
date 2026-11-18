@@ -11,8 +11,6 @@ import {
     resolveAttachment,
     resolveFiles,
 } from "seyfert";
-import { BaseClient } from "seyfert/lib/client/base.js";
-import type { MessageCreateBodyRequest, MessageUpdateBodyRequest, WebhookShorterOptionalParams } from "seyfert/lib/common/index.js";
 import type {
     APIMessage,
     APIWebhook,
@@ -24,7 +22,9 @@ import type {
     RESTPatchAPIWebhookWithTokenJSONBody,
     RESTPatchAPIWebhookWithTokenResult,
     RESTPostAPIWebhookWithTokenJSONBody,
-} from "seyfert/lib/types/index.js";
+} from "seyfert";
+import { BaseClient } from "seyfert/lib/client/base.js";
+import type { MessageCreateBodyRequest, MessageUpdateBodyRequest, WebhookShorterOptionalParams } from "seyfert/lib/common/index.js";
 import type { WebhookMetadata } from "#stelle/types/index.js";
 import { InvalidWebhookURL } from "#stelle/utils/errors.js";
 import { DiscordOps } from "#stelle/utils/functions/internal/discord.js";
@@ -56,7 +56,7 @@ function transformMessageBody<T>(body: MessageCreateBodyRequest | MessageUpdateB
             body.attachments?.map((x, i): RESTAPIAttachment => {
                 if (x instanceof Attachment) {
                     return {
-                        id: x.id ?? i.toString(),
+                        id: x.id,
                         title: x.title,
                         description: x.description,
                         filename: x.filename,
@@ -68,12 +68,10 @@ function transformMessageBody<T>(body: MessageCreateBodyRequest | MessageUpdateB
                 };
             }) ?? undefined;
     } else if (files?.length) {
-        payload.attachments = files?.map(
-            ({ filename }, i): RESTAPIAttachment => ({
-                id: i.toString(),
-                filename,
-            }),
-        );
+        payload.attachments = files.map(({ filename }, i): RESTAPIAttachment => ({
+            id: i.toString(),
+            filename,
+        }));
     }
     return payload as T;
 }

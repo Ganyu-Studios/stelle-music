@@ -10,10 +10,10 @@ export class HoshimiLyricsManager extends LyricsManager {
     public override async current(guildId: string, skipSource?: boolean): Promise<LyricsResult | null> {
         if (this.node.isNodelink()) {
             const player: PlayerStructure | undefined = this.node.nodeManager.manager.getPlayer(guildId);
-            if (!player) return Promise.resolve(null);
+            if (!player) return null;
 
             const current: TrackStructure | null = player.queue.current;
-            if (!current) return Promise.resolve(null);
+            if (!current) return null;
 
             return this.get(current, skipSource);
         }

@@ -1,7 +1,7 @@
 import type { NodeJSON, PlayerJSON } from "hoshimi";
 import type { User } from "seyfert";
+import type { ButtonStyle, PermissionFlagsBits } from "seyfert";
 import type { Awaitable, EmojiResolvable } from "seyfert/lib/common/index.js";
-import type { ButtonStyle, PermissionFlagsBits } from "seyfert/lib/types/index.js";
 
 export * from "#stelle/types/client/components.js";
 export type { InternalStelleConfiguration, StelleConfiguration } from "#stelle/types/client/configuration.js";
@@ -16,10 +16,7 @@ export type {
     PausedState,
 } from "#stelle/types/client/constants.js";
 export type { ImageData } from "#stelle/types/client/image.js";
-export type {
-    LavalinkEvent,
-    LavalinkEventRun,
-} from "#stelle/types/client/lavalink.js";
+export type { LavalinkEvent, LavalinkEventRun } from "#stelle/types/client/lavalink.js";
 export type * from "#stelle/types/client/locales.js";
 export * from "#stelle/types/client/nodelink.js";
 
@@ -152,8 +149,10 @@ export type TrackUser = Omit<
 /**
  * The type of the player session.
  */
-export interface StellePlayerJson
-    extends Omit<PlayerJSON, "ping" | "createdTimestamp" | "lastPositionUpdate" | "paused" | "playing" | "queue" | "filters" | "node"> {
+export interface StellePlayerJson extends Omit<
+    PlayerJSON,
+    "ping" | "createdTimestamp" | "lastPositionUpdate" | "paused" | "playing" | "queue" | "filters" | "node"
+> {
     node: NonOptionsNode;
 }
 
@@ -243,7 +242,7 @@ export interface WebhookMetadata {
  * The type to get the plain object without functions.
  */
 export type Plain<T> = {
-    [K in keyof T as T[K] extends Function ? never : K]: T[K];
+    [K in keyof T as T[K] extends (...args: never[]) => unknown ? never : K]: T[K];
 };
 
 /**

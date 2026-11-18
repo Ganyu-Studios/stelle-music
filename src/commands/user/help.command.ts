@@ -13,13 +13,8 @@ import {
     SubCommand,
     type WebhookMessageStructure,
 } from "seyfert";
-import type {
-    APIApplicationCommandOption,
-    APIApplicationCommandOptionChoice,
-    ApplicationCommandOptionType,
-    LocaleString,
-} from "seyfert/lib/types/index.js";
-import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
+import type { APIApplicationCommandOption, APIApplicationCommandOptionChoice, ApplicationCommandOptionType, LocaleString } from "seyfert";
+import { ApplicationIntegrationType, InteractionContextType } from "seyfert";
 import { EmbedPaginator, StelleStringMenu } from "#stelle/classes/components/EmbedPaginator.js";
 import { StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
@@ -67,14 +62,14 @@ const options = {
                     (command): boolean =>
                         !command.guildId && (command.name.includes(input) || displayName(command).toLowerCase().includes(input)),
                 )
-                .sort(
+                .toSorted(
                     (a, b): number =>
                         Number(displayName(b).toLowerCase().startsWith(input)) - Number(displayName(a).toLowerCase().startsWith(input)),
                 )
                 .slice(0, 25)
                 .map((command): APIApplicationCommandOptionChoice<string> => {
                     const description: string = command.description_localizations?.[interaction.locale] ?? command.description;
-                    const cooldown: string = TimeFormat.toHumanize((command.cooldown ?? 3) * 1000);
+                    const cooldown: string = TimeFormat.toHumanize((command.cooldown ?? 3) * 1_000);
 
                     return {
                         name: UtilsOps.truncate(`${displayName(command)} - ${description} (${cooldown})`, 100),
@@ -138,7 +133,7 @@ export default class HelpCommand extends Command {
                     messages.commands.help.command({
                         aliases,
                         category: getAlias(command.category),
-                        cooldown: TimeFormat.toHumanize((command.cooldown ?? 3) * 1000),
+                        cooldown: TimeFormat.toHumanize((command.cooldown ?? 3) * 1_000),
                         options: parseCommand(command, messages.events.optionTypes, localeString),
                     }),
                 );
@@ -157,18 +152,19 @@ export default class HelpCommand extends Command {
             .setPlaceholder(messages.commands.help.selectMenu.placeholder)
             .setCustomId(HELP_MENU_ID)
             .setOptions(
-                categories.map(
-                    (category): StringSelectOption =>
-                        new StringSelectOption()
-                            .setLabel(getAlias(category))
-                            .setValue(category.toString())
-                            .setDescription(messages.commands.help.selectMenu.description({ category: getAlias(category) }))
-                            .setEmoji("📚"),
+                categories.map((category): StringSelectOption =>
+                    new StringSelectOption()
+                        .setLabel(getAlias(category))
+                        .setValue(category.toString())
+                        .setDescription(messages.commands.help.selectMenu.description({ category: getAlias(category) }))
+                        .setEmoji("📚"),
                 ),
             )
             .setRun((interaction, setPage) => {
                 const category: number = Number(interaction.values[0]);
-                const inCategory: ResolvableCommand[] = client.commands.values.filter((command): boolean => command.category === category);
+                const inCategory: ResolvableCommand[] = client.commands.values.filter(
+                    (command): boolean => Number(command.category) === category,
+                );
 
                 paginator.setEmbeds([]).setDisabled(false);
 
@@ -228,7 +224,7 @@ function parseCommand(command: ResolvableCommand, optionsType: Record<Applicatio
         if (option instanceof SubCommand) {
             content += `\n    ${parseSubCommand(option, optionsType)}`;
         } else {
-            content += ` ${getFormattedOptions([option as APIApplicationCommandOption], optionsType).at(0)?.option}`;
+            content += ` ${getFormattedOptions([option as APIApplicationCommandOption], optionsType).at(0)?.option ?? ""}`;
         }
     }
 

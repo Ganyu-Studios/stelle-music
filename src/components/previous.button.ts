@@ -14,6 +14,6 @@ export default class PreviousTrackComponent extends ComponentCommand {
         if (!track) return ctx.errorReply(messages.events.no.previous, { ephemeral: true });
 
         await player.queue.add(track);
-        await ctx.successReply(messages.commands.previous({ title: track.info.title, uri: track.info.uri! }), { ephemeral: true });
+        await ctx.successReply(messages.commands.previous({ title: track.info.title, uri: track.info.uri }), { ephemeral: true });
     }
 }

@@ -114,9 +114,12 @@ export const RadioOps = {
                     .slice(0, 1);
                 if (!filtered.length) filtered.push(seed);
 
-                const ids: string[] = filtered.map(
-                    ({ info }): string => info.identifier ?? info.uri?.split("/").reverse()?.[0] ?? info.uri?.split("/").reverse()?.[1],
-                );
+                const ids: string[] = filtered.map(({ info }): string => {
+                    if (info.identifier) return info.identifier;
+
+                    const [first, second] = info.uri.split("/").toReversed();
+                    return first || second || "";
+                });
 
                 // Spotify recommendations first: try to get a batch of related tracks from the Spotify API.
                 const byIds: TrackStructure[] = await this.search({
@@ -175,8 +178,9 @@ export const RadioOps = {
                 return { tracks: [], kind: MixKind.List };
             }
 
-            default:
+            default: {
                 return { tracks: [], kind: MixKind.List };
+            }
         }
     },
 };

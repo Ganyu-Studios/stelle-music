@@ -9,8 +9,8 @@ import {
     TextInput,
     type WebhookMessageStructure,
 } from "seyfert";
-import { EmbedColors } from "seyfert/lib/common/index.js";
-import { MessageFlags, TextInputStyle } from "seyfert/lib/types/index.js";
+import { EmbedColors } from "seyfert";
+import { MessageFlags, TextInputStyle } from "seyfert";
 import type { userPlaylist } from "#stelle/prisma";
 import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 
@@ -101,7 +101,7 @@ export async function playlistTrackSave(
                 });
 
             playlist.tracks.push({
-                encoded: track.encoded!,
+                encoded: track.encoded,
                 requester: track.requester,
             });
 
@@ -157,8 +157,8 @@ export async function playlistTrackSave(
 
                     let amount = 0;
 
-                    const search: QueryResult | null = await client.manager.search({ query: url, requester: ctx.author });
-                    if (!search?.tracks.length)
+                    const search: QueryResult = await client.manager.search({ query: url, requester: ctx.author });
+                    if (!search.tracks.length)
                         return modal.editOrReply({
                             content: "",
                             flags: MessageFlags.Ephemeral,
@@ -171,9 +171,9 @@ export async function playlistTrackSave(
                         });
 
                     if (search.loadType === LoadType.Track || search.loadType === LoadType.Search) {
-                        const track: TrackStructure | undefined = search.tracks
-                            .filter((track): boolean => !playlist.tracks.some((t): boolean => t.encoded === track.encoded))
-                            .at(0);
+                        const track: TrackStructure | undefined = search.tracks.find(
+                            (track): boolean => !playlist.tracks.some((t): boolean => t.encoded === track.encoded),
+                        );
                         if (!track)
                             return modal.editOrReply({
                                 content: "",
@@ -189,14 +189,14 @@ export async function playlistTrackSave(
                         amount += 1;
 
                         playlist.tracks.push({
-                            encoded: track.encoded!,
+                            encoded: track.encoded,
                             requester: track.requester,
                         });
                     } else if (search.loadType === LoadType.Playlist) {
                         const tracks = search.tracks
                             .filter((track) => !playlist.tracks.some((t) => t.encoded === track.encoded))
                             .map((t) => ({
-                                encoded: t.encoded!,
+                                encoded: t.encoded,
                                 requester: t.requester,
                             }));
 

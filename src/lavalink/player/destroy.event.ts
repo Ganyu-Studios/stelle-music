@@ -45,7 +45,7 @@ export default createLavalinkEvent({
         if (
             session &&
             is247 &&
-            reason === DestroyReasons.VoiceChannelLeft &&
+            reason === (DestroyReasons.VoiceChannelLeft as string) &&
             client.config.twentyfourseven.autoReconnect &&
             client.config.sessions.enabled
         ) {

@@ -1,5 +1,5 @@
 import { AutoLoad, Command, Declare, LocalesT } from "seyfert";
-import { ApplicationIntegrationType, InteractionContextType } from "seyfert/lib/types/index.js";
+import { ApplicationIntegrationType, InteractionContextType } from "seyfert";
 import { StelleCategory } from "#stelle/types/index.js";
 import { StelleOptions } from "#stelle/utils/decorator.js";
 
