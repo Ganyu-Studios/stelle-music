@@ -1,0 +1,25 @@
+{
+    "$schema": "./node_modules/oxlint/configuration_schema.json",
+    "plugins": ["typescript", "unicorn", "oxc"],
+    "categories": {
+        "correctness": "error"
+    },
+    "rules": {
+        "no-eval": "off",
+        "typescript/no-empty-object-type": "off",
+        "typescript/no-explicit-any": "off",
+        "typescript/no-non-null-assertion": "off",
+        "typescript/no-wrapper-object-types": "off"
+    },
+    "env": {
+        "builtin": true
+    },
+    "ignorePatterns": [
+        "**/.vscode/**",
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/generated/**",
+        "**/cache/**",
+        "**/logs/**"
+    ]
+}
