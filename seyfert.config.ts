@@ -1,10 +1,9 @@
-import { config } from "seyfert";
-import { GatewayIntentBits } from "seyfert/lib/types/index.js";
+import { config, GatewayIntentBits } from "seyfert";
 import { Environment } from "#stelle/utils/data/configuration.js";
 import { StelleMeta } from "#stelle/utils/data/constants.js";
 
 export default config.bot({
-    token: Environment.TOKEN ?? "Ganyu on top!",
+    token: Environment.TOKEN,
     debug: StelleMeta.Debug,
     intents: [
         GatewayIntentBits.Guilds,
