@@ -100,6 +100,7 @@ export class WebhookClient {
      * @type {WebhookMetadata}
      */
     readonly data: WebhookMetadata;
+
     /**
      * The proxy for making API calls.
      * @type {APIRoutes}

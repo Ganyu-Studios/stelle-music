@@ -10,7 +10,7 @@ import { UtilsOps } from "#stelle/utils/functions/internal/utils.js";
 /**
  * Lavalink node options without the `sessionId`.
  */
-//i don't know how to name this type, so i just called like this
+// i don't know how to name this type, so i just called like this
 type NonResumableNodeOptions = Omit<NodeOptions, "sessionId">;
 
 /**
