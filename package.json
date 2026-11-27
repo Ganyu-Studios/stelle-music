@@ -61,25 +61,25 @@
     "dependencies": {
         "@prisma/client": "6.19.3",
         "hoshimi": "0.6.2-dev-44409975731.0",
-        "imagescript": "^3.20.4",
+        "imagescript": "^4.0.1",
         "meowdb": "^2.2.3",
-        "seyfert": "5.2.2-dev-41510346259.0",
+        "seyfert": "6.0.0",
         "yunaforseyfert": "^1.2.4",
         "zod": "^4.6.7"
     },
     "devDependencies": {
-        "@marcrock22/eslintcf": "^0.0.2",
+        "@marcrock22/eslintcf": "^0.0.3",
         "@slipher/eslint-plugin": "^1.1.0",
-        "@types/bun": "1.4.4",
+        "@types/bun": "1.4.5",
         "@typescript/native": "npm:typescript@^7.0.2",
         "eslint": "^10.15.0",
         "husky": "^9.1.7",
-        "lint-staged": "^17.6.1",
-        "oxfmt": "^0.79.0",
-        "oxlint": "^1.94.0",
+        "lint-staged": "^17.6.2",
+        "oxfmt": "^0.80.0",
+        "oxlint": "^1.95.0",
         "prisma": "6.19.3",
         "typescript": "npm:@typescript/typescript6@^6.0.2",
-        "typescript-eslint": "^8.73.0"
+        "typescript-eslint": "^8.74.0"
     },
     "trustedDependencies": [
         "@prisma/client",
