@@ -1,6 +1,6 @@
 import eslintcf from "@marcrock22/eslintcf";
 import { configs as seyfert } from "@slipher/eslint-plugin";
-import tseslint from "typescript-eslint";
+import { defineConfig } from "eslint/config";
 
 /**
  * oxfmt owns layout and import order. A few `@stylistic` rules make the same
@@ -74,7 +74,7 @@ const curatedRules = {
     "unicorn/prefer-ternary": "off",
 };
 
-export default tseslint.config(
+export default defineConfig(
     {
         ignores: ["dist/**", "node_modules/**", "src/generated/**", "cache/**", "logs/**"],
     },
