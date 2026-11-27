@@ -1,0 +1,36 @@
+{
+    "$schema": "./node_modules/oxfmt/configuration_schema.json",
+    "useTabs": false,
+    "tabWidth": 4,
+    "printWidth": 140,
+    "endOfLine": "crlf",
+    "singleQuote": false,
+    "jsxSingleQuote": false,
+    "quoteProps": "as-needed",
+    "trailingComma": "all",
+    "semi": true,
+    "arrowParens": "always",
+    "bracketSameLine": true,
+    "bracketSpacing": true,
+    "sortPackageJson": false,
+    "sortImports": {
+        "newlinesBetween": false,
+        "partitionByNewline": true
+    },
+    "ignorePatterns": [
+        "**/.vscode",
+        "**/node_modules",
+        "**/dist",
+        "**/generated",
+        "**/cache",
+        "**/logs"
+    ],
+    "overrides": [
+        {
+            "files": ["**/*.json", "**/*.jsonc"],
+            "options": {
+                "printWidth": 80
+            }
+        }
+    ]
+}

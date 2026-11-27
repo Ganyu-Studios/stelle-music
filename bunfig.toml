@@ -1,0 +1,6 @@
+[install]
+# Supply-chain cooldown: only install versions published at least a day ago (pnpm's built-in default).
+minimumReleaseAge = 86400 # seconds
+# Exceptions: dev builds of hoshimi/seyfert are installed as soon as they are published.
+# imagescript 3.20.4 carries the 4.0 API names the image code uses; remove it once it ages past the cooldown.
+minimumReleaseAgeExcludes = ["hoshimi", "seyfert", "imagescript"]
