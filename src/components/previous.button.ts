@@ -4,6 +4,7 @@ import { ComponentCommand, type GuildComponentContext, Middlewares } from "seyfe
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkActivePlayer"])
 export default class PreviousTrackComponent extends ComponentCommand {
     override componentType = "Button" as const;
+
     override customId = "player-previousTrack";
 
     async run(ctx: GuildComponentContext<typeof this.componentType, "checkPlayer">): Promise<void> {

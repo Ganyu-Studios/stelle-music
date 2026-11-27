@@ -32,7 +32,7 @@ let isInitialized: boolean = false;
  * The configuration of the bot.
  * @type {StelleConfiguration}
  */
-//@ts-expect-error The configuration is dynamically loaded.
+// @ts-expect-error The configuration is dynamically loaded.
 export const Configuration: StelleConfiguration = {
     async load(): Promise<void> {
         if (isInitialized) return;

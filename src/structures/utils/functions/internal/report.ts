@@ -47,8 +47,8 @@ async function report(options: ReportOptions): Promise<MessageStructure | void> 
 
     if (!(error instanceof Error)) return;
 
-    //as long as I'm with the dev version of Stelle,
-    //i don't want the logs to be sent to the server.
+    // as long as I'm with the dev version of Stelle,
+    // i don't want the logs to be sent to the server.
     if (StelleMeta.Dev) return logger.error("[Report] Error captured (dev mode)", options.error);
 
     const date = new Date();

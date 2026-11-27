@@ -41,6 +41,7 @@ export class RedisQueueStore extends QueueStorageAdapter {
 
         return this.parse(data);
     }
+
     override async set(key: string, value: QueueJSON): Promise<void> {
         await this.redis.set(this.buildKey(this.namespace, key), this.stringify(value), "EX", QUEUE_TTL_SECONDS);
     }

@@ -5,6 +5,7 @@ import { ComponentOps } from "#stelle/utils/functions/internal/components.js";
 @Middlewares(["checkNodes", "checkVoiceChannel", "checkBotVoiceChannel", "checkPlayer", "checkActivePlayer", "checkTracks"])
 export default class AutoplayComponent extends ComponentCommand {
     override componentType = "Button" as const;
+
     override customId = "player-toggleAutoplay";
 
     async run(ctx: GuildComponentContext<typeof this.componentType, "checkPlayer">): Promise<void> {
