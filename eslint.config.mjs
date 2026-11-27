@@ -1,6 +1,10 @@
+// @ts-check
+/// <reference types="node" />
 import eslintcf from "@marcrock22/eslintcf";
 import { configs as seyfert } from "@slipher/eslint-plugin";
 import { defineConfig } from "eslint/config";
+
+/** @typedef {import("eslint").Linter.RulesRecord} RulesRecord */
 
 /**
  * oxfmt owns layout and import order. A few `@stylistic` rules make the same
@@ -22,10 +26,12 @@ const formatterOwnedRules = new Set([
     "@stylistic/nonblock-statement-body-position",
 ]);
 
+/** @type {RulesRecord} */
 const disableStylistic = Object.fromEntries(Object.keys(stylisticConfig?.rules ?? {}).map((rule) => [rule, "off"]));
-const reenableStylistic = Object.fromEntries(
-    Object.entries(stylisticConfig?.rules ?? {}).filter(([rule]) => !formatterOwnedRules.has(rule)),
+const reenableStylistic = /** @type {RulesRecord} */ (
+    Object.fromEntries(Object.entries(stylisticConfig?.rules ?? {}).filter(([rule]) => !formatterOwnedRules.has(rule)))
 );
+/** @type {RulesRecord} */
 const alignStylistic = {
     // Safe to enforce once the options match `.oxfmtrc.json`.
     "@stylistic/quotes": ["error", "double"],
@@ -38,6 +44,7 @@ const alignStylistic = {
  * `perfectionist/sort-imports` would fight oxfmt's `sortImports`; the rest only
  * reorder AST members. All of them stay off because the configured ordering is
  * opinionated and would require a separate refactor.
+ * @type {RulesRecord}
  */
 const disablePerfectionist = Object.fromEntries(
     Object.keys(perfectionistConfig?.rules ?? {})
@@ -48,6 +55,7 @@ const disablePerfectionist = Object.fromEntries(
 /**
  * Rules that contradict the project's intentional style or would require a
  * separate refactor. Keep this list small and justified.
+ * @type {RulesRecord}
  */
 const curatedRules = {
     // The project uses single-line `if`s, explicit type annotations, mixed
